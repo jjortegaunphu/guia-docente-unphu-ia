@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elaborar Guía Docente | UNPHU IA</title>
+
+  <style>
+    :root {
+      --verde-unphu: #006b54;
+      --verde-oscuro: #004c3f;
+      --verde-claro: #e9f4f1;
+      --blanco: #ffffff;
+      --fondo: #f5f7f7;
+      --texto: #263238;
+      --gris: #66736f;
+      --borde: #d8e2df;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--fondo);
+      color: var(--texto);
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--verde-oscuro), var(--verde-unphu));
+      color: var(--blanco);
+      padding: 24px 7%;
+    }
+
+    .header-main {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      max-width: 1180px;
+      margin: auto;
+    }
+
+    .logo-unphu {
+      width: 175px;
+      height: auto;
+      background: white;
+      padding: 8px 10px;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .header-text {
+      border-left: 1px solid rgba(255,255,255,.45);
+      padding-left: 24px;
+    }
+
+    .header-text h1 {
+      margin: 0 0 7px;
+      font-size: 28px;
+    }
+
+    .header-text p {
+      margin: 0;
+      opacity: .92;
+    }
+
+    main {
+      max-width: 950px;
+      margin: 35px auto;
+      padding: 0 20px 50px;
+    }
+
+    .volver {
+      display: inline-block;
+      margin-bottom: 18px;
+      color: var(--verde-unphu);
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .panel {
+      background: var(--blanco);
+      border-radius: 14px;
+      padding: 30px;
+      box-shadow: 0 5px 20px rgba(0,0,0,.07);
+      margin-bottom: 24px;
+    }
+
+    .panel h2 {
+      color: var(--verde-oscuro);
+      margin-top: 0;
+    }
+
+    .panel h3 {
+      color: var(--verde-unphu);
+      margin-top: 26px;
+    }
+
+    .descripcion {
+      color: var(--gris);
+      line-height: 1.6;
+    }
+
+    .campo {
+      margin-top: 22px;
+    }
+
+    label.titulo {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 9px;
+    }
+
+    select,
+    input[type="number"],
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 13px;
+      border: 1px solid var(--borde);
+      border-radius: 8px;
+      font-size: 15px;
+      background: white;
+    }
+
+    select:focus,
+    input:focus {
+      outline: 2px solid rgba(0,107,84,.18);
+      border-color: var(--verde-unphu);
+    }
+
+    .opciones {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .opcion {
+      border: 1px solid var(--borde);
+      border-radius: 8px;
+      padding: 11px 14px;
+      background: #fafcfc;
+    }
+
+    .oculto {
+      display: none;
+    }
+
+    .resultado {
+      margin-top: 20px;
+      padding: 15px;
+      background: var(--verde-claro);
+      border-left: 4px solid var(--verde-unphu);
+      border-radius: 7px;
+      font-weight: bold;
+      color: var(--verde-oscuro);
+    }
+
+    .nota {
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--gris);
+    }
+
+    .boton {
+      display: inline-block;
+      margin-top: 25px;
+      padding: 13px 22px;
+      border: none;
+      border-radius: 8px;
+      background: var(--verde-unphu);
+      color: white;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .boton:hover {
+      background: var(--verde-oscuro);
+    }
+
+    footer {
+      text-align: center;
+      padding: 22px;
+      color: var(--gris);
+      font-size: 13px;
+    }
+
+    @media (max-width: 650px) {
+      .header-main {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .header-text {
+        border-left: 0;
+        border-top: 1px solid rgba(255,255,255,.45);
+        padding-left: 0;
+        padding-top: 16px;
+      }
+
+      .logo-unphu {
+        width: 155px;
+      }
+
+      .panel {
+        padding: 22px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="header-main">
+    <img src="logo-unphu.png"
+         alt="Universidad Nacional Pedro Henríquez Ureña"
+         class="logo-unphu">
+
+    <div class="header-text">
+      <h1>Elaborar Guía Docente</h1>
+      <p>Configuración inicial para la elaboración de la guía docente</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <a href="index.html" class="volver">← Volver al inicio</a>
+
+  <section class="panel">
+
+    <h2>X. Cronograma</h2>
+
+    <p class="descripcion">
+      Complete la configuración inicial de la asignatura.
+      La información proporcionada permitirá adaptar la estructura
+      del cronograma a la naturaleza y organización académica de la asignatura.
+    </p>
+
+    <div class="campo">
+      <label class="titulo" for="tipoAsignatura">
+        ¿A qué tipo de asignatura corresponde la guía docente?
+      </label>
+
+      <select id="tipoAsignatura" onchange="configurarTipo()">
+        <option value="">Seleccione una opción</option>
+        <option value="teoria">Teoría</option>
+        <option value="teoriaLaboratorio">Teoría + laboratorio</option>
+        <option value="rubroUnico">Rubro único</option>
+        <option value="preinternado">Hospitalaria – Preinternado</option>
+        <option value="internado">Hospitalaria – Internado académico</option>
+      </select>
+    </div>
+
+    <!-- CONFIGURACIÓN RUBRO ÚNICO -->
+
+    <div id="configRubroUnico" class="oculto">
+
+      <div class="campo">
+        <label class="titulo">
+          ¿La asignatura corresponde a laboratorio o práctica?
+        </label>
+
+        <div class="opciones">
+          <label class="opcion">
+            <input type="radio"
+                   name="rubroPractica"
+                   value="si"
+                   onchange="configurarRubro()">
+            Sí
+          </label>
+
+          <label class="opcion">
+            <input type="radio"
+                   name="rubroPractica"
+                   value="no"
+                   onchange="configurarRubro()">
+            No
+          </label>
+        </div>
+      </div>
+
+      <div id="areaRubro" class="campo oculto">
+
+        <label class="titulo" for="carreraRubro">
+          ¿A qué área o carrera corresponde?
+        </label>
+
+        <select id="carreraRubro" onchange="determinarSemanasRubro()">
+          <option value="">Seleccione una opción</option>
+          <option value="odontologia">Odontología</option>
+          <option value="medicina">Medicina</option>
+          <option value="otras">Otras carreras o áreas</option>
+        </select>
+
+      </div>
+
+    </div>
+
+    <!-- FRECUENCIA SEMANAL -->
+
+    <div class="campo">
+      <label class="titulo" for="frecuencia">
+        ¿Cuántas clases por semana se impartirá la asignatura?
+      </label>
+
+      <input
+        type="number"
+        id="frecuencia"
+        min="1"
+        placeholder="Ejemplo: 2">
+
+      <div class="nota">
+        Esta información permitirá organizar cada semana en Clase 1, Clase 2,
+        Clase 3... según corresponda.
+      </div>
+    </div>
+
+    <!-- INVESTIGACIÓN -->
+
+    <div class="campo">
+      <label class="titulo">
+        ¿La asignatura contempla actividades de investigación?
+      </label>
+
+      <div class="opciones">
+        <label class="opcion">
+          <input type="radio" name="investigacion" value="si"> Sí
+        </label>
+
+        <label class="opcion">
+          <input type="radio" name="investigacion" value="no"> No
+        </label>
+      </div>
+    </div>
+
+    <!-- VINCULACIÓN -->
+
+    <div class="campo">
+      <label class="titulo">
+        ¿La asignatura contempla actividades de vinculación?
+      </label>
+
+      <div class="opciones">
+        <label class="opcion">
+          <input type="radio" name="vinculacion" value="si"> Sí
+        </label>
+
+        <label class="opcion">
+          <input type="radio" name="vinculacion" value="no"> No
+        </label>
+      </div>
+    </div>
+
+    <div id="resultadoSemanas" class="resultado oculto"></div>
+
+    <button class="boton" type="button">
+      Continuar configuración
+    </button>
+
+  </section>
+
+</main>
+
+<footer>
+  Guía Docente UNPHU IA · Herramienta de apoyo académico
+</footer>
+
+<script>
+
+  let semanas = null;
+
+  function configurarTipo() {
+
+    const tipo = document.getElementById("tipoAsignatura").value;
+    const rubro = document.getElementById("configRubroUnico");
+    const resultado = document.getElementById("resultadoSemanas");
+
+    rubro.classList.add("oculto");
+    resultado.classList.add("oculto");
+
+    semanas = null;
+
+    if (tipo === "teoria") {
+      semanas = 15;
+      mostrarSemanas(
+        "Asignatura teórica: el cronograma se configurará para 15 semanas."
+      );
+    }
+
+    if (tipo === "teoriaLaboratorio") {
+      semanas = 15;
+      mostrarSemanas(
+        "Componente teórico de una asignatura Teoría + laboratorio: el cronograma se configurará para 15 semanas."
+      );
+    }
+
+    if (tipo === "rubroUnico") {
+      rubro.classList.remove("oculto");
+    }
+
+    if (tipo === "preinternado") {
+      mostrarSemanas(
+        "Asignatura hospitalaria – Preinternado. La duración y organización se configurarán de acuerdo con la estructura académica correspondiente."
+      );
+    }
+
+    if (tipo === "internado") {
+      mostrarSemanas(
+        "Asignatura hospitalaria – Internado académico. La duración y organización se configurarán de acuerdo con la estructura académica correspondiente."
+      );
+    }
+  }
+
+  function configurarRubro() {
+
+    const seleccion =
+      document.querySelector('input[name="rubroPractica"]:checked');
+
+    const area = document.getElementById("areaRubro");
+
+    if (!seleccion) return;
+
+    if (seleccion.value === "si") {
+      area.classList.remove("oculto");
+    }
+
+    if (seleccion.value === "no") {
+      area.classList.add("oculto");
+      semanas = 15;
+
+      mostrarSemanas(
+        "Asignatura de rubro único de otra naturaleza: el cronograma se configurará para 15 semanas."
+      );
+    }
+  }
+
+  function determinarSemanasRubro() {
+
+    const carrera = document.getElementById("carreraRubro").value;
+
+    if (carrera === "odontologia") {
+      semanas = 14;
+
+      mostrarSemanas(
+        "Laboratorio/práctica de rubro único de Odontología: el cronograma se configurará para 14 semanas."
+      );
+    }
+
+    if (carrera === "medicina") {
+      semanas = 15;
+
+      mostrarSemanas(
+        "Práctica de rubro único de Medicina: el cronograma se configurará para 15 semanas."
+      );
+    }
+
+    if (carrera === "otras") {
+      semanas = 13;
+
+      mostrarSemanas(
+        "Laboratorio/práctica de rubro único: el cronograma se configurará para 13 semanas."
+      );
+    }
+  }
+
+  function mostrarSemanas(texto) {
+    const resultado = document.getElementById("resultadoSemanas");
+
+    resultado.textContent = texto;
+    resultado.classList.remove("oculto");
+  }
+
+</script>
+
+</body>
+</html>
