@@ -29,7 +29,11 @@
     }
 
     header {
-      background: linear-gradient(135deg, var(--verde-oscuro), var(--verde-unphu));
+      background: linear-gradient(
+        135deg,
+        var(--verde-oscuro),
+        var(--verde-unphu)
+      );
       color: var(--blanco);
       padding: 24px 7%;
     }
@@ -137,6 +141,7 @@
       border-radius: 8px;
       padding: 11px 14px;
       background: #fafcfc;
+      cursor: pointer;
     }
 
     .oculto {
@@ -151,13 +156,14 @@
       border-radius: 7px;
       font-weight: bold;
       color: var(--verde-oscuro);
+      line-height: 1.5;
     }
 
     .nota {
       margin-top: 8px;
       font-size: 13px;
       color: var(--gris);
-      line-height: 1.4;
+      line-height: 1.45;
     }
 
     .boton {
@@ -237,11 +243,13 @@
 
     <p class="descripcion">
       Complete la configuración inicial de la asignatura.
-      La información proporcionada permitirá adaptar la estructura
-      del cronograma a la naturaleza y organización académica de la asignatura.
+      La información proporcionada permitirá adaptar el cronograma
+      a la naturaleza, duración y organización académica de la asignatura.
     </p>
 
-    <!-- TIPO DE ASIGNATURA -->
+    <!-- =========================================
+         TIPO DE ASIGNATURA
+    ========================================== -->
 
     <div class="campo">
 
@@ -249,18 +257,73 @@
         ¿A qué tipo de asignatura corresponde la guía docente?
       </label>
 
-      <select id="tipoAsignatura" onchange="configurarTipo()">
+      <select
+        id="tipoAsignatura"
+        onchange="configurarTipo()"
+      >
         <option value="">Seleccione una opción</option>
         <option value="teoria">Teoría</option>
-        <option value="teoriaLaboratorio">Teoría + laboratorio</option>
         <option value="rubroUnico">Rubro único</option>
-        <option value="preinternado">Hospitalaria – Preinternado</option>
-        <option value="internado">Hospitalaria – Internado académico</option>
+        <option value="preinternado">
+          Hospitalaria – Preinternado
+        </option>
+        <option value="internado">
+          Hospitalaria – Internado académico
+        </option>
       </select>
 
     </div>
 
-    <!-- RUBRO ÚNICO -->
+
+    <!-- =========================================
+         CONFIGURACIÓN DE TEORÍA
+    ========================================== -->
+
+    <div id="configTeoria" class="oculto">
+
+      <div class="campo">
+
+        <label class="titulo">
+          ¿La asignatura tiene un programa de laboratorio asociado?
+        </label>
+
+        <div class="opciones">
+
+          <label class="opcion">
+            <input
+              type="radio"
+              name="programaLaboratorio"
+              value="si"
+              onchange="configurarTeoria()"
+            >
+            Sí
+          </label>
+
+          <label class="opcion">
+            <input
+              type="radio"
+              name="programaLaboratorio"
+              value="no"
+              onchange="configurarTeoria()"
+            >
+            No
+          </label>
+
+        </div>
+
+        <div class="nota">
+          La respuesta permitirá determinar el esquema evaluativo
+          que corresponde desarrollar en esta guía docente.
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =========================================
+         CONFIGURACIÓN DE RUBRO ÚNICO
+    ========================================== -->
 
     <div id="configRubroUnico" class="oculto">
 
@@ -296,6 +359,7 @@
 
       </div>
 
+
       <!-- ÁREA / CARRERA -->
 
       <div id="areaRubro" class="campo oculto">
@@ -304,7 +368,10 @@
           ¿A qué área o carrera corresponde?
         </label>
 
-        <select id="carreraRubro" onchange="determinarSemanasRubro()">
+        <select
+          id="carreraRubro"
+          onchange="determinarSemanasRubro()"
+        >
           <option value="">Seleccione una opción</option>
           <option value="odontologia">Odontología</option>
           <option value="medicina">Medicina</option>
@@ -315,13 +382,19 @@
 
     </div>
 
-    <!-- DURACIÓN PARA PREINTERNADO / INTERNADO -->
+
+    <!-- =========================================
+         CONFIGURACIÓN HOSPITALARIA
+    ========================================== -->
 
     <div id="configHospitalaria" class="oculto">
 
       <div class="campo">
 
-        <label class="titulo" for="semanasHospitalaria">
+        <label
+          class="titulo"
+          for="semanasHospitalaria"
+        >
           ¿Cuántas semanas se desarrollará la asignatura?
         </label>
 
@@ -334,15 +407,18 @@
         >
 
         <div class="nota">
-          Indique la duración académica establecida para el Preinternado
-          o Internado académico correspondiente.
+          Indique la duración académica establecida para el
+          Preinternado o Internado académico correspondiente.
         </div>
 
       </div>
 
     </div>
 
-    <!-- FRECUENCIA SEMANAL -->
+
+    <!-- =========================================
+         FRECUENCIA SEMANAL
+    ========================================== -->
 
     <div class="campo">
 
@@ -358,13 +434,18 @@
       >
 
       <div class="nota">
-        Esta información permitirá organizar cada semana en Clase 1,
-        Clase 2, Clase 3... según corresponda.
+        Esta información permitirá organizar cada semana en
+        Clase 1, Clase 2, Clase 3... según corresponda,
+        y diversificar las metodologías y actividades entre
+        las clases de la semana.
       </div>
 
     </div>
 
-    <!-- INVESTIGACIÓN -->
+
+    <!-- =========================================
+         INVESTIGACIÓN
+    ========================================== -->
 
     <div class="campo">
 
@@ -375,12 +456,20 @@
       <div class="opciones">
 
         <label class="opcion">
-          <input type="radio" name="investigacion" value="si">
+          <input
+            type="radio"
+            name="investigacion"
+            value="si"
+          >
           Sí
         </label>
 
         <label class="opcion">
-          <input type="radio" name="investigacion" value="no">
+          <input
+            type="radio"
+            name="investigacion"
+            value="no"
+          >
           No
         </label>
 
@@ -388,7 +477,10 @@
 
     </div>
 
-    <!-- VINCULACIÓN -->
+
+    <!-- =========================================
+         VINCULACIÓN
+    ========================================== -->
 
     <div class="campo">
 
@@ -399,12 +491,20 @@
       <div class="opciones">
 
         <label class="opcion">
-          <input type="radio" name="vinculacion" value="si">
+          <input
+            type="radio"
+            name="vinculacion"
+            value="si"
+          >
           Sí
         </label>
 
         <label class="opcion">
-          <input type="radio" name="vinculacion" value="no">
+          <input
+            type="radio"
+            name="vinculacion"
+            value="no"
+          >
           No
         </label>
 
@@ -412,11 +512,25 @@
 
     </div>
 
-    <!-- RESULTADO DE CONFIGURACIÓN -->
 
-    <div id="resultadoSemanas" class="resultado oculto"></div>
+    <!-- =========================================
+         RESULTADO DE CONFIGURACIÓN
+    ========================================== -->
 
-    <button class="boton" type="button">
+    <div
+      id="resultadoSemanas"
+      class="resultado oculto"
+    ></div>
+
+
+    <!-- =========================================
+         BOTÓN
+    ========================================== -->
+
+    <button
+      class="boton"
+      type="button"
+    >
       Continuar configuración
     </button>
 
@@ -424,18 +538,32 @@
 
 </main>
 
+
 <footer>
   Guía Docente UNPHU IA · Herramienta de apoyo académico
 </footer>
 
+
 <script>
 
+  /* ============================================
+     VARIABLES GENERALES
+  ============================================ */
+
   let semanas = null;
+
+
+  /* ============================================
+     TIPO DE ASIGNATURA
+  ============================================ */
 
   function configurarTipo() {
 
     const tipo =
       document.getElementById("tipoAsignatura").value;
+
+    const teoria =
+      document.getElementById("configTeoria");
 
     const rubro =
       document.getElementById("configRubroUnico");
@@ -449,53 +577,65 @@
     const semanasHospitalaria =
       document.getElementById("semanasHospitalaria");
 
-    /* Reiniciar visualización */
 
+    /* Ocultar configuraciones */
+
+    teoria.classList.add("oculto");
     rubro.classList.add("oculto");
     hospitalaria.classList.add("oculto");
     resultado.classList.add("oculto");
 
     semanas = null;
 
-    /* Reiniciar configuración hospitalaria */
+
+    /* Limpiar duración hospitalaria */
 
     semanasHospitalaria.value = "";
 
-    /* TEORÍA */
+
+    /* Limpiar configuración de teoría */
+
+    reiniciarTeoria();
+
+
+    /* Limpiar configuración de rubro único */
+
+    reiniciarRubro();
+
+
+    /* ------------------------------------------
+       TEORÍA
+    ------------------------------------------ */
 
     if (tipo === "teoria") {
 
       semanas = 15;
 
+      teoria.classList.remove("oculto");
+
       mostrarSemanas(
-        "Asignatura teórica: el cronograma se configurará para 15 semanas."
+        "Asignatura teórica: el cronograma se configurará para 15 semanas. " +
+        "Indique si la asignatura tiene un programa de laboratorio asociado " +
+        "para determinar el esquema evaluativo que corresponde a esta guía."
       );
 
     }
 
-    /* TEORÍA + LABORATORIO */
 
-    else if (tipo === "teoriaLaboratorio") {
-
-      semanas = 15;
-
-      mostrarSemanas(
-        "Componente teórico de una asignatura Teoría + laboratorio: el cronograma se configurará para 15 semanas."
-      );
-
-    }
-
-    /* RUBRO ÚNICO */
+    /* ------------------------------------------
+       RUBRO ÚNICO
+    ------------------------------------------ */
 
     else if (tipo === "rubroUnico") {
 
       rubro.classList.remove("oculto");
 
-      reiniciarRubro();
-
     }
 
-    /* PREINTERNADO */
+
+    /* ------------------------------------------
+       PREINTERNADO
+    ------------------------------------------ */
 
     else if (tipo === "preinternado") {
 
@@ -503,7 +643,10 @@
 
     }
 
-    /* INTERNADO ACADÉMICO */
+
+    /* ------------------------------------------
+       INTERNADO ACADÉMICO
+    ------------------------------------------ */
 
     else if (tipo === "internado") {
 
@@ -514,23 +657,105 @@
   }
 
 
-  function reiniciarRubro() {
+  /* ============================================
+     REINICIAR TEORÍA
+  ============================================ */
+
+  function reiniciarTeoria() {
 
     const radios =
-      document.querySelectorAll('input[name="rubroPractica"]');
+      document.querySelectorAll(
+        'input[name="programaLaboratorio"]'
+      );
 
     radios.forEach(radio => {
       radio.checked = false;
     });
 
-    document
-      .getElementById("areaRubro")
-      .classList.add("oculto");
+  }
+
+
+  /* ============================================
+     CONFIGURAR TEORÍA
+  ============================================ */
+
+  function configurarTeoria() {
+
+    const seleccion =
+      document.querySelector(
+        'input[name="programaLaboratorio"]:checked'
+      );
+
+    if (!seleccion) {
+      return;
+    }
+
+    semanas = 15;
+
+
+    /* ------------------------------------------
+       TEORÍA SIN LABORATORIO
+    ------------------------------------------ */
+
+    if (seleccion.value === "no") {
+
+      mostrarSemanas(
+        "Asignatura teórica sin programa de laboratorio: " +
+        "el cronograma se configurará para 15 semanas. " +
+        "La guía trabajará Acumulado 1, Acumulado 2, " +
+        "Acumulado 3 y Evaluación Final."
+      );
+
+    }
+
+
+    /* ------------------------------------------
+       TEORÍA CON LABORATORIO
+    ------------------------------------------ */
+
+    else if (seleccion.value === "si") {
+
+      mostrarSemanas(
+        "Asignatura teórica con programa de laboratorio: " +
+        "el cronograma se configurará para 15 semanas. " +
+        "La guía teórica trabajará Acumulado 1, Acumulado 2 " +
+        "y Evaluación Final. El TP sustituye al Acumulado 3 " +
+        "y corresponde al docente que imparte el laboratorio."
+      );
+
+    }
+
+  }
+
+
+  /* ============================================
+     REINICIAR RUBRO ÚNICO
+  ============================================ */
+
+  function reiniciarRubro() {
+
+    const radios =
+      document.querySelectorAll(
+        'input[name="rubroPractica"]'
+      );
+
+    radios.forEach(radio => {
+      radio.checked = false;
+    });
+
+    const area =
+      document.getElementById("areaRubro");
+
+    area.classList.add("oculto");
 
     document.getElementById("carreraRubro").value = "";
 
   }
 
+
+  /* ============================================
+     CONFIGURAR RUBRO ÚNICO
+  ============================================ */
 
   function configurarRubro() {
 
@@ -542,11 +767,17 @@
     const area =
       document.getElementById("areaRubro");
 
+    const resultado =
+      document.getElementById("resultadoSemanas");
+
     if (!seleccion) {
       return;
     }
 
-    /* LABORATORIO O PRÁCTICA */
+
+    /* ------------------------------------------
+       LABORATORIO O PRÁCTICA
+    ------------------------------------------ */
 
     if (seleccion.value === "si") {
 
@@ -554,13 +785,14 @@
 
       semanas = null;
 
-      document
-        .getElementById("resultadoSemanas")
-        .classList.add("oculto");
+      resultado.classList.add("oculto");
 
     }
 
-    /* RUBRO ÚNICO DE OTRA NATURALEZA */
+
+    /* ------------------------------------------
+       RUBRO ÚNICO DE OTRA NATURALEZA
+    ------------------------------------------ */
 
     else if (seleccion.value === "no") {
 
@@ -571,67 +803,98 @@
       semanas = 15;
 
       mostrarSemanas(
-        "Asignatura de rubro único de otra naturaleza: el cronograma se configurará para 15 semanas."
+        "Asignatura de rubro único de otra naturaleza: " +
+        "el cronograma se configurará para 15 semanas. " +
+        "La evaluación se desarrollará como rubro único " +
+        "sobre 100 puntos."
       );
 
     }
 
   }
 
+
+  /* ============================================
+     DURACIÓN DEL RUBRO ÚNICO
+  ============================================ */
 
   function determinarSemanasRubro() {
 
     const carrera =
       document.getElementById("carreraRubro").value;
 
-    /* ODONTOLOGÍA */
+    const resultado =
+      document.getElementById("resultadoSemanas");
+
+
+    /* ------------------------------------------
+       ODONTOLOGÍA
+    ------------------------------------------ */
 
     if (carrera === "odontologia") {
 
       semanas = 14;
 
       mostrarSemanas(
-        "Laboratorio o práctica de rubro único de Odontología: el cronograma se configurará para 14 semanas."
+        "Laboratorio o práctica de rubro único de Odontología: " +
+        "el cronograma se configurará para 14 semanas. " +
+        "La evaluación se desarrollará como rubro único " +
+        "sobre 100 puntos."
       );
 
     }
 
-    /* MEDICINA */
+
+    /* ------------------------------------------
+       MEDICINA
+    ------------------------------------------ */
 
     else if (carrera === "medicina") {
 
       semanas = 15;
 
       mostrarSemanas(
-        "Práctica de rubro único de Medicina: el cronograma se configurará para 15 semanas."
+        "Práctica de rubro único de Medicina: " +
+        "el cronograma se configurará para 15 semanas. " +
+        "La evaluación se desarrollará como rubro único " +
+        "sobre 100 puntos."
       );
 
     }
 
-    /* OTRAS CARRERAS */
+
+    /* ------------------------------------------
+       OTRAS CARRERAS O ÁREAS
+    ------------------------------------------ */
 
     else if (carrera === "otras") {
 
       semanas = 13;
 
       mostrarSemanas(
-        "Laboratorio o práctica de rubro único: el cronograma se configurará para 13 semanas."
+        "Laboratorio o práctica de rubro único: " +
+        "el cronograma se configurará para 13 semanas. " +
+        "La evaluación se desarrollará como rubro único " +
+        "sobre 100 puntos."
       );
 
     }
+
 
     else {
 
       semanas = null;
 
-      document
-        .getElementById("resultadoSemanas")
-        .classList.add("oculto");
+      resultado.classList.add("oculto");
 
     }
 
   }
 
+
+  /* ============================================
+     DURACIÓN DE ASIGNATURAS HOSPITALARIAS
+  ============================================ */
 
   function actualizarSemanasHospitalaria() {
 
@@ -640,45 +903,70 @@
 
     const valor =
       parseInt(
-        document.getElementById("semanasHospitalaria").value
+        document.getElementById(
+          "semanasHospitalaria"
+        ).value
       );
+
+    const resultado =
+      document.getElementById("resultadoSemanas");
+
 
     if (!valor || valor < 1) {
 
       semanas = null;
 
-      document
-        .getElementById("resultadoSemanas")
-        .classList.add("oculto");
+      resultado.classList.add("oculto");
 
       return;
 
     }
 
+
     semanas = valor;
+
+
+    /* ------------------------------------------
+       PREINTERNADO
+    ------------------------------------------ */
 
     if (tipo === "preinternado") {
 
       mostrarSemanas(
-        "Hospitalaria – Preinternado: el cronograma se configurará para " +
+        "Hospitalaria – Preinternado: " +
+        "el cronograma se configurará para " +
         semanas +
-        " semanas."
+        " semanas. La elaboración semanal considerará " +
+        "la organización de las rotaciones y los " +
+        "escenarios clínico-hospitalarios correspondientes."
       );
 
     }
 
+
+    /* ------------------------------------------
+       INTERNADO ACADÉMICO
+    ------------------------------------------ */
+
     else if (tipo === "internado") {
 
       mostrarSemanas(
-        "Hospitalaria – Internado académico: el cronograma se configurará para " +
+        "Hospitalaria – Internado académico: " +
+        "el cronograma se configurará para " +
         semanas +
-        " semanas."
+        " semanas. La elaboración semanal considerará " +
+        "la organización de las rotaciones y los " +
+        "escenarios clínico-hospitalarios correspondientes."
       );
 
     }
 
   }
 
+
+  /* ============================================
+     MOSTRAR RESULTADO
+  ============================================ */
 
   function mostrarSemanas(texto) {
 
