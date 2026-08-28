@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Guía Docente UNPHU IA</title>
+
+  <style>
+    :root {
+      --verde-unphu: #006b54;
+      --verde-oscuro: #004c3f;
+      --verde-claro: #e9f4f1;
+      --blanco: #ffffff;
+      --gris-fondo: #f5f7f7;
+      --gris-texto: #4b5563;
+      --texto: #1f2937;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--gris-fondo);
+      color: var(--texto);
+      min-height: 100vh;
+    }
+
+    /* ENCABEZADO */
+    header {
+      background: linear-gradient(
+        135deg,
+        var(--verde-oscuro),
+        var(--verde-unphu)
+      );
+      color: var(--blanco);
+      padding: 24px 8%;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .institution {
+      font-size: 14px;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+      opacity: 0.9;
+    }
+
+    header h1 {
+      font-size: 30px;
+      margin-bottom: 6px;
+    }
+
+    header p {
+      font-size: 16px;
+      opacity: 0.95;
+    }
+
+    /* CONTENIDO PRINCIPAL */
+    main {
+      max-width: 1100px;
+      margin: auto;
+      padding: 70px 25px;
+    }
+
+    .intro {
+      text-align: center;
+      max-width: 760px;
+      margin: 0 auto 50px;
+    }
+
+    .intro h2 {
+      color: var(--verde-oscuro);
+      font-size: 30px;
+      margin-bottom: 16px;
+    }
+
+    .intro p {
+      color: var(--gris-texto);
+      font-size: 17px;
+      line-height: 1.7;
+    }
+
+    /* TARJETAS */
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+    }
+
+    .card {
+      background: var(--blanco);
+      border-radius: 16px;
+      padding: 36px;
+      border: 1px solid #e1e7e5;
+      box-shadow: 0 8px 24px rgba(0, 76, 63, 0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(0, 76, 63, 0.14);
+    }
+
+    .card-number {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--verde-claro);
+      color: var(--verde-unphu);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 20px;
+      margin-bottom: 22px;
+    }
+
+    .card h3 {
+      color: var(--verde-oscuro);
+      font-size: 22px;
+      margin-bottom: 12px;
+    }
+
+    .card p {
+      color: var(--gris-texto);
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .button {
+      display: inline-block;
+      background: var(--verde-unphu);
+      color: var(--blanco);
+      text-decoration: none;
+      padding: 12px 22px;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: background 0.2s ease;
+    }
+
+    .button:hover {
+      background: var(--verde-oscuro);
+    }
+
+    /* PIE */
+    footer {
+      text-align: center;
+      color: #6b7280;
+      font-size: 13px;
+      padding: 30px 20px;
+    }
+
+    /* ADAPTACIÓN A CELULARES */
+    @media (max-width: 750px) {
+      .options {
+        grid-template-columns: 1fr;
+      }
+
+      header h1 {
+        font-size: 25px;
+      }
+
+      .intro h2 {
+        font-size: 25px;
+      }
+
+      main {
+        padding-top: 45px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="header-content">
+      <div class="institution">
+        Universidad Nacional Pedro Henríquez Ureña
+      </div>
+
+      <h1>Guía Docente UNPHU IA</h1>
+
+      <p>
+        Asistente inteligente para la elaboración y revisión de guías docentes
+      </p>
+    </div>
+  </header>
+
+  <main>
+
+    <section class="intro">
+      <h2>¿Qué deseas realizar?</h2>
+
+      <p>
+        Selecciona una opción para iniciar el proceso. La herramienta está
+        diseñada para apoyar la elaboración y revisión de la guía docente
+        conforme a los lineamientos institucionales de la UNPHU.
+      </p>
+    </section>
+
+    <section class="options">
+
+      <article class="card">
+        <div class="card-number">1</div>
+
+        <h3>Elaborar guía docente</h3>
+
+        <p>
+          Construye la guía docente de manera progresiva, siguiendo su
+          estructura institucional y trabajando cada acápite de forma guiada.
+        </p>
+
+        <a class="button" href="elaborar.html">
+          Comenzar elaboración
+        </a>
+      </article>
+
+      <article class="card">
+        <div class="card-number">2</div>
+
+        <h3>Revisar guía docente</h3>
+
+        <p>
+          Analiza una guía docente existente para identificar aspectos que
+          requieren revisión y comprobar su coherencia con los lineamientos
+          institucionales.
+        </p>
+
+        <a class="button" href="revisar.html">
+          Iniciar revisión
+        </a>
+      </article>
+
+    </section>
+
+  </main>
+
+  <footer>
+    Guía Docente UNPHU IA · Herramienta de apoyo académico
+  </footer>
+
+</body>
+</html>
