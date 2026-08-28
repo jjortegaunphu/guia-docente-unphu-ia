@@ -38,7 +38,7 @@
         var(--verde-unphu)
       );
       color: var(--blanco);
-      padding: 24px 8%;
+      padding: 20px 8%;
     }
 
     .header-content {
@@ -46,11 +46,24 @@
       margin: auto;
     }
 
-    .institution {
-      font-size: 14px;
-      letter-spacing: 0.5px;
-      margin-bottom: 6px;
-      opacity: 0.9;
+    .header-main {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .logo-unphu {
+      width: 190px;
+      height: auto;
+      background: var(--blanco);
+      padding: 8px 10px;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .header-text {
+      border-left: 1px solid rgba(255, 255, 255, 0.45);
+      padding-left: 24px;
     }
 
     header h1 {
@@ -164,6 +177,21 @@
         grid-template-columns: 1fr;
       }
 
+      .header-main {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+
+      .header-text {
+        border-left: none;
+        padding-left: 0;
+      }
+
+      .logo-unphu {
+        width: 165px;
+      }
+
       header h1 {
         font-size: 25px;
       }
@@ -183,15 +211,25 @@
 
   <header>
     <div class="header-content">
-      <div class="institution">
-        Universidad Nacional Pedro Henríquez Ureña
+
+      <div class="header-main">
+
+        <img
+          src="logo-unphu.png"
+          alt="Universidad Nacional Pedro Henríquez Ureña"
+          class="logo-unphu"
+        >
+
+        <div class="header-text">
+          <h1>Guía Docente UNPHU IA</h1>
+
+          <p>
+            Asistente inteligente para la elaboración y revisión de guías docentes
+          </p>
+        </div>
+
       </div>
 
-      <h1>Guía Docente UNPHU IA</h1>
-
-      <p>
-        Asistente inteligente para la elaboración y revisión de guías docentes
-      </p>
     </div>
   </header>
 
