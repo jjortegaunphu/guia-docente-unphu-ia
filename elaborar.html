@@ -1790,10 +1790,15 @@ function finalizarConfiguracion(){
   }
 
 
-  alert(
-    "Configuración completada correctamente. " +
-    "El siguiente paso será elaborar el cronograma semana por semana."
-  );
+ document
+  .getElementById("etapa2")
+  .classList.add("oculto");
+
+document
+  .getElementById("etapa3")
+  .classList.remove("oculto");
+
+window.scrollTo(0,0);
 
 }
 
@@ -1808,7 +1813,264 @@ function mostrarError2(texto){
   error.classList.remove("oculto");
 
 }
+/* ==================================================
+ETAPA 3 - PROGRAMA DE LA ASIGNATURA Y REA
+================================================== */
 
+let contadorREA = 1;
+let contadorBibliografia = 1;
+
+
+/* ==================================================
+CONFIGURAR FORMA DE INGRESO DEL PROGRAMA
+================================================== */
+
+function configurarPrograma(){
+
+  const seleccion =
+    document.querySelector(
+      'input[name="formaPrograma"]:checked'
+    );
+
+  const archivo =
+    document.getElementById("opcionArchivoPrograma");
+
+  const manual =
+    document.getElementById("opcionManualPrograma");
+
+  archivo.classList.add("oculto");
+  manual.classList.add("oculto");
+
+  if(!seleccion) return;
+
+  if(seleccion.value==="archivo"){
+
+    archivo.classList.remove("oculto");
+
+  }
+
+  else if(seleccion.value==="manual"){
+
+    manual.classList.remove("oculto");
+
+  }
+
+}
+
+
+/* ==================================================
+AGREGAR REA
+================================================== */
+
+function agregarREA(){
+
+  contadorREA++;
+
+  const contenedor =
+    document.getElementById("listaREA");
+
+  const bloque =
+    document.createElement("div");
+
+  bloque.className="campo";
+
+  bloque.innerHTML=
+    '<label class="titulo">REA ' +
+    contadorREA +
+    '</label>' +
+
+    '<textarea ' +
+    'class="reaManual" ' +
+    'rows="3" ' +
+    'placeholder="Escriba el REA ' +
+    contadorREA +
+    ' exactamente como aparece en el programa">' +
+    '</textarea>';
+
+  contenedor.appendChild(bloque);
+
+}
+
+
+/* ==================================================
+AGREGAR BIBLIOGRAFÍA
+================================================== */
+
+function agregarBibliografia(){
+
+  contadorBibliografia++;
+
+  const contenedor =
+    document.getElementById("listaBibliografia");
+
+  const bloque =
+    document.createElement("div");
+
+  bloque.className="campo";
+
+  bloque.innerHTML=
+    '<label class="titulo">Referencia ' +
+    contadorBibliografia +
+    '</label>' +
+
+    '<textarea ' +
+    'class="bibliografiaManual" ' +
+    'rows="3" ' +
+    'placeholder="Escriba la referencia bibliográfica">' +
+    '</textarea>';
+
+  contenedor.appendChild(bloque);
+
+}
+
+
+/* ==================================================
+VOLVER A ETAPA 2
+================================================== */
+
+function volverEtapa2(){
+
+  document
+    .getElementById("etapa3")
+    .classList.add("oculto");
+
+  document
+    .getElementById("etapa2")
+    .classList.remove("oculto");
+
+  window.scrollTo(0,0);
+
+}
+
+
+/* ==================================================
+VALIDAR ETAPA 3
+================================================== */
+
+function continuarSemana1(){
+
+  const seleccion =
+    document.querySelector(
+      'input[name="formaPrograma"]:checked'
+    );
+
+  const error =
+    document.getElementById("errorEtapa3");
+
+  error.classList.add("oculto");
+
+
+  if(!seleccion){
+
+    mostrarError3(
+      "Indique cómo proporcionará la información del Programa de la Asignatura."
+    );
+
+    return;
+
+  }
+
+
+  /* PROGRAMA ADJUNTO */
+
+  if(seleccion.value==="archivo"){
+
+    const archivo =
+      document.getElementById("archivoPrograma");
+
+    if(!archivo.files.length){
+
+      mostrarError3(
+        "Adjunte el Programa de la Asignatura antes de continuar."
+      );
+
+      return;
+
+    }
+
+  }
+
+
+  /* REGISTRO MANUAL */
+
+  if(seleccion.value==="manual"){
+
+    const camposREA =
+      document.querySelectorAll(".reaManual");
+
+    let existeREA=false;
+
+    for(const campo of camposREA){
+
+      if(campo.value.trim()!==""){
+        existeREA=true;
+        break;
+      }
+
+    }
+
+    if(!existeREA){
+
+      mostrarError3(
+        "Introduzca al menos un REA del Programa de la Asignatura."
+      );
+
+      return;
+
+    }
+
+
+    const camposBibliografia =
+      document.querySelectorAll(
+        ".bibliografiaManual"
+      );
+
+    let existeBibliografia=false;
+
+    for(const campo of camposBibliografia){
+
+      if(campo.value.trim()!==""){
+        existeBibliografia=true;
+        break;
+      }
+
+    }
+
+    if(!existeBibliografia){
+
+      mostrarError3(
+        "Introduzca la bibliografía establecida en el Programa de la Asignatura."
+      );
+
+      return;
+
+    }
+
+  }
+
+
+  alert(
+    "Información académica registrada correctamente. " +
+    "El siguiente paso será iniciar la Semana 1 del cronograma."
+  );
+
+}
+
+
+/* ==================================================
+MOSTRAR ERROR ETAPA 3
+================================================== */
+
+function mostrarError3(texto){
+
+  const error =
+    document.getElementById("errorEtapa3");
+
+  error.textContent=texto;
+
+  error.classList.remove("oculto");
+
+}
 </script>
 
 </body>
