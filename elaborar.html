@@ -699,7 +699,190 @@ Continuar al cronograma
 </button>
 
 </section>
+<!-- ==================================================
+ETAPA 3 - PROGRAMA DE LA ASIGNATURA Y REA
+================================================== -->
 
+<section id="etapa3" class="panel oculto">
+
+  <span class="etapa">Etapa 3</span>
+
+  <h2>Programa de la Asignatura y REA</h2>
+
+  <p class="descripcion">
+    Para elaborar el cronograma es necesario disponer de los
+    Resultados de Aprendizaje de la Asignatura (REA) establecidos
+    en el Programa de la Asignatura.
+  </p>
+
+  <div class="resultado">
+    Los REA oficiales serán utilizados para establecer la
+    correspondencia entre los contenidos, las metodologías de
+    enseñanza y las actividades formativas de cada clase.
+  </div>
+
+
+  <!-- FORMA DE REGISTRO -->
+
+  <div class="campo">
+
+    <label class="titulo">
+      ¿Cómo desea proporcionar la información del Programa de la Asignatura?
+    </label>
+
+    <div class="opciones">
+
+      <label class="opcion">
+        <input
+          type="radio"
+          name="formaPrograma"
+          value="archivo"
+          onchange="configurarPrograma()"
+        >
+        Adjuntar Programa de la Asignatura
+      </label>
+
+      <label class="opcion">
+        <input
+          type="radio"
+          name="formaPrograma"
+          value="manual"
+          onchange="configurarPrograma()"
+        >
+        Introducir los REA y la bibliografía manualmente
+      </label>
+
+    </div>
+
+  </div>
+
+
+  <!-- ADJUNTAR PROGRAMA -->
+
+  <div id="opcionArchivoPrograma" class="campo oculto">
+
+    <label class="titulo" for="archivoPrograma">
+      Adjunte el Programa de la Asignatura
+    </label>
+
+    <input
+      type="file"
+      id="archivoPrograma"
+      accept=".pdf,.doc,.docx"
+    >
+
+    <div class="nota">
+      El programa permitirá identificar los REA oficiales y la
+      bibliografía que servirá de referencia para la elaboración
+      del cronograma.
+    </div>
+
+  </div>
+
+
+  <!-- REGISTRO MANUAL -->
+
+  <div id="opcionManualPrograma" class="oculto">
+
+    <div class="campo">
+
+      <label class="titulo">
+        Resultados de Aprendizaje de la Asignatura (REA)
+      </label>
+
+      <div class="nota">
+        Introduzca los REA exactamente como aparecen establecidos
+        en el Programa de la Asignatura. No deben reformularse.
+      </div>
+
+      <div id="listaREA">
+
+        <div class="campo">
+          <label class="titulo">REA 1</label>
+          <textarea
+            class="reaManual"
+            rows="3"
+            placeholder="Escriba el REA 1 exactamente como aparece en el programa"
+          ></textarea>
+        </div>
+
+      </div>
+
+      <button
+        type="button"
+        class="boton boton-secundario"
+        onclick="agregarREA()"
+      >
+        + Agregar REA
+      </button>
+
+    </div>
+
+
+    <!-- BIBLIOGRAFÍA MANUAL -->
+
+    <div class="campo">
+
+      <label class="titulo">
+        Bibliografía del Programa de la Asignatura
+      </label>
+
+      <div class="nota">
+        Registre las referencias bibliográficas establecidas en
+        el programa. Durante la elaboración del cronograma se
+        seleccionarán como máximo dos textos pertinentes para
+        cada clase.
+      </div>
+
+      <div id="listaBibliografia">
+
+        <div class="campo">
+          <label class="titulo">Referencia 1</label>
+          <textarea
+            class="bibliografiaManual"
+            rows="3"
+            placeholder="Escriba la referencia bibliográfica"
+          ></textarea>
+        </div>
+
+      </div>
+
+      <button
+        type="button"
+        class="boton boton-secundario"
+        onclick="agregarBibliografia()"
+      >
+        + Agregar referencia
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div
+    id="errorEtapa3"
+    class="error oculto"
+  ></div>
+
+
+  <button
+    type="button"
+    class="boton boton-secundario"
+    onclick="volverEtapa2()"
+  >
+    ← Volver
+  </button>
+
+  <button
+    type="button"
+    class="boton"
+    onclick="continuarSemana1()"
+  >
+    Continuar a Semana 1
+  </button>
+
+</section>
 </main>
 
 
