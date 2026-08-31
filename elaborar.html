@@ -974,7 +974,38 @@ Guía Docente UNPHU IA · Herramienta de apoyo académico
 <script>
 
 let semanas = null;
+/* ==================================================
+DATOS GENERALES DE LA GUÍA DOCENTE
+================================================== */
 
+let datosGuia = {
+
+  configuracion: {
+    tipoAsignatura: "",
+    semanas: null,
+    clasesPorSemana: null,
+    investigacion: "",
+    vinculacion: "",
+    programaLaboratorio: "",
+    rubroPractica: "",
+    carreraRubro: ""
+  },
+
+  evaluacion: {
+    esquema: "",
+    rubros: []
+  },
+
+  programa: {
+    formaIngreso: "",
+    reaOficiales: [],
+    bibliografia: [],
+    archivoNombre: ""
+  },
+
+  cronograma: []
+
+};
 
 /* ==================================================
 TIPO DE ASIGNATURA
@@ -1441,7 +1472,48 @@ function continuarConfiguracion(){
 
   }
 
+  /* GUARDAR CONFIGURACIÓN VALIDADA DE LA ETAPA 1 */
 
+  datosGuia.configuracion.tipoAsignatura = tipo;
+  datosGuia.configuracion.semanas = semanas;
+  datosGuia.configuracion.clasesPorSemana = frecuencia;
+  datosGuia.configuracion.investigacion = investigacion.value;
+  datosGuia.configuracion.vinculacion = vinculacion.value;
+
+  datosGuia.configuracion.programaLaboratorio = "";
+  datosGuia.configuracion.rubroPractica = "";
+  datosGuia.configuracion.carreraRubro = "";
+
+  if(tipo==="teoria"){
+
+    const laboratorio =
+      document.querySelector(
+        'input[name="programaLaboratorio"]:checked'
+      );
+
+    datosGuia.configuracion.programaLaboratorio =
+      laboratorio.value;
+
+  }
+
+  if(tipo==="rubroUnico"){
+
+    const practica =
+      document.querySelector(
+        'input[name="rubroPractica"]:checked'
+      );
+
+    datosGuia.configuracion.rubroPractica =
+      practica.value;
+
+    if(practica.value==="si"){
+
+      datosGuia.configuracion.carreraRubro =
+        document.getElementById("carreraRubro").value;
+
+    }
+
+  }
   prepararEtapa2();
 
 }
@@ -1869,7 +1941,79 @@ function finalizarConfiguracion(){
 
   }
 
+  /* GUARDAR SISTEMA DE EVALUACIÓN VALIDADO */
 
+  datosGuia.evaluacion.rubros = [];
+
+  if(tipo==="rubroUnico"){
+
+    datosGuia.evaluacion.esquema = "rubroUnico";
+
+  }
+
+  else{
+
+    if(tipo==="teoria"){
+
+      const laboratorio =
+        document.querySelector(
+          'input[name="programaLaboratorio"]:checked'
+        );
+
+      datosGuia.evaluacion.esquema =
+        laboratorio.value==="si"
+          ? "teoriaConLaboratorio"
+          : "teoriaSinLaboratorio";
+
+    }
+
+    else{
+
+      const esquemaHospitalario =
+        document.querySelector(
+          'input[name="esquemaHospitalario"]:checked'
+        );
+
+      datosGuia.evaluacion.esquema =
+        esquemaHospitalario.value;
+
+    }
+
+
+    const filas =
+      document.querySelectorAll(".fila-evaluacion");
+
+    filas.forEach(fila=>{
+
+      const nombre =
+        fila.querySelector("strong").textContent.trim();
+
+      const peso =
+        parseFloat(
+          fila.querySelector(".pesoEvaluacion").value
+        );
+
+      const campoSemana =
+        fila.querySelector(".semanaEvaluacion");
+
+      datosGuia.evaluacion.rubros.push({
+
+        nombre: nombre,
+
+        peso: peso,
+
+        semana: campoSemana
+          ? parseInt(campoSemana.value)
+          : null,
+
+        componenteExterno:
+          nombre==="TP"
+
+      });
+
+    });
+
+  }
  document
   .getElementById("etapa2")
   .classList.add("oculto");
@@ -2128,7 +2272,55 @@ function continuarSemana1(){
 
   }
 
+  /* GUARDAR INFORMACIÓN VALIDADA DEL PROGRAMA */
 
+  datosGuia.programa.formaIngreso = seleccion.value;
+  datosGuia.programa.reaOficiales = [];
+  datosGuia.programa.bibliografia = [];
+  datosGuia.programa.archivoNombre = "";
+
+
+  if(seleccion.value==="archivo"){
+
+    const archivo =
+      document.getElementById("archivoPrograma");
+
+    datosGuia.programa.archivoNombre =
+      archivo.files[0].name;
+
+  }
+
+
+  if(seleccion.value==="manual"){
+
+    const camposREA =
+      document.querySelectorAll(".reaManual");
+
+    camposREA.forEach(campo=>{
+
+      const texto = campo.value.trim();
+
+      if(texto!==""){
+        datosGuia.programa.reaOficiales.push(texto);
+      }
+
+    });
+
+
+    const camposBibliografia =
+      document.querySelectorAll(".bibliografiaManual");
+
+    camposBibliografia.forEach(campo=>{
+
+      const texto = campo.value.trim();
+
+      if(texto!==""){
+        datosGuia.programa.bibliografia.push(texto);
+      }
+
+    });
+
+  }
  iniciarSemana1();
 
 }
@@ -2290,7 +2482,54 @@ function generarPropuestaSemana(){
 
   }
 
+  /* GUARDAR CONTENIDOS DE LA SEMANA */
 
+  const clasesSemana = [];
+
+  contenidos.forEach(campo=>{
+
+    clasesSemana.push({
+
+      clase:
+        parseInt(
+          campo.getAttribute("data-clase")
+        ),
+
+      contenido:
+        campo.value.trim()
+
+    });
+
+  });
+
+
+  const indiceSemana =
+    datosGuia.cronograma.findIndex(
+      semana=>semana.semana===semanaActual
+    );
+
+
+  const datosSemana = {
+
+    semana: semanaActual,
+
+    clases: clasesSemana
+
+  };
+
+
+  if(indiceSemana===-1){
+
+    datosGuia.cronograma.push(datosSemana);
+
+  }
+
+  else{
+
+    datosGuia.cronograma[indiceSemana] =
+      datosSemana;
+
+  }
   alert(
     "Contenidos de la Semana " +
     semanaActual +
