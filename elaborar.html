@@ -883,6 +883,86 @@ ETAPA 3 - PROGRAMA DE LA ASIGNATURA Y REA
   </button>
 
 </section>
+  <!-- ==================================================
+ETAPA 4 - ELABORACIÓN DEL CRONOGRAMA
+================================================== -->
+
+<section id="etapaCronograma" class="panel oculto">
+
+  <span class="etapa">X. Cronograma</span>
+
+  <h2 id="tituloSemana">
+    Semana 1
+  </h2>
+
+  <p class="descripcion">
+    Indique los contenidos que se desarrollarán en cada clase
+    de esta semana. A partir de estos contenidos se elaborará
+    la propuesta académica correspondiente.
+  </p>
+
+  <div class="resultado">
+    Las metodologías de enseñanza serán seleccionadas según la
+    naturaleza de los contenidos declarados para cada clase.
+    Las actividades formativas se asociarán con uno o más REA
+    pertinentes del Programa de la Asignatura.
+  </div>
+
+
+  <!-- INFORMACIÓN DE LA SEMANA -->
+
+  <div class="campo">
+
+    <label class="titulo">
+      Contenidos de la Semana 1
+    </label>
+
+    <div class="nota">
+      Registre los contenidos que corresponde desarrollar en
+      cada clase. No es necesario indicar metodologías ni
+      actividades formativas; estas serán propuestas
+      posteriormente por la herramienta.
+    </div>
+
+  </div>
+
+
+  <!-- CLASES GENERADAS AUTOMÁTICAMENTE -->
+
+  <div id="clasesSemana"></div>
+
+
+  <!-- MENSAJE PARA SEMANA EVALUATIVA -->
+
+  <div
+    id="avisoSemanaEvaluativa"
+    class="resultado oculto"
+  ></div>
+
+
+  <div
+    id="errorCronograma"
+    class="error oculto"
+  ></div>
+
+
+  <button
+    type="button"
+    class="boton boton-secundario"
+    onclick="volverEtapa3()"
+  >
+    ← Volver
+  </button>
+
+  <button
+    type="button"
+    class="boton"
+    onclick="generarPropuestaSemana()"
+  >
+    Generar propuesta de Semana 1
+  </button>
+
+</section>
 </main>
 
 
@@ -2049,10 +2129,7 @@ function continuarSemana1(){
   }
 
 
-  alert(
-    "Información académica registrada correctamente. " +
-    "El siguiente paso será iniciar la Semana 1 del cronograma."
-  );
+ iniciarSemana1();
 
 }
 
@@ -2071,6 +2148,173 @@ function mostrarError3(texto){
   error.classList.remove("oculto");
 
 }
+ /* ==================================================
+SEMANA 1 - INICIO DEL CRONOGRAMA
+================================================== */
+
+let semanaActual = 1;
+
+
+/* ==================================================
+ABRIR SEMANA 1
+================================================== */
+
+function iniciarSemana1(){
+
+  semanaActual = 1;
+
+  document
+    .getElementById("etapa3")
+    .classList.add("oculto");
+
+  document
+    .getElementById("etapaCronograma")
+    .classList.remove("oculto");
+
+  document.getElementById("tituloSemana").textContent =
+    "Semana " + semanaActual;
+
+  crearClasesSemana();
+
+  window.scrollTo(0,0);
+
+}
+
+
+/* ==================================================
+CREAR CLASES SEGÚN FRECUENCIA
+================================================== */
+
+function crearClasesSemana(){
+
+  const frecuencia =
+    parseInt(
+      document.getElementById("frecuencia").value
+    );
+
+  const contenedor =
+    document.getElementById("clasesSemana");
+
+  contenedor.innerHTML = "";
+
+
+  for(let i=1; i<=frecuencia; i++){
+
+    const bloque =
+      document.createElement("div");
+
+    bloque.className = "resumen-esquema";
+
+    bloque.innerHTML =
+
+      '<h3>Clase ' + i + '</h3>' +
+
+      '<div class="campo">' +
+
+        '<label class="titulo">' +
+          'Contenido(s) de la Clase ' + i +
+        '</label>' +
+
+        '<textarea ' +
+          'class="contenidoClase" ' +
+          'data-clase="' + i + '" ' +
+          'rows="4" ' +
+          'placeholder="Indique los contenidos que se desarrollarán en esta clase">' +
+        '</textarea>' +
+
+        '<div class="nota">' +
+          'Registre únicamente los contenidos. ' +
+          'Las metodologías, actividades formativas, REA y recursos ' +
+          'se establecerán posteriormente a partir de estos contenidos.' +
+        '</div>' +
+
+      '</div>';
+
+    contenedor.appendChild(bloque);
+
+  }
+
+}
+
+
+/* ==================================================
+VOLVER A ETAPA 3
+================================================== */
+
+function volverEtapa3(){
+
+  document
+    .getElementById("etapaCronograma")
+    .classList.add("oculto");
+
+  document
+    .getElementById("etapa3")
+    .classList.remove("oculto");
+
+  window.scrollTo(0,0);
+
+}
+
+
+/* ==================================================
+VALIDAR CONTENIDOS DE LA SEMANA
+================================================== */
+
+function generarPropuestaSemana(){
+
+  const contenidos =
+    document.querySelectorAll(".contenidoClase");
+
+  const error =
+    document.getElementById("errorCronograma");
+
+  error.classList.add("oculto");
+
+
+  for(const campo of contenidos){
+
+    if(campo.value.trim()===""){
+
+      const numeroClase =
+        campo.getAttribute("data-clase");
+
+      mostrarErrorCronograma(
+        "Indique los contenidos correspondientes a la Clase " +
+        numeroClase +
+        "."
+      );
+
+      return;
+
+    }
+
+  }
+
+
+  alert(
+    "Contenidos de la Semana " +
+    semanaActual +
+    " registrados correctamente. " +
+    "El siguiente paso será generar la propuesta académica."
+  );
+
+}
+
+
+/* ==================================================
+MOSTRAR ERROR DEL CRONOGRAMA
+================================================== */
+
+function mostrarErrorCronograma(texto){
+
+  const error =
+    document.getElementById("errorCronograma");
+
+  error.textContent = texto;
+
+  error.classList.remove("oculto");
+
+} 
 </script>
 
 </body>
