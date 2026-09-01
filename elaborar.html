@@ -2452,7 +2452,7 @@ function volverEtapa3(){
 VALIDAR CONTENIDOS DE LA SEMANA
 ================================================== */
 
-function generarPropuestaSemana(){
+async function generarPropuestaSemana(){
 
   const contenidos =
     document.querySelectorAll(".contenidoClase");
@@ -2530,12 +2530,54 @@ function generarPropuestaSemana(){
       datosSemana;
 
   }
-  alert(
-    "Contenidos de la Semana " +
-    semanaActual +
-    " registrados correctamente. " +
-    "El siguiente paso será generar la propuesta académica."
+ try {
+
+  const respuesta = await fetch(
+    "https://guia-docente-unphu-api.jortega-cc4.workers.dev/generar-semana",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        semana: semanaActual,
+        clases: clasesSemana,
+        reaOficiales: datosGuia.programa.reaOficiales,
+        bibliografia: datosGuia.programa.bibliografia,
+        configuracion: datosGuia.configuracion
+      })
+    }
   );
+
+  const resultado = await respuesta.json();
+
+  console.log("Respuesta IA:", resultado);
+
+  if (!respuesta.ok || !resultado.correcto) {
+    throw new Error(
+      resultado.error || "No fue posible generar la propuesta académica."
+    );
+  }
+
+  datosSemana.propuesta = resultado.propuesta;
+
+  console.log("Propuesta académica:", datosSemana.propuesta);
+
+  alert(
+    "La propuesta académica de la Semana " +
+    semanaActual +
+    " fue generada correctamente."
+  );
+
+} catch (error) {
+
+  console.error("Error al generar la propuesta:", error);
+
+  mostrarErrorCronograma(
+    "No fue posible generar la propuesta académica. Intente nuevamente."
+  );
+
+}
 
 }
 
