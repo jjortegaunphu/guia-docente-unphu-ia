@@ -944,7 +944,19 @@ ETAPA 4 - ELABORACIÓN DEL CRONOGRAMA
     id="errorCronograma"
     class="error oculto"
   ></div>
+<!-- PROPUESTA ACADÉMICA GENERADA POR IA -->
 
+<div
+  id="propuestaAcademica"
+  class="oculto"
+>
+  <h3>Propuesta académica de la semana</h3>
+
+  <div
+    id="contenidoPropuestaAcademica"
+    class="resumen-esquema"
+  ></div>
+</div>
 
   <button
     type="button"
@@ -2562,6 +2574,7 @@ async function generarPropuestaSemana(){
   datosSemana.propuesta = resultado.propuesta;
 
   console.log("Propuesta académica:", datosSemana.propuesta);
+   mostrarPropuestaAcademica(datosSemana.propuesta);
 
   alert(
     "La propuesta académica de la Semana " +
@@ -2586,6 +2599,73 @@ async function generarPropuestaSemana(){
 MOSTRAR ERROR DEL CRONOGRAMA
 ================================================== */
 
+ function mostrarPropuestaAcademica(propuesta) {
+
+  const contenedor = document.getElementById("propuestaAcademica");
+  const contenido = document.getElementById("contenidoPropuestaAcademica");
+
+  if (!propuesta || !Array.isArray(propuesta.clases)) {
+    return;
+  }
+
+  let html = "";
+
+  propuesta.clases.forEach((clase) => {
+
+    const reaTexto = Array.isArray(clase.rea)
+      ? clase.rea.join("<br>")
+      : (clase.rea || "");
+
+    const recursosTexto = Array.isArray(clase.recursos)
+      ? clase.recursos.join("<br>")
+      : (clase.recursos || "");
+
+    const bibliografiaTexto = Array.isArray(clase.bibliografia)
+      ? clase.bibliografia.join("<br>")
+      : (clase.bibliografia || "");
+
+    html += `
+      <div class="resumen-item">
+
+        <h4>Clase ${clase.clase}</h4>
+
+        <p>
+          <strong>Contenido:</strong><br>
+          ${clase.contenido || ""}
+        </p>
+
+        <p>
+          <strong>Metodología de enseñanza:</strong><br>
+          ${clase.metodologia || ""}
+        </p>
+
+        <p>
+          <strong>Actividades formativas:</strong><br>
+          ${clase.actividadFormativa || ""}
+        </p>
+
+        <p>
+          <strong>REA(s):</strong><br>
+          ${reaTexto}
+        </p>
+
+        <p>
+          <strong>Recursos:</strong><br>
+          ${recursosTexto}
+        </p>
+
+        <p>
+          <strong>Bibliografía:</strong><br>
+          ${bibliografiaTexto}
+        </p>
+
+      </div>
+    `;
+  });
+
+  contenido.innerHTML = html;
+  contenedor.classList.remove("oculto");
+} 
 function mostrarErrorCronograma(texto){
 
   const error =
