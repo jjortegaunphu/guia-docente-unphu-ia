@@ -3017,11 +3017,114 @@ cuadro.scrollIntoView({
 
     const resultado = await respuesta.json();
 
-    console.log(
-      "Resultado de prueba de revisión:",
-      resultado
+    if (!resultado.correcto || !resultado.revision) {
+  throw new Error(
+    resultado.error || "No fue posible revisar la actividad formativa."
+  );
+}
+
+const revision = resultado.revision;
+rea.revisionPropuesta = {
+  alineacionEncontrada: revision.alineacionEncontrada,
+  actividadReformulada: revision.actividadReformulada || "",
+  codigosREA: Array.isArray(revision.codigosREA)
+    ? revision.codigosREA
+    : [],
+  explicacionAlineacion: revision.explicacionAlineacion || "",
+  requiereDecisionDocente: revision.requiereDecisionDocente
+};
+const idResultado =
+  `resultadoRevision-${numeroClase}-${reaIndex}`;
+
+let cuadroResultado =
+  document.getElementById(idResultado);
+
+if (!cuadroResultado) {
+  cuadroResultado = document.createElement("div");
+  cuadroResultado.id = idResultado;
+  cuadroResultado.className = "resultado";
+  cuadroResultado.style.marginTop = "16px";
+
+  const cuadroRevision =
+    document.getElementById(
+      `revisionActividad-${numeroClase}-${reaIndex}`
     );
 
+  if (cuadroRevision) {
+    cuadroRevision.appendChild(cuadroResultado);
+  }
+}
+if (revision.alineacionEncontrada) {
+
+  const codigosREA =
+    Array.isArray(revision.codigosREA)
+      ? revision.codigosREA.join(", ")
+      : "";
+
+  cuadroResultado.innerHTML = `
+    <h4>Propuesta de reformulación</h4>
+
+    <p>
+      <strong>Actividad reformulada:</strong><br>
+      ${revision.actividadReformulada || ""}
+    </p>
+
+    <p>
+      <strong>REA oficial vinculado:</strong><br>
+      ${codigosREA || "No especificado"}
+    </p>
+
+    <p>
+      <strong>Explicación de la alineación:</strong><br>
+      ${revision.explicacionAlineacion || ""}
+    </p>
+
+    <p>
+      <strong>Estado:</strong><br>
+      Pendiente de validación docente
+    </p>
+
+    <button
+      type="button"
+      class="btn-principal"
+      onclick="aceptarReformulacionActividad(${numeroClase}, ${reaIndex})"
+    >
+      Aceptar reformulación
+    </button>
+
+    <button
+      type="button"
+      class="btn-secundario"
+      onclick="mantenerActividadAnterior(${numeroClase}, ${reaIndex})"
+    >
+      Mantener actividad anterior
+    </button>
+  `;
+
+} else {
+
+  cuadroResultado.innerHTML = `
+    <h4>Resultado de la revisión</h4>
+
+    <p>
+      <strong>No se encontró una alineación pertinente con los REA oficiales.</strong>
+    </p>
+
+    <p>
+      ${revision.explicacionAlineacion || ""}
+    </p>
+
+    <p>
+      <strong>Acción requerida:</strong><br>
+      Se requiere una decisión del docente.
+    </p>
+  `;
+}
+
+cuadroResultado.scrollIntoView({
+  behavior: "smooth",
+  block: "center"
+});
   } catch (error) {
 
     console.error(
@@ -3031,6 +3134,152 @@ cuadro.scrollIntoView({
 
   }
 } 
+ function aceptarReformulacionActividad(numeroClase, reaIndex) {
+
+  const semana =
+    datosGuia.cronograma.find(
+      item => item.semana === semanaActual
+    );
+
+  if (!semana || !semana.propuesta) {
+    return;
+  }
+
+  const clase =
+    semana.propuesta.clases.find(
+      item => item.clase === numeroClase
+    );
+
+  if (
+    !clase ||
+    !Array.isArray(clase.reaSugeridos) ||
+    !clase.reaSugeridos[reaIndex]
+  ) {
+    return;
+  }
+
+  const rea = clase.reaSugeridos[reaIndex];
+const revision = rea.revisionPropuesta;
+
+if (
+  !revision ||
+  !revision.alineacionEncontrada ||
+  !revision.actividadReformulada
+) {
+  return;
+}
+
+let actividadEncontrada = null;
+
+if (rea.tipoActividad === "obligatoria") {
+
+  actividadEncontrada =
+    (clase.metodologiasActividades || []).find(
+      actividad =>
+        actividad.metodologia === rea.metodologiaVinculada &&
+        actividad.actividadFormativa === rea.actividadVinculada
+    );
+
+} else if (rea.tipoActividad === "adicional") {
+
+  actividadEncontrada =
+    (clase.actividadesAdicionales || []).find(
+      actividad =>
+        actividad.metodologiaVinculada === rea.metodologiaVinculada &&
+        actividad.actividadFormativa === rea.actividadVinculada
+    );
+
+}
+
+if (!actividadEncontrada) {
+  return;
+}
+
+actividadEncontrada.actividadFormativa =
+  revision.actividadReformulada;
+
+actividadEncontrada.codigosREA =
+  Array.isArray(revision.codigosREA)
+    ? [...revision.codigosREA]
+    : [];
+   rea.actividadVinculada =
+  revision.actividadReformulada;
+
+rea.requiereRevisionActividad = false;
+  const cuadroResultado =
+    document.getElementById(
+      `resultadoRevision-${numeroClase}-${reaIndex}`
+    );
+
+  if (!cuadroResultado) {
+    return;
+  }
+
+  rea.reformulacionAceptada = true;
+  rea.estadoRevision = "reformulacion-validada";
+const botonesDecision =
+  cuadroResultado.querySelectorAll("button");
+
+botonesDecision.forEach(
+  boton => boton.remove()
+);
+  cuadroResultado.innerHTML += `
+    <p style="margin-top:16px;">
+      <strong>Estado de la reformulación:</strong><br>
+      Validada por el docente
+    </p>
+  `;
+} 
+  function mantenerActividadAnterior(numeroClase, reaIndex) {
+
+  const semana =
+    datosGuia.cronograma.find(
+      item => item.semana === semanaActual
+    );
+
+  if (!semana || !semana.propuesta) {
+    return;
+  }
+
+  const clase =
+    semana.propuesta.clases.find(
+      item => item.clase === numeroClase
+    );
+
+  if (
+    !clase ||
+    !Array.isArray(clase.reaSugeridos) ||
+    !clase.reaSugeridos[reaIndex]
+  ) {
+    return;
+  }
+
+  const rea = clase.reaSugeridos[reaIndex];
+
+  rea.reformulacionAceptada = false;
+  rea.estadoRevision = "actividad-original-mantenida";
+
+  const cuadroResultado =
+    document.getElementById(
+      `resultadoRevision-${numeroClase}-${reaIndex}`
+    );
+
+  if (!cuadroResultado) {
+    return;
+  }
+const botonesDecision =
+  cuadroResultado.querySelectorAll("button");
+
+botonesDecision.forEach(
+  boton => boton.remove()
+);
+  cuadroResultado.innerHTML += `
+    <p style="margin-top:16px;">
+      <strong>Estado de la reformulación:</strong><br>
+      No aceptada. Se mantiene la actividad anterior.
+    </p>
+  `;
+}
 window.pruebaGuiaDocente = function() {
   console.log("Prueba local disponible");
 };
