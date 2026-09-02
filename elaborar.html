@@ -798,13 +798,20 @@ ETAPA 3 - PROGRAMA DE LA ASIGNATURA Y REA
       <div id="listaREA">
 
         <div class="campo">
-          <label class="titulo">REA 1</label>
-          <textarea
-            class="reaManual"
-            rows="3"
-            placeholder="Escriba el REA 1 exactamente como aparece en el programa"
-          ></textarea>
-        </div>
+    <label class="titulo">Resultado de Aprendizaje</label>
+
+    <input
+        type="text"
+        class="reaCodigoManual"
+        placeholder="Código oficial. Ejemplo: REA 1"
+    >
+
+    <textarea
+        class="reaManual"
+        rows="3"
+        placeholder="Escriba el texto del REA exactamente como aparece en el programa"
+    ></textarea>
+</div>
 
       </div>
 
@@ -2110,18 +2117,20 @@ function agregarREA(){
 
   bloque.className="campo";
 
-  bloque.innerHTML=
-    '<label class="titulo">REA ' +
-    contadorREA +
-    '</label>' +
+ bloque.innerHTML =
+  '<label class="titulo">Resultado de Aprendizaje</label>' +
 
-    '<textarea ' +
-    'class="reaManual" ' +
-    'rows="3" ' +
-    'placeholder="Escriba el REA ' +
-    contadorREA +
-    ' exactamente como aparece en el programa">' +
-    '</textarea>';
+  '<input ' +
+  'type="text" ' +
+  'class="reaCodigoManual" ' +
+  'placeholder="Código oficial. Ejemplo: REA 1"' +
+  '>' +
+
+  '<textarea ' +
+  'class="reaManual" ' +
+  'rows="3" ' +
+  'placeholder="Escriba el texto del REA exactamente como aparece en el programa">' +
+  '</textarea>';
 
   contenedor.appendChild(bloque);
 
@@ -2232,29 +2241,46 @@ function continuarSemana1(){
   if(seleccion.value==="manual"){
 
     const camposREA =
-      document.querySelectorAll(".reaManual");
+  document.querySelectorAll(".reaManual");
 
-    let existeREA=false;
+const camposCodigoREA =
+  document.querySelectorAll(".reaCodigoManual");
 
-    for(const campo of camposREA){
+let existeREA = false;
+let reaIncompleto = false;
 
-      if(campo.value.trim()!==""){
-        existeREA=true;
-        break;
-      }
+for (let i = 0; i < camposREA.length; i++) {
 
+  const texto =
+    camposREA[i].value.trim();
+
+  const codigo =
+    camposCodigoREA[i].value.trim();
+
+  if (texto !== "" || codigo !== "") {
+
+    if (texto === "" || codigo === "") {
+      reaIncompleto = true;
+      break;
     }
 
-    if(!existeREA){
+    existeREA = true;
+  }
+}
 
-      mostrarError3(
-        "Introduzca al menos un REA del Programa de la Asignatura."
-      );
+if (reaIncompleto) {
+  mostrarError3(
+    "Cada REA debe incluir su código oficial y su texto exactamente como aparecen en el Programa de la Asignatura."
+  );
+  return;
+}
 
-      return;
-
-    }
-
+if (!existeREA) {
+  mostrarError3(
+    "Introduzca al menos un REA del Programa de la Asignatura."
+  );
+  return;
+}
 
     const camposBibliografia =
       document.querySelectorAll(
@@ -2305,18 +2331,25 @@ function continuarSemana1(){
 
   if(seleccion.value==="manual"){
 
-    const camposREA =
-      document.querySelectorAll(".reaManual");
+   const camposREA =
+  document.querySelectorAll(".reaManual");
 
-    camposREA.forEach(campo=>{
+const camposCodigoREA =
+  document.querySelectorAll(".reaCodigoManual");
 
-      const texto = campo.value.trim();
+camposREA.forEach((campo, index) => {
 
-      if(texto!==""){
-        datosGuia.programa.reaOficiales.push(texto);
-      }
+  const texto = campo.value.trim();
+  const codigo = camposCodigoREA[index].value.trim();
 
+  if (texto !== "" && codigo !== "") {
+    datosGuia.programa.reaOficiales.push({
+      codigo: codigo,
+      texto: texto
     });
+  }
+
+});
 
 
     const camposBibliografia =
