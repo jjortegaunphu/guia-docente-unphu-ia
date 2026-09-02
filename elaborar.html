@@ -2900,10 +2900,62 @@ function revisarActividadRea(numeroClase, reaIndex) {
 
   const rea = clase.reaSugeridos[reaIndex];
 
-  console.log(
-    "Actividad pendiente de revisión:",
-    rea.actividadVinculada
-  );
+  const idCuadro = `revisionActividad-${numeroClase}-${reaIndex}`;
+
+let cuadro = document.getElementById(idCuadro);
+
+if (!cuadro) {
+  cuadro = document.createElement("div");
+  cuadro.id = idCuadro;
+  cuadro.className = "resultado";
+  cuadro.style.marginTop = "16px";
+
+  const contenedor =
+    document.getElementById("contenidoPropuestaAcademica");
+
+  contenedor.appendChild(cuadro);
+}
+
+cuadro.innerHTML = `
+  <h4>Revisión de actividad formativa</h4>
+
+  <p>
+    <strong>Actividad que requiere revisión:</strong><br>
+    ${rea.actividadVinculada || ""}
+  </p>
+
+  <p>
+    <strong>Motivo de la revisión:</strong><br>
+    El REA sugerido fue rechazado por el docente.
+  </p>
+
+  <p>
+    <strong>Criterio para la revisión:</strong><br>
+    Se deberá reformular la actividad procurando su vinculación
+    total o parcial con un REA oficial pertinente, sin modificar
+    innecesariamente el contenido ni la metodología de la clase.
+  </p>
+
+  <button
+    type="button"
+    class="btn-principal"
+    disabled
+  >
+    Reformular actividad con IA
+  </button>
+
+  <p style="margin-top:10px;">
+    <small>
+      La reformulación con IA se habilitará después de validar
+      esta etapa.
+    </small>
+  </p>
+`;
+
+cuadro.scrollIntoView({
+  behavior: "smooth",
+  block: "center"
+});
 }
 window.pruebaGuiaDocente = function() {
   console.log("Prueba local disponible");
