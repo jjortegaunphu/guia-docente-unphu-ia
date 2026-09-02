@@ -2717,20 +2717,34 @@ const estadoREA =
     ? `<div style="margin-top:12px;">
          <strong>Estado:</strong> Validado por el docente
        </div>`
-    : rea.estado === "rechazado"
-      ? `<div style="margin-top:12px;">
-           <strong>Estado:</strong> Rechazado por el docente<br>
-           <strong>Acción requerida:</strong> Revisar la actividad formativa vinculada.
-           <br><br>
-<button
-  type="button"
-  class="btn-principal"
-  onclick="revisarActividadRea(${clase.clase}, ${reaIndex})"
->
-  Revisar actividad
-</button>
-         </div>`
-      : "";
+    : rea.estado === "rechazado" &&
+  rea.estadoRevision === "reformulacion-validada"
+ ? `<div style="margin-top:12px;">
+     <strong>Estado:</strong> REA sugerido rechazado por el docente<br>
+     <strong>Revisión de la actividad:</strong> Completada y validada por el docente<br>
+     <strong>REA oficial vinculado después de la revisión:</strong>
+     ${
+       Array.isArray(rea.revisionPropuesta?.codigosREA)
+         ? rea.revisionPropuesta.codigosREA.join(", ")
+         : ""
+     }<br>
+     <strong>Acción requerida:</strong> Ninguna
+   </div>`
+: rea.estado === "rechazado"
+  ? `<div style="margin-top:12px;">
+       <strong>Estado:</strong> Rechazado por el docente<br>
+       <strong>Acción requerida:</strong> Revisar la actividad formativa vinculada.
+       <br><br>
+
+       <button
+         type="button"
+         class="btn-principal"
+         onclick="revisarActividadRea(${clase.clase}, ${reaIndex})"
+       >
+         Revisar actividad
+       </button>
+     </div>`
+  : "";
   const botonesValidacion =
   rea.estado === "validado" || rea.estado === "rechazado"
     ? ""
