@@ -2465,7 +2465,16 @@ VALIDAR CONTENIDOS DE LA SEMANA
 ================================================== */
 
 async function generarPropuestaSemana(){
-
+const historialMetodologias = datosGuia.cronograma
+  .filter(item => item.semana < semanaActual && item.propuesta)
+  .flatMap(item =>
+    (item.propuesta.clases || []).flatMap(clase =>
+      (clase.metodologiasActividades || []).map(metodo => ({
+        semana: item.semana,
+        metodologia: metodo.metodologia
+      }))
+    )
+  );
   const contenidos =
     document.querySelectorAll(".contenidoClase");
 
@@ -2556,7 +2565,8 @@ async function generarPropuestaSemana(){
         clases: clasesSemana,
         reaOficiales: datosGuia.programa.reaOficiales,
         bibliografia: datosGuia.programa.bibliografia,
-        configuracion: datosGuia.configuracion
+        configuracion: datosGuia.configuracion,
+        historialMetodologias: historialMetodologias
       })
     }
   );
@@ -2612,18 +2622,149 @@ MOSTRAR ERROR DEL CRONOGRAMA
 
   propuesta.clases.forEach((clase) => {
 
-    const reaTexto = Array.isArray(clase.rea)
-      ? clase.rea.join("<br>")
-      : (clase.rea || "");
+   const metodologiasActividades =
+  Array.isArray(clase.metodologiasActividades)
+    ? clase.metodologiasActividades
+    : [];
 
-    const recursosTexto = Array.isArray(clase.recursos)
-      ? clase.recursos.join("<br>")
-      : (clase.recursos || "");
+let metodologiasHTML = "";
 
-    const bibliografiaTexto = Array.isArray(clase.bibliografia)
-      ? clase.bibliografia.join("<br>")
-      : (clase.bibliografia || "");
+metodologiasActividades.forEach((item, index) => {
 
+  const codigosREA =
+    Array.isArray(item.codigosREA)
+      ? item.codigosREA.join(", ")
+      : "";
+
+  metodologiasHTML += `
+    <div style="margin-bottom:18px;">
+      <p>
+        <strong>Metodología ${index + 1}:</strong><br>
+        ${item.metodologia || ""}
+      </p>
+
+      <p>
+        <strong>Mediación docente:</strong><br>
+        ${item.explicacionMetodologia || ""}
+      </p>
+
+      <p>
+        <strong>Actividad formativa ${index + 1}:</strong><br>
+        ${item.actividadFormativa || ""}
+        ${codigosREA ? ` (${codigosREA})` : ""}
+      </p>
+    </div>
+  `;
+}); 
+const recursosMaterialesTexto =
+  Array.isArray(clase.recursosMateriales)
+    ? clase.recursosMateriales.join("<br>")
+    : "";
+
+const recursosVirtualesTexto =
+  Array.isArray(clase.recursosVirtuales)
+    ? clase.recursosVirtuales.join("<br>")
+    : "";
+    const bibliografiaTexto =
+  Array.isArray(clase.bibliografia)
+    ? clase.bibliografia.join("<br>")
+    : "";
+    const actividadesAdicionales =
+  Array.isArray(clase.actividadesAdicionales)
+    ? clase.actividadesAdicionales
+    : [];
+
+let actividadesAdicionalesHTML = "";
+
+actividadesAdicionales.forEach((actividad, index) => {
+
+  const codigosREA =
+    Array.isArray(actividad.codigosREA)
+      ? actividad.codigosREA.join(", ")
+      : "";
+
+  actividadesAdicionalesHTML += `
+    <div style="margin-bottom:18px;">
+      <p>
+        <strong>Actividad formativa adicional ${index + 1}:</strong><br>
+        <strong>Metodología vinculada:</strong>
+        ${actividad.metodologiaVinculada || ""}
+      </p>
+
+      <p>
+        <strong>Mediación docente:</strong><br>
+        ${actividad.explicacionVinculacion || ""}
+      </p>
+
+      <p>
+        <strong>Actividad formativa:</strong><br>
+        ${actividad.actividadFormativa || ""}
+        ${codigosREA ? ` (${codigosREA})` : ""}
+      </p>
+    </div>
+  `;
+});
+   const reaSugeridos =
+  Array.isArray(clase.reaSugeridos)
+    ? clase.reaSugeridos
+    : [];
+
+let reaSugeridosHTML = "";
+
+reaSugeridos.forEach((rea, reaIndex) => {
+const estadoREA =
+  rea.estado === "validado"
+    ? `<div style="margin-top:12px;">
+         <strong>Estado:</strong> Validado por el docente
+       </div>`
+    : rea.estado === "rechazado"
+      ? `<div style="margin-top:12px;">
+           <strong>Estado:</strong> Rechazado por el docente<br>
+           <strong>Acción requerida:</strong> Revisar la actividad formativa vinculada.
+         </div>`
+      : "";
+  const botonesValidacion =
+  rea.estado === "validado" || rea.estado === "rechazado"
+    ? ""
+    : `
+        <br><br>
+
+        <button
+          type="button"
+          class="btn-principal"
+          onclick="aceptarReaSugerido(${clase.clase}, ${reaIndex})"
+        >
+          Aceptar REA sugerido
+        </button>
+
+        <button
+          type="button"
+          class="btn-secundario"
+          onclick="rechazarReaSugerido(${clase.clase}, ${reaIndex})"
+        >
+          Rechazar
+        </button>
+      `;
+  reaSugeridosHTML += `
+    <div class="resultado" style="margin-bottom:18px;">
+      <strong>REA sugerido - requiere validación docente</strong><br><br>
+
+      <strong>Código propuesto:</strong>
+      ${rea.codigo || ""}<br>
+
+      <strong>REA sugerido:</strong>
+      ${rea.reaSugerido || ""}<br>
+
+      <strong>Actividad vinculada:</strong>
+      ${rea.actividadVinculada || ""}<br>
+
+      <strong>Justificación:</strong>
+      ${rea.justificacion || ""}
+      ${estadoREA}
+   ${botonesValidacion}
+    </div>
+  `;
+}); 
     html += `
       <div class="resumen-item">
 
@@ -2634,29 +2775,22 @@ MOSTRAR ERROR DEL CRONOGRAMA
           ${clase.contenido || ""}
         </p>
 
-        <p>
-          <strong>Metodología de enseñanza:</strong><br>
-          ${clase.metodologia || ""}
-        </p>
+        ${metodologiasHTML}
+        ${actividadesAdicionalesHTML}
+        ${reaSugeridosHTML}
+<p>
+  <strong>Recursos materiales:</strong><br>
+  ${recursosMaterialesTexto || "No se especificaron recursos materiales."}
+</p>
 
-        <p>
-          <strong>Actividades formativas:</strong><br>
-          ${clase.actividadFormativa || ""}
-        </p>
-
-        <p>
-          <strong>REA(s):</strong><br>
-          ${reaTexto}
-        </p>
-
-        <p>
-          <strong>Recursos:</strong><br>
-          ${recursosTexto}
-        </p>
+<p>
+  <strong>Recursos virtuales:</strong><br>
+  ${recursosVirtualesTexto || "No se especificaron recursos virtuales."}
+</p>
 
         <p>
           <strong>Bibliografía:</strong><br>
-          ${bibliografiaTexto}
+          ${bibliografiaTexto || "No se especificó bibliografía pertinente."}
         </p>
 
       </div>
@@ -2665,6 +2799,71 @@ MOSTRAR ERROR DEL CRONOGRAMA
 
   contenido.innerHTML = html;
   contenedor.classList.remove("oculto");
+} 
+ function aceptarReaSugerido(numeroClase, reaIndex) {
+
+  const semana =
+    datosGuia.cronograma.find(
+      item => item.semana === semanaActual
+    );
+
+  if (!semana || !semana.propuesta) {
+    return;
+  }
+
+  const clase =
+    semana.propuesta.clases.find(
+      item => item.clase === numeroClase
+    );
+
+  if (
+    !clase ||
+    !Array.isArray(clase.reaSugeridos) ||
+    !clase.reaSugeridos[reaIndex]
+  ) {
+    return;
+  }
+
+  const rea = clase.reaSugeridos[reaIndex];
+
+  rea.requiereValidacionDocente = false;
+  rea.validadoPorDocente = true;
+  rea.estado = "validado";
+
+  mostrarPropuestaAcademica(semana.propuesta);
+} 
+ function rechazarReaSugerido(numeroClase, reaIndex) {
+
+  const semana =
+    datosGuia.cronograma.find(
+      item => item.semana === semanaActual
+    );
+
+  if (!semana || !semana.propuesta) {
+    return;
+  }
+
+  const clase =
+    semana.propuesta.clases.find(
+      item => item.clase === numeroClase
+    );
+
+  if (
+    !clase ||
+    !Array.isArray(clase.reaSugeridos) ||
+    !clase.reaSugeridos[reaIndex]
+  ) {
+    return;
+  }
+
+  const rea = clase.reaSugeridos[reaIndex];
+
+  rea.requiereValidacionDocente = false;
+  rea.validadoPorDocente = false;
+  rea.estado = "rechazado";
+  rea.requiereRevisionActividad = true;
+
+  mostrarPropuestaAcademica(semana.propuesta);
 } 
 function mostrarErrorCronograma(texto){
 
