@@ -2721,6 +2721,14 @@ const estadoREA =
       ? `<div style="margin-top:12px;">
            <strong>Estado:</strong> Rechazado por el docente<br>
            <strong>Acción requerida:</strong> Revisar la actividad formativa vinculada.
+           <br><br>
+<button
+  type="button"
+  class="btn-principal"
+  onclick="revisarActividadRea(${clase.clase}, ${reaIndex})"
+>
+  Revisar actividad
+</button>
          </div>`
       : "";
   const botonesValidacion =
@@ -2866,7 +2874,37 @@ const estadoREA =
 
    mostrarPropuestaAcademica(semana.propuesta);
 }
+function revisarActividadRea(numeroClase, reaIndex) {
 
+  const semana =
+    datosGuia.cronograma.find(
+      item => item.semana === semanaActual
+    );
+
+  if (!semana || !semana.propuesta) {
+    return;
+  }
+
+  const clase =
+    semana.propuesta.clases.find(
+      item => item.clase === numeroClase
+    );
+
+  if (
+    !clase ||
+    !Array.isArray(clase.reaSugeridos) ||
+    !clase.reaSugeridos[reaIndex]
+  ) {
+    return;
+  }
+
+  const rea = clase.reaSugeridos[reaIndex];
+
+  console.log(
+    "Actividad pendiente de revisión:",
+    rea.actividadVinculada
+  );
+}
 window.pruebaGuiaDocente = function() {
   console.log("Prueba local disponible");
 };
