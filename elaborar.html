@@ -2767,9 +2767,15 @@ const estadoREA =
           Rechazar
         </button>
       `;
+  const tituloREA =
+  rea.estado === "validado"
+    ? "REA sugerido - validado por el docente"
+    : rea.estado === "rechazado"
+      ? "REA sugerido - rechazado por el docente"
+      : "REA sugerido - requiere validación docente";
   reaSugeridosHTML += `
     <div class="resultado" style="margin-bottom:18px;">
-      <strong>REA sugerido - requiere validación docente</strong><br><br>
+      <strong>${tituloREA}</strong><br><br>
 
       <strong>Código propuesto:</strong>
       ${rea.codigo || ""}<br>
