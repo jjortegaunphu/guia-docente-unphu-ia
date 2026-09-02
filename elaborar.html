@@ -2730,7 +2730,16 @@ const estadoREA =
      }<br>
      <strong>Acción requerida:</strong> Ninguna
    </div>`
-: rea.estado === "rechazado"
+: rea.estado === "rechazado" &&
+  rea.estadoRevision === "reformulacion-no-aceptada"
+  ? `<div style="margin-top:12px;">
+       <strong>Estado:</strong> REA sugerido rechazado por el docente<br>
+       <strong>Revisión de la actividad:</strong> Reformulación no aceptada<br>
+       <strong>Decisión docente:</strong> Se mantiene la actividad anterior<br>
+       <strong>Vinculación con REA oficial:</strong> No establecida<br>
+       <strong>Acción requerida:</strong> Requiere valoración docente
+     </div>`
+  : rea.estado === "rechazado"
   ? `<div style="margin-top:12px;">
        <strong>Estado:</strong> Rechazado por el docente<br>
        <strong>Acción requerida:</strong> Revisar la actividad formativa vinculada.
@@ -3278,7 +3287,7 @@ botonesDecision.forEach(
 
   rea.reformulacionAceptada = false;
   rea.estadoRevision = "actividad-original-mantenida";
-
+  rea.requiereRevisionActividad = true;
   const cuadroResultado =
     document.getElementById(
       `resultadoRevision-${numeroClase}-${reaIndex}`
