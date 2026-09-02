@@ -2945,19 +2945,20 @@ cuadro.innerHTML = `
   </p>
 
   <button
-    type="button"
-    class="btn-principal"
-    disabled
-  >
-    Reformular actividad con IA
-  </button>
+  type="button"
+  class="btn-principal"
+  onclick="solicitarRevisionActividad(${numeroClase}, ${reaIndex})"
+>
+  Reformular actividad con IA
+</button>
 
   <p style="margin-top:10px;">
-    <small>
-      La reformulación con IA se habilitará después de validar
-      esta etapa.
-    </small>
-  </p>
+  <small>
+    La actividad será revisada manteniendo su contenido,
+    metodología vinculada e intención formativa siempre que
+    sea académicamente posible.
+  </small>
+</p>
 `;
 
 cuadro.scrollIntoView({
@@ -2965,6 +2966,71 @@ cuadro.scrollIntoView({
   block: "center"
 });
 }
+ async function solicitarRevisionActividad(numeroClase, reaIndex) {
+
+  const semana =
+    datosGuia.cronograma.find(
+      item => item.semana === semanaActual
+    );
+
+  if (!semana || !semana.propuesta) {
+    return;
+  }
+
+  const clase =
+    semana.propuesta.clases.find(
+      item => item.clase === numeroClase
+    );
+
+  if (
+    !clase ||
+    !Array.isArray(clase.reaSugeridos) ||
+    !clase.reaSugeridos[reaIndex]
+  ) {
+    return;
+  }
+
+  const rea = clase.reaSugeridos[reaIndex];
+
+  const datosRevision = {
+    semana: semanaActual,
+    clase: numeroClase,
+    contenido: clase.contenido || "",
+    tipoActividad: rea.tipoActividad || "",
+    metodologiaVinculada: rea.metodologiaVinculada || "",
+    actividadActual: rea.actividadVinculada || "",
+    reaOficiales: datosGuia.programa.reaOficiales || []
+  };
+
+  try {
+
+    const respuesta = await fetch(
+      "https://guia-docente-unphu-api.jortega-cc4.workers.dev/revisar-actividad",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(datosRevision)
+      }
+    );
+
+    const resultado = await respuesta.json();
+
+    console.log(
+      "Resultado de prueba de revisión:",
+      resultado
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Error al probar la revisión de actividad:",
+      error
+    );
+
+  }
+} 
 window.pruebaGuiaDocente = function() {
   console.log("Prueba local disponible");
 };
