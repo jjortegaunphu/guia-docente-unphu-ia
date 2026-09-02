@@ -2920,6 +2920,14 @@ cuadro.innerHTML = `
   <h4>Revisión de actividad formativa</h4>
 
   <p>
+    <strong>Tipo de actividad:</strong><br>
+  ${rea.tipoActividad || "Pendiente de identificar"}
+</p>
+
+<p>
+  <strong>Metodología vinculada:</strong><br>
+  ${rea.metodologiaVinculada || "Pendiente de identificar"}
+</p>
     <strong>Actividad que requiere revisión:</strong><br>
     ${rea.actividadVinculada || ""}
   </p>
