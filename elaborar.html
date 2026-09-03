@@ -2679,7 +2679,14 @@ const historialMetodologias = datosGuia.cronograma
   datosSemana.propuesta = resultado.propuesta;
 
   console.log("Propuesta académica:", datosSemana.propuesta);
-   mostrarPropuestaAcademica(datosSemana.propuesta);
+   try {
+  mostrarPropuestaAcademica(datosSemana.propuesta);
+ } catch (errorVisualizacion) {
+  console.error(
+    "La propuesta fue generada y guardada, pero ocurrió un error al mostrarla:",
+    errorVisualizacion
+  );
+}
 const btnGenerarSemana =
   document.getElementById("btnGenerarSemana");
 
