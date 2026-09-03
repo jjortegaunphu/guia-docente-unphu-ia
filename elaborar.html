@@ -920,9 +920,12 @@ ETAPA 4 - ELABORACIÓN DEL CRONOGRAMA
 
   <div class="campo">
 
-    <label class="titulo">
-      Contenidos de la Semana 1
-    </label>
+   <label
+  id="tituloContenidosSemana"
+  class="titulo"
+>
+  Contenidos de la Semana 1
+</label>
 
     <div class="nota">
       Registre los contenidos que corresponde desarrollar en
@@ -2412,9 +2415,16 @@ function iniciarSemana1(){
   document.getElementById("tituloSemana").textContent =
     "Semana " + semanaActual;
 
-  crearClasesSemana();
+  const tituloContenidosSemana =
+  document.getElementById("tituloContenidosSemana");
 
-  window.scrollTo(0,0);
+  if (tituloContenidosSemana) {
+    tituloContenidosSemana.textContent =
+     "Contenidos de la Semana " + semanaActual;
+}
+crearClasesSemana();
+
+window.scrollTo(0,0);
 
 }
 
@@ -2479,7 +2489,13 @@ function continuarSiguienteSemana(){
 
   document.getElementById("tituloSemana").textContent =
     "Semana " + semanaActual;
+  const tituloContenidosSemana =
+    document.getElementById("tituloContenidosSemana");
 
+if (tituloContenidosSemana) {
+  tituloContenidosSemana.textContent =
+    "Contenidos de la Semana " + semanaActual;
+}
   crearClasesSemana();
 const errorCronograma =
   document.getElementById("errorCronograma");
