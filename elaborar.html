@@ -2503,10 +2503,17 @@ if (errorCronograma) {
   const propuestaAcademica =
     document.getElementById("propuestaAcademica");
 
-  if (propuestaAcademica) {
-    propuestaAcademica.innerHTML = "";
-    propuestaAcademica.classList.add("oculto");
+ if (propuestaAcademica) {
+
+  const contenidoPropuestaAcademica =
+    document.getElementById("contenidoPropuestaAcademica");
+
+  if (contenidoPropuestaAcademica) {
+    contenidoPropuestaAcademica.innerHTML = "";
   }
+
+  propuestaAcademica.classList.add("oculto");
+}
 
   window.scrollTo(0,0);
 
