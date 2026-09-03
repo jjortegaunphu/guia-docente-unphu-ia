@@ -2395,7 +2395,187 @@ SEMANA 1 - INICIO DEL CRONOGRAMA
 
 let semanaActual = 1;
 
+  /* ==================================================
+GUARDAR Y RECUPERAR PROGRESO
+================================================== */
 
+function guardarProgreso() {
+  localStorage.setItem(
+    "respaldoGuiaDocente",
+    JSON.stringify({
+      datosGuia: datosGuia,
+      semanaActual: semanaActual
+    })
+  );
+}
+/* ==================================================
+RECUPERAR PROGRESO
+================================================== */
+
+function recuperarProgreso() {
+
+  const respaldo =
+    localStorage.getItem("respaldoGuiaDocente");
+
+  if (!respaldo) {
+    return false;
+  }
+
+  try {
+
+    const datosGuardados =
+      JSON.parse(respaldo);
+
+    if (!datosGuardados.datosGuia) {
+      return false;
+    }
+
+    datosGuia = datosGuardados.datosGuia;
+
+    semanaActual =
+      datosGuardados.semanaActual || 1;
+
+    semanas =
+      datosGuia.configuracion.semanas;
+
+    return true;
+
+  } catch (error) {
+
+    console.error(
+      "No fue posible recuperar el progreso:",
+      error
+    );
+
+    return false;
+  }
+}
+ /* ==================================================
+RESTAURAR INTERFAZ DESPUÉS DE RECARGAR
+================================================== */
+
+function restaurarInterfazProgreso() {
+
+  const recuperado = recuperarProgreso();
+
+  if (!recuperado) {
+    return;
+  }
+
+  /* Restaurar frecuencia de clases */
+  const frecuencia =
+    document.getElementById("frecuencia");
+
+  if (frecuencia) {
+    frecuencia.value =
+      datosGuia.configuracion.clasesPorSemana;
+  }
+
+  /* Restaurar cantidad de semanas */
+  semanas =
+    datosGuia.configuracion.semanas;
+
+  /* Mostrar el cronograma */
+  document
+    .getElementById("etapa1")
+    .classList.add("oculto");
+
+  document
+    .getElementById("etapa2")
+    .classList.add("oculto");
+
+  document
+    .getElementById("etapa3")
+    .classList.add("oculto");
+
+  document
+    .getElementById("etapaCronograma")
+    .classList.remove("oculto");
+
+  /* Actualizar títulos */
+  document.getElementById("tituloSemana").textContent =
+    "Semana " + semanaActual;
+
+  const tituloContenidosSemana =
+    document.getElementById("tituloContenidosSemana");
+
+  if (tituloContenidosSemana) {
+    tituloContenidosSemana.textContent =
+      "Contenidos de la Semana " + semanaActual;
+  }
+
+  /* Crear las clases de la semana */
+  crearClasesSemana();
+
+  /* Buscar los datos guardados de la semana actual */
+  const datosSemana =
+    datosGuia.cronograma.find(
+      semana => semana.semana === semanaActual
+    );
+
+  if (!datosSemana) {
+    return;
+  }
+
+  /* Restaurar contenidos de las clases */
+  const campos =
+    document.querySelectorAll(".contenidoClase");
+
+  campos.forEach(campo => {
+
+    const numeroClase =
+      parseInt(
+        campo.getAttribute("data-clase")
+      );
+
+    const claseGuardada =
+      datosSemana.clases?.find(
+        clase => clase.clase === numeroClase
+      );
+
+    if (claseGuardada) {
+      campo.value =
+        claseGuardada.contenido || "";
+    }
+
+  });
+
+  /* Restaurar propuesta académica */
+  if (datosSemana.propuesta) {
+
+    mostrarPropuestaAcademica(
+      datosSemana.propuesta
+    );
+  }
+
+  /* Configurar botón */
+  const btnGenerarSemana =
+    document.getElementById("btnGenerarSemana");
+
+  if (btnGenerarSemana) {
+
+    if (semanaActual < semanas) {
+
+      btnGenerarSemana.textContent =
+        "Continuar a la Semana " +
+        (semanaActual + 1);
+
+      btnGenerarSemana.onclick =
+        function () {
+          continuarSiguienteSemana();
+        };
+
+    } else {
+
+      btnGenerarSemana.textContent =
+        "Cronograma completado";
+
+      btnGenerarSemana.disabled = true;
+    }
+  }
+
+  window.scrollTo(0,0);
+} 
 /* ==================================================
 ABRIR SEMANA 1
 ================================================== */
@@ -2646,6 +2826,9 @@ const historialMetodologias = datosGuia.cronograma
       datosSemana;
 
   }
+
+ guardarProgreso();
+  
  try {
 
   const respuesta = await fetch(
@@ -2677,7 +2860,7 @@ const historialMetodologias = datosGuia.cronograma
   }
 
   datosSemana.propuesta = resultado.propuesta;
-
+  guardarProgreso();
   console.log("Propuesta académica:", datosSemana.propuesta);
    try {
   mostrarPropuestaAcademica(datosSemana.propuesta);
@@ -3447,6 +3630,7 @@ function mostrarErrorCronograma(texto){
   error.classList.remove("oculto");
 
 } 
+recuperarProgreso();
 </script>
 
 </body>
