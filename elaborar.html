@@ -973,7 +973,8 @@ ETAPA 4 - ELABORACIÓN DEL CRONOGRAMA
     ← Volver
   </button>
 
-  <button
+ <button
+  id="btnGenerarSemana"
     type="button"
     class="boton"
     onclick="generarPropuestaSemana()"
@@ -2468,8 +2469,46 @@ function crearClasesSemana(){
       '</div>';
 
     contenedor.appendChild(bloque);
-
+     }
   }
+function continuarSiguienteSemana(){
+  if (semanaActual >= semanas) {
+    return;
+  }
+  semanaActual++;
+
+  document.getElementById("tituloSemana").textContent =
+    "Semana " + semanaActual;
+
+  crearClasesSemana();
+const errorCronograma =
+  document.getElementById("errorCronograma");
+
+if (errorCronograma) {
+  errorCronograma.textContent = "";
+  errorCronograma.classList.add("oculto");
+}
+  const btnGenerarSemana =
+    document.getElementById("btnGenerarSemana");
+
+  if (btnGenerarSemana) {
+    btnGenerarSemana.textContent =
+      "Generar propuesta de Semana " + semanaActual;
+
+    btnGenerarSemana.onclick = function () {
+      generarPropuestaSemana();
+    };
+  }
+
+  const propuestaAcademica =
+    document.getElementById("propuestaAcademica");
+
+  if (propuestaAcademica) {
+    propuestaAcademica.innerHTML = "";
+    propuestaAcademica.classList.add("oculto");
+  }
+
+  window.scrollTo(0,0);
 
 }
 
@@ -2618,7 +2657,29 @@ const historialMetodologias = datosGuia.cronograma
 
   console.log("Propuesta académica:", datosSemana.propuesta);
    mostrarPropuestaAcademica(datosSemana.propuesta);
+const btnGenerarSemana =
+  document.getElementById("btnGenerarSemana");
 
+if (btnGenerarSemana) {
+
+  if (semanaActual < semanas) {
+
+    btnGenerarSemana.textContent =
+      "Continuar a la Semana " + (semanaActual + 1);
+
+    btnGenerarSemana.onclick = function () {
+      continuarSiguienteSemana();
+    };
+
+  } else {
+
+    btnGenerarSemana.textContent =
+      "Cronograma completado";
+
+    btnGenerarSemana.disabled = true;
+
+  }
+}
   alert(
     "La propuesta académica de la Semana " +
     semanaActual +
