@@ -2686,6 +2686,57 @@ window.scrollTo(0,0);
 CREAR CLASES SEGÚN FRECUENCIA
 ================================================== */
 
+function obtenerEvaluacionesSemana(numeroSemana) {
+
+  if (
+    !datosGuia.evaluacion ||
+    !Array.isArray(datosGuia.evaluacion.rubros)
+  ) {
+    return [];
+  }
+
+  return datosGuia.evaluacion.rubros.filter(
+    rubro =>
+      !rubro.componenteExterno &&
+      rubro.semana === numeroSemana
+  );
+}
+function actualizarAvisoSemanaEvaluativa() {
+
+  const aviso =
+    document.getElementById("avisoSemanaEvaluativa");
+
+  if (!aviso) {
+    return;
+  }
+
+  const evaluaciones =
+    obtenerEvaluacionesSemana(semanaActual);
+
+  if (evaluaciones.length === 0) {
+
+    aviso.textContent = "";
+    aviso.classList.add("oculto");
+
+    return;
+  }
+
+  const nombres =
+    evaluaciones.map(
+      evaluacion => evaluacion.nombre
+    );
+
+  aviso.textContent =
+    "Esta semana corresponde a la aplicación de: " +
+    nombres.join(", ") +
+    ".";
+
+  aviso.classList.remove("oculto");
+}
+  /* ==================================================
+IDENTIFICAR EVALUACIONES DE LA SEMANA
+================================================== */
+  
 function crearClasesSemana(){
 
   const frecuencia =
@@ -2698,7 +2749,8 @@ function crearClasesSemana(){
 
   contenedor.innerHTML = "";
 
-
+  actualizarAvisoSemanaEvaluativa();
+  
   for(let i=1; i<=frecuencia; i++){
 
     const bloque =
