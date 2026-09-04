@@ -2953,10 +2953,14 @@ let metodologiasHTML = "";
 metodologiasActividades.forEach((item, index) => {
 
   const codigosREA =
-    Array.isArray(item.codigosREA)
-      ? item.codigosREA.join(", ")
-      : "";
-
+  Array.isArray(item.codigosREA)
+    ? item.codigosREA.join(", ")
+    : "";
+  const actividadLimpia =
+  (item.actividadFormativa || "")
+    .replace(/\s*\(REA\s*\d+(?:\s*,\s*REA\s*\d+)*\)\s*$/i, "")
+    .replace(/\s*\(REA\d+(?:\s*,\s*REA\d+)*\)\s*$/i, "")
+    .trim();
   metodologiasHTML += `
     <div style="margin-bottom:18px;">
       <p>
@@ -2969,11 +2973,10 @@ metodologiasActividades.forEach((item, index) => {
         ${item.explicacionMetodologia || ""}
       </p>
 
-      <p>
+     <p>
         <strong>Actividad formativa ${index + 1}:</strong><br>
-        ${item.actividadFormativa || ""}
-        ${codigosREA ? ` (${codigosREA})` : ""}
-      </p>
+        ${actividadLimpia}${codigosREA ? ` (${codigosREA})` : ""}
+    </p>
     </div>
   `;
 }); 
@@ -3000,9 +3003,15 @@ let actividadesAdicionalesHTML = "";
 actividadesAdicionales.forEach((actividad, index) => {
 
   const codigosREA =
-    Array.isArray(actividad.codigosREA)
-      ? actividad.codigosREA.join(", ")
-      : "";
+  Array.isArray(actividad.codigosREA)
+    ? actividad.codigosREA.join(", ")
+    : "";
+
+const actividadLimpia =
+  (actividad.actividadFormativa || "")
+    .replace(/\s*\(REA\s*\d+(?:\s*,\s*REA\s*\d+)*\)\s*$/i, "")
+    .replace(/\s*\(REA\d+(?:\s*,\s*REA\d+)*\)\s*$/i, "")
+    .trim();
 
   actividadesAdicionalesHTML += `
     <div style="margin-bottom:18px;">
@@ -3017,11 +3026,8 @@ actividadesAdicionales.forEach((actividad, index) => {
         ${actividad.explicacionVinculacion || ""}
       </p>
 
-      <p>
-        <strong>Actividad formativa:</strong><br>
-        ${actividad.actividadFormativa || ""}
-        ${codigosREA ? ` (${codigosREA})` : ""}
-      </p>
+      <strong>Actividad formativa:</strong><br>
+      ${actividadLimpia}${codigosREA ? ` (${codigosREA})` : ""}
     </div>
   `;
 });
