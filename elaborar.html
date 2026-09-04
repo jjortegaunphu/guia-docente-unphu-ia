@@ -2727,7 +2727,7 @@ function actualizarAvisoSemanaEvaluativa() {
     );
 
   aviso.textContent =
-    "Esta semana corresponde a la aplicación de: " +
+    "Esta semana corresponde al cierre de: " +
     nombres.join(", ") +
     ".";
 
@@ -3065,7 +3065,179 @@ function volverEtapa3(){
 /* ==================================================
 VALIDAR CONTENIDOS DE LA SEMANA
 ================================================== */
+/* ==================================================
+VALIDAR PUNTUACIONES DE LA PROPUESTA ACADÉMICA
+================================================== */
 
+function validarEvaluacionPropuesta(
+  propuesta,
+  sistemaEvaluacion,
+  historialEvaluacion,
+  evaluacionesSemana
+) {
+
+  if (!propuesta || !Array.isArray(propuesta.clases)) {
+    return {
+      valido: false,
+      mensaje: "La propuesta académica no contiene una estructura de clases válida."
+    };
+  }
+
+  if (!Array.isArray(sistemaEvaluacion)) {
+    return {
+      valido: false,
+      mensaje: "No se encontró un sistema de evaluación válido."
+    };
+  }
+
+  const historial = Array.isArray(historialEvaluacion)
+    ? historialEvaluacion
+    : [];
+
+  const cierresSemana = Array.isArray(evaluacionesSemana)
+    ? evaluacionesSemana
+    : [];
+
+  const puntuacionAnterior = {};
+  const puntuacionSemanaActual = {};
+
+  /* Sumar puntuaciones de semanas anteriores */
+
+  historial.forEach(actividad => {
+
+    if (
+      actividad.rubroEvaluacion &&
+      Number(actividad.puntuacion) > 0
+    ) {
+
+      const rubro = actividad.rubroEvaluacion;
+
+      puntuacionAnterior[rubro] =
+        (puntuacionAnterior[rubro] || 0) +
+        Number(actividad.puntuacion);
+    }
+  });
+
+  /* Revisar todas las actividades de la propuesta actual */
+
+  for (const clase of propuesta.clases) {
+
+    const actividades = [
+      ...(Array.isArray(clase.metodologiasActividades)
+        ? clase.metodologiasActividades
+        : []),
+
+      ...(Array.isArray(clase.actividadesAdicionales)
+        ? clase.actividadesAdicionales
+        : [])
+    ];
+
+    for (const actividad of actividades) {
+
+      if (actividad.esEvaluativa !== true) {
+        continue;
+      }
+
+      const rubro = actividad.rubroEvaluacion;
+      const puntuacion = Number(actividad.puntuacion);
+
+      if (!rubro) {
+        return {
+          valido: false,
+          mensaje:
+            "Se encontró una actividad evaluativa sin rubro de evaluación."
+        };
+      }
+
+      if (!Number.isFinite(puntuacion) || puntuacion <= 0) {
+        return {
+          valido: false,
+          mensaje:
+            `La actividad evaluativa asociada a "${rubro}" no tiene una puntuación válida.`
+        };
+      }
+
+      const rubroOficial =
+        sistemaEvaluacion.find(
+          item =>
+            item.nombre === rubro &&
+            item.componenteExterno !== true
+        );
+
+      if (!rubroOficial) {
+        return {
+          valido: false,
+          mensaje:
+            `La propuesta utiliza el rubro "${rubro}", pero este no corresponde a un rubro evaluativo gestionado en esta guía.`
+        };
+      }
+
+      puntuacionSemanaActual[rubro] =
+        (puntuacionSemanaActual[rubro] || 0) +
+        puntuacion;
+    }
+  }
+
+  /* Comprobar que ningún rubro exceda su peso */
+
+  for (const rubro of sistemaEvaluacion) {
+
+    if (rubro.componenteExterno === true) {
+      continue;
+    }
+
+    const peso = Number(rubro.peso);
+
+    const anterior =
+      puntuacionAnterior[rubro.nombre] || 0;
+
+    const actual =
+      puntuacionSemanaActual[rubro.nombre] || 0;
+
+    const total = anterior + actual;
+
+    if (total > peso + 0.001) {
+      return {
+        valido: false,
+        mensaje:
+          `Las actividades evaluativas de "${rubro.nombre}" acumulan ${total} puntos, pero el peso establecido es ${peso}.`
+      };
+    }
+  }
+
+  /* En una semana de cierre, el rubro debe quedar completo */
+
+  for (const rubroCierre of cierresSemana) {
+
+    if (rubroCierre.componenteExterno === true) {
+      continue;
+    }
+
+    const peso = Number(rubroCierre.peso);
+
+    const anterior =
+      puntuacionAnterior[rubroCierre.nombre] || 0;
+
+    const actual =
+      puntuacionSemanaActual[rubroCierre.nombre] || 0;
+
+    const total = anterior + actual;
+
+    if (Math.abs(total - peso) > 0.001) {
+      return {
+        valido: false,
+        mensaje:
+          `La semana ${semanaActual} corresponde al cierre de "${rubroCierre.nombre}". ` +
+          `El rubro acumula ${total} de ${peso} puntos.`
+      };
+    }
+  }
+
+  return {
+    valido: true,
+    mensaje: ""
+  };
+}
 async function generarPropuestaSemana(){
 const historialMetodologias = datosGuia.cronograma
   .filter(item => item.semana < semanaActual && item.propuesta)
@@ -3077,6 +3249,34 @@ const historialMetodologias = datosGuia.cronograma
       }))
     )
   );
+ const historialEvaluacion = datosGuia.cronograma
+  .filter(item => item.semana < semanaActual && item.propuesta)
+  .flatMap(item =>
+    (item.propuesta.clases || []).flatMap(clase => {
+
+      const actividadesObligatorias =
+        clase.metodologiasActividades || [];
+
+      const actividadesAdicionales =
+        clase.actividadesAdicionales || [];
+
+      return [
+        ...actividadesObligatorias,
+        ...actividadesAdicionales
+      ]
+        .filter(actividad => actividad.esEvaluativa === true)
+        .map(actividad => ({
+          semana: item.semana,
+          clase: clase.clase,
+          rubroEvaluacion: actividad.rubroEvaluacion,
+          puntuacion: Number(actividad.puntuacion) || 0
+        }));
+
+    })
+  );
+  const evaluacionesSemana =
+  obtenerEvaluacionesSemana(semanaActual);
+  
   const contenidos =
     document.querySelectorAll(".contenidoClase");
 
@@ -3171,6 +3371,9 @@ const historialMetodologias = datosGuia.cronograma
         reaOficiales: datosGuia.programa.reaOficiales,
         bibliografia: datosGuia.programa.bibliografia,
         configuracion: datosGuia.configuracion,
+        evaluacionesSemana: evaluacionesSemana,
+        sistemaEvaluacion: datosGuia.evaluacion.rubros,
+        historialEvaluacion: historialEvaluacion,
         historialMetodologias: historialMetodologias
       })
     }
@@ -3184,8 +3387,21 @@ const historialMetodologias = datosGuia.cronograma
     throw new Error(
       resultado.error || "No fue posible generar la propuesta académica."
     );
-  }
+    const validacionEvaluacion =
+  validarEvaluacionPropuesta(
+    resultado.propuesta,
+    datosGuia.evaluacion.rubros,
+    historialEvaluacion,
+    evaluacionesSemana
+  );
 
+if (!validacionEvaluacion.valido) {
+  throw new Error(
+    "La propuesta generada presenta una inconsistencia en el sistema de evaluación: " +
+    validacionEvaluacion.mensaje
+  );
+}
+  
   datosSemana.propuesta = resultado.propuesta;
   guardarProgreso();
   console.log("Propuesta académica:", datosSemana.propuesta);
@@ -3274,6 +3490,16 @@ metodologiasActividades.forEach((item, index) => {
     .replace(/\s*\(REA\s*\d+(?:\s*,\s*REA\s*\d+)*\)\s*$/i, "")
     .replace(/\s*\(REA\d+(?:\s*,\s*REA\d+)*\)\s*$/i, "")
     .trim();
+  const informacionEvaluativa =
+  item.esEvaluativa === true
+    ? `
+      <p>
+        <strong>Actividad evaluativa:</strong>
+        ${item.rubroEvaluacion || ""} —
+        ${Number(item.puntuacion) || 0} punto(s)
+      </p>
+    `
+    : "";
   metodologiasHTML += `
     <div style="margin-bottom:18px;">
       <p>
@@ -3290,6 +3516,8 @@ metodologiasActividades.forEach((item, index) => {
         <strong>Actividad formativa ${index + 1}:</strong><br>
         ${actividadLimpia}${codigosREA ? ` (${codigosREA})` : ""}
     </p>
+    
+    ${informacionEvaluativa}
     </div>
   `;
 }); 
@@ -3325,7 +3553,16 @@ const actividadLimpia =
     .replace(/\s*\(REA\s*\d+(?:\s*,\s*REA\s*\d+)*\)\s*$/i, "")
     .replace(/\s*\(REA\d+(?:\s*,\s*REA\d+)*\)\s*$/i, "")
     .trim();
-
+const informacionEvaluativaAdicional =
+  actividad.esEvaluativa === true
+    ? `
+      <p>
+        <strong>Actividad evaluativa:</strong>
+        ${actividad.rubroEvaluacion || ""} —
+        ${Number(actividad.puntuacion) || 0} punto(s)
+      </p>
+    `
+    : "";
   actividadesAdicionalesHTML += `
     <div style="margin-bottom:18px;">
       <p>
@@ -3341,7 +3578,10 @@ const actividadLimpia =
 
       <strong>Actividad formativa:</strong><br>
       ${actividadLimpia}${codigosREA ? ` (${codigosREA})` : ""}
+      
+      ${informacionEvaluativaAdicional}
     </div>
+  
   `;
 });
    const reaSugeridos =
