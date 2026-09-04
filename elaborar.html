@@ -2408,6 +2408,47 @@ function guardarProgreso() {
     })
   );
 }
+  function guardarContenidoSemanaActual() {
+
+  const campos =
+    document.querySelectorAll(".contenidoClase");
+
+  const clases = [];
+
+  campos.forEach(campo => {
+
+    const numeroClase =
+      parseInt(
+        campo.getAttribute("data-clase")
+      );
+
+    clases.push({
+      clase: numeroClase,
+      contenido: campo.value
+    });
+
+  });
+
+  const indiceSemana =
+    datosGuia.cronograma.findIndex(
+      semana => semana.semana === semanaActual
+    );
+
+  if (indiceSemana === -1) {
+
+    datosGuia.cronograma.push({
+      semana: semanaActual,
+      clases: clases
+    });
+
+  } else {
+
+    datosGuia.cronograma[indiceSemana].clases =
+      clases;
+  }
+
+  guardarProgreso();
+}
 /* ==================================================
 RECUPERAR PROGRESO
 ================================================== */
@@ -2673,6 +2714,14 @@ function crearClasesSemana(){
       '</div>';
 
     contenedor.appendChild(bloque);
+    const campoContenido =
+      bloque.querySelector(".contenidoClase");
+
+    campoContenido.addEventListener("input", function () {
+
+    guardarContenidoSemanaActual();
+
+});
      }
   }
 function continuarSiguienteSemana(){
