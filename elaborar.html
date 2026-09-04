@@ -1978,11 +1978,18 @@ function finalizarConfiguracion(){
 
   datosGuia.evaluacion.rubros = [];
 
-  if(tipo==="rubroUnico"){
+ if(tipo==="rubroUnico"){
 
     datosGuia.evaluacion.esquema = "rubroUnico";
 
-  }
+    datosGuia.evaluacion.rubros.push({
+        nombre: "Rubro único",
+        peso: 100,
+        semana: null,
+        componenteExterno: false
+    });
+
+}
 
   else{
 
