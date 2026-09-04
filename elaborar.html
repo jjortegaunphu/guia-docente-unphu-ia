@@ -976,6 +976,16 @@ ETAPA 4 - ELABORACIÓN DEL CRONOGRAMA
     ← Volver
   </button>
 
+  <button
+  id="btnSemanaAnterior"
+  type="button"
+  class="boton boton-secundario"
+  onclick="irSemanaAnterior()"
+  style="display:none;"
+>
+  ← Semana anterior
+</button>
+  
  <button
   id="btnGenerarSemana"
     type="button"
@@ -2589,6 +2599,13 @@ function restaurarInterfazProgreso() {
   }
 
   /* Configurar botón */
+  const btnSemanaAnterior =
+  document.getElementById("btnSemanaAnterior");
+
+if (btnSemanaAnterior) {
+  btnSemanaAnterior.style.display =
+    semanaActual > 1 ? "" : "none";
+
   const btnGenerarSemana =
     document.getElementById("btnGenerarSemana");
 
@@ -2730,6 +2747,15 @@ function continuarSiguienteSemana(){
   }
   semanaActual++;
   guardarProgreso();
+
+  const btnSemanaAnterior =
+  document.getElementById("btnSemanaAnterior");
+
+if (btnSemanaAnterior) {
+  btnSemanaAnterior.style.display =
+    semanaActual > 1 ? "" : "none";
+}
+  
   document.getElementById("tituloSemana").textContent =
     "Semana " + semanaActual;
   const tituloContenidosSemana =
@@ -2740,6 +2766,41 @@ if (tituloContenidosSemana) {
     "Contenidos de la Semana " + semanaActual;
 }
   crearClasesSemana();
+  const datosSemanaExistente =
+  datosGuia.cronograma.find(
+    semana => semana.semana === semanaActual
+  );
+
+if (datosSemanaExistente) {
+
+  const campos =
+    document.querySelectorAll(".contenidoClase");
+
+  campos.forEach(campo => {
+
+    const numeroClase =
+      parseInt(
+        campo.getAttribute("data-clase")
+      );
+
+    const claseGuardada =
+      datosSemanaExistente.clases?.find(
+        clase => clase.clase === numeroClase
+      );
+
+    if (claseGuardada) {
+      campo.value =
+        claseGuardada.contenido || "";
+    }
+
+  });
+}
+  if (datosSemanaExistente?.propuesta) {
+
+  mostrarPropuestaAcademica(
+    datosSemanaExistente.propuesta
+  );
+}
 const errorCronograma =
   document.getElementById("errorCronograma");
 
@@ -2747,22 +2808,59 @@ if (errorCronograma) {
   errorCronograma.textContent = "";
   errorCronograma.classList.add("oculto");
 }
-  const btnGenerarSemana =
-    document.getElementById("btnGenerarSemana");
+ const btnGenerarSemana =
+  document.getElementById("btnGenerarSemana");
 
-  if (btnGenerarSemana) {
+if (btnGenerarSemana) {
+
+  btnGenerarSemana.disabled = false;
+
+  if (datosSemanaExistente?.propuesta) {
+
+    if (semanaActual < semanas) {
+
+      btnGenerarSemana.textContent =
+        "Continuar a la Semana " +
+        (semanaActual + 1);
+
+      btnGenerarSemana.onclick =
+        function () {
+          continuarSiguienteSemana();
+        };
+
+    } else {
+
+      btnGenerarSemana.textContent =
+        "Cronograma completado";
+
+      btnGenerarSemana.disabled = true;
+    }
+
+  } else {
+
     btnGenerarSemana.textContent =
-      "Generar propuesta de Semana " + semanaActual;
+      "Generar propuesta de Semana " +
+      semanaActual;
 
-    btnGenerarSemana.onclick = function () {
-      generarPropuestaSemana();
-    };
+    btnGenerarSemana.onclick =
+      function () {
+        generarPropuestaSemana();
+      };
   }
+}
 
   const propuestaAcademica =
     document.getElementById("propuestaAcademica");
 
  if (propuestaAcademica) {
+
+ const propuestaAcademica =
+  document.getElementById("propuestaAcademica");
+
+if (
+  propuestaAcademica &&
+  !datosSemanaExistente?.propuesta
+) {
 
   const contenidoPropuestaAcademica =
     document.getElementById("contenidoPropuestaAcademica");
@@ -2773,11 +2871,128 @@ if (errorCronograma) {
 
   propuestaAcademica.classList.add("oculto");
 }
+function irSemanaAnterior() {
+
+  if (semanaActual <= 1) {
+    return;
+  }
+
+  semanaActual--;
+
+  guardarProgreso();
+
+  document.getElementById("tituloSemana").textContent =
+    "Semana " + semanaActual;
+
+  const tituloContenidosSemana =
+    document.getElementById("tituloContenidosSemana");
+
+  if (tituloContenidosSemana) {
+    tituloContenidosSemana.textContent =
+      "Contenidos de la Semana " + semanaActual;
+  }
+
+  crearClasesSemana();
+
+  const datosSemana =
+    datosGuia.cronograma.find(
+      semana => semana.semana === semanaActual
+    );
+
+  /* Restaurar contenidos */
+  if (datosSemana) {
+
+    const campos =
+      document.querySelectorAll(".contenidoClase");
+
+    campos.forEach(campo => {
+
+      const numeroClase =
+        parseInt(
+          campo.getAttribute("data-clase")
+        );
+
+      const claseGuardada =
+        datosSemana.clases?.find(
+          clase => clase.clase === numeroClase
+        );
+
+      if (claseGuardada) {
+        campo.value =
+          claseGuardada.contenido || "";
+      }
+
+    });
+  }
+
+  /* Restaurar propuesta */
+  const propuestaAcademica =
+    document.getElementById("propuestaAcademica");
+
+  const contenidoPropuestaAcademica =
+    document.getElementById("contenidoPropuestaAcademica");
+
+  if (datosSemana?.propuesta) {
+
+    mostrarPropuestaAcademica(
+      datosSemana.propuesta
+    );
+
+  } else {
+
+    if (contenidoPropuestaAcademica) {
+      contenidoPropuestaAcademica.innerHTML = "";
+    }
+
+    if (propuestaAcademica) {
+      propuestaAcademica.classList.add("oculto");
+    }
+  }
+
+  /* Configurar botón principal */
+  const btnGenerarSemana =
+    document.getElementById("btnGenerarSemana");
+
+  if (btnGenerarSemana) {
+
+    btnGenerarSemana.disabled = false;
+
+    if (datosSemana?.propuesta) {
+
+      btnGenerarSemana.textContent =
+        "Continuar a la Semana " +
+        (semanaActual + 1);
+
+      btnGenerarSemana.onclick =
+        function () {
+          continuarSiguienteSemana();
+        };
+
+    } else {
+
+      btnGenerarSemana.textContent =
+        "Generar propuesta de Semana " +
+        semanaActual;
+
+      btnGenerarSemana.onclick =
+        function () {
+          generarPropuestaSemana();
+        };
+    }
+  }
+
+  /* Mostrar u ocultar Semana anterior */
+  const btnSemanaAnterior =
+    document.getElementById("btnSemanaAnterior");
+
+  if (btnSemanaAnterior) {
+
+    btnSemanaAnterior.style.display =
+      semanaActual > 1 ? "" : "none";
+  }
 
   window.scrollTo(0,0);
-
 }
-
 
 /* ==================================================
 VOLVER A ETAPA 3
