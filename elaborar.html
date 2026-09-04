@@ -2513,9 +2513,7 @@ function restaurarInterfazProgreso() {
       semana => semana.semana === semanaActual
     );
 
-  if (!datosSemana) {
-    return;
-  }
+  if (datosSemana) {
 
   /* Restaurar contenidos de las clases */
   const campos =
@@ -2547,12 +2545,17 @@ function restaurarInterfazProgreso() {
       datosSemana.propuesta
     );
   }
+  }
 
   /* Configurar botón */
   const btnGenerarSemana =
     document.getElementById("btnGenerarSemana");
 
   if (btnGenerarSemana) {
+
+  btnGenerarSemana.disabled = false;
+
+  if (datosSemana?.propuesta) {
 
     if (semanaActual < semanas) {
 
@@ -2572,8 +2575,19 @@ function restaurarInterfazProgreso() {
 
       btnGenerarSemana.disabled = true;
     }
-  }
 
+  } else {
+
+    btnGenerarSemana.textContent =
+      "Generar propuesta de Semana " +
+      semanaActual;
+
+    btnGenerarSemana.onclick =
+      function () {
+        generarPropuestaSemana();
+      };
+  }
+}
   window.scrollTo(0,0);
 } 
 /* ==================================================
@@ -2666,7 +2680,7 @@ function continuarSiguienteSemana(){
     return;
   }
   semanaActual++;
-
+  guardarProgreso();
   document.getElementById("tituloSemana").textContent =
     "Semana " + semanaActual;
   const tituloContenidosSemana =
@@ -3630,7 +3644,7 @@ function mostrarErrorCronograma(texto){
   error.classList.remove("oculto");
 
 } 
-recuperarProgreso();
+restaurarInterfazProgreso();
 </script>
 
 </body>
