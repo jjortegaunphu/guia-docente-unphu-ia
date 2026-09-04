@@ -3384,9 +3384,10 @@ const historialMetodologias = datosGuia.cronograma
   console.log("Respuesta IA:", resultado);
 
   if (!respuesta.ok || !resultado.correcto) {
-    throw new Error(
-      resultado.error || "No fue posible generar la propuesta académica."
-    );
+  throw new Error(
+    resultado.error || "No fue posible generar la propuesta académica."
+  );
+}
     const validacionEvaluacion =
   validarEvaluacionPropuesta(
     resultado.propuesta,
