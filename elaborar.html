@@ -804,12 +804,14 @@ ETAPA 3 - PROGRAMA DE LA ASIGNATURA Y REA
         type="text"
         class="reaCodigoManual"
         placeholder="Código oficial. Ejemplo: REA 1"
+        oninput="guardarBorradorEtapa3()"
     >
 
     <textarea
         class="reaManual"
         rows="3"
         placeholder="Escriba el texto del REA exactamente como aparece en el programa"
+        oninput="guardarBorradorEtapa3()"
     ></textarea>
 </div>
 
@@ -2175,13 +2177,15 @@ function agregarREA(){
   '<input ' +
   'type="text" ' +
   'class="reaCodigoManual" ' +
-  'placeholder="Código oficial. Ejemplo: REA 1"' +
+  'placeholder="Código oficial. Ejemplo: REA 1" ' +
+  'oninput="guardarBorradorEtapa3()"' +
   '>' +
 
   '<textarea ' +
   'class="reaManual" ' +
   'rows="3" ' +
-  'placeholder="Escriba el texto del REA exactamente como aparece en el programa">' +
+  'placeholder="Escriba el texto del REA exactamente como aparece en el programa" ' +
+  'oninput="guardarBorradorEtapa3()">' +
   '</textarea>';
 
   contenedor.appendChild(bloque);
@@ -2508,6 +2512,7 @@ function guardarProgreso() {
 
   guardarProgreso();
 }
+  
   function guardarBorradorEtapa2() {
 
   if (etapaActual !== "etapa2") {
@@ -2547,6 +2552,69 @@ function guardarProgreso() {
   datosGuia.evaluacion.rubros = rubros;
 
   guardarProgreso();
+}
+
+  function guardarBorradorEtapa3() {
+
+  if (etapaActual !== "etapa3") {
+    return;
+  }
+
+  const codigos =
+    document.querySelectorAll(".reaCodigoManual");
+
+  const textos =
+    document.querySelectorAll(".reaManual");
+
+  const reaOficiales = [];
+
+  codigos.forEach((codigo, indice) => {
+
+    reaOficiales.push({
+      codigo: codigo.value,
+      texto: textos[indice]
+        ? textos[indice].value
+        : ""
+    });
+
+  });
+
+  datosGuia.programa.reaOficiales =
+    reaOficiales;
+
+  guardarProgreso();
+}
+  function restaurarBorradorEtapa3() {
+
+  if (
+    !datosGuia.programa ||
+    !Array.isArray(datosGuia.programa.reaOficiales) ||
+    datosGuia.programa.reaOficiales.length === 0
+  ) {
+    return;
+  }
+
+  const codigos =
+    document.querySelectorAll(".reaCodigoManual");
+
+  const textos =
+    document.querySelectorAll(".reaManual");
+
+  datosGuia.programa.reaOficiales.forEach(
+    (rea, indice) => {
+
+      if (codigos[indice]) {
+        codigos[indice].value =
+          rea.codigo || "";
+      }
+
+      if (textos[indice]) {
+        textos[indice].value =
+          rea.texto || "";
+      }
+
+    }
+  );
 }
   function restaurarBorradorEtapa2() {
 
@@ -2926,6 +2994,7 @@ if (datosGuia.programa.formaIngreso) {
   }
 
 }
+  restaurarBorradorEtapa3();
   return;
 }
 /* Si la guía todavía no ha sido configurada,
