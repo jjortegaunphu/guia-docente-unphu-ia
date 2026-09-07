@@ -851,6 +851,7 @@ ETAPA 3 - PROGRAMA DE LA ASIGNATURA Y REA
             class="bibliografiaManual"
             rows="3"
             placeholder="Escriba la referencia bibliográfica"
+            oninput="guardarBorradorEtapa3()"
           ></textarea>
         </div>
 
@@ -2214,11 +2215,12 @@ function agregarBibliografia(){
     contadorBibliografia +
     '</label>' +
 
-    '<textarea ' +
-    'class="bibliografiaManual" ' +
-    'rows="3" ' +
-    'placeholder="Escriba la referencia bibliográfica">' +
-    '</textarea>';
+   '<textarea ' +
+   'class="bibliografiaManual" ' +
+   'rows="3" ' +
+   'placeholder="Escriba la referencia bibliográfica" ' +
+   'oninput="guardarBorradorEtapa3()">' +
+   '</textarea>';
 
   contenedor.appendChild(bloque);
 
@@ -2581,7 +2583,23 @@ function guardarProgreso() {
 
   datosGuia.programa.reaOficiales =
     reaOficiales;
+const camposBibliografia =
+  document.querySelectorAll(
+    ".bibliografiaManual"
+  );
 
+const bibliografia = [];
+
+camposBibliografia.forEach(campo => {
+
+  bibliografia.push(
+    campo.value
+  );
+
+});
+
+datosGuia.programa.bibliografia =
+  bibliografia;
   guardarProgreso();
 }
   function restaurarBorradorEtapa3() {
@@ -2629,6 +2647,39 @@ while (cantidadVisible < cantidadGuardada) {
 
     }
   );
+const cantidadBibliografiaGuardada =
+  datosGuia.programa.bibliografia.length;
+
+let cantidadBibliografiaVisible =
+  document.querySelectorAll(
+    ".bibliografiaManual"
+  ).length;
+
+while (
+  cantidadBibliografiaVisible <
+  cantidadBibliografiaGuardada
+) {
+
+  agregarBibliografia();
+
+  cantidadBibliografiaVisible++;
+
+}
+const camposBibliografia =
+  document.querySelectorAll(
+    ".bibliografiaManual"
+  );
+
+datosGuia.programa.bibliografia.forEach(
+  (referencia, indice) => {
+
+    if (camposBibliografia[indice]) {
+      camposBibliografia[indice].value =
+        referencia || "";
+    }
+
+  }
+);    
 }
   function restaurarBorradorEtapa2() {
 
