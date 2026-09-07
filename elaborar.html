@@ -1765,6 +1765,10 @@ function mostrarCamposEvaluacion(rubros,descripcion){
     const fila=document.createElement("div");
 
     fila.className="fila-evaluacion";
+    fila.setAttribute(
+     "data-nombre",
+      nombre
+);
 
 
     let campoSemana="";
@@ -1776,7 +1780,8 @@ function mostrarCamposEvaluacion(rubros,descripcion){
         '<input type="number" ' +
         'class="semanaEvaluacion" ' +
         'min="1" max="' + semanas + '" ' +
-        'placeholder="Semana">';
+        'placeholder="Semana" ' +
+        'oninput="guardarBorradorEtapa2()">';
 
     }
 
@@ -1795,7 +1800,7 @@ function mostrarCamposEvaluacion(rubros,descripcion){
       'class="pesoEvaluacion" ' +
       'min="0" max="100" step="0.01" ' +
       'placeholder="Peso (%)" ' +
-      'oninput="calcularTotal()">' +
+      'oninput="calcularTotal(); guardarBorradorEtapa2()">' +
 
       campoSemana;
 
@@ -2228,9 +2233,10 @@ function volverEtapa2(){
   etapaActual = "etapa2";
   guardarProgreso();
 
-  prepararEtapa2();
+ prepararEtapa2();
 
-  
+ restaurarBorradorEtapa2();
+
 }
 
 
@@ -2496,6 +2502,95 @@ function guardarProgreso() {
   }
 
   guardarProgreso();
+}
+  function guardarBorradorEtapa2() {
+
+  if (etapaActual !== "etapa2") {
+    return;
+  }
+
+  const filas =
+    document.querySelectorAll(
+      "#camposEvaluacion .fila-evaluacion"
+    );
+
+  if (!filas.length) {
+    return;
+  }
+
+  const rubros = [];
+
+  filas.forEach(fila => {
+
+    const nombre =
+      fila.getAttribute("data-nombre");
+
+    const peso =
+      fila.querySelector(".pesoEvaluacion");
+
+    const semana =
+      fila.querySelector(".semanaEvaluacion");
+
+    rubros.push({
+      nombre: nombre,
+      peso: peso ? peso.value : "",
+      semana: semana ? semana.value : ""
+    });
+
+  });
+
+  datosGuia.evaluacion.rubros = rubros;
+
+  guardarProgreso();
+}
+  function restaurarBorradorEtapa2() {
+
+  if (
+    !datosGuia.evaluacion ||
+    !Array.isArray(datosGuia.evaluacion.rubros) ||
+    datosGuia.evaluacion.rubros.length === 0
+  ) {
+    return;
+  }
+
+  const filas =
+    document.querySelectorAll(
+      "#camposEvaluacion .fila-evaluacion"
+    );
+
+  filas.forEach(fila => {
+
+    const nombre =
+      fila.getAttribute("data-nombre");
+
+    const rubroGuardado =
+      datosGuia.evaluacion.rubros.find(
+        rubro => rubro.nombre === nombre
+      );
+
+    if (!rubroGuardado) {
+      return;
+    }
+
+    const peso =
+      fila.querySelector(".pesoEvaluacion");
+
+    const semana =
+      fila.querySelector(".semanaEvaluacion");
+
+    if (peso) {
+      peso.value =
+        rubroGuardado.peso ?? "";
+    }
+
+    if (semana) {
+      semana.value =
+        rubroGuardado.semana ?? "";
+    }
+
+  });
+
+  calcularTotal();
 }
 /* ==================================================
 RECUPERAR PROGRESO
@@ -2792,6 +2887,8 @@ if (carreraRubro) {
 }
 
   prepararEtapa2();
+
+  restaurarBorradorEtapa2();
 
   return;
 } 
