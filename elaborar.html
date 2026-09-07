@@ -2684,6 +2684,23 @@ function iniciarSemana1(){
 }
 crearClasesSemana();
 
+ const btnGenerarSemana =
+  document.getElementById("btnGenerarSemana");
+
+if (btnGenerarSemana) {
+
+  btnGenerarSemana.disabled = false;
+
+  btnGenerarSemana.textContent =
+    "Generar propuesta de Semana " +
+    semanaActual;
+
+  btnGenerarSemana.onclick =
+    function () {
+      generarPropuestaSemana();
+    };
+} 
+
 window.scrollTo(0,0);
 
 }
