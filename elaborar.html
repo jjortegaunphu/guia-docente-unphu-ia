@@ -3239,7 +3239,38 @@ function validarEvaluacionPropuesta(
       };
     }
   }
+/* Validar cierre del Rubro único en la última semana */
 
+const rubroUnico = sistemaEvaluacion.find(
+  rubro =>
+    rubro.nombre === "Rubro único" &&
+    rubro.componenteExterno !== true
+);
+
+if (
+  rubroUnico &&
+  semanaActual === semanas
+) {
+
+  const peso = Number(rubroUnico.peso);
+
+  const anterior =
+    puntuacionAnterior[rubroUnico.nombre] || 0;
+
+  const actual =
+    puntuacionSemanaActual[rubroUnico.nombre] || 0;
+
+  const total = anterior + actual;
+
+  if (Math.abs(total - peso) > 0.001) {
+    return {
+      valido: false,
+      mensaje:
+        `La semana ${semanaActual} es la última semana de la asignatura. ` +
+        `El Rubro único acumula ${total} de ${peso} puntos y debe completar exactamente ${peso} puntos.`
+    };
+  }
+}
   return {
     valido: true,
     mensaje: ""
@@ -3381,7 +3412,8 @@ const historialMetodologias = datosGuia.cronograma
         evaluacionesSemana: evaluacionesSemana,
         sistemaEvaluacion: datosGuia.evaluacion.rubros,
         historialEvaluacion: historialEvaluacion,
-        historialMetodologias: historialMetodologias
+        historialMetodologias: historialMetodologias,
+        totalSemanas: semanas
       })
     }
   );
