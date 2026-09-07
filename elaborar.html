@@ -2593,7 +2593,21 @@ function guardarProgreso() {
   ) {
     return;
   }
+const cantidadGuardada =
+  datosGuia.programa.reaOficiales.length;
 
+let cantidadVisible =
+  document.querySelectorAll(
+    ".reaCodigoManual"
+  ).length;
+
+while (cantidadVisible < cantidadGuardada) {
+
+  agregarREA();
+
+  cantidadVisible++;
+
+}
   const codigos =
     document.querySelectorAll(".reaCodigoManual");
 
