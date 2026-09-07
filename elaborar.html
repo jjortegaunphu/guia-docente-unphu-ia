@@ -1547,6 +1547,7 @@ function continuarConfiguracion(){
     }
 
   }
+  etapaActual = "etapa2";
   guardarProgreso();
   prepararEtapa2();
 
@@ -1571,8 +1572,9 @@ PREPARAR ETAPA 2
 
 function prepararEtapa2(){
 
-  const tipo =
-    document.getElementById("tipoAsignatura").value;
+ const tipo =
+    document.getElementById("tipoAsignatura").value ||
+    datosGuia.configuracion.tipoAsignatura;
 
   document
     .getElementById("etapa1")
@@ -1636,7 +1638,8 @@ CREAR ESQUEMA DE EVALUACIÓN
 function crearEvaluacion(){
 
   const tipo =
-    document.getElementById("tipoAsignatura").value;
+    document.getElementById("tipoAsignatura").value ||
+    datosGuia.configuracion.tipoAsignatura;
 
   let rubros=[];
 
@@ -1645,10 +1648,15 @@ function crearEvaluacion(){
 
   if(tipo==="teoria"){
 
-    const laboratorio =
+    const laboratorioSeleccionado =
       document.querySelector(
         'input[name="programaLaboratorio"]:checked'
-      ).value;
+  );
+
+const laboratorio =
+  laboratorioSeleccionado
+    ? laboratorioSeleccionado.value
+    : datosGuia.configuracion.programaLaboratorio;
 
 
     if(laboratorio==="no"){
@@ -1860,6 +1868,9 @@ function volverEtapa1(){
     .getElementById("etapa1")
     .classList.remove("oculto");
 
+  etapaActual = "etapa1";
+  guardarProgreso();
+
   window.scrollTo(0,0);
 
 }
@@ -1872,7 +1883,8 @@ FINALIZAR CONFIGURACIÓN
 function finalizarConfiguracion(){
 
   const tipo =
-    document.getElementById("tipoAsignatura").value;
+    document.getElementById("tipoAsignatura").value ||
+    datosGuia.configuracion.tipoAsignatura;
 
   const error =
     document.getElementById("errorEtapa2");
@@ -1994,19 +2006,23 @@ function finalizarConfiguracion(){
 
   else{
 
-    if(tipo==="teoria"){
+   if(tipo==="teoria"){
 
-      const laboratorio =
-        document.querySelector(
-          'input[name="programaLaboratorio"]:checked'
-        );
+  const laboratorioSeleccionado =
+    document.querySelector(
+      'input[name="programaLaboratorio"]:checked'
+    );
 
-      datosGuia.evaluacion.esquema =
-        laboratorio.value==="si"
-          ? "teoriaConLaboratorio"
-          : "teoriaSinLaboratorio";
+  const laboratorio =
+    laboratorioSeleccionado
+      ? laboratorioSeleccionado.value
+      : datosGuia.configuracion.programaLaboratorio;
 
-    }
+  datosGuia.evaluacion.esquema =
+    laboratorio==="si"
+      ? "teoriaConLaboratorio"
+      : "teoriaSinLaboratorio";
+}
 
     else{
 
@@ -2055,6 +2071,10 @@ function finalizarConfiguracion(){
     });
 
   }
+
+  etapaActual = "etapa3";
+  guardarProgreso();
+  
  document
   .getElementById("etapa2")
   .classList.add("oculto");
@@ -2204,6 +2224,9 @@ function volverEtapa2(){
   document
     .getElementById("etapa2")
     .classList.remove("oculto");
+
+  etapaActual = "etapa2";
+  guardarProgreso();
 
   window.scrollTo(0,0);
 
@@ -2388,6 +2411,10 @@ camposREA.forEach((campo, index) => {
     });
 
   }
+
+  etapaActual = "cronograma";
+  guardarProgreso();
+  
  iniciarSemana1();
 
 }
@@ -2412,6 +2439,7 @@ SEMANA 1 - INICIO DEL CRONOGRAMA
 ================================================== */
 
 let semanaActual = 1;
+let etapaActual = "etapa1";
 
   /* ==================================================
 GUARDAR Y RECUPERAR PROGRESO
@@ -2422,7 +2450,8 @@ function guardarProgreso() {
     "respaldoGuiaDocente",
     JSON.stringify({
       datosGuia: datosGuia,
-      semanaActual: semanaActual
+      semanaActual: semanaActual,
+      etapaActual: etapaActual
     })
   );
 }
@@ -2494,6 +2523,9 @@ function recuperarProgreso() {
     semanaActual =
       datosGuardados.semanaActual || 1;
 
+    etapaActual =
+      datosGuardados.etapaActual || "etapa1";
+
     semanas =
       datosGuia.configuracion.semanas;
 
@@ -2520,6 +2552,264 @@ function restaurarInterfazProgreso() {
   if (!recuperado) {
     return;
   }
+/* Restaurar frecuencia de clases */
+const frecuencia =
+  document.getElementById("frecuencia");
+
+if (frecuencia) {
+  frecuencia.value =
+    datosGuia.configuracion.clasesPorSemana;
+}
+  if (
+  datosGuia.configuracion.investigacion
+) {
+
+  const radioInvestigacion =
+    document.querySelector(
+      'input[name="investigacion"][value="' +
+      datosGuia.configuracion.investigacion +
+      '"]'
+    );
+
+  if (radioInvestigacion) {
+    radioInvestigacion.checked = true;
+  }
+}
+  if (
+  datosGuia.configuracion.vinculacion
+) {
+
+  const radioVinculacion =
+    document.querySelector(
+      'input[name="vinculacion"][value="' +
+      datosGuia.configuracion.vinculacion +
+      '"]'
+    );
+
+  if (radioVinculacion) {
+    radioVinculacion.checked = true;
+  }
+}
+  if (etapaActual === "etapa1") {
+
+  const tipoAsignatura =
+    document.getElementById("tipoAsignatura");
+    
+document
+  .getElementById("etapa1")
+  .classList.remove("oculto");
+
+document
+  .getElementById("etapa2")
+  .classList.add("oculto");
+
+document
+  .getElementById("etapa3")
+  .classList.add("oculto");
+
+document
+  .getElementById("etapaCronograma")
+  .classList.add("oculto");
+  if (tipoAsignatura) {
+    tipoAsignatura.value =
+      datosGuia.configuracion.tipoAsignatura || "";
+  }
+  if (
+  datosGuia.configuracion.tipoAsignatura === "teoria"
+) {
+  document
+    .getElementById("configTeoria")
+    .classList.remove("oculto");
+}
+
+if (
+  datosGuia.configuracion.tipoAsignatura === "rubroUnico"
+) {
+  document
+    .getElementById("configRubroUnico")
+    .classList.remove("oculto");
+
+  if (
+    datosGuia.configuracion.rubroPractica === "si"
+  ) {
+    document
+      .getElementById("areaRubro")
+      .classList.remove("oculto");
+  }
+}
+
+if (
+  datosGuia.configuracion.tipoAsignatura === "preinternado" ||
+  datosGuia.configuracion.tipoAsignatura === "internado"
+) {
+  document
+    .getElementById("configHospitalaria")
+    .classList.remove("oculto");
+}  
+if (
+  datosGuia.configuracion.programaLaboratorio
+) {
+
+  const radioLaboratorio =
+    document.querySelector(
+      'input[name="programaLaboratorio"][value="' +
+      datosGuia.configuracion.programaLaboratorio +
+      '"]'
+    );
+
+  if (radioLaboratorio) {
+    radioLaboratorio.checked = true;
+  }
+}
+    if (
+  datosGuia.configuracion.rubroPractica
+) {
+
+  const radioPractica =
+    document.querySelector(
+      'input[name="rubroPractica"][value="' +
+      datosGuia.configuracion.rubroPractica +
+      '"]'
+    );
+
+  if (radioPractica) {
+    radioPractica.checked = true;
+  }
+}
+   const carreraRubro =
+  document.getElementById("carreraRubro");
+
+if (carreraRubro) {
+  carreraRubro.value =
+    datosGuia.configuracion.carreraRubro || "";
+} 
+    const semanasHospitalaria =
+  document.getElementById("semanasHospitalaria");
+
+if (
+  semanasHospitalaria &&
+  (
+    datosGuia.configuracion.tipoAsignatura === "preinternado" ||
+    datosGuia.configuracion.tipoAsignatura === "internado"
+  )
+) {
+  semanasHospitalaria.value =
+    datosGuia.configuracion.semanas || "";
+}
+    if (
+  datosGuia.configuracion.tipoAsignatura === "teoria"
+) {
+
+  configurarTeoria();
+
+}
+   if (
+  datosGuia.configuracion.tipoAsignatura === "rubroUnico" &&
+  datosGuia.configuracion.rubroPractica === "no"
+) {
+
+  mostrarSemanas(
+    "Asignatura de Rubro único: el cronograma se " +
+    "configurará para 15 semanas y la evaluación " +
+    "se desarrollará sobre 100 puntos."
+  );
+
+} 
+   if (
+  datosGuia.configuracion.tipoAsignatura === "rubroUnico" &&
+  datosGuia.configuracion.rubroPractica === "si" &&
+  datosGuia.configuracion.carreraRubro
+) {
+
+  determinarSemanasRubro();
+
+} 
+    if (
+  datosGuia.configuracion.tipoAsignatura === "preinternado" ||
+  datosGuia.configuracion.tipoAsignatura === "internado"
+) {
+
+  actualizarSemanasHospitalaria();
+
+}
+  return;
+}
+ if (etapaActual === "etapa2") {
+
+  document
+    .getElementById("etapa1")
+    .classList.add("oculto");
+
+  document
+    .getElementById("etapa2")
+    .classList.remove("oculto");
+
+   const tipoAsignatura =
+  document.getElementById("tipoAsignatura");
+
+if (tipoAsignatura) {
+  tipoAsignatura.value =
+    datosGuia.configuracion.tipoAsignatura || "";
+}
+   if (
+  datosGuia.configuracion.programaLaboratorio
+) {
+
+  const radioLaboratorio =
+    document.querySelector(
+      'input[name="programaLaboratorio"][value="' +
+      datosGuia.configuracion.programaLaboratorio +
+      '"]'
+    );
+
+  if (radioLaboratorio) {
+    radioLaboratorio.checked = true;
+  }
+  }
+
+  if (
+    datosGuia.configuracion.rubroPractica
+  ) {
+
+    const radioPractica =
+      document.querySelector(
+        'input[name="rubroPractica"][value="' +
+        datosGuia.configuracion.rubroPractica +
+        '"]'
+      );
+
+    if (radioPractica) {
+      radioPractica.checked = true;
+    }
+  }
+   const carreraRubro =
+  document.getElementById("carreraRubro");
+
+if (carreraRubro) {
+  carreraRubro.value =
+    datosGuia.configuracion.carreraRubro || "";
+}
+
+  prepararEtapa2();
+
+  return;
+} 
+  if (etapaActual === "etapa3") {
+
+  document
+    .getElementById("etapa1")
+    .classList.add("oculto");
+
+  document
+    .getElementById("etapa2")
+    .classList.add("oculto");
+
+  document
+    .getElementById("etapa3")
+    .classList.remove("oculto");
+
+  return;
+}
 /* Si la guía todavía no ha sido configurada,
    permanecer en la Etapa 1 */
 if (
@@ -2529,15 +2819,7 @@ if (
 ) {
   return;
 }
-  /* Restaurar frecuencia de clases */
-  const frecuencia =
-    document.getElementById("frecuencia");
-
-  if (frecuencia) {
-    frecuencia.value =
-      datosGuia.configuracion.clasesPorSemana;
-  }
-
+  
   /* Restaurar cantidad de semanas */
   semanas =
     datosGuia.configuracion.semanas;
@@ -3090,6 +3372,9 @@ function volverEtapa3(){
     .getElementById("etapa3")
     .classList.remove("oculto");
 
+  etapaActual = "etapa3";
+  guardarProgreso();
+  
   window.scrollTo(0,0);
 
 }
