@@ -2133,6 +2133,11 @@ function configurarPrograma(){
 
   if(!seleccion) return;
 
+  datosGuia.programa.formaIngreso =
+    seleccion.value;
+
+  guardarProgreso();
+  
   if(seleccion.value==="archivo"){
 
     archivo.classList.remove("oculto");
@@ -2905,7 +2910,22 @@ if (carreraRubro) {
   document
     .getElementById("etapa3")
     .classList.remove("oculto");
+    
+if (datosGuia.programa.formaIngreso) {
 
+  const radioFormaPrograma =
+    document.querySelector(
+      'input[name="formaPrograma"][value="' +
+      datosGuia.programa.formaIngreso +
+      '"]'
+    );
+
+  if (radioFormaPrograma) {
+    radioFormaPrograma.checked = true;
+    configurarPrograma();
+  }
+
+}
   return;
 }
 /* Si la guía todavía no ha sido configurada,
