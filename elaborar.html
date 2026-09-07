@@ -4266,7 +4266,17 @@ const parametrosInicio =
 const modoInicio =
   parametrosInicio.get("modo");
 
-if (modoInicio !== "nueva") {
+if (modoInicio === "nueva") {
+
+  guardarProgreso();
+
+  window.history.replaceState(
+    {},
+    "",
+    window.location.pathname
+  );
+
+} else {
   restaurarInterfazProgreso();
 }
 </script>
