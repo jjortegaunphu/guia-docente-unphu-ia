@@ -3365,6 +3365,9 @@ function continuarSiguienteSemana(){
   if (semanaActual >= semanas) {
     return;
   }
+
+  guardarContenidoSemanaActual();
+  
   semanaActual++;
   guardarProgreso();
 
@@ -3493,6 +3496,8 @@ function irSemanaAnterior() {
     return;
   }
 
+  guardarContenidoSemanaActual();
+  
   semanaActual--;
 
   guardarProgreso();
