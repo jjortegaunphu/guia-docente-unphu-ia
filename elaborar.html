@@ -2519,7 +2519,15 @@ function restaurarInterfazProgreso() {
   if (!recuperado) {
     return;
   }
-
+/* Si la guía todavía no ha sido configurada,
+   permanecer en la Etapa 1 */
+if (
+  !datosGuia.configuracion.tipoAsignatura ||
+  !datosGuia.configuracion.semanas ||
+  !datosGuia.configuracion.clasesPorSemana
+) {
+  return;
+}
   /* Restaurar frecuencia de clases */
   const frecuencia =
     document.getElementById("frecuencia");
