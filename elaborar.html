@@ -4260,7 +4260,15 @@ function mostrarErrorCronograma(texto){
   error.classList.remove("oculto");
 
 } 
-restaurarInterfazProgreso();
+const parametrosInicio =
+  new URLSearchParams(window.location.search);
+
+const modoInicio =
+  parametrosInicio.get("modo");
+
+if (modoInicio !== "nueva") {
+  restaurarInterfazProgreso();
+}
 </script>
 
 </body>
