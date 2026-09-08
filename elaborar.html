@@ -999,6 +999,31 @@ ETAPA 4 - ELABORACIÓN DEL CRONOGRAMA
   </button>
 
 </section>
+ <!-- ==================================================
+VISTA FINAL DEL CRONOGRAMA
+================================================== -->
+
+<section id="vistaFinalCronograma" class="panel oculto">
+
+  <span class="etapa">X. Cronograma</span>
+
+  <h2>Cronograma completo de la asignatura</h2>
+
+  <p class="descripcion">
+    Revise la propuesta académica completa antes de finalizar
+    la guía docente.
+  </p>
+
+  <div class="resultado">
+    El cronograma presenta la organización académica de todas
+    las semanas de la asignatura, integrando contenidos,
+    metodologías de enseñanza, actividades formativas, REA,
+    recursos y bibliografía.
+  </div>
+
+  <div id="contenidoCronogramaCompleto"></div>
+
+</section> 
 </main>
 
 
@@ -3179,10 +3204,15 @@ if (btnSemanaAnterior) {
 
     } else {
 
-      btnGenerarSemana.textContent =
-        "Cronograma completado";
+btnGenerarSemana.textContent =
+    "Ver cronograma completo";
 
-      btnGenerarSemana.disabled = true;
+btnGenerarSemana.disabled = false;
+
+btnGenerarSemana.onclick =
+  function () {
+    mostrarVistaFinalCronograma();
+  };
     }
 
   } else {
@@ -3361,6 +3391,50 @@ function crearClasesSemana(){
 });
      }
   }
+  /* ==================================================
+MOSTRAR VISTA FINAL DEL CRONOGRAMA
+================================================== */
+
+function mostrarVistaFinalCronograma() {
+
+  guardarContenidoSemanaActual();
+
+  document
+    .getElementById("etapaCronograma")
+    .classList.add("oculto");
+
+  document
+    .getElementById("vistaFinalCronograma")
+    .classList.remove("oculto");
+
+  const contenedor =
+  document.getElementById("contenidoCronogramaCompleto");
+
+contenedor.innerHTML = "";
+
+const semanasOrdenadas =
+  [...datosGuia.cronograma].sort(
+    (a, b) => a.semana - b.semana
+  );
+
+semanasOrdenadas.forEach(datosSemana => {
+
+  const bloqueSemana =
+    document.createElement("div");
+
+  bloqueSemana.className = "resumen-esquema";
+
+  bloqueSemana.innerHTML =
+    "<h3>Semana " +
+    datosSemana.semana +
+    "</h3>";
+
+  contenedor.appendChild(bloqueSemana);
+
+});
+  
+  window.scrollTo(0, 0);
+}
 function continuarSiguienteSemana(){
   if (semanaActual >= semanas) {
     return;
@@ -3453,10 +3527,15 @@ if (btnGenerarSemana) {
 
     } else {
 
-      btnGenerarSemana.textContent =
-        "Cronograma completado";
+btnGenerarSemana.textContent =
+  "Ver cronograma completo";
 
-      btnGenerarSemana.disabled = true;
+btnGenerarSemana.disabled = false;
+
+btnGenerarSemana.onclick =
+  function () {
+    mostrarVistaFinalCronograma();
+  };
     }
 
   } else {
@@ -3631,6 +3710,8 @@ function volverEtapa3(){
 
   etapaActual = "etapa3";
   guardarProgreso();
+
+  prepararEtapa3();
   
   window.scrollTo(0,0);
 
@@ -4038,9 +4119,14 @@ if (btnGenerarSemana) {
   } else {
 
     btnGenerarSemana.textContent =
-      "Cronograma completado";
+  "Ver cronograma completo";
 
-    btnGenerarSemana.disabled = true;
+btnGenerarSemana.disabled = false;
+
+btnGenerarSemana.onclick =
+  function () {
+    mostrarVistaFinalCronograma();
+  };
 
   }
 }
