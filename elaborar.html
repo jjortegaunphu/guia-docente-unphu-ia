@@ -2458,7 +2458,8 @@ camposREA.forEach((campo, index) => {
   etapaActual = "cronograma";
   guardarProgreso();
   
- iniciarSemana1();
+ abrirSemanaGuardada(semanaActual);
+ guardarProgreso();
 
 }
 
@@ -3278,6 +3279,115 @@ window.scrollTo(0,0);
 
 }
 
+  function abrirSemanaGuardada(numeroSemana) {
+
+  semanaActual = numeroSemana;
+
+  document
+    .getElementById("etapa3")
+    .classList.add("oculto");
+
+  document
+    .getElementById("etapaCronograma")
+    .classList.remove("oculto");
+
+document.getElementById("tituloSemana").textContent =
+  "Semana " + semanaActual;
+
+const tituloContenidosSemana =
+  document.getElementById("tituloContenidosSemana");
+
+if (tituloContenidosSemana) {
+  tituloContenidosSemana.textContent =
+    "Contenidos de la Semana " + semanaActual;
+}
+
+crearClasesSemana();
+    
+ const datosSemana =
+  datosGuia.cronograma.find(
+    semana => semana.semana === semanaActual
+  );
+
+if (datosSemana) {
+
+  const campos =
+    document.querySelectorAll(".contenidoClase");
+
+  campos.forEach(campo => {
+
+    const numeroClase =
+      parseInt(
+        campo.getAttribute("data-clase")
+      );
+
+    const claseGuardada =
+      datosSemana.clases?.find(
+        clase => clase.clase === numeroClase
+      );
+
+    if (claseGuardada) {
+      campo.value =
+        claseGuardada.contenido || "";
+    }
+
+  });
+
+} 
+    if (datosSemana?.propuesta) {
+
+     mostrarPropuestaAcademica(
+      datosSemana.propuesta
+  );
+
+}
+ const btnGenerarSemana =
+  document.getElementById("btnGenerarSemana");
+
+if (btnGenerarSemana) {
+
+  btnGenerarSemana.disabled = false;
+
+  if (datosSemana?.propuesta) {
+
+    if (semanaActual < semanas) {
+
+      btnGenerarSemana.textContent =
+        "Continuar a la Semana " +
+        (semanaActual + 1);
+
+      btnGenerarSemana.onclick =
+        function () {
+          continuarSiguienteSemana();
+        };
+
+    } else {
+
+      btnGenerarSemana.textContent =
+        "Ver cronograma completo";
+
+      btnGenerarSemana.onclick =
+        function () {
+          mostrarVistaFinalCronograma();
+        };
+
+    }
+
+  } else {
+
+    btnGenerarSemana.textContent =
+      "Generar propuesta de Semana " +
+      semanaActual;
+
+    btnGenerarSemana.onclick =
+      function () {
+        generarPropuestaSemana();
+      };
+
+  }
+
+}   
+}
 
 /* ==================================================
 CREAR CLASES SEGÚN FRECUENCIA
