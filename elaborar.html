@@ -3521,33 +3521,62 @@ function mostrarVistaFinalCronograma() {
     .classList.remove("oculto");
 
   const contenedor =
-  document.getElementById("contenidoCronogramaCompleto");
+    document.getElementById("contenidoCronogramaCompleto");
 
-contenedor.innerHTML = "";
+  contenedor.innerHTML = "";
 
-const semanasOrdenadas =
-  [...datosGuia.cronograma].sort(
-    (a, b) => a.semana - b.semana
-  );
+  const semanasOrdenadas =
+    [...datosGuia.cronograma].sort(
+      (a, b) => a.semana - b.semana
+    );
 
-semanasOrdenadas.forEach(datosSemana => {
+  semanasOrdenadas.forEach(datosSemana => {
 
-  const bloqueSemana =
-    document.createElement("div");
+    const bloqueSemana =
+      document.createElement("div");
 
-  bloqueSemana.className = "resumen-esquema";
+    bloqueSemana.className = "resumen-esquema";
 
-  bloqueSemana.innerHTML =
-    "<h3>Semana " +
-    datosSemana.semana +
-    "</h3>";
+    bloqueSemana.innerHTML =
+      "<h3>Semana " +
+      datosSemana.semana +
+      "</h3>";
 
-  contenedor.appendChild(bloqueSemana);
+    const propuesta = datosSemana.propuesta;
 
-});
-  
+    if (propuesta && Array.isArray(propuesta.clases)) {
+
+      propuesta.clases.forEach(clase => {
+
+        const bloqueClase =
+          document.createElement("div");
+
+        bloqueClase.style.marginTop = "22px";
+        bloqueClase.style.paddingTop = "15px";
+        bloqueClase.style.borderTop =
+          "1px solid var(--borde)";
+
+        bloqueClase.innerHTML =
+          "<h4>Clase " +
+          clase.clase +
+          "</h4>" +
+          "<p><strong>Contenido:</strong><br>" +
+          (clase.contenido || "") +
+          "</p>";
+
+        bloqueSemana.appendChild(bloqueClase);
+
+      });
+
+    }
+
+    contenedor.appendChild(bloqueSemana);
+
+  });
+
   window.scrollTo(0, 0);
 }
+  
 function continuarSiguienteSemana(){
   if (semanaActual >= semanas) {
     return;
