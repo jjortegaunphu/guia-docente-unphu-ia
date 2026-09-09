@@ -3526,6 +3526,24 @@ function mostrarVistaFinalCronograma() {
 
   contenedor.innerHTML = "";
 
+  const tablaCronograma = document.createElement("table");
+
+tablaCronograma.style.width = "100%";
+tablaCronograma.style.borderCollapse = "collapse";
+
+tablaCronograma.innerHTML =
+  "<thead>" +
+    "<tr>" +
+      "<th>Contenido</th>" +
+      "<th>Metodologías de Enseñanza</th>" +
+      "<th>Actividades Formativas y REA(s)</th>" +
+      "<th>Recursos y Bibliografías</th>" +
+    "</tr>" +
+  "</thead>" +
+  "<tbody id='cuerpoCronogramaInstitucional'></tbody>";
+
+contenedor.appendChild(tablaCronograma);
+  
   const semanasOrdenadas =
     [...datosGuia.cronograma].sort(
       (a, b) => a.semana - b.semana
