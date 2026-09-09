@@ -3606,6 +3606,31 @@ const actividadesInstitucionales =
         )
         .join("<br><br>")
     : "";
+
+        const recursosInstitucionales =
+  "<strong>Recursos materiales:</strong><br>" +
+  (
+    Array.isArray(clase.recursosMateriales) &&
+    clase.recursosMateriales.length > 0
+      ? clase.recursosMateriales.join("<br>")
+      : ""
+  ) +
+
+  "<br><br><strong>Recursos virtuales:</strong><br>" +
+  (
+    Array.isArray(clase.recursosVirtuales) &&
+    clase.recursosVirtuales.length > 0
+      ? clase.recursosVirtuales.join("<br>")
+      : ""
+  ) +
+
+  "<br><br><strong>Bibliografía:</strong><br>" +
+  (
+    Array.isArray(clase.bibliografia) &&
+    clase.bibliografia.length > 0
+      ? clase.bibliografia.join("<br>")
+      : ""
+  );
         
         const filaClaseInstitucional =
   document.createElement("tr");
@@ -3625,7 +3650,10 @@ filaClaseInstitucional.innerHTML =
   "<td>" +
      actividadesInstitucionales +
   "</td>" +
-  "<td></td>";
+  
+  "<td>" +
+    recursosInstitucionales +
+  "</td>";
 
 cuerpoCronograma.appendChild(filaClaseInstitucional);
         
