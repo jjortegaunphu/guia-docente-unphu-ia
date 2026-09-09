@@ -3576,8 +3576,24 @@ metodologiasActividades.forEach((item, index) => {
 
       "<p><strong>Mediación docente:</strong><br>" +
       (item.explicacionMetodologia || "") +
-      "</p>" +
-    "</div>";
+     "</p>" +
+
+"<p><strong>Actividad formativa " +
+(index + 1) +
+":</strong><br>" +
+(item.actividadFormativa || "") +
+"</p>" +
+
+"<p><strong>REA:</strong><br>" +
+(
+  Array.isArray(item.codigosREA) &&
+  item.codigosREA.length > 0
+    ? item.codigosREA.join(", ")
+    : "Sin REA asociado"
+) +
+"</p>" +
+
+"</div>";
 
 });
 
