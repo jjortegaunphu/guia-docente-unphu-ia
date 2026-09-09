@@ -3551,6 +3551,19 @@ contenedor.appendChild(tablaCronograma);
 
   semanasOrdenadas.forEach(datosSemana => {
 
+    const cuerpoCronograma =
+  document.getElementById("cuerpoCronogramaInstitucional");
+
+const filaSemana = document.createElement("tr");
+
+filaSemana.innerHTML =
+  "<td colspan='4' style='text-align:center; font-weight:bold;'>" +
+    "Semana " +
+    datosSemana.semana +
+  "</td>";
+
+cuerpoCronograma.appendChild(filaSemana);
+    
     const bloqueSemana =
       document.createElement("div");
 
