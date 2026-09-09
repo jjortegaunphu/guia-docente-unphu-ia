@@ -3580,6 +3580,21 @@ cuerpoCronograma.appendChild(filaSemana);
 
       propuesta.clases.forEach(clase => {
 
+const metodologiasInstitucionales =
+  Array.isArray(clase.metodologiasActividades)
+    ? clase.metodologiasActividades
+        .map((item, index) =>
+          "<strong>Metodología " +
+          (index + 1) +
+          ":</strong><br>" +
+          (item.metodologia || "") +
+          "<br><br>" +
+          "<strong>Mediación docente:</strong><br>" +
+          (item.explicacionMetodologia || "")
+        )
+        .join("<br><br>")
+    : "";
+        
         const filaClaseInstitucional =
   document.createElement("tr");
 
@@ -3590,7 +3605,10 @@ filaClaseInstitucional.innerHTML =
     "</strong><br>" +
     (clase.contenido || "") +
   "</td>" +
-  "<td></td>" +
+  
+  "<td>" +
+    metodologiasInstitucionales +
+  "</td>" +
   "<td></td>" +
   "<td></td>";
 
