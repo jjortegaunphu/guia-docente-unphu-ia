@@ -4204,11 +4204,21 @@ if (!validacionEvaluacion.valido) {
   );
 }
   
-  datosSemana.propuesta = resultado.propuesta;
+  datosGuia.cronograma[indiceSemana === -1
+  ? datosGuia.cronograma.length - 1
+  : indiceSemana
+].propuesta = resultado.propuesta;
+
+const propuestaGuardada =
+  datosGuia.cronograma[indiceSemana === -1
+    ? datosGuia.cronograma.length - 1
+    : indiceSemana
+  ].propuesta;
   guardarProgreso();
-  console.log("Propuesta académica:", datosSemana.propuesta);
+ console.log("Propuesta académica:", propuestaGuardada);
+   
    try {
-  mostrarPropuestaAcademica(datosSemana.propuesta);
+  mostrarPropuestaAcademica(propuestaGuardada);
  } catch (errorVisualizacion) {
   console.error(
     "La propuesta fue generada y guardada, pero ocurrió un error al mostrarla:",
