@@ -3600,6 +3600,12 @@ const recursosVirtualesTexto =
   clase.recursosVirtuales.length > 0
     ? clase.recursosVirtuales.join("<br>")
     : "";
+
+   const bibliografiaTexto =
+  Array.isArray(clase.bibliografia) &&
+  clase.bibliografia.length > 0
+    ? clase.bibliografia.join("<br>")
+    : "";     
         
 bloqueClase.innerHTML =
   "<h4>Clase " +
@@ -3624,6 +3630,14 @@ metodologiasHTML +
   recursosVirtualesTexto
     ? "<p><strong>Recursos virtuales:</strong><br>" +
       recursosVirtualesTexto +
+      "</p>"
+    : ""
+) +
+
+(
+  bibliografiaTexto
+    ? "<p><strong>Bibliografía:</strong><br>" +
+      bibliografiaTexto +
       "</p>"
     : ""
 );
