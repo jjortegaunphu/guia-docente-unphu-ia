@@ -3580,6 +3580,22 @@ cuerpoCronograma.appendChild(filaSemana);
 
       propuesta.clases.forEach(clase => {
 
+        const filaClaseInstitucional =
+  document.createElement("tr");
+
+filaClaseInstitucional.innerHTML =
+  "<td>" +
+    "<strong>Clase " +
+    clase.clase +
+    "</strong><br>" +
+    (clase.contenido || "") +
+  "</td>" +
+  "<td></td>" +
+  "<td></td>" +
+  "<td></td>";
+
+cuerpoCronograma.appendChild(filaClaseInstitucional);
+        
         const bloqueClase =
           document.createElement("div");
 
