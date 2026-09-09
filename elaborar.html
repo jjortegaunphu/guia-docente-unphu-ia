@@ -3589,6 +3589,12 @@ metodologiasActividades.forEach((item, index) => {
 
 });
 
+ const recursosMaterialesTexto =
+  Array.isArray(clase.recursosMateriales) &&
+  clase.recursosMateriales.length > 0
+    ? clase.recursosMateriales.join("<br>")
+    : "";       
+        
 bloqueClase.innerHTML =
   "<h4>Clase " +
   clase.clase +
@@ -3598,7 +3604,15 @@ bloqueClase.innerHTML =
   (clase.contenido || "") +
   "</p>" +
 
-  metodologiasHTML;
+metodologiasHTML +
+
+(
+  recursosMaterialesTexto
+    ? "<p><strong>Recursos materiales:</strong><br>" +
+      recursosMaterialesTexto +
+      "</p>"
+    : ""
+);
 
         bloqueSemana.appendChild(bloqueClase);
 
