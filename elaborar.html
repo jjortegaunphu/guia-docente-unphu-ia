@@ -3593,7 +3593,13 @@ metodologiasActividades.forEach((item, index) => {
   Array.isArray(clase.recursosMateriales) &&
   clase.recursosMateriales.length > 0
     ? clase.recursosMateriales.join("<br>")
-    : "";       
+    : ""; 
+
+const recursosVirtualesTexto =
+  Array.isArray(clase.recursosVirtuales) &&
+  clase.recursosVirtuales.length > 0
+    ? clase.recursosVirtuales.join("<br>")
+    : "";
         
 bloqueClase.innerHTML =
   "<h4>Clase " +
@@ -3610,6 +3616,14 @@ metodologiasHTML +
   recursosMaterialesTexto
     ? "<p><strong>Recursos materiales:</strong><br>" +
       recursosMaterialesTexto +
+      "</p>"
+    : ""
+) +
+
+(
+  recursosVirtualesTexto
+    ? "<p><strong>Recursos virtuales:</strong><br>" +
+      recursosVirtualesTexto +
       "</p>"
     : ""
 );
