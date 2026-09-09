@@ -3508,6 +3508,7 @@ function crearClasesSemana(){
 MOSTRAR VISTA FINAL DEL CRONOGRAMA
 ================================================== */
 
+  
 function mostrarVistaFinalCronograma() {
 
   guardarContenidoSemanaActual();
@@ -3556,13 +3557,40 @@ function mostrarVistaFinalCronograma() {
         bloqueClase.style.borderTop =
           "1px solid var(--borde)";
 
-        bloqueClase.innerHTML =
-          "<h4>Clase " +
-          clase.clase +
-          "</h4>" +
-          "<p><strong>Contenido:</strong><br>" +
-          (clase.contenido || "") +
-          "</p>";
+       const metodologiasActividades =
+  Array.isArray(clase.metodologiasActividades)
+    ? clase.metodologiasActividades
+    : [];
+
+let metodologiasHTML = "";
+
+metodologiasActividades.forEach((item, index) => {
+
+  metodologiasHTML +=
+    "<div style='margin-top:15px;'>" +
+      "<p><strong>Metodología " +
+      (index + 1) +
+      ":</strong><br>" +
+      (item.metodologia || "") +
+      "</p>" +
+
+      "<p><strong>Mediación docente:</strong><br>" +
+      (item.explicacionMetodologia || "") +
+      "</p>" +
+    "</div>";
+
+});
+
+bloqueClase.innerHTML =
+  "<h4>Clase " +
+  clase.clase +
+  "</h4>" +
+
+  "<p><strong>Contenido:</strong><br>" +
+  (clase.contenido || "") +
+  "</p>" +
+
+  metodologiasHTML;
 
         bloqueSemana.appendChild(bloqueClase);
 
