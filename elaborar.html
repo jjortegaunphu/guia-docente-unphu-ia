@@ -3564,17 +3564,7 @@ filaSemana.innerHTML =
 
 cuerpoCronograma.appendChild(filaSemana);
     
-    const bloqueSemana =
-      document.createElement("div");
-
-    bloqueSemana.className = "resumen-esquema";
-
-    bloqueSemana.innerHTML =
-      "<h3>Semana " +
-      datosSemana.semana +
-      "</h3>";
-
-    const propuesta = datosSemana.propuesta;
+      const propuesta = datosSemana.propuesta;
 
     if (propuesta && Array.isArray(propuesta.clases)) {
 
@@ -3657,15 +3647,7 @@ filaClaseInstitucional.innerHTML =
 
 cuerpoCronograma.appendChild(filaClaseInstitucional);
         
-        const bloqueClase =
-          document.createElement("div");
-
-        bloqueClase.style.marginTop = "22px";
-        bloqueClase.style.paddingTop = "15px";
-        bloqueClase.style.borderTop =
-          "1px solid var(--borde)";
-
-       const metodologiasActividades =
+const metodologiasActividades =
   Array.isArray(clase.metodologiasActividades)
     ? clase.metodologiasActividades
     : [];
@@ -3749,14 +3731,10 @@ metodologiasHTML +
       "</p>"
     : ""
 );
-
-        bloqueSemana.appendChild(bloqueClase);
-
+       
       });
 
     }
-
-    contenedor.appendChild(bloqueSemana);
 
   });
 
