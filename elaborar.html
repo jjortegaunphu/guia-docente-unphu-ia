@@ -3594,6 +3594,18 @@ const metodologiasInstitucionales =
         )
         .join("<br><br>")
     : "";
+
+const actividadesInstitucionales =
+  Array.isArray(clase.metodologiasActividades)
+    ? clase.metodologiasActividades
+        .map((item, index) =>
+          "<strong>Actividad formativa " +
+          (index + 1) +
+          ":</strong><br>" +
+          (item.actividadFormativa || "")
+        )
+        .join("<br><br>")
+    : "";
         
         const filaClaseInstitucional =
   document.createElement("tr");
@@ -3609,7 +3621,10 @@ filaClaseInstitucional.innerHTML =
   "<td>" +
     metodologiasInstitucionales +
   "</td>" +
-  "<td></td>" +
+  
+  "<td>" +
+     actividadesInstitucionales +
+  "</td>" +
   "<td></td>";
 
 cuerpoCronograma.appendChild(filaClaseInstitucional);
