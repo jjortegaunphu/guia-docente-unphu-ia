@@ -3572,7 +3572,19 @@ function mostrarVistaFinalCronograma() {
   etapaActual = "vistaFinalCronograma";
   guardarProgreso();
 
-  document
+document
+  .getElementById("etapa1")
+  .classList.add("oculto");
+
+document
+  .getElementById("etapa2")
+  .classList.add("oculto");
+
+document
+  .getElementById("etapa3")
+  .classList.add("oculto");
+  
+document
     .getElementById("etapaCronograma")
     .classList.add("oculto");
 
