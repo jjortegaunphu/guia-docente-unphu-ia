@@ -3141,6 +3141,12 @@ if (datosGuia.programa.formaIngreso) {
   restaurarBorradorEtapa3();
   return;
 }
+
+if (etapaActual === "vistaFinalCronograma") {
+  mostrarVistaFinalCronograma();
+  return;
+}
+  
 /* Si la guía todavía no ha sido configurada,
    permanecer en la Etapa 1 */
 if (
@@ -3562,6 +3568,9 @@ MOSTRAR VISTA FINAL DEL CRONOGRAMA
 function mostrarVistaFinalCronograma() {
 
   guardarContenidoSemanaActual();
+
+  etapaActual = "vistaFinalCronograma";
+  guardarProgreso();
 
   document
     .getElementById("etapaCronograma")
