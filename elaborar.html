@@ -4932,10 +4932,18 @@ function editarActividadFormativa(numeroClase, indiceMetodologia) {
     return;
   }
 
-  alert(
-    "Actividad seleccionada: " +
-    (metodologia.actividadFormativa || "")
-  );
+  const actividadCompleta =
+  metodologia.actividadFormativa || "";
+
+const actividadSinREA =
+  actividadCompleta
+    .replace(/\s*\(REA[^)]*\)\s*$/i, "")
+    .trim();
+
+alert(
+  "Texto editable de la actividad: " +
+  actividadSinREA
+);
 }
   
  function aceptarReaSugerido(numeroClase, reaIndex) {
