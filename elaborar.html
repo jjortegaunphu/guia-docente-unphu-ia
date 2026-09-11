@@ -4754,7 +4754,15 @@ const estadoREA =
   if (nuevoContenido === null) {
     return;
   }
-}
+  
+  clase.contenido = nuevoContenido.trim();
+
+  guardarProgreso();
+
+  mostrarPropuestaAcademica(
+  semana.propuesta
+);
+  }
   
  function aceptarReaSugerido(numeroClase, reaIndex) {
 
