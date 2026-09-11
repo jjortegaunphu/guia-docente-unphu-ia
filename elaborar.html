@@ -4509,6 +4509,14 @@ metodologiasActividades.forEach((item, index) => {
         ${item.metodologia || ""}
       </p>
 
+      <button
+  type="button"
+  class="boton boton-secundario"
+  onclick="editarMetodologiaClase(${clase.clase}, ${index})"
+>
+  Editar metodología
+</button>
+
       <p>
         <strong>Mediación docente:</strong><br>
         ${item.explicacionMetodologia || ""}
@@ -4763,6 +4771,37 @@ const estadoREA =
   semana.propuesta
 );
   }
+
+function editarMetodologiaClase(numeroClase, indiceMetodologia) {
+
+  const semana = datosGuia.cronograma.find(
+    item => item.semana === semanaActual
+  );
+
+  if (!semana || !semana.propuesta) {
+    return;
+  }
+
+  const clase = semana.propuesta.clases.find(
+    item => item.clase === numeroClase
+  );
+
+  if (!clase) {
+    return;
+  }
+
+  const metodologia =
+    clase.metodologiasActividades[indiceMetodologia];
+
+  if (!metodologia) {
+    return;
+  }
+
+  alert(
+    "Metodología seleccionada: " +
+    metodologia.metodologia
+  );
+}
   
  function aceptarReaSugerido(numeroClase, reaIndex) {
 
