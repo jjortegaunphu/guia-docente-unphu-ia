@@ -4940,9 +4940,25 @@ const actividadSinREA =
     .replace(/\s*\(REA[^)]*\)\s*$/i, "")
     .trim();
 
-alert(
-  "Texto editable de la actividad: " +
+const nuevaActividad = prompt(
+  "Edite la actividad formativa:",
   actividadSinREA
+);
+
+if (nuevaActividad === null) {
+  return;
+}
+  const reaOriginal =
+  actividadCompleta.match(/\s*(\(REA[^)]*\))\s*$/i);
+
+metodologia.actividadFormativa =
+  nuevaActividad.trim() +
+  (reaOriginal ? " " + reaOriginal[1] : "");
+
+guardarProgreso();
+
+mostrarPropuestaAcademica(
+  semana.propuesta
 );
 }
   
