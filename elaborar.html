@@ -4820,6 +4820,31 @@ const seleccion = prompt(
   "\n\nMetodología actual: " +
   metodologia.metodologia
 );
+
+if (seleccion === null) {
+  return;
+}
+
+const numeroSeleccionado = parseInt(seleccion, 10);
+
+if (
+  isNaN(numeroSeleccionado) ||
+  numeroSeleccionado < 1 ||
+  numeroSeleccionado > metodologiasPermitidas.length
+) {
+  alert("Seleccione un número válido del 1 al 10.");
+  return;
+}
+
+metodologia.metodologia =
+  metodologiasPermitidas[numeroSeleccionado - 1];
+
+guardarProgreso();
+
+mostrarPropuestaAcademica(
+  semana.propuesta
+);
+  
 }
   
  function aceptarReaSugerido(numeroClase, reaIndex) {
