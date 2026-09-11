@@ -4522,6 +4522,14 @@ metodologiasActividades.forEach((item, index) => {
         ${item.explicacionMetodologia || ""}
       </p>
 
+      <button
+  type="button"
+  class="boton boton-secundario"
+  onclick="editarMediacionClase(${clase.clase}, ${index})"
+>
+  Editar mediación
+</button>
+
      <p>
         <strong>Actividad formativa ${index + 1}:</strong><br>
         ${actividadLimpia}${codigosREA ? ` (${codigosREA})` : ""}
@@ -4845,6 +4853,37 @@ mostrarPropuestaAcademica(
   semana.propuesta
 );
   
+}
+
+  function editarMediacionClase(numeroClase, indiceMetodologia) {
+
+  const semana = datosGuia.cronograma.find(
+    item => item.semana === semanaActual
+  );
+
+  if (!semana || !semana.propuesta) {
+    return;
+  }
+
+  const clase = semana.propuesta.clases.find(
+    item => item.clase === numeroClase
+  );
+
+  if (!clase) {
+    return;
+  }
+
+  const metodologia =
+    clase.metodologiasActividades[indiceMetodologia];
+
+  if (!metodologia) {
+    return;
+  }
+
+  alert(
+    "Mediación seleccionada: " +
+    (metodologia.explicacionMetodologia || "")
+  );
 }
   
  function aceptarReaSugerido(numeroClase, reaIndex) {
