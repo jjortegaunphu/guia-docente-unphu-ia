@@ -4797,10 +4797,29 @@ function editarMetodologiaClase(numeroClase, indiceMetodologia) {
     return;
   }
 
-  alert(
-    "Metodología seleccionada: " +
-    metodologia.metodologia
-  );
+  const metodologiasPermitidas = [
+  "Trabajo colaborativo",
+  "Intercambios orales",
+  "Diálogo socrático",
+  "Estudio de casos",
+  "Aprendizaje basado en problemas (ABP)",
+  "Aprendizaje basado en proyectos (ABProyectos)",
+  "Simulaciones",
+  "Dramatizaciones",
+  "Prácticas",
+  "Pasantías"
+];
+
+const opciones = metodologiasPermitidas
+  .map((nombre, index) => (index + 1) + ". " + nombre)
+  .join("\n");
+
+const seleccion = prompt(
+  "Seleccione la nueva metodología escribiendo su número:\n\n" +
+  opciones +
+  "\n\nMetodología actual: " +
+  metodologia.metodologia
+);
 }
   
  function aceptarReaSugerido(numeroClase, reaIndex) {
