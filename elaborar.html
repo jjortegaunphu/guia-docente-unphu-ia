@@ -4880,10 +4880,23 @@ mostrarPropuestaAcademica(
     return;
   }
 
-  alert(
-    "Mediación seleccionada: " +
-    (metodologia.explicacionMetodologia || "")
-  );
+  const nuevaMediacion = prompt(
+  "Edite la mediación docente:",
+  metodologia.explicacionMetodologia || ""
+);
+
+if (nuevaMediacion === null) {
+  return;
+}
+
+metodologia.explicacionMetodologia =
+  nuevaMediacion.trim();
+
+guardarProgreso();
+
+mostrarPropuestaAcademica(
+  semana.propuesta
+);
 }
   
  function aceptarReaSugerido(numeroClase, reaIndex) {
