@@ -4697,6 +4697,7 @@ const estadoREA =
         <button
           type="button"
           class="boton boton-secundario"
+          onclick="editarContenidoClase(${clase.clase})"
          >
         Editar contenido
 </button>
@@ -4726,6 +4727,35 @@ const estadoREA =
   contenido.innerHTML = html;
   contenedor.classList.remove("oculto");
 } 
+
+  function editarContenidoClase(numeroClase) {
+
+  const semana = datosGuia.cronograma.find(
+    item => item.semana === semanaActual
+  );
+
+  if (!semana || !semana.propuesta) {
+    return;
+  }
+
+  const clase = semana.propuesta.clases.find(
+    item => item.clase === numeroClase
+  );
+
+  if (!clase) {
+    return;
+  }
+
+  const nuevoContenido = prompt(
+    "Edite el contenido de la Clase " + numeroClase + ":",
+    clase.contenido || ""
+  );
+
+  if (nuevoContenido === null) {
+    return;
+  }
+}
+  
  function aceptarReaSugerido(numeroClase, reaIndex) {
 
   const semana =
