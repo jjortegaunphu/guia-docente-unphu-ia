@@ -2557,6 +2557,10 @@ function guardarProgreso() {
   const campos =
     document.querySelectorAll(".contenidoClase");
 
+    if (!campos.length) {
+  return;
+}
+
   const clases = [];
 
   campos.forEach(campo => {
