@@ -4534,6 +4534,14 @@ metodologiasActividades.forEach((item, index) => {
         <strong>Actividad formativa ${index + 1}:</strong><br>
         ${actividadLimpia}${codigosREA ? ` (${codigosREA})` : ""}
     </p>
+
+<button
+  type="button"
+  class="boton boton-secundario"
+  onclick="editarActividadFormativa(${clase.clase}, ${index})"
+>
+  Editar actividad
+</button>
     
     ${informacionEvaluativa}
     </div>
@@ -4897,6 +4905,37 @@ guardarProgreso();
 mostrarPropuestaAcademica(
   semana.propuesta
 );
+}
+
+function editarActividadFormativa(numeroClase, indiceMetodologia) {
+
+  const semana = datosGuia.cronograma.find(
+    item => item.semana === semanaActual
+  );
+
+  if (!semana || !semana.propuesta) {
+    return;
+  }
+
+  const clase = semana.propuesta.clases.find(
+    item => item.clase === numeroClase
+  );
+
+  if (!clase) {
+    return;
+  }
+
+  const metodologia =
+    clase.metodologiasActividades[indiceMetodologia];
+
+  if (!metodologia) {
+    return;
+  }
+
+  alert(
+    "Actividad seleccionada: " +
+    (metodologia.actividadFormativa || "")
+  );
 }
   
  function aceptarReaSugerido(numeroClase, reaIndex) {
