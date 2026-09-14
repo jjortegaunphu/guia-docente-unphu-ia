@@ -4580,7 +4580,13 @@ metodologiasActividades.forEach((item, index) => {
 >
   Editar mediación
 </button>
-
+<button
+  type="button"
+  class="boton boton-secundario"
+  onclick="modificarMediacionConIA(${clase.clase}, ${index})"
+>
+  Modificar con IA
+</button>
      <p>
         <strong>Actividad formativa ${index + 1}:</strong><br>
         ${actividadLimpia}${codigosREA ? ` (${codigosREA})` : ""}
