@@ -4948,17 +4948,31 @@ const nuevaActividad = prompt(
 if (nuevaActividad === null) {
   return;
 }
-  const reaOriginal =
-  actividadCompleta.match(/\s*(\(REA[^)]*\))\s*$/i);
+  const actividadModificada =
+    nuevaActividad.trim();
 
-metodologia.actividadFormativa =
-  nuevaActividad.trim() +
-  (reaOriginal ? " " + reaOriginal[1] : "");
+  const reaOficiales =
+    datosGuia.programa.reaOficiales || [];
 
-guardarProgreso();
+  if (!reaOficiales.length) {
+  alert(
+    "No hay REA oficiales disponibles para analizar la nueva actividad. " +
+    "Revise los REA cargados en la Etapa 3."
+  );
+  return;
+}
+ console.log(
+  "Actividad modificada:",
+  actividadModificada
+);
 
-mostrarPropuestaAcademica(
-  semana.propuesta
+console.log(
+  "REA oficiales disponibles:",
+  reaOficiales
+); 
+alert(
+  "La actividad fue modificada. " +
+  "Ahora se revisarán los REA oficiales pertinentes para esta nueva actividad."
 );
 }
   
