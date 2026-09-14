@@ -5071,14 +5071,32 @@ mostrarPropuestaAcademica(
     return;
   }
 
-  alert(
-    "Recursos materiales de la Clase " +
-    numeroClase +
-    ":\n\n" +
-    (Array.isArray(clase.recursosMateriales)
-      ? clase.recursosMateriales.join("\n")
-      : "No se especificaron recursos materiales.")
-  );
+ const recursosActuales =
+  Array.isArray(clase.recursosMateriales)
+    ? clase.recursosMateriales.join("\n")
+    : "";
+
+const nuevosRecursos = prompt(
+  "Edite los recursos materiales de la Clase " +
+  numeroClase +
+  ".\n\nEscriba un recurso por línea:",
+  recursosActuales
+);
+
+if (nuevosRecursos === null) {
+  return;
+}
+  clase.recursosMateriales =
+  nuevosRecursos
+    .split("\n")
+    .map(recurso => recurso.trim())
+    .filter(recurso => recurso !== "");
+
+guardarProgreso();
+
+mostrarPropuestaAcademica(
+  semana.propuesta
+); 
 } 
   
  function aceptarReaSugerido(numeroClase, reaIndex) {
