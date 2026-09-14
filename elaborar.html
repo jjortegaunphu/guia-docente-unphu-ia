@@ -4798,6 +4798,14 @@ const estadoREA =
   ${recursosVirtualesTexto || "No se especificaron recursos virtuales."}
 </p>
 
+<button
+  type="button"
+  class="boton boton-secundario"
+  onclick="editarRecursosVirtuales(${clase.clase})"
+>
+  Editar recursos virtuales
+</button>
+
         <p>
           <strong>Bibliografía:</strong><br>
           ${bibliografiaTexto || "No se especificó bibliografía pertinente."}
@@ -5184,7 +5192,71 @@ document
   );
 }; 
 } 
-  
+  function editarRecursosVirtuales(numeroClase) {
+
+  const semana = datosGuia.cronograma.find(
+    item => item.semana === semanaActual
+  );
+
+  if (!semana || !semana.propuesta) {
+    return;
+  }
+
+  const clase = semana.propuesta.clases.find(
+    item => item.clase === numeroClase
+  );
+
+  if (!clase) {
+    return;
+  }
+
+  const recursosActuales =
+    Array.isArray(clase.recursosVirtuales)
+      ? clase.recursosVirtuales.join("\n")
+      : "";
+    document.getElementById(
+  "tituloEdicionLista"
+).textContent =
+  "Editar recursos virtuales - Clase " +
+  numeroClase;
+
+document.getElementById(
+  "instruccionEdicionLista"
+).textContent =
+  "Escriba un recurso virtual por línea.";
+
+document.getElementById(
+  "campoEdicionLista"
+).value =
+  recursosActuales;
+
+document
+  .getElementById("modalEdicionLista")
+  .classList.remove("oculto");
+    document.getElementById(
+  "botonGuardarEdicionLista"
+).onclick = function () {
+
+  const nuevosRecursos =
+    document.getElementById(
+      "campoEdicionLista"
+    ).value;
+
+  clase.recursosVirtuales =
+    nuevosRecursos
+      .split("\n")
+      .map(recurso => recurso.trim())
+      .filter(recurso => recurso !== "");
+
+  guardarProgreso();
+
+  cerrarEdicionLista();
+
+  mostrarPropuestaAcademica(
+    semana.propuesta
+  );
+};
+}
  function aceptarReaSugerido(numeroClase, reaIndex) {
 
   const semana =
