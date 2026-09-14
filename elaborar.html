@@ -4985,7 +4985,49 @@ mostrarPropuestaAcademica(
   semana.propuesta
 );
 }
+async function modificarMediacionConIA(numeroClase, indiceMetodologia) {
 
+  const semana = datosGuia.cronograma.find(
+    item => item.semana === semanaActual
+  );
+
+  if (!semana || !semana.propuesta) {
+    return;
+  }
+
+  const clase = semana.propuesta.clases.find(
+    item => item.clase === numeroClase
+  );
+
+  if (!clase) {
+    return;
+  }
+
+  const metodologia =
+    clase.metodologiasActividades[indiceMetodologia];
+
+  if (!metodologia) {
+    return;
+  }
+
+  const indicacionDocente = prompt(
+    "¿Qué desea modificar de la mediación docente?\n\n" +
+    "Ejemplo: Hacerla más participativa, incorporar preguntas orientadoras o reducir la exposición del docente."
+  );
+
+  if (
+    indicacionDocente === null ||
+    indicacionDocente.trim() === ""
+  ) {
+    return;
+  }
+
+  alert(
+    "Solicitud registrada:\n\n" +
+    indicacionDocente.trim() +
+    "\n\nLa conexión con la IA se incorporará en el siguiente paso."
+  );
+}
 async function editarActividadFormativa(numeroClase, indiceMetodologia) {
 
   const semana = datosGuia.cronograma.find(
