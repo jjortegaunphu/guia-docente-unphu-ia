@@ -1049,6 +1049,39 @@ ETAPA 4 - ELABORACIÓN DEL CRONOGRAMA
   </button>
 
 </section>
+  <div id="modalEdicionLista" class="oculto">
+  <div class="panel">
+    <h3 id="tituloEdicionLista">Editar información</h3>
+
+    <p id="instruccionEdicionLista">
+      Escriba un elemento por línea.
+    </p>
+
+    <textarea
+      id="campoEdicionLista"
+      rows="8"
+      style="width:100%;"
+    ></textarea>
+
+    <div style="margin-top:16px;">
+      <button
+        type="button"
+        class="boton"
+        id="botonGuardarEdicionLista"
+      >
+        Guardar cambios
+      </button>
+
+      <button
+        type="button"
+        class="boton boton-secundario"
+        onclick="cerrarEdicionLista()"
+      >
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>
  <!-- ==================================================
 VISTA FINAL DEL CRONOGRAMA
 ================================================== -->
@@ -5052,6 +5085,20 @@ mostrarPropuestaAcademica(
   semana.propuesta
 ); 
 }
+  
+ function cerrarEdicionLista() {
+  document
+    .getElementById("modalEdicionLista")
+    .classList.add("oculto");
+
+  document.getElementById(
+    "campoEdicionLista"
+  ).value = "";
+
+  document.getElementById(
+    "botonGuardarEdicionLista"
+  ).onclick = null;
+} 
 
  function editarRecursosMateriales(numeroClase) {
 
@@ -5076,27 +5123,48 @@ mostrarPropuestaAcademica(
     ? clase.recursosMateriales.join("\n")
     : "";
 
-const nuevosRecursos = prompt(
-  "Edite los recursos materiales de la Clase " +
-  numeroClase +
-  ".\n\nEscriba un recurso por línea:",
-  recursosActuales
-);
+document.getElementById(
+  "tituloEdicionLista"
+).textContent =
+  "Editar recursos materiales - Clase " +
+  numeroClase;
 
-if (nuevosRecursos === null) {
-  return;
-}
+document.getElementById(
+  "instruccionEdicionLista"
+).textContent =
+  "Escriba un recurso material por línea.";
+
+document.getElementById(
+  "campoEdicionLista"
+).value =
+  recursosActuales;
+
+document
+  .getElementById("modalEdicionLista")
+  .classList.remove("oculto");
+  document.getElementById(
+  "botonGuardarEdicionLista"
+).onclick = function () {
+
+  const nuevosRecursos =
+    document.getElementById(
+      "campoEdicionLista"
+    ).value;
+
   clase.recursosMateriales =
-  nuevosRecursos
-    .split("\n")
-    .map(recurso => recurso.trim())
-    .filter(recurso => recurso !== "");
+    nuevosRecursos
+      .split("\n")
+      .map(recurso => recurso.trim())
+      .filter(recurso => recurso !== "");
 
-guardarProgreso();
+  guardarProgreso();
 
-mostrarPropuestaAcademica(
-  semana.propuesta
-); 
+  cerrarEdicionLista();
+
+  mostrarPropuestaAcademica(
+    semana.propuesta
+  );
+}; 
 } 
   
  function aceptarReaSugerido(numeroClase, reaIndex) {
