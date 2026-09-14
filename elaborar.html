@@ -5022,11 +5022,74 @@ async function modificarMediacionConIA(numeroClase, indiceMetodologia) {
     return;
   }
 
-  alert(
-    "Solicitud registrada:\n\n" +
-    indicacionDocente.trim() +
-    "\n\nLa conexión con la IA se incorporará en el siguiente paso."
+  try {
+
+  const respuesta = await fetch(
+    "https://guia-docente-unphu-api.jortega-cc4.workers.dev/modificar-mediacion",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+        contenido:
+          clase.contenido || "",
+
+        metodologia:
+          metodologia.metodologia || "",
+
+        mediacionActual:
+          metodologia.explicacionMetodologia || "",
+
+        indicacionDocente:
+          indicacionDocente.trim()
+      })
+    }
   );
+
+  const resultado =
+    await respuesta.json();
+
+  if (
+    !respuesta.ok ||
+    !resultado.correcto
+  ) {
+    alert(
+      resultado.error ||
+      "No fue posible modificar la mediación con IA."
+    );
+    return;
+  }
+const aceptarPropuesta = confirm(
+  "MEDIACIÓN ACTUAL:\n\n" +
+  (metodologia.explicacionMetodologia || "") +
+  "\n\n------------------------------\n\n" +
+  "PROPUESTA DE LA IA:\n\n" +
+  resultado.mediacionPropuesta +
+  "\n\n------------------------------\n\n" +
+  "¿Desea sustituir la mediación actual por la propuesta de la IA?"
+);
+
+if (!aceptarPropuesta) {
+  return;
+}
+
+metodologia.explicacionMetodologia =
+  resultado.mediacionPropuesta.trim();
+
+guardarProgreso();
+
+mostrarPropuestaAcademica(
+  semana.propuesta
+);
+} catch (error) {
+
+  alert(
+    "No fue posible conectar con el servicio de IA."
+  );
+  return;
+}
 }
 async function editarActividadFormativa(numeroClase, indiceMetodologia) {
 
