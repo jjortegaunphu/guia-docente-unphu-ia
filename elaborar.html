@@ -4810,7 +4810,13 @@ const estadoREA =
           <strong>Bibliografía:</strong><br>
           ${bibliografiaTexto || "No se especificó bibliografía pertinente."}
         </p>
-
+<button
+  type="button"
+  class="boton boton-secundario"
+  onclick="editarBibliografiaClase(${clase.clase})"
+>
+  Editar bibliografía
+</button>
       </div>
     `;
   });
@@ -5247,6 +5253,78 @@ document
       .split("\n")
       .map(recurso => recurso.trim())
       .filter(recurso => recurso !== "");
+
+  guardarProgreso();
+
+  cerrarEdicionLista();
+
+  mostrarPropuestaAcademica(
+    semana.propuesta
+  );
+};
+}
+  function editarBibliografiaClase(numeroClase) {
+
+  const semana = datosGuia.cronograma.find(
+    item => item.semana === semanaActual
+  );
+
+  if (!semana || !semana.propuesta) {
+    return;
+  }
+
+  const clase = semana.propuesta.clases.find(
+    item => item.clase === numeroClase
+  );
+
+  if (!clase) {
+    return;
+  }
+
+  const bibliografiaActual =
+    Array.isArray(clase.bibliografia)
+      ? clase.bibliografia.join("\n")
+      : "";
+    document.getElementById(
+  "tituloEdicionLista"
+).textContent =
+  "Editar bibliografía - Clase " +
+  numeroClase;
+
+document.getElementById(
+  "instruccionEdicionLista"
+).textContent =
+  "Escriba una referencia bibliográfica por línea. Máximo 2 referencias.";
+
+document.getElementById(
+  "campoEdicionLista"
+).value =
+  bibliografiaActual;
+
+document
+  .getElementById("modalEdicionLista")
+  .classList.remove("oculto");
+    document.getElementById(
+  "botonGuardarEdicionLista"
+).onclick = function () {
+
+  const nuevasReferencias =
+    document.getElementById(
+      "campoEdicionLista"
+    ).value
+      .split("\n")
+      .map(referencia => referencia.trim())
+      .filter(referencia => referencia !== "");
+
+  if (nuevasReferencias.length > 2) {
+    alert(
+      "La bibliografía de cada clase puede contener un máximo de 2 referencias pertinentes."
+    );
+    return;
+  }
+
+  clase.bibliografia =
+    nuevasReferencias;
 
   guardarProgreso();
 
