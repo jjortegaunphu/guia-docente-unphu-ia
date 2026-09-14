@@ -5236,7 +5236,66 @@ mostrarPropuestaAcademica(
   semana.propuesta
 ); 
 }
-  
+ async function modificarActividadConIA(numeroClase, indiceMetodologia) {
+
+  const semana = datosGuia.cronograma.find(
+    item => item.semana === semanaActual
+  );
+
+  if (!semana || !semana.propuesta) {
+    return;
+  }
+
+  const clase = semana.propuesta.clases.find(
+    item => item.clase === numeroClase
+  );
+
+  if (!clase) {
+    return;
+  }
+
+  const metodologia =
+    clase.metodologiasActividades[indiceMetodologia];
+
+  if (!metodologia) {
+    return;
+  }
+  const actividadCompleta =
+  metodologia.actividadFormativa || "";
+
+const actividadActual =
+  actividadCompleta
+    .replace(/\s*\(REA[^)]*\)\s*$/i, "")
+    .trim();
+
+const indicacionDocente = prompt(
+  "¿Qué desea modificar de la actividad formativa?\n\n" +
+  "Ejemplo: Hacerla más práctica, incorporar trabajo colaborativo o contextualizarla a una situación profesional."
+);
+
+if (
+  indicacionDocente === null ||
+  indicacionDocente.trim() === ""
+) {
+  return;
+} 
+const datosParaIA = {
+  contenido:
+    clase.contenido || "",
+
+  metodologia:
+    metodologia.metodologia || "",
+
+  mediacionDocente:
+    metodologia.explicacionMetodologia || "",
+
+  actividadActual:
+    actividadActual,
+
+  indicacionDocente:
+    indicacionDocente.trim()
+};   
+} 
  function cerrarEdicionLista() {
   document
     .getElementById("modalEdicionLista")
