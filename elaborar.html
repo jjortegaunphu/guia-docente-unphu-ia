@@ -4961,15 +4961,15 @@ if (nuevaActividad === null) {
   );
   return;
 }
- console.log(
-  "Actividad modificada:",
-  actividadModificada
-);
 
-console.log(
-  "REA oficiales disponibles:",
-  reaOficiales
-); 
+const datosParaRevisionREA = {
+  actividad: actividadModificada,
+  reaOficiales: reaOficiales.map(rea => ({
+    codigo: rea.codigo,
+    texto: rea.texto
+  }))
+};
+  
 alert(
   "La actividad fue modificada. " +
   "Ahora se revisarán los REA oficiales pertinentes para esta nueva actividad."
