@@ -4907,7 +4907,7 @@ mostrarPropuestaAcademica(
 );
 }
 
-function editarActividadFormativa(numeroClase, indiceMetodologia) {
+async function editarActividadFormativa(numeroClase, indiceMetodologia) {
 
   const semana = datosGuia.cronograma.find(
     item => item.semana === semanaActual
@@ -4970,10 +4970,79 @@ const datosParaRevisionREA = {
   }))
 };
   
-alert(
-  "La actividad fue modificada. " +
-  "Ahora se revisarán los REA oficiales pertinentes para esta nueva actividad."
+const respuestaRevision = await fetch(
+  "https://guia-docente-unphu-api.jortega-cc4.workers.dev/revisar-rea-actividad",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(
+      datosParaRevisionREA
+    )
+  }
 );
+  const resultadoRevision =
+  await respuestaRevision.json();
+
+if (
+  !respuestaRevision.ok ||
+  !resultadoRevision.correcto
+) {
+  alert(
+    resultadoRevision.error ||
+    "No fue posible revisar los REA de la actividad."
+  );
+  return;
+}
+const reaPertinentes =
+  reaOficiales.filter(
+    rea =>
+      resultadoRevision.codigosREA.includes(
+        rea.codigo
+      )
+  );  
+  const textoREAPertinentes =
+  reaPertinentes.length
+    ? reaPertinentes
+        .map(
+          rea =>
+            rea.codigo + ": " + rea.texto
+        )
+        .join("\n\n")
+    : "Ningún REA oficial fue identificado como pertinente para la nueva actividad.";
+  if (!reaPertinentes.length) {
+  alert(
+    "La actividad modificada no presenta una vinculación académicamente pertinente " +
+    "con ninguno de los REA oficiales disponibles.\n\n" +
+    "La actividad anterior y sus REA se mantendrán sin cambios."
+  );
+  return;
+}
+  const confirmarREA = confirm(
+  "REA identificados para la nueva actividad:\n\n" +
+  textoREAPertinentes +
+  "\n\n¿Desea asociar estos REA a la actividad modificada?"
+);
+  if (!confirmarREA) {
+  return;
+}
+ const codigosREAConfirmados =
+  reaPertinentes.map(
+    rea => rea.codigo
+  );
+
+metodologia.actividadFormativa =
+  actividadModificada;
+
+metodologia.codigosREA =
+  codigosREAConfirmados;
+
+guardarProgreso();
+
+mostrarPropuestaAcademica(
+  semana.propuesta
+); 
 }
   
  function aceptarReaSugerido(numeroClase, reaIndex) {
