@@ -1049,8 +1049,26 @@ ETAPA 4 - ELABORACIÓN DEL CRONOGRAMA
   </button>
 
 </section>
-  <div id="modalEdicionLista" class="oculto">
-  <div class="panel">
+ <div
+  id="modalEdicionLista"
+  class="oculto"
+  style="
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.45);
+    padding: 40px 20px;
+    overflow-y: auto;
+  "
+>
+ <div
+  class="panel"
+  style="
+    max-width: 700px;
+    margin: 40px auto;
+    background: white;
+  "
+>
     <h3 id="tituloEdicionLista">Editar información</h3>
 
     <p id="instruccionEdicionLista">
