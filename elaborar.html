@@ -4734,6 +4734,14 @@ const estadoREA =
   ${recursosMaterialesTexto || "No se especificaron recursos materiales."}
 </p>
 
+<button
+  type="button"
+  class="boton boton-secundario"
+  onclick="editarRecursosMateriales(${clase.clase})"
+>
+  Editar recursos materiales
+</button>
+
 <p>
   <strong>Recursos virtuales:</strong><br>
   ${recursosVirtualesTexto || "No se especificaron recursos virtuales."}
@@ -5044,6 +5052,34 @@ mostrarPropuestaAcademica(
   semana.propuesta
 ); 
 }
+
+ function editarRecursosMateriales(numeroClase) {
+
+  const semana = datosGuia.cronograma.find(
+    item => item.semana === semanaActual
+  );
+
+  if (!semana || !semana.propuesta) {
+    return;
+  }
+
+  const clase = semana.propuesta.clases.find(
+    item => item.clase === numeroClase
+  );
+
+  if (!clase) {
+    return;
+  }
+
+  alert(
+    "Recursos materiales de la Clase " +
+    numeroClase +
+    ":\n\n" +
+    (Array.isArray(clase.recursosMateriales)
+      ? clase.recursosMateriales.join("\n")
+      : "No se especificaron recursos materiales.")
+  );
+} 
   
  function aceptarReaSugerido(numeroClase, reaIndex) {
 
