@@ -2229,8 +2229,26 @@ document
   .getElementById("etapa3")
   .classList.remove("oculto");
 
-window.scrollTo(0,0);
+  if (datosGuia.programa.formaIngreso) {
 
+  const radioFormaPrograma =
+    document.querySelector(
+      'input[name="formaPrograma"][value="' +
+      datosGuia.programa.formaIngreso +
+      '"]'
+    );
+
+  if (radioFormaPrograma) {
+    radioFormaPrograma.checked = true;
+    configurarPrograma();
+  }
+
+}
+
+restaurarBorradorEtapa3();
+
+window.scrollTo(0,0);
+ 
 }
 
 
