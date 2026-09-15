@@ -2016,7 +2016,21 @@ if (tipoAsignatura) {
 
   configurarTipo();
 }
-  
+
+  if (datosGuia.configuracion.programaLaboratorio) {
+
+  const radioLaboratorio =
+    document.querySelector(
+      'input[name="programaLaboratorio"][value="' +
+      datosGuia.configuracion.programaLaboratorio +
+      '"]'
+    );
+
+  if (radioLaboratorio) {
+    radioLaboratorio.checked = true;
+  }
+
+}
   window.scrollTo(0,0);
 
 }
