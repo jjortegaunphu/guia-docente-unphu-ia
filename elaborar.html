@@ -4045,6 +4045,14 @@ function irSemanaAnterior() {
       semanaActual > 1 ? "" : "none";
   }
 
+  const btnVolverEtapa3 =
+  document.getElementById("btnVolverEtapa3");
+
+if (btnVolverEtapa3) {
+  btnVolverEtapa3.style.display =
+    semanaActual === 1 ? "" : "none";
+}
+  
   window.scrollTo(0,0);
 }
 
