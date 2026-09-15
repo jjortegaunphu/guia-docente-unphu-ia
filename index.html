@@ -264,14 +264,7 @@
         >
           Comenzar elaboración
         </a>
-        <a
-          id="btnNuevaGuia"
-          class="button"
-          href="elaborar.html?modo=nueva"
-          style="display:none; margin-left:10px;"
-         >
-  Iniciar nueva guía
-</a>
+        
       </article>
 
       <article class="card">
@@ -320,47 +313,14 @@
   }
   const btnElaborarGuia =
     document.getElementById("btnElaborarGuia");
-  const btnNuevaGuia =
-    document.getElementById("btnNuevaGuia");
-  
+    
 if (existeGuiaEnProgreso && btnElaborarGuia) {
   btnElaborarGuia.textContent =
     "Continuar elaboración";
 
   btnElaborarGuia.href =
     "elaborar.html";
-  if (btnNuevaGuia) {
-    btnNuevaGuia.style.display =
-    "inline-block";
-}
-}
-  if (btnNuevaGuia) {
-
-  btnNuevaGuia.addEventListener(
-    "click",
-    function (event) {
-
-      if (!existeGuiaEnProgreso) {
-        return;
-      }
-
-      event.preventDefault();
-
-      const confirmarNuevaGuia =
-        window.confirm(
-          "Actualmente existe una guía docente en elaboración.\n\n" +
-          "Si inicia una nueva guía, dejará de trabajar temporalmente sobre la guía actual.\n\n" +
-          "¿Desea iniciar una nueva guía?"
-        );
-
-      if (confirmarNuevaGuia) {
-        window.location.href =
-          "elaborar.html?modo=nueva";
-      }
-
-    }
-  );
-
+  
 }
 </script>
 </body>
