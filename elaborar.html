@@ -6,6 +6,8 @@
 
 <title>Elaborar Guía Docente | UNPHU IA</title>
 
+<script src="https://unpkg.com/docx@9.5.1/dist/index.iife.js"></script>
+
 <style>
 
 :root{
@@ -6236,6 +6238,31 @@ if (modoInicio === "nueva") {
 } else {
   restaurarInterfazProgreso();
 }
+async function descargarCronogramaWord() {
+
+  if (typeof docx === "undefined") {
+    alert(
+      "No fue posible cargar el generador de Word."
+    );
+    return;
+  }
+
+  console.log(
+    "Generador de Word disponible correctamente."
+  );
+}
+  const btnDescargarWord =
+  document.getElementById("btnDescargarWord");
+
+if (btnDescargarWord) {
+  btnDescargarWord.addEventListener(
+    "click",
+    function () {
+      descargarCronogramaWord();
+    }
+  );
+}
+  
 </script>
 
 </body>
