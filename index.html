@@ -257,7 +257,11 @@
           estructura institucional y trabajando cada acápite de forma guiada.
         </p>
 
-        <a class="button" href="elaborar.html?modo=nueva">
+        <a
+           id="btnElaborarGuia"
+           class="button"
+           href="elaborar.html?modo=nueva"
+        >
           Comenzar elaboración
         </a>
       </article>
@@ -285,6 +289,37 @@
   <footer>
     Guía Docente UNPHU IA · Herramienta de apoyo académico
   </footer>
+<script>
+  const respaldoGuia =
+    localStorage.getItem("respaldoGuiaDocente");
 
+  let existeGuiaEnProgreso = false;
+
+  if (respaldoGuia) {
+    try {
+      const datosGuardados =
+        JSON.parse(respaldoGuia);
+
+      if (datosGuardados.datosGuia) {
+        existeGuiaEnProgreso = true;
+      }
+    } catch (error) {
+      console.error(
+        "No fue posible comprobar el progreso guardado:",
+        error
+      );
+    }
+  }
+  const btnElaborarGuia =
+  document.getElementById("btnElaborarGuia");
+
+if (existeGuiaEnProgreso && btnElaborarGuia) {
+  btnElaborarGuia.textContent =
+    "Continuar elaboración";
+
+  btnElaborarGuia.href =
+    "elaborar.html";
+}
+</script>
 </body>
 </html>
