@@ -2007,6 +2007,16 @@ function volverEtapa1(){
   etapaActual = "etapa1";
   guardarProgreso();
 
+  const tipoAsignatura =
+  document.getElementById("tipoAsignatura");
+
+if (tipoAsignatura) {
+  tipoAsignatura.value =
+    datosGuia.configuracion.tipoAsignatura || "";
+
+  configurarTipo();
+}
+  
   window.scrollTo(0,0);
 
 }
