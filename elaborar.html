@@ -5294,7 +5294,135 @@ const datosParaIA = {
 
   indicacionDocente:
     indicacionDocente.trim()
-};   
+};  
+ try {
+
+  const respuestaActividad = await fetch(
+    "https://guia-docente-unphu-api.jortega-cc4.workers.dev/modificar-actividad",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(datosParaIA)
+    }
+  );
+
+  const resultadoActividad =
+    await respuestaActividad.json();
+
+     if (
+    !respuestaActividad.ok ||
+    !resultadoActividad.correcto ||
+    !resultadoActividad.actividadPropuesta
+  ) {
+    alert(
+      resultadoActividad.error ||
+      "No fue posible generar una nueva actividad formativa."
+    );
+
+    return;
+  }
+  const reaOficiales =
+    datosGuia.programa.reaOficiales || [];
+
+  if (reaOficiales.length === 0) {
+    alert(
+      "No hay REA oficiales disponibles para revisar la actividad propuesta."
+    );
+
+    return;
+  }
+  const respuestaREA = await fetch(
+    "https://guia-docente-unphu-api.jortega-cc4.workers.dev/revisar-rea-actividad",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        actividad:
+          resultadoActividad.actividadPropuesta.trim(),
+
+        reaOficiales:
+          reaOficiales
+      })
+    }
+  );
+
+  const resultadoREA =
+    await respuestaREA.json();   
+     if (
+    !respuestaREA.ok ||
+    !resultadoREA.correcto ||
+    !Array.isArray(resultadoREA.codigosREA)
+  ) {
+    alert(
+      resultadoREA.error ||
+      "No fue posible revisar los REA de la actividad propuesta."
+    );
+
+    return;
+  }
+     const reaPertinentes =
+    reaOficiales.filter(
+      rea =>
+        resultadoREA.codigosREA.includes(
+          rea.codigo
+        )
+    );
+   if (reaPertinentes.length === 0) {
+    alert(
+      "No se identificó ningún REA oficial pertinente para la actividad propuesta por la IA.\n\n" +
+      "La actividad actual y sus REA se conservarán sin cambios."
+    );
+
+    return;
+  }  
+   const textoREA =
+    reaPertinentes
+      .map(
+        rea =>
+          rea.codigo + ": " + rea.texto
+      )
+      .join("\n\n");  
+     const aceptarPropuesta = confirm(
+    "ACTIVIDAD ACTUAL:\n\n" +
+    actividadActual +
+    "\n\n------------------------------\n\n" +
+    "PROPUESTA DE LA IA:\n\n" +
+    resultadoActividad.actividadPropuesta.trim() +
+    "\n\n------------------------------\n\n" +
+    "REA IDENTIFICADOS:\n\n" +
+    textoREA +
+    "\n\n------------------------------\n\n" +
+    "¿Desea sustituir la actividad actual por la propuesta de la IA?"
+  );
+
+  if (!aceptarPropuesta) {
+    return;
+  }
+     metodologia.actividadFormativa =
+    resultadoActividad.actividadPropuesta.trim();
+
+  metodologia.codigosREA =
+    reaPertinentes.map(
+      rea => rea.codigo
+    );
+
+  guardarProgreso();
+
+  mostrarPropuestaAcademica(
+    semana.propuesta
+  );
+} catch (error) {
+
+  alert(
+    "No fue posible conectar con el servicio de IA para modificar la actividad formativa."
+  );
+
+  return;
+}  
 } 
  function cerrarEdicionLista() {
   document
