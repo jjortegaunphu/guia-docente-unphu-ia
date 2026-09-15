@@ -6247,9 +6247,333 @@ async function descargarCronogramaWord() {
     return;
   }
 
-  console.log(
-    "Generador de Word disponible correctamente."
+  const {
+    Document,
+    Packer,
+    Paragraph,
+    TextRun,
+    Table,
+    TableRow,
+    TableCell,
+    WidthType,
+    AlignmentType,
+    VerticalAlign
+  } = docx;
+
+  const semanasOrdenadas =
+    [...datosGuia.cronograma].sort(
+      (a, b) => a.semana - b.semana
+    );
+
+  if (semanasOrdenadas.length === 0) {
+    alert(
+      "No existen datos del cronograma para descargar."
+    );
+    return;
+  }
+
+  const filasCronograma = [];
+
+filasCronograma.push(
+  new TableRow({
+    tableHeader: true,
+    children: [
+      "Contenido",
+      "Metodologías de Enseñanza",
+      "Actividades Formativas y REA(s)",
+      "Recursos y Bibliografías"
+    ].map(texto =>
+      new TableCell({
+        verticalAlign: VerticalAlign.CENTER,
+        children: [
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            children: [
+              new TextRun({
+                text: texto,
+                bold: true
+              })
+            ]
+          })
+        ]
+      })
+    )
+  })
+);
+  semanasOrdenadas.forEach(datosSemana => {
+
+  filasCronograma.push(
+    new TableRow({
+      children: [
+        new TableCell({
+          columnSpan: 4,
+          verticalAlign: VerticalAlign.CENTER,
+          children: [
+            new Paragraph({
+              alignment: AlignmentType.CENTER,
+              children: [
+                new TextRun({
+                  text: "Semana " + datosSemana.semana,
+                  bold: true
+                })
+              ]
+            })
+          ]
+        })
+      ]
+    })
   );
+const propuesta = datosSemana.propuesta;
+
+if (
+  propuesta &&
+  Array.isArray(propuesta.clases)
+) {
+
+  propuesta.clases.forEach(clase => {
+
+    const celdaContenido =
+  new TableCell({
+    children: [
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: "Clase " + clase.clase,
+            bold: true
+          })
+        ]
+      }),
+
+      new Paragraph({
+        text: clase.contenido || ""
+      })
+    ]
+  });
+const parrafosMetodologias = [];
+
+if (Array.isArray(clase.metodologiasActividades)) {
+
+  clase.metodologiasActividades.forEach(
+    (item, index) => {
+
+      parrafosMetodologias.push(
+        new Paragraph({
+          children: [
+            new TextRun({
+              text:
+                "Metodología " +
+                (index + 1) +
+                ":",
+              bold: true
+            })
+          ]
+        }),
+
+        new Paragraph({
+          text: item.metodologia || ""
+        }),
+
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: "Mediación docente:",
+              bold: true
+            })
+          ]
+        }),
+
+        new Paragraph({
+          text:
+            item.explicacionMetodologia || ""
+        })
+      );
+
+    }
+  );
+
+}
+
+const celdaMetodologias =
+  new TableCell({
+    children: parrafosMetodologias
+  });
+   const parrafosActividades = [];
+
+if (Array.isArray(clase.metodologiasActividades)) {
+
+  clase.metodologiasActividades.forEach(
+    (item, index) => {
+
+      parrafosActividades.push(
+        new Paragraph({
+          children: [
+            new TextRun({
+              text:
+                "Actividad formativa " +
+                (index + 1) +
+                ":",
+              bold: true
+            })
+          ]
+        }),
+
+        new Paragraph({
+          text: item.actividadFormativa || ""
+        })
+      );
+
+    }
+  );
+
+}
+
+const celdaActividades =
+  new TableCell({
+    children: parrafosActividades
+  }); 
+    const parrafosRecursos = [];
+
+parrafosRecursos.push(
+  new Paragraph({
+    children: [
+      new TextRun({
+        text: "Recursos materiales:",
+        bold: true
+      })
+    ]
+  })
+);
+
+if (Array.isArray(clase.recursosMateriales)) {
+  clase.recursosMateriales.forEach(recurso => {
+    parrafosRecursos.push(
+      new Paragraph({
+        text: recurso || ""
+      })
+    );
+  });
+}
+
+parrafosRecursos.push(
+  new Paragraph({
+    children: [
+      new TextRun({
+        text: "Recursos virtuales:",
+        bold: true
+      })
+    ]
+  })
+);
+
+if (Array.isArray(clase.recursosVirtuales)) {
+  clase.recursosVirtuales.forEach(recurso => {
+    parrafosRecursos.push(
+      new Paragraph({
+        text: recurso || ""
+      })
+    );
+  });
+}
+
+parrafosRecursos.push(
+  new Paragraph({
+    children: [
+      new TextRun({
+        text: "Bibliografía:",
+        bold: true
+      })
+    ]
+  })
+);
+
+if (Array.isArray(clase.bibliografia)) {
+  clase.bibliografia.forEach(referencia => {
+    parrafosRecursos.push(
+      new Paragraph({
+        text: referencia || ""
+      })
+    );
+  });
+}
+
+const celdaRecursos =
+  new TableCell({
+    children: parrafosRecursos
+  });
+    filasCronograma.push(
+  new TableRow({
+    children: [
+      celdaContenido,
+      celdaMetodologias,
+      celdaActividades,
+      celdaRecursos
+    ]
+  })
+);
+  });
+
+}
+});
+const tablaWord =
+  new Table({
+    width: {
+      size: 100,
+      type: WidthType.PERCENTAGE
+    },
+    rows: filasCronograma
+  });
+
+const documentoWord =
+  new Document({
+    sections: [
+      {
+        children: [
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            children: [
+              new TextRun({
+                text: "Cronograma de la asignatura",
+                bold: true,
+                size: 28
+              })
+            ]
+          }),
+
+          new Paragraph({
+            text: ""
+          }),
+
+          tablaWord
+        ]
+      }
+    ]
+  });  
+  const archivoWord =
+  await Packer.toBlob(documentoWord);
+
+const enlaceDescarga =
+  document.createElement("a");
+
+enlaceDescarga.href =
+  URL.createObjectURL(archivoWord);
+
+enlaceDescarga.download =
+  "Cronograma_Guia_Docente_UNPHU.docx";
+
+document.body.appendChild(enlaceDescarga);
+
+enlaceDescarga.click();
+
+document.body.removeChild(enlaceDescarga);
+
+setTimeout(
+  function () {
+    URL.revokeObjectURL(
+      enlaceDescarga.href
+    );
+  },
+  1000
+);
 }
   const btnDescargarWord =
   document.getElementById("btnDescargarWord");
