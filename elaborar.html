@@ -6739,16 +6739,10 @@ recursos +=
   "\n\nBibliografía:\n";
 
 if (Array.isArray(clase.bibliografia)) {
-  recursos +=
-    clase.bibliografia
-     .map(referencia =>
-      referencia.replace(
-        /(\/|\.|\?|&|=)/g,
-        "$1\u200B"
-    )
-  )
-  .join("\n");
+   recursos +=
+    clase.bibliografia.join("\n");
 }
+
   filasPDF.push([
   contenido,
   metodologias.trim(),
