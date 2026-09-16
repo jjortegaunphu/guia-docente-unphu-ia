@@ -6257,8 +6257,9 @@ async function descargarCronogramaWord() {
     TableCell,
     WidthType,
     AlignmentType,
-    VerticalAlign
-  } = docx;
+    VerticalAlign,
+    TableLayoutType
+    } = docx;
 
   const semanasOrdenadas =
     [...datosGuia.cronograma].sort(
@@ -6277,20 +6278,24 @@ async function descargarCronogramaWord() {
 filasCronograma.push(
   new TableRow({
     tableHeader: true,
-    children: [
-      "Contenido",
-      "Metodologías de Enseñanza",
-      "Actividades Formativas y REA(s)",
-      "Recursos y Bibliografías"
-    ].map(texto =>
+   children: [
+  { texto: "Contenido", ancho: 24 },
+  { texto: "Metodologías de Enseñanza", ancho: 27 },
+  { texto: "Actividades Formativas y REA(s)", ancho: 27 },
+  { texto: "Recursos y Bibliografías", ancho: 22 }
+].map(columna =>
       new TableCell({
-        verticalAlign: VerticalAlign.CENTER,
-        children: [
+  width: {
+    size: columna.ancho,
+    type: WidthType.PERCENTAGE
+  },
+  verticalAlign: VerticalAlign.CENTER,
+  children: [
           new Paragraph({
             alignment: AlignmentType.CENTER,
             children: [
               new TextRun({
-                text: texto,
+               text: columna.texto,
                 bold: true
               })
             ]
@@ -6334,6 +6339,10 @@ if (
 
     const celdaContenido =
   new TableCell({
+    width: {
+      size: 24,
+      type: WidthType.PERCENTAGE
+    },
     children: [
       new Paragraph({
         children: [
@@ -6395,6 +6404,10 @@ if (Array.isArray(clase.metodologiasActividades)) {
 
 const celdaMetodologias =
   new TableCell({
+    width: {
+      size: 27,
+      type: WidthType.PERCENTAGE
+    },
     children: parrafosMetodologias
   });
    const parrafosActividades = [];
@@ -6429,8 +6442,12 @@ if (Array.isArray(clase.metodologiasActividades)) {
 
 const celdaActividades =
   new TableCell({
+    width: {
+      size: 27,
+      type: WidthType.PERCENTAGE
+    },
     children: parrafosActividades
-  }); 
+  });
     const parrafosRecursos = [];
 
 parrafosRecursos.push(
@@ -6498,6 +6515,10 @@ if (Array.isArray(clase.bibliografia)) {
 
 const celdaRecursos =
   new TableCell({
+    width: {
+      size: 22,
+      type: WidthType.PERCENTAGE
+    },
     children: parrafosRecursos
   });
     filasCronograma.push(
@@ -6520,11 +6541,22 @@ const tablaWord =
       size: 100,
       type: WidthType.PERCENTAGE
     },
+    layout: TableLayoutType.FIXED,
     rows: filasCronograma
   });
 
 const documentoWord =
   new Document({
+    styles: {
+      default: {
+        document: {
+          run: {
+            size: 20
+          }
+        }
+      }
+    },
+
     sections: [
       {
         children: [
