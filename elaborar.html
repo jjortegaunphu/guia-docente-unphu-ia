@@ -6289,15 +6289,19 @@ filasCronograma.push(
     size: columna.ancho,
     type: WidthType.PERCENTAGE
   },
+  shading: {
+  fill: "006B54"
+  },
   verticalAlign: VerticalAlign.CENTER,
   children: [
           new Paragraph({
             alignment: AlignmentType.CENTER,
             children: [
               new TextRun({
-               text: columna.texto,
-                bold: true
-              })
+                text: columna.texto,
+                bold: true,
+                color: "FFFFFF"
+          })
             ]
           })
         ]
@@ -6312,6 +6316,9 @@ filasCronograma.push(
       children: [
         new TableCell({
           columnSpan: 4,
+          shading: {
+            fill: "E9F4F1"
+          },
           verticalAlign: VerticalAlign.CENTER,
           children: [
             new Paragraph({
