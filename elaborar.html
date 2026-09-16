@@ -118,8 +118,9 @@ label.titulo{
   margin-bottom:9px;
 }
 
-select,
-input[type="number"]{
+  select,
+  input[type="text"],
+  input[type="number"]{
   width:100%;
   padding:12px 13px;
   border:1px solid var(--borde);
@@ -363,7 +364,29 @@ Esta información permitirá adaptar el cronograma a su
 naturaleza, duración y organización académica.
 </p>
 
+<div class="campo">
+  <label class="titulo" for="codigoAsignatura">
+    Código de la asignatura
+  </label>
 
+  <input
+    type="text"
+    id="codigoAsignatura"
+    placeholder="Ej.: MAT-101"
+  >
+</div>
+
+<div class="campo">
+  <label class="titulo" for="nombreAsignatura">
+    Nombre de la asignatura
+  </label>
+
+  <input
+    type="text"
+    id="nombreAsignatura"
+    placeholder="Ej.: Matemática Básica"
+  >
+</div>
 <div class="campo">
 
 <label class="titulo" for="tipoAsignatura">
@@ -375,8 +398,8 @@ naturaleza, duración y organización académica.
 <option value="">Seleccione una opción</option>
 <option value="teoria">Teoría</option>
 <option value="rubroUnico">Rubro único</option>
-<option value="preinternado">Hospitalaria – Preinternado</option>
-<option value="internado">Hospitalaria – Internado académico</option>
+<option value="preinternado">Preinternado</option>
+<option value="internado">Internado académico</option>
 
 </select>
 
@@ -1163,6 +1186,8 @@ DATOS GENERALES DE LA GUÍA DOCENTE
 let datosGuia = {
 
   configuracion: {
+    codigoAsignatura: "",
+    nombreAsignatura: "",
     tipoAsignatura: "",
     semanas: null,
     clasesPorSemana: null,
@@ -1473,7 +1498,7 @@ function actualizarSemanasHospitalaria(){
   if(tipo==="preinternado"){
 
     mostrarSemanas(
-      "Hospitalaria – Preinternado: el cronograma se " +
+      "Preinternado: el cronograma se " +
       "configurará para " + semanas + " semanas."
     );
 
@@ -1483,7 +1508,7 @@ function actualizarSemanasHospitalaria(){
   else{
 
     mostrarSemanas(
-      "Hospitalaria – Internado académico: el cronograma " +
+      "Internado académico: el cronograma " +
       "se configurará para " + semanas + " semanas."
     );
 
@@ -1514,6 +1539,12 @@ VALIDACIÓN ETAPA 1
 
 function continuarConfiguracion(){
 
+  const codigoAsignatura =
+    document.getElementById("codigoAsignatura").value.trim();
+
+  const nombreAsignatura =
+    document.getElementById("nombreAsignatura").value.trim();
+  
   const tipo =
     document.getElementById("tipoAsignatura").value;
 
@@ -1537,6 +1568,23 @@ function continuarConfiguracion(){
 
   error.classList.add("oculto");
 
+    if(!codigoAsignatura){
+
+    mostrarError1(
+      "Ingrese el código de la asignatura."
+    );
+
+    return;
+  }
+
+  if(!nombreAsignatura){
+
+    mostrarError1(
+      "Ingrese el nombre de la asignatura."
+    );
+
+    return;
+  }
 
   if(!tipo){
 
@@ -1655,7 +1703,8 @@ function continuarConfiguracion(){
   }
 
   /* GUARDAR CONFIGURACIÓN VALIDADA DE LA ETAPA 1 */
-
+  datosGuia.configuracion.codigoAsignatura = codigoAsignatura;
+  datosGuia.configuracion.nombreAsignatura = nombreAsignatura;
   datosGuia.configuracion.tipoAsignatura = tipo;
   datosGuia.configuracion.semanas = semanas;
   datosGuia.configuracion.clasesPorSemana = frecuencia;
@@ -2979,6 +3028,22 @@ function restaurarInterfazProgreso() {
 
   if (!recuperado) {
     return;
+  }
+    /* Restaurar código y nombre de la asignatura */
+  const codigoAsignatura =
+    document.getElementById("codigoAsignatura");
+
+  const nombreAsignatura =
+    document.getElementById("nombreAsignatura");
+
+  if (codigoAsignatura) {
+    codigoAsignatura.value =
+      datosGuia.configuracion.codigoAsignatura || "";
+  }
+
+  if (nombreAsignatura) {
+    nombreAsignatura.value =
+      datosGuia.configuracion.nombreAsignatura || "";
   }
 /* Restaurar frecuencia de clases */
 const frecuencia =
