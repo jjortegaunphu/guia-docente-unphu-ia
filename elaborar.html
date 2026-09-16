@@ -6740,7 +6740,14 @@ recursos +=
 
 if (Array.isArray(clase.bibliografia)) {
   recursos +=
-    clase.bibliografia.join("\n");
+    clase.bibliografia
+     .map(referencia =>
+      referencia.replace(
+        /(\/|\.|\?|&|=)/g,
+        "$1\u200B"
+    )
+  )
+  .join("\n");
 }
   filasPDF.push([
   contenido,
