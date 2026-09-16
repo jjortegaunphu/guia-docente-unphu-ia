@@ -78,7 +78,7 @@
 
     /* CONTENIDO PRINCIPAL */
     main {
-      max-width: 1100px;
+      max-width: 1250px;
       margin: auto;
       padding: 70px 25px;
     }
@@ -104,8 +104,8 @@
     /* TARJETAS */
     .options {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 28px;
+      grid-template-columns: repeat(3, 1fr);
+       gap: 24px;
     }
 
     .card {
@@ -224,7 +224,7 @@
           <h1>Guía Docente UNPHU IA</h1>
 
           <p>
-            Asistente inteligente para la elaboración y revisión de guías docentes
+            Asistente inteligente para la elaboración de guías docentes
           </p>
         </div>
 
@@ -239,51 +239,78 @@
       <h2>¿Qué deseas realizar?</h2>
 
       <p>
-        Selecciona una opción para iniciar el proceso. La herramienta está
-        diseñada para apoyar la elaboración y revisión de la guía docente
-        conforme a los lineamientos institucionales de la UNPHU.
+        Desarrolla la guía docente de manera progresiva, desde la elaboración
+        del cronograma hasta la definición del sistema y los instrumentos
+        de evaluación, conforme a los lineamientos institucionales de la UNPHU.
       </p>
     </section>
 
-    <section class="options">
+   <section class="options">
 
-      <article class="card">
-        <div class="card-number">1</div>
+  <!-- PASO 1 -->
+  <article class="card">
+    <div class="card-number">1</div>
 
-        <h3>Elaborar guía docente</h3>
+    <h3>Elaborar cronograma</h3>
 
-        <p>
-          Construye la guía docente de manera progresiva, siguiendo su
-          estructura institucional y trabajando cada acápite de forma guiada.
-        </p>
+    <p>
+      Organiza los contenidos, metodologías de enseñanza,
+      actividades formativas, REA, recursos y bibliografía
+      de la asignatura por semana y clase.
+    </p>
 
-        <a
-           id="btnElaborarGuia"
-           class="button"
-           href="elaborar.html?modo=nueva"
-        >
-          Comenzar elaboración
-        </a>
-        
-      </article>
+    <a
+      id="btnElaborarCronograma"
+      class="button"
+      href="elaborar.html?modo=nueva"
+    >
+      Iniciar cronograma
+    </a>
+  </article>
 
-      <article class="card">
-        <div class="card-number">2</div>
+  <!-- PASO 2 -->
+  <article class="card">
+    <div class="card-number">2</div>
 
-        <h3>Revisar guía docente</h3>
+    <h3>Elaborar sistema de evaluación</h3>
 
-        <p>
-          Analiza una guía docente existente para identificar aspectos que
-          requieren revisión y comprobar su coherencia con los lineamientos
-          institucionales.
-        </p>
+    <p>
+      Define el sistema de evaluación de la asignatura
+      tomando como referencia el cronograma completo
+      elaborado en el paso 1.
+    </p>
 
-        <a class="button" href="revisar.html">
-          Iniciar revisión
-        </a>
-      </article>
+    <a
+      id="btnSistemaEvaluacion"
+      class="button"
+      href="#"
+    >
+      Iniciar sistema de evaluación
+    </a>
+  </article>
 
-    </section>
+  <!-- PASO 3 -->
+  <article class="card">
+    <div class="card-number">3</div>
+
+    <h3>Elaborar instrumentos de evaluación</h3>
+
+    <p>
+      Diseña los instrumentos de evaluación correspondientes
+      tomando como referencia el sistema de evaluación
+      definido en el paso 2.
+    </p>
+
+    <a
+      id="btnInstrumentosEvaluacion"
+      class="button"
+      href="#"
+    >
+      Iniciar instrumentos
+    </a>
+  </article>
+
+</section>
 
   </main>
 
@@ -311,16 +338,15 @@
       );
     }
   }
-  const btnElaborarGuia =
-    document.getElementById("btnElaborarGuia");
-    
-if (existeGuiaEnProgreso && btnElaborarGuia) {
-  btnElaborarGuia.textContent =
-    "Continuar elaboración";
+  const btnElaborarCronograma =
+  document.getElementById("btnElaborarCronograma");
 
-  btnElaborarGuia.href =
+if (existeGuiaEnProgreso && btnElaborarCronograma) {
+  btnElaborarCronograma.textContent =
+    "Continuar cronograma";
+
+  btnElaborarCronograma.href =
     "elaborar.html";
-  
 }
 </script>
 </body>
