@@ -7,6 +7,9 @@
 <title>Elaborar Guía Docente | UNPHU IA</title>
 
 <script src="https://unpkg.com/docx@9.5.1/dist/index.iife.js"></script>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
 <style>
 
@@ -6619,6 +6622,201 @@ setTimeout(
   1000
 );
 }
+  function descargarCronogramaPDF() {
+
+  if (
+    typeof window.jspdf === "undefined" ||
+    typeof window.jspdf.jsPDF === "undefined"
+  ) {
+    alert(
+      "No fue posible cargar la herramienta para generar el PDF."
+    );
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+
+  const documentoPDF =
+    new jsPDF({
+      orientation: "portrait",
+      unit: "pt",
+      format: "a4"
+    });
+
+    const semanasOrdenadas =
+  [...datosGuia.cronograma]
+    .filter(
+      datosSemana =>
+        datosSemana.propuesta &&
+        Array.isArray(datosSemana.propuesta.clases) &&
+        datosSemana.propuesta.clases.length > 0
+    )
+    .sort(
+      (a, b) => a.semana - b.semana
+    );
+
+if (!semanasOrdenadas.length) {
+  alert(
+    "No hay contenido disponible para generar el PDF."
+  );
+  return;
+}
+const filasPDF = [];
+
+semanasOrdenadas.forEach(datosSemana => {
+
+  filasPDF.push([
+    {
+      content: "Semana " + datosSemana.semana,
+      colSpan: 4,
+      styles: {
+        halign: "center",
+        fontStyle: "bold",
+        fillColor: [233, 244, 241]
+      }
+    }
+  ]);
+const propuesta =
+  datosSemana.propuesta;
+
+propuesta.clases.forEach(clase => {
+
+  const contenido =
+    "Clase " + clase.clase + "\n" +
+    (clase.contenido || "");
+
+  let metodologias = "";
+
+if (Array.isArray(clase.metodologiasActividades)) {
+
+  clase.metodologiasActividades.forEach(
+    (item, index) => {
+
+      metodologias +=
+        "Metodología " + (index + 1) + ":\n" +
+        (item.metodologia || "") + "\n" +
+        "Mediación docente:\n" +
+        (item.explicacion || "") + "\n\n";
+
+    }
+  );
+
+}
+let actividades = "";
+
+if (Array.isArray(clase.metodologiasActividades)) {
+
+  clase.metodologiasActividades.forEach(
+    (item, index) => {
+
+      actividades +=
+        "Actividad formativa " + (index + 1) + ":\n" +
+        (item.actividadFormativa || "") + "\n\n";
+
+    }
+  );
+
+}
+  let recursos = "";
+
+recursos +=
+  "Recursos materiales:\n";
+
+if (Array.isArray(clase.recursosMateriales)) {
+  recursos +=
+    clase.recursosMateriales.join("\n");
+}
+
+recursos +=
+  "\n\nRecursos virtuales:\n";
+
+if (Array.isArray(clase.recursosVirtuales)) {
+  recursos +=
+    clase.recursosVirtuales.join("\n");
+}
+
+recursos +=
+  "\n\nBibliografía:\n";
+
+if (Array.isArray(clase.bibliografia)) {
+  recursos +=
+    clase.bibliografia.join("\n");
+}
+  filasPDF.push([
+  contenido,
+  metodologias.trim(),
+  actividades.trim(),
+  recursos.trim()
+]);
+});
+});
+    documentoPDF.setFontSize(14);
+documentoPDF.setFont(
+  "helvetica",
+  "bold"
+);
+
+documentoPDF.text(
+  "Cronograma de la asignatura",
+  documentoPDF.internal.pageSize.getWidth() / 2,
+  35,
+  {
+    align: "center"
+  }
+);
+
+documentoPDF.autoTable({
+  startY: 50,
+
+  head: [[
+    "Contenido",
+    "Metodologías de Enseñanza",
+    "Actividades Formativas y REA(s)",
+    "Recursos y Bibliografías"
+  ]],
+
+  body: filasPDF,
+
+  theme: "grid",
+
+  styles: {
+    font: "helvetica",
+    fontSize: 10,
+    cellPadding: 3,
+    valign: "top",
+    lineColor: [0, 0, 0],
+    lineWidth: 0.5,
+    textColor: [0, 0, 0],
+    overflow: "linebreak"
+  },
+
+  headStyles: {
+    fillColor: [0, 107, 84],
+    textColor: [255, 255, 255],
+    fontStyle: "bold",
+    halign: "center",
+    valign: "middle"
+  },
+
+  columnStyles: {
+    0: { cellWidth: 126 },
+    1: { cellWidth: 142 },
+    2: { cellWidth: 142 },
+    3: { cellWidth: 116 }
+  },
+
+  margin: {
+    left: 34,
+    right: 35
+  },
+
+  showHead: "firstPage"
+});
+
+documentoPDF.save(
+  "Cronograma_Guia_Docente_UNPHU.pdf"
+);
+}
   const btnDescargarWord =
   document.getElementById("btnDescargarWord");
 
@@ -6630,7 +6828,17 @@ if (btnDescargarWord) {
     }
   );
 }
-  
+  const btnDescargarPDF =
+  document.getElementById("btnDescargarPDF");
+
+if (btnDescargarPDF) {
+  btnDescargarPDF.addEventListener(
+    "click",
+    function () {
+      descargarCronogramaPDF();
+    }
+  );
+}
 </script>
 
 </body>
