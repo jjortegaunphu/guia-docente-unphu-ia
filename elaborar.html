@@ -398,8 +398,8 @@ naturaleza, duración y organización académica.
 <option value="">Seleccione una opción</option>
 <option value="teoria">Teoría</option>
 <option value="rubroUnico">Rubro único</option>
-<option value="preinternado">Preinternado</option>
-<option value="internado">Internado académico</option>
+<option value="cienciasBasicas">Ciclo de Ciencias Básicas</option>
+<option value="cienciasClinicas">Ciclo de Ciencias Clínicas</option>
 
 </select>
 
@@ -529,14 +529,43 @@ oninput="actualizarSemanasHospitalaria()"
 >
 
 <div class="nota">
-Indique la duración académica establecida para el
-Preinternado o Internado académico correspondiente.
+  Indique la duración académica correspondiente a la asignatura.
 </div>
 
 </div>
 
 </div>
+<!-- MODALIDAD DEL CICLO DE CIENCIAS CLÍNICAS -->
 
+<div id="configCienciasClinicas" class="campo oculto">
+
+  <label class="titulo">
+    ¿A qué modalidad del Ciclo de Ciencias Clínicas corresponde la asignatura?
+  </label>
+
+  <div class="opciones">
+
+    <label class="opcion">
+      <input
+        type="radio"
+        name="modalidadClinica"
+        value="preinternado"
+      >
+      Preinternado académico
+    </label>
+
+    <label class="opcion">
+      <input
+        type="radio"
+        name="modalidadClinica"
+        value="internado"
+      >
+      Internado académico
+    </label>
+
+  </div>
+
+</div>
 
 <!-- FRECUENCIA -->
 
@@ -686,7 +715,16 @@ onchange="crearEvaluacion()"
 Acumulado 1 + Acumulado 2 + Acumulado 3 +
 Acumulado 4 + TP + Examen Final
 </label>
-
+<label class="opcion">
+<input
+type="radio"
+name="esquemaHospitalario"
+value="hospital3"
+onchange="crearEvaluacion()"
+>
+Acumulado 1 + Acumulado 2 + Acumulado 3 +
+TP + Examen Final
+</label>
 </div>
 
 </div>
@@ -1195,7 +1233,8 @@ let datosGuia = {
     vinculacion: "",
     programaLaboratorio: "",
     rubroPractica: "",
-    carreraRubro: ""
+    carreraRubro: "",
+    modalidadClinica: ""
   },
 
   evaluacion: {
@@ -1236,6 +1275,10 @@ function configurarTipo(){
     .classList.add("oculto");
 
   document
+  .getElementById("configCienciasClinicas")
+  .classList.add("oculto");
+
+  document
     .getElementById("resultadoSemanas")
     .classList.add("oculto");
 
@@ -1272,16 +1315,24 @@ function configurarTipo(){
   }
 
 
-  else if(
-    tipo==="preinternado" ||
-    tipo==="internado"
-  ){
+ else if(
+  tipo==="cienciasBasicas" ||
+  tipo==="cienciasClinicas"
+){
+
+  document
+    .getElementById("configHospitalaria")
+    .classList.remove("oculto");
+
+  if(tipo==="cienciasClinicas"){
 
     document
-      .getElementById("configHospitalaria")
+      .getElementById("configCienciasClinicas")
       .classList.remove("oculto");
 
   }
+
+}
 
 }
 
@@ -1495,25 +1546,46 @@ function actualizarSemanasHospitalaria(){
   semanas=valor;
 
 
-  if(tipo==="preinternado"){
+ if(tipo==="cienciasBasicas"){
+
+  mostrarSemanas(
+    "Ciclo de Ciencias Básicas: el cronograma se " +
+    "configurará para " + semanas + " semanas."
+  );
+
+}
+
+else if(tipo==="cienciasClinicas"){
+
+  const modalidadClinica =
+    document.querySelector(
+      'input[name="modalidadClinica"]:checked'
+    );
+
+  if(modalidadClinica){
+
+    const nombreModalidad =
+      modalidadClinica.value==="preinternado"
+        ? "Preinternado académico"
+        : "Internado académico";
 
     mostrarSemanas(
-      "Preinternado: el cronograma se " +
+      nombreModalidad + ": el cronograma se " +
       "configurará para " + semanas + " semanas."
     );
 
   }
 
-
   else{
 
     mostrarSemanas(
-      "Internado académico: el cronograma " +
-      "se configurará para " + semanas + " semanas."
+      "Ciclo de Ciencias Clínicas: el cronograma se " +
+      "configurará para " + semanas + " semanas."
     );
 
   }
 
+}
 }
 
 
@@ -1655,19 +1727,39 @@ function continuarConfiguracion(){
   }
 
 
-  if(
-    (tipo==="preinternado" ||
-     tipo==="internado") &&
-    !semanas
-  ){
+ if(
+  (tipo==="cienciasBasicas" ||
+   tipo==="cienciasClinicas") &&
+  !semanas
+){
+
+  mostrarError1(
+    "Indique cuántas semanas se desarrollará la asignatura."
+  );
+
+  return;
+
+}
+
+
+if(tipo==="cienciasClinicas"){
+
+  const modalidadClinica =
+    document.querySelector(
+      'input[name="modalidadClinica"]:checked'
+    );
+
+  if(!modalidadClinica){
 
     mostrarError1(
-      "Indique cuántas semanas se desarrollará la asignatura."
+      "Seleccione si la asignatura corresponde a Preinternado académico o Internado académico."
     );
 
     return;
 
   }
+
+}
 
 
   if(!frecuencia || frecuencia<1){
@@ -1714,7 +1806,20 @@ function continuarConfiguracion(){
   datosGuia.configuracion.programaLaboratorio = "";
   datosGuia.configuracion.rubroPractica = "";
   datosGuia.configuracion.carreraRubro = "";
+  datosGuia.configuracion.modalidadClinica = "";
 
+if(tipo==="cienciasClinicas"){
+
+  const modalidadClinica =
+    document.querySelector(
+      'input[name="modalidadClinica"]:checked'
+    );
+
+  datosGuia.configuracion.modalidadClinica =
+    modalidadClinica.value;
+
+}
+  
   if(tipo==="teoria"){
 
     const laboratorio =
@@ -1919,7 +2024,7 @@ const laboratorio =
     }
 
 
-    else{
+    else if(esquema.value==="hospital2"){
 
       rubros=[
         ["Acumulado 1",true],
@@ -1936,6 +2041,22 @@ const laboratorio =
 
     }
 
+else if(esquema.value==="hospital3"){
+
+  rubros=[
+    ["Acumulado 1",true],
+    ["Acumulado 2",true],
+    ["Acumulado 3",true],
+    ["TP",false],
+    ["Examen Final",true]
+  ];
+
+  descripcion=
+    "Esquema hospitalario: Acumulado 1 + Acumulado 2 + " +
+    "Acumulado 3 + TP + Examen Final.";
+
+}
+    
   }
 
 
@@ -2099,6 +2220,37 @@ if (tipoAsignatura) {
   }
 
 }
+
+  if (datosGuia.configuracion.modalidadClinica) {
+
+  const radioModalidadClinica =
+    document.querySelector(
+      'input[name="modalidadClinica"][value="' +
+      datosGuia.configuracion.modalidadClinica +
+      '"]'
+    );
+
+  if (radioModalidadClinica) {
+    radioModalidadClinica.checked = true;
+  }
+
+}
+
+if(
+  datosGuia.configuracion.tipoAsignatura==="cienciasBasicas" ||
+  datosGuia.configuracion.tipoAsignatura==="cienciasClinicas"
+){
+
+  semanas =
+    datosGuia.configuracion.semanas;
+
+  document.getElementById("semanasHospitalaria").value =
+    datosGuia.configuracion.semanas || "";
+
+  actualizarSemanasHospitalaria();
+
+}
+  
   window.scrollTo(0,0);
 
 }
@@ -2121,8 +2273,8 @@ function finalizarConfiguracion(){
 
 
   if(
-    tipo==="preinternado" ||
-    tipo==="internado"
+  tipo==="cienciasBasicas" ||
+  tipo==="cienciasClinicas"
   ){
 
     const esquema =
@@ -2926,6 +3078,25 @@ datosGuia.programa.bibliografia.forEach(
 }
   function restaurarBorradorEtapa2() {
 
+if (
+  datosGuia.evaluacion &&
+  datosGuia.evaluacion.esquema
+) {
+
+  const radioEsquema =
+    document.querySelector(
+      'input[name="esquemaHospitalario"][value="' +
+      datosGuia.evaluacion.esquema +
+      '"]'
+    );
+
+  if (radioEsquema) {
+    radioEsquema.checked = true;
+    crearEvaluacion();
+  }
+
+}
+    
   if (
     !datosGuia.evaluacion ||
     !Array.isArray(datosGuia.evaluacion.rubros) ||
@@ -3132,13 +3303,25 @@ if (
 }
 
 if (
-  datosGuia.configuracion.tipoAsignatura === "preinternado" ||
-  datosGuia.configuracion.tipoAsignatura === "internado"
+  datosGuia.configuracion.tipoAsignatura === "cienciasBasicas" ||
+  datosGuia.configuracion.tipoAsignatura === "cienciasClinicas"
 ) {
+
   document
     .getElementById("configHospitalaria")
     .classList.remove("oculto");
-}  
+
+  if (
+    datosGuia.configuracion.tipoAsignatura === "cienciasClinicas"
+  ) {
+
+    document
+      .getElementById("configCienciasClinicas")
+      .classList.remove("oculto");
+
+  }
+
+} 
 if (
   datosGuia.configuracion.programaLaboratorio
 ) {
@@ -3182,12 +3365,14 @@ if (carreraRubro) {
 if (
   semanasHospitalaria &&
   (
-    datosGuia.configuracion.tipoAsignatura === "preinternado" ||
-    datosGuia.configuracion.tipoAsignatura === "internado"
+    datosGuia.configuracion.tipoAsignatura === "cienciasBasicas" ||
+    datosGuia.configuracion.tipoAsignatura === "cienciasClinicas"
   )
 ) {
+
   semanasHospitalaria.value =
     datosGuia.configuracion.semanas || "";
+
 }
     if (
   datosGuia.configuracion.tipoAsignatura === "teoria"
@@ -3218,8 +3403,8 @@ if (
 
 } 
     if (
-  datosGuia.configuracion.tipoAsignatura === "preinternado" ||
-  datosGuia.configuracion.tipoAsignatura === "internado"
+  datosGuia.configuracion.tipoAsignatura === "cienciasBasicas" ||
+  datosGuia.configuracion.tipoAsignatura === "cienciasClinicas"
 ) {
 
   actualizarSemanasHospitalaria();
@@ -3259,6 +3444,23 @@ if (tipoAsignatura) {
     radioLaboratorio.checked = true;
   }
   }
+
+   if (
+  datosGuia.configuracion.modalidadClinica
+) {
+
+  const radioModalidadClinica =
+    document.querySelector(
+      'input[name="modalidadClinica"][value="' +
+      datosGuia.configuracion.modalidadClinica +
+      '"]'
+    );
+
+  if (radioModalidadClinica) {
+    radioModalidadClinica.checked = true;
+  }
+
+}
 
   if (
     datosGuia.configuracion.rubroPractica
