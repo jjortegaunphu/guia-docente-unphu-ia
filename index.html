@@ -322,6 +322,7 @@
     localStorage.getItem("respaldoGuiaDocente");
 
   let existeGuiaEnProgreso = false;
+  let cronogramaCompletado = false;
 
   if (respaldoGuia) {
     try {
@@ -330,6 +331,12 @@
 
       if (datosGuardados.datosGuia) {
         existeGuiaEnProgreso = true;
+        if (
+          datosGuardados.datosGuia.cronogramaCompletado === true
+         ) {
+           cronogramaCompletado = true;
+  }
+        
       }
     } catch (error) {
       console.error(
@@ -348,6 +355,36 @@ if (existeGuiaEnProgreso && btnElaborarCronograma) {
   btnElaborarCronograma.href =
     "elaborar.html";
 }
+ const btnSistemaEvaluacion =
+  document.getElementById("btnSistemaEvaluacion");
+
+if (btnSistemaEvaluacion) {
+
+  if (cronogramaCompletado) {
+
+    btnSistemaEvaluacion.href =
+      "evaluacion.html";
+
+  } else {
+
+    btnSistemaEvaluacion.href = "#";
+
+    btnSistemaEvaluacion.addEventListener(
+      "click",
+      function(event) {
+
+        event.preventDefault();
+
+        alert(
+          "Para elaborar el sistema de evaluación, primero debe completar el cronograma de la asignatura."
+        );
+
+      }
+    );
+
+  }
+
+} 
 </script>
 </body>
 </html>
