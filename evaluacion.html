@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Sistema de Evaluación · Guía Docente UNPHU IA</title>
+</head>
+
+<body>
+
+  <header>
+    <h1>Guía Docente UNPHU IA</h1>
+    <p>Elaboración del Sistema de Evaluación</p>
+  </header>
+
+  <main>
+
+    <section id="cargando">
+      <h2>Preparando el sistema de evaluación...</h2>
+
+      <p>
+        Se está recuperando la información del cronograma
+        elaborado en el paso anterior.
+      </p>
+    </section>
+
+    <section
+      id="sistemaEvaluacion"
+      style="display:none;"
+    >
+
+      <h2>X. Sistema de Evaluación</h2>
+
+      <p>
+        El sistema de evaluación será generado tomando como
+        referencia el cronograma completo de la asignatura.
+      </p>
+
+      <div id="resumenAsignatura"></div>
+
+      <div id="contenidoSistemaEvaluacion"></div>
+
+    </section>
+
+    <section
+      id="errorEvaluacion"
+      style="display:none;"
+    >
+
+      <h2>No se puede elaborar el sistema de evaluación</h2>
+
+      <p id="mensajeErrorEvaluacion"></p>
+
+      <a href="index.html">
+        Volver al inicio
+      </a>
+
+    </section>
+
+  </main>
+
+
+  <script>
+
+    let datosPaso1 = null;
+
+    function cargarDatosPaso1(){
+
+      const respaldo =
+        localStorage.getItem("respaldoGuiaDocente");
+
+      if (!respaldo) {
+        mostrarError(
+          "No se encontró un cronograma previamente elaborado."
+        );
+        return;
+      }
+
+      try {
+
+        const datosGuardados =
+          JSON.parse(respaldo);
+
+        if (
+          !datosGuardados.datosGuia ||
+          datosGuardados.datosGuia.cronogramaCompletado !== true
+        ) {
+
+          mostrarError(
+            "Para elaborar el sistema de evaluación, primero debe completar el cronograma de la asignatura."
+          );
+
+          return;
+        }
+
+        datosPaso1 =
+          datosGuardados.datosGuia;
+
+        mostrarSistemaEvaluacion();
+
+      } catch (error) {
+
+        console.error(
+          "Error al recuperar el cronograma:",
+          error
+        );
+
+        mostrarError(
+          "No fue posible recuperar correctamente la información del cronograma."
+        );
+
+      }
+
+    }
+
+
+    function mostrarSistemaEvaluacion(){
+
+      document
+        .getElementById("cargando")
+        .style.display = "none";
+
+      document
+        .getElementById("errorEvaluacion")
+        .style.display = "none";
+
+      document
+        .getElementById("sistemaEvaluacion")
+        .style.display = "block";
+
+    }
+
+
+    function mostrarError(mensaje){
+
+      document
+        .getElementById("cargando")
+        .style.display = "none";
+
+      document
+        .getElementById("sistemaEvaluacion")
+        .style.display = "none";
+
+      document
+        .getElementById("errorEvaluacion")
+        .style.display = "block";
+
+      document
+        .getElementById("mensajeErrorEvaluacion")
+        .textContent = mensaje;
+
+    }
+
+
+    cargarDatosPaso1();
+
+  </script>
+
+</body>
+
+</html>
