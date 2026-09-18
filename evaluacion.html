@@ -239,6 +239,73 @@ function prepararContextoIAEvaluacion(rubro, rubroAnterior = null){
   };
 
 }
+
+async function generarPrimerRubroEvaluacion(){
+
+  const primerRubro = obtenerPrimerRubroEvaluacion();
+
+  if(!primerRubro){
+    mostrarError(
+      "No se encontró la configuración del primer rubro de evaluación."
+    );
+    return;
+  }
+
+  const contexto =
+    prepararContextoIAEvaluacion(primerRubro);
+
+  const contenedor =
+    document.getElementById("contenidoSistemaEvaluacion");
+
+  contenedor.innerHTML =
+    "<p>Generando propuesta del " +
+    primerRubro.nombre +
+    "...</p>";
+
+  try{
+
+    const respuesta = await fetch(
+      "https://guia-docente-unphu-api.jortega-cc4.workers.dev/generar-sistema-evaluacion",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(contexto)
+      }
+    );
+
+    const resultado = await respuesta.json();
+
+    if(!respuesta.ok || !resultado.correcto){
+      throw new Error(
+        resultado.error ||
+        "No fue posible generar la propuesta de evaluación."
+      );
+    }
+
+    console.log(
+      "Propuesta generada para " + primerRubro.nombre + ":",
+      resultado.propuesta
+    );
+
+    contenedor.innerHTML =
+      "<p><strong>Propuesta generada correctamente para " +
+      primerRubro.nombre +
+      ".</strong></p>";
+
+  }
+  catch(error){
+
+    console.error(
+      "Error al generar el sistema de evaluación:",
+      error
+    );
+
+    contenedor.innerHTML =
+      "<p>No fue posible generar la propuesta del sistema de evaluación.</p>";
+  }
+}
     
     function mostrarSistemaEvaluacion(){
 
