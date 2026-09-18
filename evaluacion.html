@@ -119,7 +119,54 @@
 
     }
 
+function prepararActividadesCronograma(){
 
+  const actividades = [];
+
+  datosPaso1.cronograma.forEach(semana => {
+
+    semana.propuesta?.clases?.forEach(clase => {
+
+      clase.metodologiasActividades?.forEach(item => {
+
+        actividades.push({
+          semana: semana.semana,
+          clase: clase.clase,
+          contenido: clase.contenido || "",
+          metodologia: item.metodologia || "",
+          actividadFormativa:
+            item.actividadFormativa || "",
+          rea:
+            item.codigosREA || []
+        });
+
+      });
+
+      clase.actividadesAdicionales?.forEach(item => {
+
+        actividades.push({
+          semana: semana.semana,
+          clase: clase.clase,
+          contenido: clase.contenido || "",
+          metodologia: "Actividad adicional",
+          actividadFormativa:
+            item.actividadFormativa ||
+            item.actividad ||
+            "",
+          rea:
+            item.codigosREA || []
+        });
+
+      });
+
+    });
+
+  });
+
+  return actividades;
+
+}
+    
     function mostrarSistemaEvaluacion(){
 
       document
@@ -133,6 +180,14 @@
       document
         .getElementById("sistemaEvaluacion")
         .style.display = "block";
+
+      const actividadesCronograma =
+        prepararActividadesCronograma();
+
+      console.log(
+         "Actividades recuperadas para el sistema de evaluación:",
+         actividadesCronograma
+       );
 
     }
 
