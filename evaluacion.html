@@ -166,6 +166,20 @@ function prepararActividadesCronograma(){
   return actividades;
 
 }
+
+function obtenerPrimerRubroEvaluacion(){
+
+  if (
+    !datosPaso1.evaluacion ||
+    !Array.isArray(datosPaso1.evaluacion.rubros) ||
+    datosPaso1.evaluacion.rubros.length === 0
+  ) {
+    return null;
+  }
+
+  return datosPaso1.evaluacion.rubros[0];
+
+}
     
     function mostrarSistemaEvaluacion(){
 
@@ -189,6 +203,14 @@ function prepararActividadesCronograma(){
          actividadesCronograma
        );
 
+      const primerRubro =
+        obtenerPrimerRubroEvaluacion();
+
+      console.log(
+       "Primer rubro de evaluación:",
+       primerRubro
+      );
+      
     }
 
 
