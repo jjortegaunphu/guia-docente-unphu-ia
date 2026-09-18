@@ -258,7 +258,7 @@ function mostrarTablaEvaluacion(propuesta){
 
   let filas = "";
 
-  propuesta.actividades.forEach(actividad => {
+ propuesta.actividades.forEach((actividad, index) => {
 
     const rea =
       Array.isArray(actividad.codigosREA)
@@ -271,26 +271,37 @@ function mostrarTablaEvaluacion(propuesta){
         : "";
 
     filas += `
-      <tr>
-        <td>${actividad.semana}</td>
-        <td>${actividad.tecnica || ""}</td>
-        <td>${rea}</td>
-        <td>${actividad.tipo || ""}</td>
-        <td>${instrumentos}</td>
-        <td>${actividad.valor ?? 0}</td>
-      </tr>
-    `;
+  <tr>
+    <td>${actividad.semana}</td>
+    <td>${actividad.tecnica || ""}</td>
+    <td>${rea}</td>
+    <td>${actividad.tipo || ""}</td>
+    <td>${instrumentos}</td>
+    <td>${actividad.valor ?? 0}</td>
+    <td>
+      <button
+        type="button"
+        onclick="editarActividadEvaluacion(${index})"
+      >
+        Editar
+      </button>
+    </td>
+  </tr>
+`;
 
   });
 
   filas += `
     <tr>
-      <td colspan="5">
+      <td colspan="6">
         <strong>${propuesta.rubro}</strong>
       </td>
       <td>
         <strong>${propuesta.pesoTotal}</strong>
       </td>
+      
+      <td></td>
+      
     </tr>
   `;
 
@@ -306,6 +317,7 @@ function mostrarTablaEvaluacion(propuesta){
           <th>Tipo (D, F o S)</th>
           <th>Instrumento(s)</th>
           <th>Valor</th>
+          <th>Acciones</th>
         </tr>
       </thead>
 
@@ -314,6 +326,15 @@ function mostrarTablaEvaluacion(propuesta){
       </tbody>
     </table>
   `;
+
+}
+
+function editarActividadEvaluacion(index){
+
+  console.log(
+    "Actividad seleccionada para editar:",
+    index
+  );
 
 }
     
