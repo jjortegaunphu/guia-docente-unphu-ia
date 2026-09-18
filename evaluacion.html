@@ -269,6 +269,12 @@ function prepararContextoIAEvaluacion(rubro, rubroAnterior = null){
        "Primer rubro de evaluación:",
        primerRubro
       );
+      const resumen = document.getElementById("resumenAsignatura");
+
+resumen.innerHTML = `
+  <p><strong>Asignatura:</strong> ${datosPaso1.configuracion?.nombreAsignatura || ""}</p>
+  <p><strong>Código:</strong> ${datosPaso1.configuracion?.codigoAsignatura || ""}</p>
+`;
       
     }
 
