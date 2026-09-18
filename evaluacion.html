@@ -366,10 +366,9 @@ async function generarPrimerRubroEvaluacion(){
       resultado.propuesta
     );
 
-    contenedor.innerHTML =
-      "<p><strong>Propuesta generada correctamente para " +
-      primerRubro.nombre +
-      ".</strong></p>";
+    mostrarTablaEvaluacion(
+       resultado.propuesta
+    );
 
   }
   catch(error){
