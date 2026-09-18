@@ -4945,16 +4945,7 @@ metodologiasActividades.forEach((item, index) => {
     .replace(/\s*\(REA\s*\d+(?:\s*,\s*REA\s*\d+)*\)\s*$/i, "")
     .replace(/\s*\(REA\d+(?:\s*,\s*REA\d+)*\)\s*$/i, "")
     .trim();
-  const informacionEvaluativa =
-  item.esEvaluativa === true
-    ? `
-      <p>
-        <strong>Actividad evaluativa:</strong>
-        ${item.rubroEvaluacion || ""} —
-        ${Number(item.puntuacion) || 0} punto(s)
-      </p>
-    `
-    : "";
+ 
   metodologiasHTML += `
     <div style="margin-bottom:18px;">
       <p>
@@ -5010,8 +5001,7 @@ metodologiasActividades.forEach((item, index) => {
   Modificar con IA
 </button>
     
-    ${informacionEvaluativa}
-    </div>
+</div>
   `;
 }); 
 const recursosMaterialesTexto =
@@ -5046,16 +5036,7 @@ const actividadLimpia =
     .replace(/\s*\(REA\s*\d+(?:\s*,\s*REA\s*\d+)*\)\s*$/i, "")
     .replace(/\s*\(REA\d+(?:\s*,\s*REA\d+)*\)\s*$/i, "")
     .trim();
-const informacionEvaluativaAdicional =
-  actividad.esEvaluativa === true
-    ? `
-      <p>
-        <strong>Actividad evaluativa:</strong>
-        ${actividad.rubroEvaluacion || ""} —
-        ${Number(actividad.puntuacion) || 0} punto(s)
-      </p>
-    `
-    : "";
+
   actividadesAdicionalesHTML += `
     <div style="margin-bottom:18px;">
       <p>
@@ -5072,8 +5053,7 @@ const informacionEvaluativaAdicional =
       <strong>Actividad formativa:</strong><br>
       ${actividadLimpia}${codigosREA ? ` (${codigosREA})` : ""}
       
-      ${informacionEvaluativaAdicional}
-    </div>
+         </div>
   
   `;
 });
