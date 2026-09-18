@@ -1249,7 +1249,12 @@ let datosGuia = {
     archivoNombre: ""
   },
 
-  cronograma: []
+  cronograma: [],
+
+  sistemaEvaluacion: {
+  generado: false,
+  actividades: []
+}
 
 };
 
@@ -3957,6 +3962,12 @@ function mostrarVistaFinalCronograma() {
 
   guardarContenidoSemanaActual();
 
+  // PASO 1 COMPLETADO
+  datosGuia.cronogramaCompletado = true;
+
+  datosGuia.sistemaEvaluacion.fuenteCronograma =
+  prepararDatosSistemaEvaluacion();
+  
   etapaActual = "vistaFinalCronograma";
   guardarProgreso();
 
@@ -4115,6 +4126,33 @@ cuerpoCronograma.appendChild(filaClaseInstitucional);
   });
 
   window.scrollTo(0, 0);
+}
+
+/* ==================================================
+PREPARAR DATOS PARA EL SISTEMA DE EVALUACIÓN
+================================================== */
+
+function prepararDatosSistemaEvaluacion(){
+
+  if (!datosGuia.cronogramaCompletado) {
+    return null;
+  }
+
+  return {
+
+    configuracion: datosGuia.configuracion,
+
+    evaluacionInstitucional: datosGuia.evaluacion,
+
+    programa: {
+      reaOficiales: datosGuia.programa.reaOficiales,
+      bibliografia: datosGuia.programa.bibliografia
+    },
+
+    cronograma: datosGuia.cronograma
+
+  };
+
 }
   
 function continuarSiguienteSemana(){
