@@ -207,6 +207,38 @@ function prepararPeriodoEvaluativo(rubro, rubroAnterior = null){
   };
 
 }
+
+function prepararContextoIAEvaluacion(rubro, rubroAnterior = null){
+
+  const periodo =
+    prepararPeriodoEvaluativo(
+      rubro,
+      rubroAnterior
+    );
+
+  return {
+
+    asignatura: {
+      configuracion:
+        datosPaso1.configuracion || {}
+    },
+
+    rubro: {
+      nombre: periodo.rubro,
+      pesoFijo: periodo.peso,
+      semanaInicio: periodo.semanaInicio,
+      semanaCierre: periodo.semanaFin
+    },
+
+    reaOficiales:
+      datosPaso1.programa?.reaOficiales || [],
+
+    actividadesCronograma:
+      periodo.actividades
+
+  };
+
+}
     
     function mostrarSistemaEvaluacion(){
 
