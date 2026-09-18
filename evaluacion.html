@@ -180,6 +180,33 @@ function obtenerPrimerRubroEvaluacion(){
   return datosPaso1.evaluacion.rubros[0];
 
 }
+
+function prepararPeriodoEvaluativo(rubro, rubroAnterior = null){
+
+  const semanaInicio =
+    rubroAnterior
+      ? Number(rubroAnterior.semana) + 1
+      : 1;
+
+  const semanaFin =
+    Number(rubro.semana);
+
+  const actividades =
+    prepararActividadesCronograma().filter(
+      actividad =>
+        Number(actividad.semana) >= semanaInicio &&
+        Number(actividad.semana) <= semanaFin
+    );
+
+  return {
+    rubro: rubro.nombre,
+    peso: Number(rubro.peso),
+    semanaInicio: semanaInicio,
+    semanaFin: semanaFin,
+    actividades: actividades
+  };
+
+}
     
     function mostrarSistemaEvaluacion(){
 
