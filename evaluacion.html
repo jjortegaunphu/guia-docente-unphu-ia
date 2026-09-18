@@ -406,6 +406,25 @@ async function generarPrimerRubroEvaluacion(){
       resultado.propuesta
     );
 
+datosPaso1.sistemaEvaluacion =
+  datosPaso1.sistemaEvaluacion || {};
+
+datosPaso1.sistemaEvaluacion.propuestaActual =
+  resultado.propuesta;
+
+const respaldo =
+  JSON.parse(
+    localStorage.getItem("respaldoGuiaDocente")
+  );
+
+respaldo.datosGuia =
+  datosPaso1;
+
+localStorage.setItem(
+  "respaldoGuiaDocente",
+  JSON.stringify(respaldo)
+);
+    
     mostrarTablaEvaluacion(
        resultado.propuesta
     );
@@ -459,7 +478,28 @@ resumen.innerHTML = `
   <p><strong>Código:</strong> ${datosPaso1.configuracion?.codigoAsignatura || ""}</p>
 `;
 
-     generarPrimerRubroEvaluacion(); 
+     if (
+  datosPaso1.sistemaEvaluacion &&
+  datosPaso1.sistemaEvaluacion.propuestaActual
+) {
+
+  console.log(
+    "Mostrando propuesta de evaluación guardada."
+  );
+
+  mostrarTablaEvaluacion(
+    datosPaso1.sistemaEvaluacion.propuestaActual
+  );
+
+} else {
+
+  console.log(
+    "No existe propuesta guardada. Generando con IA..."
+  );
+
+  generarPrimerRubroEvaluacion();
+
+}
       
     }
 
