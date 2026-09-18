@@ -331,10 +331,29 @@ function mostrarTablaEvaluacion(propuesta){
 
 function editarActividadEvaluacion(index){
 
-  console.log(
-    "Actividad seleccionada para editar:",
-    index
-  );
+  const filas =
+    document.querySelectorAll(
+      "#contenidoSistemaEvaluacion tbody tr"
+    );
+
+  const fila = filas[index];
+
+  if(!fila){
+    return;
+  }
+
+  const celdaTecnica =
+    fila.children[1];
+
+  const tecnicaActual =
+    celdaTecnica.textContent.trim();
+
+  celdaTecnica.innerHTML = `
+    <textarea
+      rows="4"
+      style="width:95%;"
+    >${tecnicaActual}</textarea>
+  `;
 
 }
     
