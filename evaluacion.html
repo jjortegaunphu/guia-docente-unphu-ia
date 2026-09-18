@@ -70,6 +70,8 @@
 
     let datosPaso1 = null;
 
+    let propuestaEvaluacionActual = null;
+
     function cargarDatosPaso1(){
 
       const respaldo =
@@ -256,6 +258,8 @@ function mostrarTablaEvaluacion(propuesta){
     return;
   }
 
+  propuestaEvaluacionActual = propuesta;
+  
   let filas = "";
 
  propuesta.actividades.forEach((actividad, index) => {
@@ -331,6 +335,13 @@ function mostrarTablaEvaluacion(propuesta){
 
 function editarActividadEvaluacion(index){
 
+  const actividad =
+    propuestaEvaluacionActual?.actividades?.[index];
+
+  if(!actividad){
+    return;
+  }
+
   const filas =
     document.querySelectorAll(
       "#contenidoSistemaEvaluacion tbody tr"
@@ -342,18 +353,176 @@ function editarActividadEvaluacion(index){
     return;
   }
 
-  const celdaTecnica =
-    fila.children[1];
+  const instrumentosPermitidos = [
+    "Rúbrica",
+    "Lista de cotejo",
+    "Escala de estimación",
+    "Prueba objetiva"
+  ];
 
-  const tecnicaActual =
-    celdaTecnica.textContent.trim();
+  const instrumentoActual =
+    Array.isArray(actividad.instrumentos)
+      ? actividad.instrumentos[0] || ""
+      : "";
 
-  celdaTecnica.innerHTML = `
-    <textarea
-      rows="4"
-      style="width:95%;"
-    >${tecnicaActual}</textarea>
+  fila.innerHTML = `
+    <td>
+      <input
+        type="number"
+        value="${actividad.semana}"
+        min="1"
+        style="width:55px;"
+      >
+    </td>
+
+    <td>
+      <textarea
+        rows="5"
+        style="width:95%;"
+      >${actividad.tecnica || ""}</textarea>
+    </td>
+
+    <td>
+      <input
+        type="text"
+        value="${
+          Array.isArray(actividad.codigosREA)
+            ? actividad.codigosREA.join(", ")
+            : ""
+        }"
+        style="width:90%;"
+      >
+    </td>
+
+    <td>
+      <select>
+        <option value="D" ${actividad.tipo === "D" ? "selected" : ""}>D</option>
+        <option value="F" ${actividad.tipo === "F" ? "selected" : ""}>F</option>
+        <option value="S" ${actividad.tipo === "S" ? "selected" : ""}>S</option>
+      </select>
+    </td>
+
+    <td>
+      <select>
+        ${instrumentosPermitidos.map(instrumento => `
+          <option
+            value="${instrumento}"
+            ${instrumento === instrumentoActual ? "selected" : ""}
+          >
+            ${instrumento}
+          </option>
+        `).join("")}
+      </select>
+    </td>
+
+    <td>
+      <input
+        type="number"
+        value="${actividad.valor ?? 0}"
+        min="0"
+        style="width:55px;"
+      >
+    </td>
+
+    <td>
+      <button
+        type="button"
+        onclick="guardarEdicionActividad(${index})"
+      >
+        Guardar
+      </button>
+
+      <button
+        type="button"
+        onclick="cancelarEdicionActividad()"
+      >
+        Cancelar
+      </button>
+    </td>
   `;
+}
+
+function cancelarEdicionActividad(){
+
+  mostrarTablaEvaluacion(
+    propuestaEvaluacionActual
+  );
+
+}
+
+function guardarEdicionActividad(index){
+
+  const filas =
+    document.querySelectorAll(
+      "#contenidoSistemaEvaluacion tbody tr"
+    );
+
+  const fila = filas[index];
+
+  if(!fila){
+    return;
+  }
+
+  const campos =
+    fila.querySelectorAll(
+      "input, textarea, select"
+    );
+
+  const semana =
+    Number(campos[0].value);
+
+  const tecnica =
+    campos[1].value.trim();
+
+  const codigosREA =
+    campos[2].value
+      .split(",")
+      .map(codigo => codigo.trim())
+      .filter(codigo => codigo !== "");
+
+  const tipo =
+    campos[3].value;
+
+  const instrumento =
+    campos[4].value;
+
+  let valor =
+    Number(campos[5].value);
+
+  if(tipo === "D"){
+    valor = 0;
+  }
+
+  propuestaEvaluacionActual.actividades[index] = {
+    semana: semana,
+    tecnica: tecnica,
+    codigosREA: codigosREA,
+    tipo: tipo,
+    instrumentos: [instrumento],
+    valor: valor
+  };
+
+  datosPaso1.sistemaEvaluacion.propuestaActual =
+    propuestaEvaluacionActual;
+
+  const respaldo =
+    JSON.parse(
+      localStorage.getItem(
+        "respaldoGuiaDocente"
+      )
+    );
+
+  respaldo.datosGuia =
+    datosPaso1;
+
+  localStorage.setItem(
+    "respaldoGuiaDocente",
+    JSON.stringify(respaldo)
+  );
+
+  mostrarTablaEvaluacion(
+    propuestaEvaluacionActual
+  );
 
 }
     
