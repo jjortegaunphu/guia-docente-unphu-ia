@@ -240,6 +240,83 @@ function prepararContextoIAEvaluacion(rubro, rubroAnterior = null){
 
 }
 
+function mostrarTablaEvaluacion(propuesta){
+
+  const contenedor =
+    document.getElementById(
+      "contenidoSistemaEvaluacion"
+    );
+
+  if(
+    !propuesta ||
+    !Array.isArray(propuesta.actividades)
+  ){
+    contenedor.innerHTML =
+      "<p>No se recibió una propuesta de evaluación válida.</p>";
+    return;
+  }
+
+  let filas = "";
+
+  propuesta.actividades.forEach(actividad => {
+
+    const rea =
+      Array.isArray(actividad.codigosREA)
+        ? actividad.codigosREA.join(", ")
+        : "";
+
+    const instrumentos =
+      Array.isArray(actividad.instrumentos)
+        ? actividad.instrumentos.join(", ")
+        : "";
+
+    filas += `
+      <tr>
+        <td>${actividad.semana}</td>
+        <td>${actividad.tecnica || ""}</td>
+        <td>${rea}</td>
+        <td>${actividad.tipo || ""}</td>
+        <td>${instrumentos}</td>
+        <td>${actividad.valor ?? 0}</td>
+      </tr>
+    `;
+
+  });
+
+  filas += `
+    <tr>
+      <td colspan="5">
+        <strong>${propuesta.rubro}</strong>
+      </td>
+      <td>
+        <strong>${propuesta.pesoTotal}</strong>
+      </td>
+    </tr>
+  `;
+
+  contenedor.innerHTML = `
+    <h3>${propuesta.rubro}</h3>
+
+    <table border="1" cellspacing="0" cellpadding="8">
+      <thead>
+        <tr>
+          <th>Semana</th>
+          <th>Técnica</th>
+          <th>REA(s)</th>
+          <th>Tipo (D, F o S)</th>
+          <th>Instrumento(s)</th>
+          <th>Valor</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        ${filas}
+      </tbody>
+    </table>
+  `;
+
+}
+    
 async function generarPrimerRubroEvaluacion(){
 
   const primerRubro = obtenerPrimerRubroEvaluacion();
