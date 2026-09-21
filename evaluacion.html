@@ -432,11 +432,61 @@ function mostrarTablaEvaluacion(propuesta){
       <tbody>
         ${filas}
       </tbody>
-    </table>
+        </table>
+
+    <div style="margin-top:15px;">
+      <button
+        type="button"
+        onclick="agregarActividadEvaluacion()"
+      >
+        + Agregar actividad formativa
+      </button>
+    </div>
   `;
 
 }
 
+function agregarActividadEvaluacion(){
+
+  if(
+    !propuestaEvaluacionActual ||
+    !Array.isArray(
+      propuestaEvaluacionActual.actividades
+    )
+  ){
+    return;
+  }
+
+  const nuevaActividad = {
+    semana: 1,
+    tecnica: "",
+    codigosREA: [],
+    tipo: "F",
+    instrumentos: [
+      "Lista de cotejo"
+    ],
+    valor: 0
+  };
+
+  nuevaActividad.esNueva = true;
+
+  propuestaEvaluacionActual.actividades.push(
+    nuevaActividad
+  );
+
+  const nuevoIndex =
+    propuestaEvaluacionActual.actividades.length - 1;
+
+  mostrarTablaEvaluacion(
+    propuestaEvaluacionActual
+  );
+
+  editarActividadEvaluacion(
+    nuevoIndex
+  );
+
+}
+    
 function editarActividadEvaluacion(index){
 
   const actividad =
@@ -600,7 +650,7 @@ const opcionesActividadesCronograma =
 
       <button
         type="button"
-        onclick="cancelarEdicionActividad()"
+        onclick="cancelarEdicionActividad(${index})"
       >
         Cancelar
       </button>
@@ -788,7 +838,20 @@ if(contenidoReferencia){
 
 }
     
-function cancelarEdicionActividad(){
+function cancelarEdicionActividad(index){
+
+  const actividad =
+    propuestaEvaluacionActual?.actividades?.[index];
+
+  if(
+    actividad &&
+    actividad.esNueva === true
+  ){
+    propuestaEvaluacionActual.actividades.splice(
+      index,
+      1
+    );
+  }
 
   mostrarTablaEvaluacion(
     propuestaEvaluacionActual
