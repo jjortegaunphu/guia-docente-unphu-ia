@@ -537,8 +537,12 @@ campos[0].value =
   actividadSeleccionada.semana;
 
 // Técnica / actividad evaluativa
+// Se elimina la referencia al REA solo en la visualización
+// del Sistema de Evaluación. El cronograma original no se modifica.
 campos[2].value =
-  actividadSeleccionada.actividadFormativa;
+  actividadSeleccionada.actividadFormativa
+    .replace(/\s*\(REA\d+(?:\s*,\s*REA\d+)*\)\s*$/i, "")
+    .trim();
 
 // REA asociados
 campos[3].value =
