@@ -169,6 +169,29 @@ function prepararActividadesCronograma(){
 
 }
 
+function obtenerActividadesCronogramaDelRubro(){
+
+  const actividades =
+    prepararActividadesCronograma();
+
+  const rubro =
+    obtenerPrimerRubroEvaluacion();
+
+  if(!rubro){
+    return [];
+  }
+
+  const semanaFin =
+    Number(rubro.semana);
+
+  return actividades.filter(actividad =>
+    Number(actividad.semana) >= 1 &&
+    Number(actividad.semana) <= semanaFin &&
+    actividad.actividadFormativa
+  );
+
+}
+    
 function obtenerPrimerRubroEvaluacion(){
 
   if (
