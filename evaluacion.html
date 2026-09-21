@@ -517,14 +517,23 @@ let filas = "";
 
         ${mensajeTotal}
 
-       <div style="margin-top:15px;">
-        <button
-          type="button"
-          onclick="agregarActividadEvaluacion()"
-         >
-        + Agregar actividad formativa
-      </button>
-    </div>
+<div style="margin-top:15px;">
+  <button
+    type="button"
+    onclick="agregarActividadEvaluacion()"
+  >
+    + Agregar actividad formativa
+  </button>
+
+  <button
+    type="button"
+    onclick="aceptarRubroEvaluacion()"
+    ${totalCorrecto ? "" : "disabled"}
+    style="margin-left:10px;"
+  >
+    Aceptar ${propuesta.rubro}
+  </button>
+</div>
   `;
 
 }
