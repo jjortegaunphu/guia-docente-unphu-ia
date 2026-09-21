@@ -538,6 +538,42 @@ let filas = "";
 
 }
 
+function aceptarRubroEvaluacion(){
+
+  if(
+    !propuestaEvaluacionActual ||
+    !Array.isArray(propuestaEvaluacionActual.actividades)
+  ){
+    return;
+  }
+
+  const totalActual =
+    propuestaEvaluacionActual.actividades.reduce(
+      (total, actividad) =>
+        total + Number(actividad.valor || 0),
+      0
+    );
+
+  const pesoTotal =
+    Number(propuestaEvaluacionActual.pesoTotal);
+
+  if(totalActual !== pesoTotal){
+
+    alert(
+      "No puede aceptar este acumulado hasta que " +
+      "la suma de las actividades evaluativas sea " +
+      "exactamente " + pesoTotal + " puntos."
+    );
+
+    return;
+  }
+
+  alert(
+    propuestaEvaluacionActual.rubro +
+    " está correctamente distribuido y listo para ser aceptado."
+  );
+}
+    
 function agregarActividadEvaluacion(){
 
   if(
