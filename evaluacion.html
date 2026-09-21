@@ -192,6 +192,25 @@ function obtenerActividadesCronogramaDelRubro(){
 
 }
 
+function extraerREADeTexto(texto){
+
+  if(!texto){
+    return [];
+  }
+
+  const coincidencias =
+    texto.match(/REA\d+/gi) || [];
+
+  return [
+    ...new Set(
+      coincidencias.map(
+        codigo => codigo.toUpperCase()
+      )
+    )
+  ];
+
+}
+    
 function obtenerClasesCronogramaDelRubro(){
 
   const actividades =
@@ -222,22 +241,31 @@ function obtenerClasesCronogramaDelRubro(){
 
     }
 
-    if(Array.isArray(actividad.rea)){
+    const reaEncontrados = [
+  ...(Array.isArray(actividad.rea)
+    ? actividad.rea
+    : []),
 
-      actividad.rea.forEach(codigoREA => {
+  ...extraerREADeTexto(
+    actividad.actividadFormativa
+  )
+];
 
-        if(
-          codigoREA &&
-          !claseExistente.rea.includes(codigoREA)
-        ){
-          claseExistente.rea.push(
-            codigoREA
-          );
-        }
+reaEncontrados.forEach(codigoREA => {
 
-      });
+  const codigo =
+    String(codigoREA)
+      .trim()
+      .toUpperCase();
 
-    }
+  if(
+    codigo &&
+    !claseExistente.rea.includes(codigo)
+  ){
+    claseExistente.rea.push(codigo);
+  }
+
+});
 
   });
 
