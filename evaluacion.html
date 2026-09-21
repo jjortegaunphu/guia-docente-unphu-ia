@@ -376,6 +376,16 @@ function editarActividadEvaluacion(index){
     return;
   }
 
+const actividadesCronograma =
+  obtenerActividadesCronogramaDelRubro();
+
+const opcionesActividadesCronograma =
+  actividadesCronograma.map((item, posicion) => `
+    <option value="${posicion}">
+      Semana ${item.semana} - Clase ${item.clase}: ${item.actividadFormativa}
+    </option>
+  `).join("");
+  
   const instrumentosPermitidos = [
     "Rúbrica",
     "Lista de cotejo",
@@ -399,11 +409,28 @@ function editarActividadEvaluacion(index){
     </td>
 
     <td>
-      <textarea
-        rows="5"
-        style="width:95%;"
-      >${actividad.tecnica || ""}</textarea>
-    </td>
+
+  <select
+    onchange="seleccionarActividadCronograma(this, ${index})"
+    style="width:95%; margin-bottom:8px;"
+  >
+    <option value="">
+      -- Sustituir por una actividad del cronograma --
+    </option>
+
+    ${opcionesActividadesCronograma}
+
+    <option value="nueva">
+      Otra actividad propuesta por el docente
+    </option>
+  </select>
+
+  <textarea
+    rows="5"
+    style="width:95%;"
+  >${actividad.tecnica || ""}</textarea>
+
+</td>
 
     <td>
       <input
@@ -465,6 +492,62 @@ function editarActividadEvaluacion(index){
   `;
 }
 
+function seleccionarActividadCronograma(select, index){
+
+  if(select.value === ""){
+    return;
+  }
+
+  const fila =
+    select.closest("tr");
+
+  if(!fila){
+    return;
+  }
+
+  const campos =
+    fila.querySelectorAll(
+      "input, textarea, select"
+    );
+
+  // Si el docente desea proponer una actividad nueva
+  if(select.value === "nueva"){
+
+  campos[2].value = "";
+  campos[2].focus();
+
+  return;
+}
+
+  const actividadesCronograma =
+    obtenerActividadesCronogramaDelRubro();
+
+  const posicion =
+    Number(select.value);
+
+  const actividadSeleccionada =
+    actividadesCronograma[posicion];
+
+  if(!actividadSeleccionada){
+    return;
+  }
+
+  // Semana
+campos[0].value =
+  actividadSeleccionada.semana;
+
+// Técnica / actividad evaluativa
+campos[2].value =
+  actividadSeleccionada.actividadFormativa;
+
+// REA asociados
+campos[3].value =
+  Array.isArray(actividadSeleccionada.rea)
+    ? actividadSeleccionada.rea.join(", ")
+    : "";
+
+}
+    
 function cancelarEdicionActividad(){
 
   mostrarTablaEvaluacion(
@@ -492,25 +575,25 @@ function guardarEdicionActividad(index){
     );
 
   const semana =
-    Number(campos[0].value);
+  Number(campos[0].value);
 
-  const tecnica =
-    campos[1].value.trim();
+const tecnica =
+  campos[2].value.trim();
 
-  const codigosREA =
-    campos[2].value
-      .split(",")
-      .map(codigo => codigo.trim())
-      .filter(codigo => codigo !== "");
+const codigosREA =
+  campos[3].value
+    .split(",")
+    .map(codigo => codigo.trim())
+    .filter(codigo => codigo !== "");
 
-  const tipo =
-    campos[3].value;
+const tipo =
+  campos[4].value;
 
-  const instrumento =
-    campos[4].value;
+const instrumento =
+  campos[5].value;
 
-  let valor =
-    Number(campos[5].value);
+let valor =
+  Number(campos[6].value);
 
   if(tipo === "D"){
     valor = 0;
