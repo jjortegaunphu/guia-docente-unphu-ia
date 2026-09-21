@@ -191,6 +191,59 @@ function obtenerActividadesCronogramaDelRubro(){
   );
 
 }
+
+function obtenerClasesCronogramaDelRubro(){
+
+  const actividades =
+    obtenerActividadesCronogramaDelRubro();
+
+  const clasesUnicas = [];
+
+  actividades.forEach(actividad => {
+
+    let claseExistente =
+      clasesUnicas.find(item =>
+        Number(item.semana) === Number(actividad.semana) &&
+        Number(item.clase) === Number(actividad.clase)
+      );
+
+    if(!claseExistente){
+
+      claseExistente = {
+        semana: actividad.semana,
+        clase: actividad.clase,
+        contenido: actividad.contenido,
+        rea: []
+      };
+
+      clasesUnicas.push(
+        claseExistente
+      );
+
+    }
+
+    if(Array.isArray(actividad.rea)){
+
+      actividad.rea.forEach(codigoREA => {
+
+        if(
+          codigoREA &&
+          !claseExistente.rea.includes(codigoREA)
+        ){
+          claseExistente.rea.push(
+            codigoREA
+          );
+        }
+
+      });
+
+    }
+
+  });
+
+  return clasesUnicas;
+
+}
     
 function obtenerPrimerRubroEvaluacion(){
 
