@@ -492,6 +492,35 @@ const opcionesActividadesCronograma =
   `;
 }
 
+function sintetizarActividadEvaluativa(texto){
+
+  if(!texto){
+    return "";
+  }
+
+  let tecnica = texto.trim();
+
+  // Eliminar referencias REA al final
+  tecnica = tecnica.replace(
+    /\s*\(REA\d+(?:\s*,\s*REA\d+)*\)\s*$/i,
+    ""
+  );
+
+  // Eliminar expresiones introductorias
+  tecnica = tecnica.replace(
+    /^(los estudiantes|el estudiante|los alumnos|el alumno)\s+/i,
+    ""
+  );
+
+  // Colocar mayúscula inicial
+  tecnica =
+    tecnica.charAt(0).toUpperCase() +
+    tecnica.slice(1);
+
+  return tecnica.trim();
+
+}
+    
 function seleccionarActividadCronograma(select, index){
 
   if(select.value === ""){
@@ -540,9 +569,9 @@ campos[0].value =
 // Se elimina la referencia al REA solo en la visualización
 // del Sistema de Evaluación. El cronograma original no se modifica.
 campos[2].value =
-  actividadSeleccionada.actividadFormativa
-    .replace(/\s*\(REA\d+(?:\s*,\s*REA\d+)*\)\s*$/i, "")
-    .trim();
+  sintetizarActividadEvaluativa(
+    actividadSeleccionada.actividadFormativa
+  );
 
 // REA asociados
 campos[3].value =
