@@ -528,6 +528,19 @@ const opcionesActividadesCronograma =
   ${opcionesClasesCronograma}
 </select>
 
+<div
+  id="contenidoReferencia-${index}"
+  style="
+    display:none;
+    width:95%;
+    margin-bottom:8px;
+    padding:8px;
+    background:#f5f5f5;
+    border:1px solid #ddd;
+    font-size:14px;
+  "
+></div>
+
   <textarea
     rows="5"
     style="width:95%;"
@@ -670,6 +683,16 @@ if(selectorClase){
   selectorClase.value = "";
 }
 
+  const contenidoReferencia =
+  document.getElementById(
+    `contenidoReferencia-${index}`
+  );
+
+if(contenidoReferencia){
+  contenidoReferencia.style.display = "none";
+  contenidoReferencia.innerHTML = "";
+}
+
   const actividadesCronograma =
     obtenerActividadesCronogramaDelRubro();
 
@@ -688,13 +711,13 @@ campos[0].value =
   actividadSeleccionada.semana;
 
 // Técnica / actividad evaluativa
-campos[2].value =
+campos[3].value =
   sintetizarActividadEvaluativa(
     actividadSeleccionada.actividadFormativa
   );
 
 // REA asociados
-campos[3].value =
+campos[4].value =
   Array.isArray(actividadSeleccionada.rea)
     ? actividadSeleccionada.rea.join(", ")
     : "";
@@ -742,6 +765,22 @@ function seleccionarClaseReferencia(select, index){
       ? claseSeleccionada.rea.join(", ")
       : "";
 
+const contenidoReferencia =
+  document.getElementById(
+    `contenidoReferencia-${index}`
+  );
+
+if(contenidoReferencia){
+
+  contenidoReferencia.innerHTML =
+    "<strong>Contenido de referencia:</strong> " +
+    (claseSeleccionada.contenido ||
+      "No se especificó contenido para esta clase.");
+
+  contenidoReferencia.style.display =
+    "block";
+}
+  
   // La técnica queda libre para que el docente
   // redacte su nueva actividad evaluativa
   campos[3].value = "";
