@@ -994,6 +994,10 @@ let valor =
     valor: valor
   };
 
+  propuestaEvaluacionActual.actividades.sort(
+  (a, b) => Number(a.semana) - Number(b.semana)
+);
+
   datosPaso1.sistemaEvaluacion.propuestaActual =
     propuestaEvaluacionActual;
 
