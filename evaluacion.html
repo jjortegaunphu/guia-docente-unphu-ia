@@ -363,8 +363,89 @@ function mostrarTablaEvaluacion(propuesta){
   }
 
   propuestaEvaluacionActual = propuesta;
-  
-  let filas = "";
+
+const totalActual =
+  propuesta.actividades.reduce(
+    (total, actividad) =>
+      total + Number(actividad.valor || 0),
+    0
+  );
+
+const totalCorrecto =
+  totalActual === Number(propuesta.pesoTotal);
+
+const diferencia =
+  totalActual - Number(propuesta.pesoTotal);
+
+  let mensajeTotal = "";
+
+if(totalCorrecto){
+
+  mensajeTotal = `
+    <div style="margin-top:12px;">
+      <strong>
+        ✓ Total asignado:
+        ${totalActual} de ${propuesta.pesoTotal} puntos.
+      </strong>
+    </div>
+  `;
+
+} else if(diferencia > 0){
+
+  mensajeTotal = `
+    <div
+      style="
+        margin-top:12px;
+        padding:10px;
+        border:1px solid #999;
+      "
+    >
+      <strong>
+        Total actual:
+        ${totalActual} de ${propuesta.pesoTotal} puntos.
+      </strong>
+
+      <br><br>
+
+      El valor máximo de ${propuesta.rubro}
+      es ${propuesta.pesoTotal} puntos.
+      Debe modificar el valor de una o más
+      actividades evaluativas hasta que la suma
+      sea exactamente ${propuesta.pesoTotal} puntos.
+
+      <br><br>
+
+      <strong>
+        Debe redistribuir ${diferencia} punto(s).
+      </strong>
+    </div>
+  `;
+
+} else {
+
+  mensajeTotal = `
+    <div
+      style="
+        margin-top:12px;
+        padding:10px;
+        border:1px solid #999;
+      "
+    >
+      <strong>
+        Total actual:
+        ${totalActual} de ${propuesta.pesoTotal} puntos.
+      </strong>
+
+      <br><br>
+
+      Faltan ${Math.abs(diferencia)} punto(s)
+      por asignar para completar ${propuesta.rubro}.
+    </div>
+  `;
+
+}
+
+let filas = "";
 
  propuesta.actividades.forEach((actividad, index) => {
 
@@ -434,11 +515,13 @@ function mostrarTablaEvaluacion(propuesta){
       </tbody>
         </table>
 
-    <div style="margin-top:15px;">
-      <button
-        type="button"
-        onclick="agregarActividadEvaluacion()"
-      >
+        ${mensajeTotal}
+
+       <div style="margin-top:15px;">
+        <button
+          type="button"
+          onclick="agregarActividadEvaluacion()"
+         >
         + Agregar actividad formativa
       </button>
     </div>
