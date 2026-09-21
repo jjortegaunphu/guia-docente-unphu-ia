@@ -429,6 +429,16 @@ function editarActividadEvaluacion(index){
     return;
   }
 
+const clasesCronograma =
+  obtenerClasesCronogramaDelRubro();
+
+const opcionesClasesCronograma =
+  clasesCronograma.map((item, posicion) => `
+    <option value="${posicion}">
+      Semana ${item.semana} - Clase ${item.clase}
+    </option>
+  `).join("");
+  
 const actividadesCronograma =
   obtenerActividadesCronogramaDelRubro();
 
@@ -477,6 +487,18 @@ const opcionesActividadesCronograma =
       Otra actividad propuesta por el docente
     </option>
   </select>
+
+<select
+  id="claseReferencia-${index}"
+  onchange="seleccionarClaseReferencia(this, ${index})"
+  style="width:95%; margin-bottom:8px; display:none;"
+>
+  <option value="">
+    -- Seleccionar semana y clase de referencia --
+  </option>
+
+  ${opcionesClasesCronograma}
+</select>
 
   <textarea
     rows="5"
@@ -595,10 +617,29 @@ function seleccionarActividadCronograma(select, index){
   // Si el docente desea proponer una actividad nueva
   if(select.value === "nueva"){
 
-  campos[2].value = "";
-  campos[2].focus();
+  const selectorClase =
+    document.getElementById(
+      `claseReferencia-${index}`
+    );
+
+  if(selectorClase){
+    selectorClase.style.display = "block";
+  }
+
+  campos[3].value = "";
+  campos[3].focus();
 
   return;
+}
+
+  const selectorClase =
+  document.getElementById(
+    `claseReferencia-${index}`
+  );
+
+if(selectorClase){
+  selectorClase.style.display = "none";
+  selectorClase.value = "";
 }
 
   const actividadesCronograma =
@@ -619,8 +660,6 @@ campos[0].value =
   actividadSeleccionada.semana;
 
 // Técnica / actividad evaluativa
-// Se elimina la referencia al REA solo en la visualización
-// del Sistema de Evaluación. El cronograma original no se modifica.
 campos[2].value =
   sintetizarActividadEvaluativa(
     actividadSeleccionada.actividadFormativa
@@ -631,6 +670,54 @@ campos[3].value =
   Array.isArray(actividadSeleccionada.rea)
     ? actividadSeleccionada.rea.join(", ")
     : "";
+
+}
+
+function seleccionarClaseReferencia(select, index){
+
+  if(select.value === ""){
+    return;
+  }
+
+  const clasesCronograma =
+    obtenerClasesCronogramaDelRubro();
+
+  const posicion =
+    Number(select.value);
+
+  const claseSeleccionada =
+    clasesCronograma[posicion];
+
+  if(!claseSeleccionada){
+    return;
+  }
+
+  const fila =
+    select.closest("tr");
+
+  if(!fila){
+    return;
+  }
+
+  const campos =
+    fila.querySelectorAll(
+      "input, textarea, select"
+    );
+
+  // Semana correspondiente a la clase seleccionada
+  campos[0].value =
+    claseSeleccionada.semana;
+
+  // REA asociados a esa clase
+  campos[4].value =
+    Array.isArray(claseSeleccionada.rea)
+      ? claseSeleccionada.rea.join(", ")
+      : "";
+
+  // La técnica queda libre para que el docente
+  // redacte su nueva actividad evaluativa
+  campos[3].value = "";
+  campos[3].focus();
 
 }
     
@@ -664,22 +751,22 @@ function guardarEdicionActividad(index){
   Number(campos[0].value);
 
 const tecnica =
-  campos[2].value.trim();
+  campos[3].value.trim();
 
 const codigosREA =
-  campos[3].value
+  campos[4].value
     .split(",")
     .map(codigo => codigo.trim())
     .filter(codigo => codigo !== "");
 
 const tipo =
-  campos[4].value;
-
-const instrumento =
   campos[5].value;
 
+const instrumento =
+  campos[6].value;
+
 let valor =
-  Number(campos[6].value);
+  Number(campos[7].value);
 
   if(tipo === "D"){
     valor = 0;
