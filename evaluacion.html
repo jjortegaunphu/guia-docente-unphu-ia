@@ -1299,8 +1299,15 @@ async function generarRubroEvaluacion(rubro){
     return;
   }
 
-  const rubroAnterior =
-  obtenerRubroAnteriorEvaluacion();
+  const indiceRubro =
+  datosPaso1.evaluacion.rubros.findIndex(
+    item => item.nombre === rubro.nombre
+  );
+
+const rubroAnterior =
+  indiceRubro > 0
+    ? datosPaso1.evaluacion.rubros[indiceRubro - 1]
+    : null;
 
 const contexto =
   prepararContextoIAEvaluacion(
