@@ -3215,6 +3215,21 @@ function restaurarInterfazProgreso() {
   if (!recuperado) {
     return;
   }
+
+  /* Regresar directamente al cronograma completo
+   desde el Sistema de Evaluación */
+const volverCronogramaCompleto =
+  localStorage.getItem("volverCronogramaCompleto");
+
+if (
+  volverCronogramaCompleto === "si" &&
+  datosGuia.cronogramaCompletado === true
+) {
+  localStorage.removeItem("volverCronogramaCompleto");
+  mostrarVistaFinalCronograma();
+  return;
+}
+  
     /* Restaurar código y nombre de la asignatura */
   const codigoAsignatura =
     document.getElementById("codigoAsignatura");
