@@ -218,10 +218,10 @@ function extraerREADeTexto(texto){
 
 }
     
-function obtenerClasesCronogramaDelRubro(){
+function obtenerClasesCronogramaDelRubro(rubro){
 
   const actividades =
-    obtenerActividadesCronogramaDelRubro();
+    obtenerActividadesCronogramaDelRubro(rubro);
 
   const clasesUnicas = [];
 
@@ -773,8 +773,30 @@ function editarActividadEvaluacion(index){
     return;
   }
 
+const rubroActual =
+  datosPaso1.evaluacion.rubros.find(
+    rubro =>
+      rubro.nombre === propuestaEvaluacionActual.rubro
+  );
+
+const rubroAnterior =
+  datosPaso1.evaluacion.rubros[
+    datosPaso1.evaluacion.rubros.indexOf(rubroActual) - 1
+  ] || null;
+
+const periodoActual =
+  prepararPeriodoEvaluativo(
+    rubroActual,
+    rubroAnterior
+  );
+
 const clasesCronograma =
-  obtenerClasesCronogramaDelRubro();
+  obtenerClasesCronogramaDelRubro(
+    {
+      semanaInicio: periodoActual.semanaInicio,
+      semanaFin: periodoActual.semanaFin
+    }
+  );
 
 const opcionesClasesCronograma =
   clasesCronograma.map((item, posicion) => `
@@ -784,7 +806,12 @@ const opcionesClasesCronograma =
   `).join("");
   
 const actividadesCronograma =
-  obtenerActividadesCronogramaDelRubro();
+  obtenerActividadesCronogramaDelRubro(
+    {
+      semanaInicio: periodoActual.semanaInicio,
+      semanaFin: periodoActual.semanaFin
+    }
+  );
 
 const opcionesActividadesCronograma =
   actividadesCronograma.map((item, posicion) => `
@@ -1009,8 +1036,33 @@ if(contenidoReferencia){
   contenidoReferencia.innerHTML = "";
 }
 
-  const actividadesCronograma =
-    obtenerActividadesCronogramaDelRubro();
+  const rubroActual =
+  datosPaso1.evaluacion.rubros.find(
+    rubro =>
+      rubro.nombre === propuestaEvaluacionActual.rubro
+  );
+
+const indiceRubro =
+  datosPaso1.evaluacion.rubros.indexOf(rubroActual);
+
+const rubroAnterior =
+  indiceRubro > 0
+    ? datosPaso1.evaluacion.rubros[indiceRubro - 1]
+    : null;
+
+const periodoActual =
+  prepararPeriodoEvaluativo(
+    rubroActual,
+    rubroAnterior
+  );
+
+const actividadesCronograma =
+  obtenerActividadesCronogramaDelRubro(
+    {
+      semanaInicio: periodoActual.semanaInicio,
+      semanaFin: periodoActual.semanaFin
+    }
+  );
 
   const posicion =
     Number(select.value);
@@ -1046,8 +1098,33 @@ function seleccionarClaseReferencia(select, index){
     return;
   }
 
-  const clasesCronograma =
-    obtenerClasesCronogramaDelRubro();
+ const rubroActual =
+  datosPaso1.evaluacion.rubros.find(
+    rubro =>
+      rubro.nombre === propuestaEvaluacionActual.rubro
+  );
+
+const indiceRubro =
+  datosPaso1.evaluacion.rubros.indexOf(rubroActual);
+
+const rubroAnterior =
+  indiceRubro > 0
+    ? datosPaso1.evaluacion.rubros[indiceRubro - 1]
+    : null;
+
+const periodoActual =
+  prepararPeriodoEvaluativo(
+    rubroActual,
+    rubroAnterior
+  );
+
+const clasesCronograma =
+  obtenerClasesCronogramaDelRubro(
+    {
+      semanaInicio: periodoActual.semanaInicio,
+      semanaFin: periodoActual.semanaFin
+    }
+  );
 
   const posicion =
     Number(select.value);
