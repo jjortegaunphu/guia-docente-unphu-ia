@@ -1505,28 +1505,58 @@ resumen.innerHTML = `
   <p><strong>Código:</strong> ${datosPaso1.configuracion?.codigoAsignatura || ""}</p>
 `;
 
-     if (
-  datosPaso1.sistemaEvaluacion &&
-  datosPaso1.sistemaEvaluacion.propuestaActual
-) {
+  const propuestaGuardada =
+  datosPaso1.sistemaEvaluacion?.propuestaActual || null;
+
+const rubrosAceptados =
+  datosPaso1.sistemaEvaluacion?.rubrosAceptados || [];
+
+const propuestaYaAceptada =
+  propuestaGuardada
+    ? rubrosAceptados.some(
+        rubro =>
+          rubro.rubro === propuestaGuardada.rubro
+      )
+    : false;
+
+if(
+  propuestaGuardada &&
+  !propuestaYaAceptada
+){
 
   console.log(
     "Mostrando propuesta de evaluación guardada."
   );
 
   mostrarTablaEvaluacion(
-    datosPaso1.sistemaEvaluacion.propuestaActual
+    propuestaGuardada
   );
 
 } else {
 
-  console.log(
-    "No existe propuesta guardada. Generando con IA..."
-  );
+  const siguienteRubro =
+    obtenerSiguienteRubroEvaluacion();
 
-  generarPrimerRubroEvaluacion();
+  if(siguienteRubro){
 
-}
+    console.log(
+      "Generando siguiente rubro:",
+      siguienteRubro.nombre
+    );
+
+    generarRubroEvaluacion(
+      siguienteRubro
+    );
+
+  } else {
+
+    console.log(
+      "Todos los rubros de evaluación han sido completados."
+    );
+
+  }
+
+}   
       
     }
 
