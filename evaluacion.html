@@ -599,6 +599,14 @@ let filas = "";
     + Agregar técnica de evaluación
   </button>
 
+<button
+  type="button"
+  onclick="regenerarRubroEvaluacion()"
+  style="margin-left:10px;"
+>
+  Regenerar con IA
+</button>
+
   <button
     type="button"
     onclick="aceptarRubroEvaluacion()"
@@ -612,6 +620,51 @@ let filas = "";
 
 }
 
+function regenerarRubroEvaluacion(){
+
+  if(
+    !propuestaEvaluacionActual ||
+    !propuestaEvaluacionActual.rubro
+  ){
+    return;
+  }
+
+  const nombreRubro =
+    propuestaEvaluacionActual.rubro;
+
+  const rubroActual =
+    datosPaso1.evaluacion?.rubros?.find(
+      rubro =>
+        rubro.nombre === nombreRubro
+    );
+
+  if(!rubroActual){
+    alert(
+      "No se encontró la configuración del rubro actual."
+    );
+    return;
+  }
+
+  const confirmar =
+    confirm(
+      "Se generará una nueva propuesta para " +
+      nombreRubro +
+      ".\n\n" +
+      "La propuesta actual será sustituida. " +
+      "Los rubros aceptados anteriormente no serán modificados.\n\n" +
+      "¿Desea continuar?"
+    );
+
+  if(!confirmar){
+    return;
+  }
+
+  generarRubroEvaluacion(
+    rubroActual
+  );
+
+}
+    
 function aceptarRubroEvaluacion(){
 
   if(
