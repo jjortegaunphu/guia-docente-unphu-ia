@@ -663,6 +663,27 @@ localStorage.setItem(
   "respaldoGuiaDocente",
   JSON.stringify(respaldo)
 );
+
+// Preparar el siguiente rubro de evaluación
+const siguientePeriodo =
+  prepararSiguienteRubroEvaluacion();
+
+if(siguientePeriodo){
+
+  console.log(
+    "Siguiente rubro preparado:",
+    siguientePeriodo
+  );
+
+} else {
+
+  console.log(
+    "Todos los rubros de evaluación han sido completados."
+  );
+
+}
+
+}
   
 }
     
