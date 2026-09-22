@@ -287,6 +287,28 @@ function obtenerPrimerRubroEvaluacion(){
 
 }
 
+function obtenerSiguienteRubroEvaluacion(){
+
+  if(
+    !datosPaso1.evaluacion ||
+    !Array.isArray(datosPaso1.evaluacion.rubros)
+  ){
+    return null;
+  }
+
+  const rubrosAceptados =
+    datosPaso1.sistemaEvaluacion?.rubrosAceptados || [];
+
+  const indiceSiguiente =
+    rubrosAceptados.length;
+
+  return (
+    datosPaso1.evaluacion.rubros[indiceSiguiente] ||
+    null
+  );
+
+}
+    
 function prepararPeriodoEvaluativo(rubro, rubroAnterior = null){
 
   const semanaInicio =
