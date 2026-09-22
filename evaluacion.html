@@ -646,6 +646,22 @@ function aceptarRubroEvaluacion(){
 datosPaso1.sistemaEvaluacion.rubrosAceptados =
   datosPaso1.sistemaEvaluacion.rubrosAceptados || [];
 
+  const rubroYaAceptado =
+  datosPaso1.sistemaEvaluacion.rubrosAceptados.some(
+    rubro =>
+      rubro.rubro === propuestaEvaluacionActual.rubro
+  );
+
+if(rubroYaAceptado){
+
+  alert(
+    propuestaEvaluacionActual.rubro +
+    " ya fue aceptado previamente."
+  );
+
+  return;
+}
+
 const indiceRubroAceptado =
   datosPaso1.sistemaEvaluacion.rubrosAceptados.length;
 
