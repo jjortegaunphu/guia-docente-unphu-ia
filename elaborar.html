@@ -4089,11 +4089,20 @@ function irASemanaDesdeCronograma() {
   }
 
   semanaActual = semanaSeleccionada;
-  etapaActual = "cronograma";
+etapaActual = "cronograma";
 
-  guardarProgreso();
+/* Ocultar la vista del cronograma completo
+   antes de mostrar la semana seleccionada */
+const vistaFinal =
+  document.getElementById("vistaFinalCronograma");
 
-  restaurarInterfazProgreso();
+if (vistaFinal) {
+  vistaFinal.classList.add("oculto");
+}
+
+guardarProgreso();
+
+restaurarInterfazProgreso();
 }
 
   
