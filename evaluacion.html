@@ -1289,6 +1289,89 @@ localStorage.setItem(
       "<p>No fue posible generar la propuesta del sistema de evaluación.</p>";
   }
 }
+
+async function generarRubroEvaluacion(rubro){
+
+  if(!rubro){
+    mostrarError(
+      "No se encontró la configuración del rubro de evaluación."
+    );
+    return;
+  }
+
+  const contexto =
+    prepararContextoIAEvaluacion(rubro);
+
+  const contenedor =
+    document.getElementById("contenidoSistemaEvaluacion");
+
+  contenedor.innerHTML =
+    "<p>Generando propuesta del " +
+    rubro.nombre +
+    "...</p>";
+
+  try{
+
+    const respuesta = await fetch(
+      "https://guia-docente-unphu-api.jortega-cc4.workers.dev/generar-sistema-evaluacion",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(contexto)
+      }
+    );
+
+    const resultado = await respuesta.json();
+
+    if(!respuesta.ok || !resultado.correcto){
+      throw new Error(
+        resultado.error ||
+        "No fue posible generar la propuesta de evaluación."
+      );
+    }
+
+    console.log(
+      "Propuesta generada para " + rubro.nombre + ":",
+      resultado.propuesta
+    );
+
+    datosPaso1.sistemaEvaluacion =
+      datosPaso1.sistemaEvaluacion || {};
+
+    datosPaso1.sistemaEvaluacion.propuestaActual =
+      resultado.propuesta;
+
+    const respaldo =
+      JSON.parse(
+        localStorage.getItem("respaldoGuiaDocente")
+      );
+
+    respaldo.datosGuia =
+      datosPaso1;
+
+    localStorage.setItem(
+      "respaldoGuiaDocente",
+      JSON.stringify(respaldo)
+    );
+
+    mostrarTablaEvaluacion(
+      resultado.propuesta
+    );
+
+  }
+  catch(error){
+
+    console.error(
+      "Error al generar el sistema de evaluación:",
+      error
+    );
+
+    contenedor.innerHTML =
+      "<p>No fue posible generar la propuesta del sistema de evaluación.</p>";
+  }
+}
     
     function mostrarSistemaEvaluacion(){
 
