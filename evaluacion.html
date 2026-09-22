@@ -572,6 +572,31 @@ function aceptarRubroEvaluacion(){
     propuestaEvaluacionActual.rubro +
     " está correctamente distribuido y listo para ser aceptado."
   );
+
+  datosPaso1.sistemaEvaluacion =
+  datosPaso1.sistemaEvaluacion || {};
+
+datosPaso1.sistemaEvaluacion.rubrosAceptados =
+  datosPaso1.sistemaEvaluacion.rubrosAceptados || [];
+
+datosPaso1.sistemaEvaluacion.rubrosAceptados[0] =
+  JSON.parse(
+    JSON.stringify(propuestaEvaluacionActual)
+  );
+
+const respaldo =
+  JSON.parse(
+    localStorage.getItem("respaldoGuiaDocente")
+  );
+
+respaldo.datosGuia =
+  datosPaso1;
+
+localStorage.setItem(
+  "respaldoGuiaDocente",
+  JSON.stringify(respaldo)
+);
+  
 }
     
 function agregarActividadEvaluacion(){
