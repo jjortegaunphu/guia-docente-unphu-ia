@@ -176,29 +176,29 @@ function prepararActividadesCronograma(){
 
 }
 
-function obtenerActividadesCronogramaDelRubro(){
+function obtenerActividadesCronogramaDelRubro(rubro){
 
   const actividades =
     prepararActividadesCronograma();
-
-  const rubro =
-    obtenerPrimerRubroEvaluacion();
 
   if(!rubro){
     return [];
   }
 
+  const semanaInicio =
+    Number(rubro.semanaInicio || 1);
+
   const semanaFin =
-    Number(rubro.semana);
+    Number(rubro.semanaFin || rubro.semana);
 
   return actividades.filter(actividad =>
-    Number(actividad.semana) >= 1 &&
+    Number(actividad.semana) >= semanaInicio &&
     Number(actividad.semana) <= semanaFin &&
     actividad.actividadFormativa
   );
 
 }
-
+    
 function extraerREADeTexto(texto){
 
   if(!texto){
@@ -1299,8 +1299,14 @@ async function generarRubroEvaluacion(rubro){
     return;
   }
 
-  const contexto =
-    prepararContextoIAEvaluacion(rubro);
+  const rubroAnterior =
+  obtenerRubroAnteriorEvaluacion();
+
+const contexto =
+  prepararContextoIAEvaluacion(
+    rubro,
+    rubroAnterior
+  );
 
   const contenedor =
     document.getElementById("contenidoSistemaEvaluacion");
