@@ -696,10 +696,16 @@ const siguientePeriodo =
 
 if(siguientePeriodo){
 
-  console.log(
-    "Siguiente rubro preparado:",
-    siguientePeriodo
-  );
+  if(siguientePeriodo){
+
+  const siguienteRubro =
+    obtenerSiguienteRubroEvaluacion();
+
+  if(siguienteRubro){
+    generarRubroEvaluacion(
+      siguienteRubro
+    );
+  }
 
 } else {
 
