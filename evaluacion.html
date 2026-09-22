@@ -308,6 +308,32 @@ function obtenerSiguienteRubroEvaluacion(){
   );
 
 }
+
+function obtenerRubroAnteriorEvaluacion(){
+
+  if(
+    !datosPaso1.evaluacion ||
+    !Array.isArray(datosPaso1.evaluacion.rubros)
+  ){
+    return null;
+  }
+
+  const rubrosAceptados =
+    datosPaso1.sistemaEvaluacion?.rubrosAceptados || [];
+
+  const indiceSiguiente =
+    rubrosAceptados.length;
+
+  if(indiceSiguiente === 0){
+    return null;
+  }
+
+  return (
+    datosPaso1.evaluacion.rubros[indiceSiguiente - 1] ||
+    null
+  );
+
+}
     
 function prepararPeriodoEvaluativo(rubro, rubroAnterior = null){
 
