@@ -334,6 +334,25 @@ function obtenerRubroAnteriorEvaluacion(){
   );
 
 }
+
+function prepararSiguienteRubroEvaluacion(){
+
+  const rubro =
+    obtenerSiguienteRubroEvaluacion();
+
+  if(!rubro){
+    return null;
+  }
+
+  const rubroAnterior =
+    obtenerRubroAnteriorEvaluacion();
+
+  return prepararPeriodoEvaluativo(
+    rubro,
+    rubroAnterior
+  );
+
+}
     
 function prepararPeriodoEvaluativo(rubro, rubroAnterior = null){
 
