@@ -4556,13 +4556,9 @@ function validarEvaluacionPropuesta(
         };
       }
 
-      if (!Number.isFinite(puntuacion) || puntuacion <= 0) {
-        return {
-          valido: false,
-          mensaje:
-            `La actividad evaluativa asociada a "${rubro}" no tiene una puntuación válida.`
-        };
-      }
+     /* La puntuación de las actividades evaluativas
+   se definirá posteriormente en
+   X. Sistema de Evaluación. */
 
       const rubroOficial =
         sistemaEvaluacion.find(
@@ -4612,33 +4608,6 @@ function validarEvaluacionPropuesta(
     }
   }
 
-  /* En una semana de cierre, el rubro debe quedar completo */
-
-  for (const rubroCierre of cierresSemana) {
-
-    if (rubroCierre.componenteExterno === true) {
-      continue;
-    }
-
-    const peso = Number(rubroCierre.peso);
-
-    const anterior =
-      puntuacionAnterior[rubroCierre.nombre] || 0;
-
-    const actual =
-      puntuacionSemanaActual[rubroCierre.nombre] || 0;
-
-    const total = anterior + actual;
-
-    if (Math.abs(total - peso) > 0.001) {
-      return {
-        valido: false,
-        mensaje:
-          `La semana ${semanaActual} corresponde al cierre de "${rubroCierre.nombre}". ` +
-          `El rubro acumula ${total} de ${peso} puntos.`
-      };
-    }
-  }
 /* Validar cierre del Rubro único en la última semana */
 
 const rubroUnico = sistemaEvaluacion.find(
