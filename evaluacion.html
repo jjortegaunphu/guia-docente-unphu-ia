@@ -954,9 +954,334 @@ function mostrarVistaFinalSistemaEvaluacion(){
 
     </div>
 
+    <div style="margin-top:20px;">
+  <button
+    type="button"
+    onclick="descargarSistemaEvaluacionWord()"
+    ${totalCorrecto ? "" : "disabled"}
+  >
+    Descargar Word
+  </button>
+</div>
+
   `;
 
 }
+
+  function descargarSistemaEvaluacionWord(){
+
+  const rubrosConfigurados =
+    datosPaso1.evaluacion?.rubros || [];
+
+  const rubrosAceptados =
+    datosPaso1.sistemaEvaluacion?.rubrosAceptados || [];
+
+  if(
+    rubrosConfigurados.length === 0 ||
+    rubrosAceptados.length !== rubrosConfigurados.length
+  ){
+    alert(
+      "El Sistema de Evaluación todavía no está completo."
+    );
+    return;
+  }
+
+  let filas = "";
+  let totalGeneral = 0;
+
+  rubrosConfigurados.forEach(rubroConfigurado => {
+
+    const rubroAceptado =
+      rubrosAceptados.find(
+        item =>
+          item.rubro === rubroConfigurado.nombre
+      );
+
+    if(!rubroAceptado){
+      return;
+    }
+
+    const actividades =
+      Array.isArray(rubroAceptado.actividades)
+        ? rubroAceptado.actividades
+        : [];
+
+    actividades.forEach(actividad => {
+
+      const rea =
+        Array.isArray(actividad.codigosREA)
+          ? actividad.codigosREA.join(", ")
+          : "";
+
+      const instrumentos =
+        Array.isArray(actividad.instrumentos)
+          ? actividad.instrumentos.join(", ")
+          : "";
+
+      filas += `
+        <tr>
+          <td>${actividad.semana ?? ""}</td>
+          <td>${actividad.tecnica || ""}</td>
+          <td>${rea}</td>
+          <td>${actividad.tipo || ""}</td>
+          <td>${instrumentos}</td>
+          <td>${Number(actividad.valor || 0)}</td>
+        </tr>
+      `;
+
+    });
+
+    const pesoRubro =
+      Number(
+        rubroAceptado.pesoTotal ??
+        rubroConfigurado.peso ??
+        0
+      );
+
+    totalGeneral += pesoRubro;
+
+    const esRubroUnico =
+      rubrosConfigurados.length === 1 &&
+      String(rubroConfigurado.nombre)
+        .trim()
+        .toLowerCase() === "rubro único";
+
+    if(!esRubroUnico){
+
+      filas += `
+        <tr class="subtotal">
+          <td colspan="5">
+            <strong>${rubroConfigurado.nombre}</strong>
+          </td>
+
+          <td>
+            <strong>${pesoRubro}</strong>
+          </td>
+        </tr>
+      `;
+
+    }
+
+  });
+
+  if(Math.abs(totalGeneral - 100) >= 0.001){
+    alert(
+      "El Sistema de Evaluación debe sumar exactamente 100 puntos antes de descargarlo."
+    );
+    return;
+  }
+
+  const nombreAsignatura =
+    datosPaso1.configuracion?.nombreAsignatura ||
+    "Asignatura";
+
+  const codigoAsignatura =
+    datosPaso1.configuracion?.codigoAsignatura ||
+    "";
+
+  const contenidoWord = `
+    <html
+      xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:w="urn:schemas-microsoft-com:office:word"
+      xmlns="http://www.w3.org/TR/REC-html40"
+    >
+
+      <head>
+
+        <meta charset="UTF-8">
+
+        <style>
+
+          @page {
+            size: portrait;
+            margin: 1.5cm;
+          }
+
+          body {
+            font-family: "Book Antiqua", serif;
+            font-size: 10pt;
+          }
+
+          h2 {
+            font-family: "Book Antiqua", serif;
+            font-size: 10pt;
+            margin-bottom: 8px;
+          }
+
+          .datos {
+            font-family: "Book Antiqua", serif;
+            font-size: 10pt;
+            margin-bottom: 14px;
+          }
+
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            font-family: "Book Antiqua", serif;
+            font-size: 10pt;
+          }
+
+          th,
+          td {
+            border: 1px solid #000000;
+            padding: 4px;
+            vertical-align: middle;
+            font-family: "Book Antiqua", serif;
+            font-size: 10pt;
+          }
+
+          th {
+            background: #70ad47;
+            text-align: center;
+            font-weight: bold;
+          }
+
+          th:nth-child(1),
+          td:nth-child(1) {
+            width: 8%;
+            text-align: center;
+          }
+
+          th:nth-child(2),
+          td:nth-child(2) {
+            width: 38%;
+          }
+
+          th:nth-child(3),
+          td:nth-child(3) {
+            width: 14%;
+            text-align: center;
+          }
+
+          th:nth-child(4),
+          td:nth-child(4) {
+            width: 10%;
+            text-align: center;
+          }
+
+          th:nth-child(5),
+          td:nth-child(5) {
+            width: 20%;
+          }
+
+          th:nth-child(6),
+          td:nth-child(6) {
+            width: 10%;
+            text-align: center;
+          }
+
+          .subtotal td {
+            background: #e2efda;
+            font-weight: bold;
+          }
+
+          .total td {
+            font-weight: bold;
+          }
+
+        </style>
+
+      </head>
+
+      <body>
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th
+                colspan="6"
+                style="text-align:left;"
+              >
+                X. Sistema de Evaluación
+              </th>
+            </tr>
+
+            <tr>
+              <th>Semana</th>
+              <th>Técnica</th>
+              <th>REA(s)</th>
+              <th>
+                Tipo<br>
+                (D, F, S)
+              </th>
+              <th>Instrumento(s)</th>
+              <th>Valor</th>
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            ${filas}
+
+            <tr class="total">
+
+              <td
+                colspan="5"
+                style="text-align:right;"
+              >
+                <strong>Total:</strong>
+              </td>
+
+              <td>
+                <strong>${totalGeneral}</strong>
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </body>
+
+    </html>
+  `;
+
+  const blob =
+    new Blob(
+      ["\ufeff", contenidoWord],
+      {
+        type:
+          "application/msword;charset=utf-8"
+      }
+    );
+
+  const url =
+    URL.createObjectURL(blob);
+
+  const enlace =
+    document.createElement("a");
+
+  enlace.href = url;
+
+  enlace.download =
+    "Sistema_de_Evaluacion_" +
+    String(nombreAsignatura)
+      .replace(
+        /[^\wáéíóúÁÉÍÓÚñÑ-]+/g,
+        "_"
+      ) +
+    ".doc";
+
+  document.body.appendChild(
+    enlace
+  );
+
+  enlace.click();
+
+  document.body.removeChild(
+    enlace
+  );
+
+  URL.revokeObjectURL(
+    url
+  );
+
+}  
     
 function agregarActividadEvaluacion(){
 
