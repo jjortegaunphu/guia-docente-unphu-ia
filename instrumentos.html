@@ -678,6 +678,16 @@ function mostrarListaCotejo(
     >
     </div>
 
+    <div style="margin-top:18px;">
+  <button
+    type="button"
+    id="btnAceptarListaCotejo"
+    onclick="aceptarListaCotejo()"
+  >
+    Aceptar Lista de cotejo
+  </button>
+</div>
+
   `;
 
   actualizarTotalListaCotejo();
@@ -960,7 +970,156 @@ function renumerarItemsListaCotejo(){
 
 }
 
+function aceptarListaCotejo(){
 
+  const filas =
+    document.querySelectorAll(
+      ".filaItemListaCotejo"
+    );
+
+  if(
+    filas.length < 5 ||
+    filas.length > 10
+  ){
+
+    alert(
+      "La Lista de cotejo debe contener entre 5 y 10 ítems."
+    );
+
+    return;
+  }
+
+
+  let total = 0;
+  let hayIndicadorVacio = false;
+  let hayValorInvalido = false;
+
+
+  filas.forEach(fila => {
+
+    const indicador =
+      fila.querySelector(
+        ".indicadorListaCotejo"
+      );
+
+    const campoValor =
+      fila.querySelector(
+        ".valorListaCotejo"
+      );
+
+
+    if(
+      !indicador ||
+      indicador.value.trim() === ""
+    ){
+      hayIndicadorVacio = true;
+    }
+
+
+    if(!campoValor){
+
+      hayValorInvalido = true;
+      return;
+
+    }
+
+
+    const valor =
+      Number(campoValor.value);
+
+
+    if(
+      !Number.isFinite(valor) ||
+      valor < 0
+    ){
+
+      hayValorInvalido = true;
+      return;
+
+    }
+
+
+    total += valor;
+
+  });
+
+
+  if(hayIndicadorVacio){
+
+    alert(
+      "Todos los indicadores o descriptores deben estar completos antes de aceptar la Lista de cotejo."
+    );
+
+    return;
+  }
+
+
+  if(hayValorInvalido){
+
+    alert(
+      "Todos los valores de la Lista de cotejo deben ser números válidos y no negativos."
+    );
+
+    return;
+  }
+
+
+  const estado =
+    document.getElementById(
+      "estadoTotalListaCotejo"
+    );
+
+
+  if(!estado){
+
+    alert(
+      "No fue posible verificar el valor establecido para esta Lista de cotejo."
+    );
+
+    return;
+  }
+
+
+  const valorEstablecido =
+    Number(
+      estado.dataset.valorEstablecido
+    );
+
+
+  if(!Number.isFinite(valorEstablecido)){
+
+    alert(
+      "El valor establecido para esta actividad no es válido."
+    );
+
+    return;
+  }
+
+
+  if(
+    Math.abs(
+      total - valorEstablecido
+    ) >= 0.001
+  ){
+
+    alert(
+      "No puede aceptar la Lista de cotejo porque la distribución actual es de " +
+      total.toFixed(2) +
+      " punto(s) y debe ser exactamente " +
+      valorEstablecido.toFixed(2) +
+      " punto(s)."
+    );
+
+    return;
+  }
+
+
+  alert(
+    "La Lista de cotejo cumple con todos los requisitos y está lista para ser aceptada."
+  );
+
+}
+  
 async function seleccionarInstrumento(index){
 
   const instrumentos =
