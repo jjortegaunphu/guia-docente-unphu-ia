@@ -1431,7 +1431,9 @@ function descargarSistemaEvaluacionPDF(){
 
           * {
             box-sizing: border-box;
-          }
+           -webkit-print-color-adjust: exact !important;
+           print-color-adjust: exact !important;
+             }
 
           body {
             margin: 0;
@@ -1459,9 +1461,9 @@ function descargarSistemaEvaluacionPDF(){
           }
 
           th {
-            background: #70ad47;
-            text-align: center;
-            font-weight: bold;
+             background: #70ad47 !important;
+             text-align: center;
+             font-weight: bold;
           }
 
          th:nth-child(1),
@@ -1499,9 +1501,9 @@ td:nth-child(6) {
 }
 
           .subtotal td {
-            background: #e2efda;
+            background: #e2efda !important;
             font-weight: bold;
-          }
+           }
 
           .total td {
             font-weight: bold;
