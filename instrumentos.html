@@ -294,8 +294,13 @@ function mostrarInstrumentosPendientes(){
           </td>
 
           <td>
-            Pendiente
-          </td>
+          <button
+           type="button"
+           onclick="seleccionarInstrumento(${index})"
+          >
+           Elaborar instrumento
+          </button>
+       </td>
 
         </tr>
       `;
@@ -381,7 +386,35 @@ function mostrarInstrumentosPendientes(){
 
 }
 
+function seleccionarInstrumento(index){
 
+  const instrumentos =
+    obtenerInstrumentosPendientes();
+
+  const seleccionado =
+    instrumentos[index];
+
+  if(!seleccionado){
+    alert(
+      "No fue posible identificar el instrumento seleccionado."
+    );
+    return;
+  }
+
+  console.log(
+    "Instrumento seleccionado:",
+    seleccionado
+  );
+
+  alert(
+    "Instrumento seleccionado:\n\n" +
+    "Semana: " + seleccionado.semana + "\n" +
+    "Instrumento: " + seleccionado.instrumento + "\n" +
+    "Valor: " + seleccionado.valor + " punto(s)"
+  );
+
+}
+  
 function mostrarErrorInstrumentos(mensaje){
 
   document
