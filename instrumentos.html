@@ -656,9 +656,39 @@ function mostrarListaCotejo(
 
 }
 
-<span id="totalActualListaCotejo">
-  ${Number(propuesta.valorTotal).toFixed(2)}
-</span>
+function actualizarTotalListaCotejo(){
+
+  const campos =
+    document.querySelectorAll(
+      ".valorListaCotejo"
+    );
+
+  let total = 0;
+
+  campos.forEach(campo => {
+
+    const valor =
+      Number(campo.value);
+
+    if(Number.isFinite(valor)){
+      total += valor;
+    }
+
+  });
+
+  const totalVisual =
+    document.getElementById(
+      "totalActualListaCotejo"
+    );
+
+  if(totalVisual){
+
+    totalVisual.textContent =
+      total.toFixed(2);
+
+  }
+
+}
   
 async function seleccionarInstrumento(index){
 
