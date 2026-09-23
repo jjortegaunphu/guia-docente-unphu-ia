@@ -91,6 +91,8 @@ let datosGuia = null;
 
 let fuenteInstrumentos = null;
 
+let instrumentoSeleccionadoActual = null;
+
 
 function cargarDatosInstrumentos(){
 
@@ -228,7 +230,37 @@ function obtenerInstrumentosPendientes(){
 
 }
 
+function buscarInstrumentoElaborado(item){
 
+  const elaborados =
+    datosGuia
+      ?.instrumentosEvaluacion
+      ?.elaborados || [];
+
+  return elaborados.find(
+    elaborado =>
+
+      elaborado.rubro ===
+        item.rubro &&
+
+      Number(
+        elaborado.indiceActividad
+      ) ===
+        Number(
+          item.indiceActividad
+        ) &&
+
+      Number(
+        elaborado.indiceInstrumento
+      ) ===
+        Number(
+          item.indiceInstrumento
+        )
+
+  ) || null;
+
+}
+  
 function mostrarInstrumentosPendientes(){
 
   document
@@ -274,6 +306,19 @@ function mostrarInstrumentosPendientes(){
       const rea =
         item.codigosREA.join(", ");
 
+      const elaborado =
+  buscarInstrumentoElaborado(item);
+
+const estado =
+  elaborado
+    ? "Aceptado"
+    : "Pendiente";
+
+const textoBoton =
+  elaborado
+    ? "Editar instrumento"
+    : "Elaborar instrumento";
+
       filas += `
         <tr>
 
@@ -302,13 +347,17 @@ function mostrarInstrumentosPendientes(){
           </td>
 
           <td>
-          <button
-           type="button"
-           onclick="seleccionarInstrumento(${index})"
-          >
-           Elaborar instrumento
-          </button>
-       </td>
+  <div style="margin-bottom:6px;">
+    <strong>${estado}</strong>
+  </div>
+
+  <button
+    type="button"
+    onclick="seleccionarInstrumento(${index})"
+  >
+    ${textoBoton}
+  </button>
+</td>
 
         </tr>
       `;
@@ -1113,9 +1162,198 @@ function aceptarListaCotejo(){
   }
 
 
+  if(!instrumentoSeleccionadoActual){
+
   alert(
-    "La Lista de cotejo cumple con todos los requisitos y está lista para ser aceptada."
+    "No fue posible identificar el instrumento que se desea aceptar."
   );
+
+  return;
+}
+
+
+const itemsAceptados =
+  Array.from(filas).map(fila => {
+
+    const indicador =
+      fila.querySelector(
+        ".indicadorListaCotejo"
+      ).value.trim();
+
+    const valor =
+      Number(
+        fila.querySelector(
+          ".valorListaCotejo"
+        ).value
+      );
+
+    return {
+      indicador: indicador,
+      opciones: ["Sí", "No"],
+      valor: valor
+    };
+
+  });
+
+
+if(!datosGuia.instrumentosEvaluacion){
+  datosGuia.instrumentosEvaluacion = {};
+}
+
+
+if(
+  !Array.isArray(
+    datosGuia.instrumentosEvaluacion.elaborados
+  )
+){
+  datosGuia.instrumentosEvaluacion.elaborados = [];
+}
+
+
+const nuevoInstrumento = {
+
+  rubro:
+    instrumentoSeleccionadoActual.rubro,
+
+  indiceActividad:
+    instrumentoSeleccionadoActual.indiceActividad,
+
+  indiceInstrumento:
+    instrumentoSeleccionadoActual.indiceInstrumento,
+
+  semana:
+    instrumentoSeleccionadoActual.semana,
+
+  tecnica:
+    instrumentoSeleccionadoActual.tecnica,
+
+  codigosREA:
+    Array.isArray(
+      instrumentoSeleccionadoActual.codigosREA
+    )
+      ? [
+          ...instrumentoSeleccionadoActual.codigosREA
+        ]
+      : [],
+
+  tipo:
+    instrumentoSeleccionadoActual.tipo,
+
+  instrumento:
+    "Lista de cotejo",
+
+  valor:
+    Number(
+      instrumentoSeleccionadoActual.valor
+    ),
+
+  estado:
+    "Aceptado",
+
+  contenido: {
+
+    instrumento:
+      "Lista de cotejo",
+
+    items:
+      itemsAceptados,
+
+    valorTotal:
+      total
+
+  }
+
+};
+
+
+const indiceExistente =
+  datosGuia.instrumentosEvaluacion
+    .elaborados
+    .findIndex(item =>
+
+      item.rubro ===
+        nuevoInstrumento.rubro &&
+
+      Number(item.indiceActividad) ===
+        Number(
+          nuevoInstrumento.indiceActividad
+        ) &&
+
+      Number(item.indiceInstrumento) ===
+        Number(
+          nuevoInstrumento.indiceInstrumento
+        )
+
+    );
+
+
+if(indiceExistente >= 0){
+
+  datosGuia.instrumentosEvaluacion
+    .elaborados[indiceExistente] =
+      nuevoInstrumento;
+
+}
+else{
+
+  datosGuia.instrumentosEvaluacion
+    .elaborados.push(
+      nuevoInstrumento
+    );
+
+}
+
+
+const respaldoActual =
+  localStorage.getItem(
+    "respaldoGuiaDocente"
+  );
+
+
+if(!respaldoActual){
+
+  alert(
+    "No fue posible localizar el respaldo de la guía docente."
+  );
+
+  return;
+}
+
+
+try{
+
+  const respaldo =
+    JSON.parse(respaldoActual);
+
+  respaldo.datosGuia =
+    datosGuia;
+
+  localStorage.setItem(
+    "respaldoGuiaDocente",
+    JSON.stringify(respaldo)
+  );
+
+}
+catch(error){
+
+  console.error(
+    "Error al guardar la Lista de cotejo:",
+    error
+  );
+
+  alert(
+    "La Lista de cotejo es válida, pero ocurrió un error al guardar el instrumento."
+  );
+
+  return;
+}
+
+
+alert(
+  "La Lista de cotejo ha sido aceptada y guardada correctamente."
+);
+
+  mostrarInstrumentosPendientes();
 
 }
   
@@ -1136,7 +1374,29 @@ async function seleccionarInstrumento(index){
     return;
   }
 
+  instrumentoSeleccionadoActual =
+  seleccionado;
 
+const elaborado =
+  buscarInstrumentoElaborado(
+    seleccionado
+  );
+
+if(
+  elaborado &&
+  elaborado.instrumento ===
+    "Lista de cotejo" &&
+  elaborado.contenido
+){
+
+  mostrarListaCotejo(
+    elaborado.contenido,
+    seleccionado
+  );
+
+  return;
+}
+  
   const contexto =
     prepararContextoInstrumento(
       seleccionado
