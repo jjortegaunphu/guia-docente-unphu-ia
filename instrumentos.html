@@ -386,6 +386,75 @@ function mostrarInstrumentosPendientes(){
 
 }
 
+function prepararContextoInstrumento(item){
+
+  if(!item || !fuenteInstrumentos){
+    return null;
+  }
+
+  const semanaSeleccionada =
+    Number(item.semana);
+
+  const cronograma =
+    Array.isArray(fuenteInstrumentos.cronograma)
+      ? fuenteInstrumentos.cronograma
+      : [];
+
+  const semanaCronograma =
+    cronograma.find(
+      semana =>
+        Number(semana.semana) === semanaSeleccionada
+    ) || null;
+
+
+  return {
+
+    asignatura: {
+      codigo:
+        fuenteInstrumentos.asignatura?.codigo || "",
+
+      nombre:
+        fuenteInstrumentos.asignatura?.nombre || ""
+    },
+
+    actividadEvaluativa: {
+
+      rubro:
+        item.rubro || "",
+
+      semana:
+        semanaSeleccionada,
+
+      tecnica:
+        item.tecnica || "",
+
+      codigosREA:
+        Array.isArray(item.codigosREA)
+          ? item.codigosREA
+          : [],
+
+      tipo:
+        item.tipo || "",
+
+      instrumento:
+        item.instrumento || "",
+
+      valor:
+        Number(item.valor || 0)
+    },
+
+    reaOficiales:
+      Array.isArray(fuenteInstrumentos.reaOficiales)
+        ? fuenteInstrumentos.reaOficiales
+        : [],
+
+    contextoSemana:
+      semanaCronograma
+
+  };
+
+}
+  
 function seleccionarInstrumento(index){
 
   const instrumentos =
@@ -401,6 +470,25 @@ function seleccionarInstrumento(index){
     return;
   }
 
+const contexto =
+  prepararContextoInstrumento(
+    seleccionado
+  );
+
+if(!contexto){
+
+  alert(
+    "No fue posible preparar la información necesaria para elaborar el instrumento."
+  );
+
+  return;
+}
+
+console.log(
+  "Contexto completo del instrumento:",
+  contexto
+);
+  
   console.log(
     "Instrumento seleccionado:",
     seleccionado
