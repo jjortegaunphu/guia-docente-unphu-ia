@@ -483,15 +483,18 @@ function mostrarListaCotejo(
 
   let filas = "";
 
-  propuesta.items.forEach(
-    (item, index) => {
+ propuesta.items.forEach(
+  (item, index) => {
 
-      filas += `
-        <tr>
+    filas += `
+      <tr class="filaItemListaCotejo">
 
-          <td style="text-align:center;">
-            ${index + 1}
-          </td>
+        <td
+          class="numeroItemListaCotejo"
+          style="text-align:center;"
+        >
+          ${index + 1}
+        </td>
 
           <td>
   <textarea
@@ -528,7 +531,14 @@ function mostrarListaCotejo(
     "
   >
 </td>
-
+<td style="text-align:center;">
+  <button
+    type="button"
+    onclick="eliminarItemListaCotejo(this)"
+  >
+    Eliminar
+  </button>
+</td>
         </tr>
       `;
 
@@ -605,13 +615,17 @@ function mostrarListaCotejo(
             Valor
           </th>
 
+          <th style="width:10%;">
+            Acción
+          </th>
+
         </tr>
 
       </thead>
 
-      <tbody>
+      <tbody id="cuerpoListaCotejo">
 
-        ${filas}
+       ${filas}
 
         <tr>
 
@@ -641,6 +655,15 @@ function mostrarListaCotejo(
            </tbody>
 
     </table>
+
+    <div style="margin-top:12px;">
+     <button
+       type="button"
+       onclick="agregarItemListaCotejo()"
+    >
+    + Agregar ítem
+  </button>
+</div>
 
     <div
       id="estadoTotalListaCotejo"
@@ -761,6 +784,309 @@ function actualizarTotalListaCotejo(){
     ". Faltan " +
     Math.abs(diferencia).toFixed(2) +
     " punto(s) por distribuir.";
+
+}
+
+function eliminarItemListaCotejo(boton){
+
+  const filas =
+    document.querySelectorAll(
+      ".filaItemListaCotejo"
+    );
+
+  if(filas.length <= 5){
+
+    alert(
+      "La Lista de cotejo debe conservar un mínimo de 5 ítems."
+    );
+
+    return;
+  }
+
+  const fila =
+    boton.closest("tr");
+
+  if(fila){
+    fila.remove();
+  }
+
+  renumerarItemsListaCotejo();
+  actualizarTotalListaCotejo();
+
+}
+
+
+function agregarItemListaCotejo(){
+
+  const cuerpo =
+    document.getElementById(
+      "cuerpoListaCotejo"
+    );
+
+  if(!cuerpo){
+    return;
+  }
+
+  const filas =
+    cuerpo.querySelectorAll(
+      ".filaItemListaCotejo"
+    );
+
+  if(filas.length >= 10){
+
+    alert(
+      "La Lista de cotejo puede contener un máximo de 10 ítems."
+    );
+
+    return;
+  }
+
+
+  const nuevaFila =
+    document.createElement("tr");
+
+  nuevaFila.className =
+    "filaItemListaCotejo";
+
+
+  nuevaFila.innerHTML = `
+
+    <td
+      class="numeroItemListaCotejo"
+      style="text-align:center;"
+    >
+      ${filas.length + 1}
+    </td>
+
+    <td>
+      <textarea
+        class="indicadorListaCotejo"
+        style="
+          width:100%;
+          box-sizing:border-box;
+          min-height:55px;
+        "
+        placeholder="Escriba el nuevo indicador o descriptor."
+      ></textarea>
+    </td>
+
+    <td style="text-align:center;">
+      ☐
+    </td>
+
+    <td style="text-align:center;">
+      ☐
+    </td>
+
+    <td style="text-align:center;">
+      <input
+        type="number"
+        class="valorListaCotejo"
+        value="0"
+        min="0"
+        step="0.25"
+        oninput="actualizarTotalListaCotejo()"
+        style="
+          width:70px;
+          text-align:center;
+        "
+      >
+    </td>
+
+    <td style="text-align:center;">
+      <button
+        type="button"
+        onclick="eliminarItemListaCotejo(this)"
+      >
+        Eliminar
+      </button>
+    </td>
+
+  `;
+
+
+  cuerpo.appendChild(
+    nuevaFila
+  );
+
+  renumerarItemsListaCotejo();
+  actualizarTotalListaCotejo();
+
+}
+
+
+function renumerarItemsListaCotejo(){
+
+  const filas =
+    document.querySelectorAll(
+      ".filaItemListaCotejo"
+    );
+
+  filas.forEach(
+    (fila, index) => {
+
+      const numero =
+        fila.querySelector(
+          ".numeroItemListaCotejo"
+        );
+
+      if(numero){
+        numero.textContent =
+          index + 1;
+      }
+
+    }
+  );
+
+}
+
+function eliminarItemListaCotejo(boton){
+
+  const filas =
+    document.querySelectorAll(
+      ".filaItemListaCotejo"
+    );
+
+  if(filas.length <= 5){
+
+    alert(
+      "La Lista de cotejo debe conservar un mínimo de 5 ítems."
+    );
+
+    return;
+  }
+
+  const fila =
+    boton.closest("tr");
+
+  if(fila){
+    fila.remove();
+  }
+
+  renumerarItemsListaCotejo();
+  actualizarTotalListaCotejo();
+
+}
+
+
+function agregarItemListaCotejo(){
+
+  const cuerpo =
+    document.getElementById(
+      "cuerpoListaCotejo"
+    );
+
+  if(!cuerpo){
+    return;
+  }
+
+  const filas =
+    cuerpo.querySelectorAll(
+      ".filaItemListaCotejo"
+    );
+
+  if(filas.length >= 10){
+
+    alert(
+      "La Lista de cotejo puede contener un máximo de 10 ítems."
+    );
+
+    return;
+  }
+
+  const nuevaFila =
+    document.createElement("tr");
+
+  nuevaFila.className =
+    "filaItemListaCotejo";
+
+  nuevaFila.innerHTML = `
+
+    <td
+      class="numeroItemListaCotejo"
+      style="text-align:center;"
+    >
+      ${filas.length + 1}
+    </td>
+
+    <td>
+      <textarea
+        class="indicadorListaCotejo"
+        style="
+          width:100%;
+          box-sizing:border-box;
+          min-height:55px;
+        "
+        placeholder="Escriba el nuevo indicador o descriptor."
+      ></textarea>
+    </td>
+
+    <td style="text-align:center;">
+      ☐
+    </td>
+
+    <td style="text-align:center;">
+      ☐
+    </td>
+
+    <td style="text-align:center;">
+      <input
+        type="number"
+        class="valorListaCotejo"
+        value="0"
+        min="0"
+        step="0.25"
+        oninput="actualizarTotalListaCotejo()"
+        style="
+          width:70px;
+          text-align:center;
+        "
+      >
+    </td>
+
+    <td style="text-align:center;">
+      <button
+        type="button"
+        onclick="eliminarItemListaCotejo(this)"
+      >
+        Eliminar
+      </button>
+    </td>
+
+  `;
+
+  cuerpo.appendChild(
+    nuevaFila
+  );
+
+  renumerarItemsListaCotejo();
+  actualizarTotalListaCotejo();
+
+}
+
+
+function renumerarItemsListaCotejo(){
+
+  const filas =
+    document.querySelectorAll(
+      ".filaItemListaCotejo"
+    );
+
+  filas.forEach(
+    (fila, index) => {
+
+      const numero =
+        fila.querySelector(
+          ".numeroItemListaCotejo"
+        );
+
+      if(numero){
+        numero.textContent =
+          index + 1;
+      }
+
+    }
+  );
 
 }
   
