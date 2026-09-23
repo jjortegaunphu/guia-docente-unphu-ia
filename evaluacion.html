@@ -363,20 +363,50 @@ function prepararSiguienteRubroEvaluacion(){
     
 function prepararPeriodoEvaluativo(rubro, rubroAnterior = null){
 
-  const semanaInicio =
+const todasLasActividades =
+  prepararActividadesCronograma();
+
+const esRubroUnico =
+  datosPaso1.evaluacion?.rubros?.length === 1 &&
+  String(rubro.nombre || "")
+    .trim()
+    .toLowerCase() === "rubro único";
+
+let semanaInicio;
+let semanaFin;
+
+if(esRubroUnico){
+
+  semanaInicio = 1;
+
+  semanaFin =
+    todasLasActividades.reduce(
+      (ultimaSemana, actividad) =>
+        Math.max(
+          ultimaSemana,
+          Number(actividad.semana || 0)
+        ),
+      0
+    );
+
+} else {
+
+  semanaInicio =
     rubroAnterior
       ? Number(rubroAnterior.semana) + 1
       : 1;
 
-  const semanaFin =
+  semanaFin =
     Number(rubro.semana);
 
-  const actividades =
-    prepararActividadesCronograma().filter(
-      actividad =>
-        Number(actividad.semana) >= semanaInicio &&
-        Number(actividad.semana) <= semanaFin
-    );
+}
+
+const actividades =
+  todasLasActividades.filter(
+    actividad =>
+      Number(actividad.semana) >= semanaInicio &&
+      Number(actividad.semana) <= semanaFin
+  );
 
   return {
     rubro: rubro.nombre,
