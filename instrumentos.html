@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    Instrumentos de Evaluación · Guía Docente UNPHU IA
+  </title>
+</head>
+
+<body>
+
+  <header>
+    <h1>Guía Docente UNPHU IA</h1>
+    <p>Elaboración de Instrumentos de Evaluación</p>
+  </header>
+
+  <main>
+
+    <section id="cargando">
+
+      <h2>
+        Preparando los instrumentos de evaluación...
+      </h2>
+
+      <p>
+        Se está recuperando el Sistema de Evaluación
+        elaborado en el paso anterior.
+      </p>
+
+    </section>
+
+
+    <section
+      id="instrumentosEvaluacion"
+      style="display:none;"
+    >
+
+      <a href="evaluacion.html">
+        ← Volver al Sistema de Evaluación
+      </a>
+
+      <h2>
+        XI. Instrumentos de Evaluación
+      </h2>
+
+      <div id="resumenAsignatura"></div>
+
+      <div id="listaInstrumentos"></div>
+
+    </section>
+
+
+    <section
+      id="errorInstrumentos"
+      style="display:none;"
+    >
+
+      <h2>
+        No se pueden elaborar los instrumentos de evaluación
+      </h2>
+
+      <p id="mensajeErrorInstrumentos"></p>
+
+      <a href="index.html">
+        Volver al inicio
+      </a>
+
+    </section>
+
+  </main>
+
+
+<script>
+
+let datosGuia = null;
+
+let fuenteInstrumentos = null;
+
+
+function cargarDatosInstrumentos(){
+
+  const respaldo =
+    localStorage.getItem(
+      "respaldoGuiaDocente"
+    );
+
+  if(!respaldo){
+
+    mostrarErrorInstrumentos(
+      "No se encontró una guía docente previamente elaborada."
+    );
+
+    return;
+  }
+
+  try{
+
+    const datosGuardados =
+      JSON.parse(respaldo);
+
+    datosGuia =
+      datosGuardados.datosGuia;
+
+    if(
+      !datosGuia ||
+      datosGuia.instrumentosEvaluacion
+        ?.sistemaEvaluacionCompletado !== true ||
+      !datosGuia.instrumentosEvaluacion?.fuente
+    ){
+
+      mostrarErrorInstrumentos(
+        "Para elaborar los instrumentos de evaluación, primero debe completar y aceptar el Sistema de Evaluación."
+      );
+
+      return;
+    }
+
+    fuenteInstrumentos =
+      datosGuia.instrumentosEvaluacion.fuente;
+
+    mostrarInstrumentosPendientes();
+
+  }
+  catch(error){
+
+    console.error(
+      "Error al recuperar los datos para los instrumentos:",
+      error
+    );
+
+    mostrarErrorInstrumentos(
+      "No fue posible recuperar correctamente la información del Sistema de Evaluación."
+    );
+
+  }
+
+}
+
+
+function obtenerInstrumentosPendientes(){
+
+  const pendientes = [];
+
+  const rubros =
+    fuenteInstrumentos
+      ?.sistemaEvaluacion
+      ?.rubrosAceptados || [];
+
+  rubros.forEach(rubro => {
+
+    const actividades =
+      Array.isArray(rubro.actividades)
+        ? rubro.actividades
+        : [];
+
+    actividades.forEach(
+      (actividad, indiceActividad) => {
+
+        const instrumentos =
+          Array.isArray(actividad.instrumentos)
+            ? actividad.instrumentos
+            : [];
+
+        instrumentos.forEach(
+          (instrumento, indiceInstrumento) => {
+
+            pendientes.push({
+
+              rubro:
+                rubro.rubro || "",
+
+              semana:
+                actividad.semana ?? "",
+
+              tecnica:
+                actividad.tecnica || "",
+
+              codigosREA:
+                Array.isArray(
+                  actividad.codigosREA
+                )
+                  ? actividad.codigosREA
+                  : [],
+
+              tipo:
+                actividad.tipo || "",
+
+              instrumento:
+                instrumento || "",
+
+              valor:
+                Number(
+                  actividad.valor || 0
+                ),
+
+              indiceActividad:
+                indiceActividad,
+
+              indiceInstrumento:
+                indiceInstrumento
+
+            });
+
+          }
+        );
+
+      }
+    );
+
+  });
+
+  return pendientes;
+
+}
+
+
+function mostrarInstrumentosPendientes(){
+
+  document
+    .getElementById("cargando")
+    .style.display = "none";
+
+  document
+    .getElementById("errorInstrumentos")
+    .style.display = "none";
+
+  document
+    .getElementById("instrumentosEvaluacion")
+    .style.display = "block";
+
+
+  const resumen =
+    document.getElementById(
+      "resumenAsignatura"
+    );
+
+  resumen.innerHTML = `
+    <p>
+      <strong>Asignatura:</strong>
+      ${fuenteInstrumentos.asignatura?.nombre || ""}
+    </p>
+
+    <p>
+      <strong>Código:</strong>
+      ${fuenteInstrumentos.asignatura?.codigo || ""}
+    </p>
+  `;
+
+
+  const instrumentos =
+    obtenerInstrumentosPendientes();
+
+
+  let filas = "";
+
+  instrumentos.forEach(
+    (item, index) => {
+
+      const rea =
+        item.codigosREA.join(", ");
+
+      filas += `
+        <tr>
+
+          <td>
+            ${item.semana}
+          </td>
+
+          <td>
+            ${item.tecnica}
+          </td>
+
+          <td>
+            ${rea}
+          </td>
+
+          <td>
+            ${item.tipo}
+          </td>
+
+          <td>
+            ${item.instrumento}
+          </td>
+
+          <td>
+            ${item.valor}
+          </td>
+
+          <td>
+            Pendiente
+          </td>
+
+        </tr>
+      `;
+
+    }
+  );
+
+
+  const contenedor =
+    document.getElementById(
+      "listaInstrumentos"
+    );
+
+
+  if(instrumentos.length === 0){
+
+    contenedor.innerHTML = `
+      <p>
+        No se encontraron instrumentos de evaluación
+        para elaborar.
+      </p>
+    `;
+
+    return;
+  }
+
+
+  contenedor.innerHTML = `
+
+    <h3>
+      Instrumentos pendientes de elaboración
+    </h3>
+
+    <table
+      border="1"
+      cellspacing="0"
+      cellpadding="8"
+      style="
+        border-collapse:collapse;
+        width:100%;
+      "
+    >
+
+      <thead>
+
+        <tr>
+
+          <th>Semana</th>
+
+          <th>
+            Técnica / evidencia
+          </th>
+
+          <th>REA(s)</th>
+
+          <th>
+            Tipo
+          </th>
+
+          <th>
+            Instrumento
+          </th>
+
+          <th>
+            Valor
+          </th>
+
+          <th>
+            Estado
+          </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+        ${filas}
+      </tbody>
+
+    </table>
+
+  `;
+
+}
+
+
+function mostrarErrorInstrumentos(mensaje){
+
+  document
+    .getElementById("cargando")
+    .style.display = "none";
+
+  document
+    .getElementById("instrumentosEvaluacion")
+    .style.display = "none";
+
+  document
+    .getElementById("errorInstrumentos")
+    .style.display = "block";
+
+  document
+    .getElementById(
+      "mensajeErrorInstrumentos"
+    )
+    .textContent = mensaje;
+
+}
+
+
+document.addEventListener(
+  "DOMContentLoaded",
+  cargarDatosInstrumentos
+);
+
+</script>
+
+</body>
+
+</html>
