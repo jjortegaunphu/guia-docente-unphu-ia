@@ -627,7 +627,7 @@ function mostrarListaCotejo(
 
        ${filas}
 
-        <tr>
+        <tr class="filaTotalListaCotejo">
 
           <td
             colspan="4"
@@ -905,9 +905,26 @@ function agregarItemListaCotejo(){
   `;
 
 
+  const filaTotal =
+  cuerpo.querySelector(
+    ".filaTotalListaCotejo"
+  );
+
+if(filaTotal){
+
+  cuerpo.insertBefore(
+    nuevaFila,
+    filaTotal
+  );
+
+}
+else{
+
   cuerpo.appendChild(
     nuevaFila
   );
+
+}
 
   renumerarItemsListaCotejo();
   actualizarTotalListaCotejo();
