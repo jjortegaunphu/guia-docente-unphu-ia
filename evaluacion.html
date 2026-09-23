@@ -450,6 +450,48 @@ function prepararContextoIAEvaluacion(rubro, rubroAnterior = null){
 
 }
 
+function prepararDatosInstrumentosEvaluacion(){
+
+  const rubrosConfigurados =
+    datosPaso1.evaluacion?.rubros || [];
+
+  const rubrosAceptados =
+    datosPaso1.sistemaEvaluacion?.rubrosAceptados || [];
+
+  if(
+    rubrosConfigurados.length === 0 ||
+    rubrosAceptados.length !== rubrosConfigurados.length
+  ){
+    return null;
+  }
+
+  return {
+
+    asignatura: {
+      codigo:
+        datosPaso1.configuracion?.codigoAsignatura || "",
+
+      nombre:
+        datosPaso1.configuracion?.nombreAsignatura || ""
+    },
+
+    reaOficiales:
+      datosPaso1.programa?.reaOficiales || [],
+
+    cronograma:
+      datosPaso1.cronograma || [],
+
+    sistemaEvaluacion: {
+      rubrosAceptados:
+        JSON.parse(
+          JSON.stringify(rubrosAceptados)
+        )
+    }
+
+  };
+
+}
+    
 function mostrarTablaEvaluacion(propuesta){
 
   const contenedor =
@@ -795,6 +837,35 @@ if(siguientePeriodo){
   console.log(
     "Todos los rubros de evaluación han sido completados."
   );
+
+  const datosInstrumentos =
+    prepararDatosInstrumentosEvaluacion();
+
+  if(datosInstrumentos){
+
+    datosPaso1.instrumentosEvaluacion =
+      datosPaso1.instrumentosEvaluacion || {};
+
+    datosPaso1.instrumentosEvaluacion.fuente =
+      datosInstrumentos;
+
+    datosPaso1.instrumentosEvaluacion.sistemaEvaluacionCompletado =
+      true;
+
+    const respaldoActualizado =
+      JSON.parse(
+        localStorage.getItem("respaldoGuiaDocente")
+      );
+
+    respaldoActualizado.datosGuia =
+      datosPaso1;
+
+    localStorage.setItem(
+      "respaldoGuiaDocente",
+      JSON.stringify(respaldoActualizado)
+    );
+
+  }
 
   mostrarVistaFinalSistemaEvaluacion();
 
@@ -2386,12 +2457,48 @@ const contexto =
          datosPaso1.sistemaEvaluacion?.rubrosAceptados || [];
 
       if(
-         rubrosConfigurados.length > 0 &&
-         rubrosAceptadosGuardados.length === rubrosConfigurados.length
-      ){
+  rubrosConfigurados.length > 0 &&
+  rubrosAceptadosGuardados.length === rubrosConfigurados.length
+){
 
-        mostrarVistaFinalSistemaEvaluacion();
-        return;
+  if(
+    datosPaso1.instrumentosEvaluacion
+      ?.sistemaEvaluacionCompletado !== true
+  ){
+
+    const datosInstrumentos =
+      prepararDatosInstrumentosEvaluacion();
+
+    if(datosInstrumentos){
+
+      datosPaso1.instrumentosEvaluacion =
+        datosPaso1.instrumentosEvaluacion || {};
+
+      datosPaso1.instrumentosEvaluacion.fuente =
+        datosInstrumentos;
+
+      datosPaso1.instrumentosEvaluacion
+        .sistemaEvaluacionCompletado = true;
+
+      const respaldoActualizado =
+        JSON.parse(
+          localStorage.getItem("respaldoGuiaDocente")
+        );
+
+      respaldoActualizado.datosGuia =
+        datosPaso1;
+
+      localStorage.setItem(
+        "respaldoGuiaDocente",
+        JSON.stringify(respaldoActualizado)
+      );
+
+    }
+
+  }
+
+  mostrarVistaFinalSistemaEvaluacion();
+  return;
 
 }
 
