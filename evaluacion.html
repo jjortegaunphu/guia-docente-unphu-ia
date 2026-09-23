@@ -766,10 +766,194 @@ if(siguientePeriodo){
     "Todos los rubros de evaluación han sido completados."
   );
 
+  mostrarVistaFinalSistemaEvaluacion();
+
 }
 
 }
  
+function mostrarVistaFinalSistemaEvaluacion(){
+
+  const contenedor =
+    document.getElementById(
+      "contenidoSistemaEvaluacion"
+    );
+
+  const rubrosConfigurados =
+    datosPaso1.evaluacion?.rubros || [];
+
+  const rubrosAceptados =
+    datosPaso1.sistemaEvaluacion?.rubrosAceptados || [];
+
+  if(
+    rubrosConfigurados.length === 0 ||
+    rubrosAceptados.length !== rubrosConfigurados.length
+  ){
+    alert(
+      "El sistema de evaluación todavía no está completo."
+    );
+    return;
+  }
+
+  let filas = "";
+  let totalGeneral = 0;
+
+  rubrosConfigurados.forEach(rubroConfigurado => {
+
+    const rubroAceptado =
+      rubrosAceptados.find(
+        item =>
+          item.rubro === rubroConfigurado.nombre
+      );
+
+    if(!rubroAceptado){
+      return;
+    }
+
+    const actividades =
+      Array.isArray(rubroAceptado.actividades)
+        ? rubroAceptado.actividades
+        : [];
+
+    actividades.forEach(actividad => {
+
+      const rea =
+        Array.isArray(actividad.codigosREA)
+          ? actividad.codigosREA.join(", ")
+          : "";
+
+      const instrumentos =
+        Array.isArray(actividad.instrumentos)
+          ? actividad.instrumentos.join(", ")
+          : "";
+
+      filas += `
+        <tr>
+          <td>${actividad.semana ?? ""}</td>
+          <td>${actividad.tecnica || ""}</td>
+          <td>${rea}</td>
+          <td>${actividad.tipo || ""}</td>
+          <td>${instrumentos}</td>
+          <td>${Number(actividad.valor || 0)}</td>
+        </tr>
+      `;
+
+    });
+
+    const pesoRubro =
+      Number(
+        rubroAceptado.pesoTotal ??
+        rubroConfigurado.peso ??
+        0
+      );
+
+    totalGeneral += pesoRubro;
+
+    const esRubroUnico =
+      rubrosConfigurados.length === 1 &&
+      String(rubroConfigurado.nombre)
+        .trim()
+        .toLowerCase() === "rubro único";
+
+    if(!esRubroUnico){
+
+      filas += `
+        <tr style="background:#e2efda;">
+          <td colspan="5">
+            <strong>
+              ${rubroConfigurado.nombre}
+            </strong>
+          </td>
+
+          <td>
+            <strong>
+              ${pesoRubro}
+            </strong>
+          </td>
+        </tr>
+      `;
+
+    }
+
+  });
+
+  const totalCorrecto =
+    Math.abs(totalGeneral - 100) < 0.001;
+
+  contenedor.innerHTML = `
+
+    <h3>
+      Sistema de Evaluación completo
+    </h3>
+
+    <table
+      border="1"
+      cellspacing="0"
+      cellpadding="6"
+      style="
+        border-collapse:collapse;
+        width:100%;
+      "
+    >
+
+      <thead>
+        <tr style="background:#70ad47;">
+          <th>Semana</th>
+          <th>Técnica</th>
+          <th>REA(s)</th>
+          <th>Tipo<br>(D, F o S)</th>
+          <th>Instrumento(s)</th>
+          <th>Valor</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        ${filas}
+
+        <tr>
+          <td
+            colspan="5"
+            style="text-align:right;"
+          >
+            <strong>Total:</strong>
+          </td>
+
+          <td>
+            <strong>
+              ${totalGeneral}
+            </strong>
+          </td>
+        </tr>
+
+      </tbody>
+
+    </table>
+
+    <div style="margin-top:15px;">
+
+      ${
+        totalCorrecto
+          ? `
+              <strong>
+                ✓ Sistema de Evaluación completado:
+                ${totalGeneral} de 100 puntos.
+              </strong>
+            `
+          : `
+              <strong>
+                El Sistema de Evaluación suma
+                ${totalGeneral} de 100 puntos.
+                Revise la distribución antes de finalizar.
+              </strong>
+            `
+      }
+
+    </div>
+
+  `;
+
+}
     
 function agregarActividadEvaluacion(){
 
