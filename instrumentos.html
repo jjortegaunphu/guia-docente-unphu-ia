@@ -455,7 +455,7 @@ function prepararContextoInstrumento(item){
 
 }
   
-function seleccionarInstrumento(index){
+async function seleccionarInstrumento(index){
 
   const instrumentos =
     obtenerInstrumentosPendientes();
@@ -464,45 +464,110 @@ function seleccionarInstrumento(index){
     instrumentos[index];
 
   if(!seleccionado){
+
     alert(
       "No fue posible identificar el instrumento seleccionado."
     );
+
     return;
   }
 
-const contexto =
-  prepararContextoInstrumento(
-    seleccionado
-  );
 
-if(!contexto){
+  const contexto =
+    prepararContextoInstrumento(
+      seleccionado
+    );
 
-  alert(
-    "No fue posible preparar la información necesaria para elaborar el instrumento."
-  );
+  if(!contexto){
 
-  return;
-}
+    alert(
+      "No fue posible preparar la información necesaria para elaborar el instrumento."
+    );
 
-console.log(
-  "Contexto completo del instrumento:",
-  contexto
-);
-  
+    return;
+  }
+
+
   console.log(
-    "Instrumento seleccionado:",
-    seleccionado
+    "Contexto enviado para elaborar el instrumento:",
+    contexto
   );
 
-  alert(
-    "Instrumento seleccionado:\n\n" +
-    "Semana: " + seleccionado.semana + "\n" +
-    "Instrumento: " + seleccionado.instrumento + "\n" +
-    "Valor: " + seleccionado.valor + " punto(s)"
-  );
 
-}
-  
+  try{
+
+    const respuesta =
+      await fetch(
+        "https://guia-docente-unphu-api.jortega-cc4.workers.dev/generar-instrumento-evaluacion",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body:
+            JSON.stringify(contexto)
+        }
+      );
+
+
+    const resultado =
+      await respuesta.json();
+
+
+    console.log(
+      "Respuesta del Worker:",
+      resultado
+    );
+
+
+    if(
+      !respuesta.ok ||
+      resultado.correcto !== true
+    ){
+
+      alert(
+        resultado.error ||
+        "No fue posible elaborar el instrumento de evaluación."
+      );
+
+      return;
+    }
+
+
+    console.log(
+      "Instrumento generado:",
+      resultado.propuesta
+    );
+
+
+    alert(
+      "El instrumento fue generado correctamente.\n\n" +
+      "Semana: " +
+      seleccionado.semana +
+      "\nInstrumento: " +
+      seleccionado.instrumento +
+      "\nValor: " +
+      seleccionado.valor +
+      " punto(s)"
+    );
+
+  }
+  catch(error){
+
+    console.error(
+      "Error al generar el instrumento:",
+      error
+    );
+
+    alert(
+      "Ocurrió un error al comunicarse con el servicio de elaboración de instrumentos."
+    );
+
+  }
+
+} 
 function mostrarErrorInstrumentos(mensaje){
 
   document
