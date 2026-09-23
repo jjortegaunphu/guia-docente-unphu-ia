@@ -54,6 +54,14 @@
 
       <div id="listaInstrumentos"></div>
 
+      <div
+        id="instrumentoGenerado"
+        style="
+           display:none;
+           margin-top:30px;
+        "
+    ></div>
+
     </section>
 
 
@@ -454,6 +462,179 @@ function prepararContextoInstrumento(item){
   };
 
 }
+
+function mostrarListaCotejo(
+  propuesta,
+  seleccionado
+){
+
+  const contenedor =
+    document.getElementById(
+      "instrumentoGenerado"
+    );
+
+  if(
+    !propuesta ||
+    !Array.isArray(propuesta.items)
+  ){
+    return;
+  }
+
+
+  let filas = "";
+
+  propuesta.items.forEach(
+    (item, index) => {
+
+      filas += `
+        <tr>
+
+          <td style="text-align:center;">
+            ${index + 1}
+          </td>
+
+          <td>
+            ${item.indicador}
+          </td>
+
+          <td style="text-align:center;">
+            ☐
+          </td>
+
+          <td style="text-align:center;">
+            ☐
+          </td>
+
+          <td style="text-align:center;">
+            ${Number(item.valor).toFixed(2)}
+          </td>
+
+        </tr>
+      `;
+
+    }
+  );
+
+
+  contenedor.innerHTML = `
+
+    <hr>
+
+    <h3>
+      Lista de cotejo
+    </h3>
+
+    <p>
+      <strong>Semana:</strong>
+      ${seleccionado.semana}
+    </p>
+
+    <p>
+      <strong>Técnica / evidencia:</strong>
+      ${seleccionado.tecnica}
+    </p>
+
+    <p>
+      <strong>REA(s):</strong>
+      ${seleccionado.codigosREA.join(", ")}
+    </p>
+
+    <p>
+      <strong>Tipo:</strong>
+      ${seleccionado.tipo}
+    </p>
+
+    <p>
+      <strong>Valor:</strong>
+      ${seleccionado.valor} punto(s)
+    </p>
+
+
+    <table
+      border="1"
+      cellspacing="0"
+      cellpadding="8"
+      style="
+        border-collapse:collapse;
+        width:100%;
+        margin-top:15px;
+      "
+    >
+
+      <thead>
+
+        <tr>
+
+          <th style="width:7%;">
+            N.º
+          </th>
+
+          <th>
+            Indicador / descriptor
+          </th>
+
+          <th style="width:8%;">
+            Sí
+          </th>
+
+          <th style="width:8%;">
+            No
+          </th>
+
+          <th style="width:10%;">
+            Valor
+          </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        ${filas}
+
+        <tr>
+
+          <td
+            colspan="4"
+            style="
+              text-align:right;
+              font-weight:bold;
+            "
+          >
+            Total
+          </td>
+
+          <td
+            style="
+              text-align:center;
+              font-weight:bold;
+            "
+          >
+            ${Number(
+              propuesta.valorTotal
+            ).toFixed(2)}
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  `;
+
+
+  contenedor.style.display =
+    "block";
+
+
+  contenedor.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+
+}
   
 async function seleccionarInstrumento(index){
 
@@ -541,19 +722,19 @@ async function seleccionarInstrumento(index){
       resultado.propuesta
     );
 
+    if(
+  resultado.propuesta.instrumento ===
+  "Lista de cotejo"
+){
 
-    alert(
-      "El instrumento fue generado correctamente.\n\n" +
-      "Semana: " +
-      seleccionado.semana +
-      "\nInstrumento: " +
-      seleccionado.instrumento +
-      "\nValor: " +
-      seleccionado.valor +
-      " punto(s)"
-    );
+  mostrarListaCotejo(
+    resultado.propuesta,
+    seleccionado
+  );
 
-  }
+}
+
+}
   catch(error){
 
     console.error(
