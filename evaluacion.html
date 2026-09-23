@@ -1723,6 +1723,22 @@ const contexto =
         .getElementById("sistemaEvaluacion")
         .style.display = "block";
 
+      const rubrosConfigurados =
+         datosPaso1.evaluacion?.rubros || [];
+
+      const rubrosAceptadosGuardados =
+         datosPaso1.sistemaEvaluacion?.rubrosAceptados || [];
+
+      if(
+         rubrosConfigurados.length > 0 &&
+         rubrosAceptadosGuardados.length === rubrosConfigurados.length
+      ){
+
+        mostrarVistaFinalSistemaEvaluacion();
+        return;
+
+}
+
       const actividadesCronograma =
         prepararActividadesCronograma();
 
