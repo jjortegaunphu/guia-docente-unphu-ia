@@ -1356,6 +1356,27 @@ alert(
   mostrarInstrumentosPendientes();
 
 }
+
+function mostrarRubrica(
+  propuesta,
+  seleccionado
+){
+
+  console.log(
+    "Propuesta de Rúbrica recibida:",
+    propuesta
+  );
+
+  console.log(
+    "Actividad correspondiente:",
+    seleccionado
+  );
+
+  alert(
+    "La Rúbrica fue generada correctamente. Revise la consola para verificar su estructura."
+  );
+
+}
   
 async function seleccionarInstrumento(index){
 
@@ -1477,6 +1498,18 @@ if(
 
 }
 
+if(
+  resultado.propuesta.instrumento ===
+  "Rúbrica"
+){
+
+  mostrarRubrica(
+    resultado.propuesta,
+    seleccionado
+  );
+
+}
+    
 }
   catch(error){
 
