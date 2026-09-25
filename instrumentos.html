@@ -1410,10 +1410,13 @@ function mostrarRubrica(
           );
 
         const enProceso =
-          niveles.find(
-            nivel =>
-              nivel.nivel === "En proceso"
-          );
+         niveles.find(
+          nivel =>
+           String(nivel.nivel)
+          .trim()
+          .toLowerCase() ===
+        "en proceso"
+      );
 
         const inicial =
           niveles.find(
