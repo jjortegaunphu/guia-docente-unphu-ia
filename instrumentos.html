@@ -1362,19 +1362,220 @@ function mostrarRubrica(
   seleccionado
 ){
 
-  console.log(
-    "Propuesta de Rúbrica recibida:",
-    propuesta
-  );
+  const contenedor =
+    document.getElementById(
+      "instrumentoGenerado"
+    );
 
-  console.log(
-    "Actividad correspondiente:",
-    seleccionado
-  );
+  if(!contenedor){
+    return;
+  }
 
-  alert(
-    "La Rúbrica fue generada correctamente. Revise la consola para verificar su estructura."
-  );
+
+  const rea =
+    Array.isArray(
+      seleccionado.codigosREA
+    )
+      ? seleccionado.codigosREA.join(", ")
+      : "";
+
+
+  let filas = "";
+
+
+  if(
+    propuesta.tipoRubrica ===
+    "Analítica"
+  ){
+
+    propuesta.criterios.forEach(
+      (criterio, index) => {
+
+        const niveles =
+          Array.isArray(criterio.niveles)
+            ? criterio.niveles
+            : [];
+
+
+        const avanzado =
+          niveles.find(
+            nivel =>
+              nivel.nivel === "Avanzado"
+          );
+
+        const logrado =
+          niveles.find(
+            nivel =>
+              nivel.nivel === "Logrado"
+          );
+
+        const enProceso =
+          niveles.find(
+            nivel =>
+              nivel.nivel === "En proceso"
+          );
+
+        const inicial =
+          niveles.find(
+            nivel =>
+              nivel.nivel === "Inicial"
+          );
+
+
+        filas += `
+          <tr>
+
+            <td style="text-align:center;">
+              ${index + 1}
+            </td>
+
+            <td>
+              ${criterio.criterio}
+            </td>
+
+            <td>
+              ${avanzado?.descriptor || ""}
+            </td>
+
+            <td>
+              ${logrado?.descriptor || ""}
+            </td>
+
+            <td>
+              ${enProceso?.descriptor || ""}
+            </td>
+
+            <td>
+              ${inicial?.descriptor || ""}
+            </td>
+
+            <td style="text-align:center;">
+              ${Number(
+                criterio.valorMaximo
+              )}
+            </td>
+
+          </tr>
+        `;
+
+      }
+    );
+
+  }
+
+
+  contenedor.innerHTML = `
+
+    <hr>
+
+    <h2>Rúbrica</h2>
+
+    <p>
+      <strong>Semana:</strong>
+      ${seleccionado.semana}
+    </p>
+
+    <p>
+      <strong>Técnica / evidencia:</strong>
+      ${seleccionado.tecnica}
+    </p>
+
+    <p>
+      <strong>REA(s):</strong>
+      ${rea}
+    </p>
+
+    <p>
+      <strong>Tipo:</strong>
+      ${seleccionado.tipo}
+    </p>
+
+    <p>
+      <strong>Valor:</strong>
+      ${Number(seleccionado.valor)}
+      punto(s)
+    </p>
+
+    <p>
+      <strong>Tipo de rúbrica:</strong>
+      ${propuesta.tipoRubrica}
+    </p>
+
+
+    <table
+      border="1"
+      cellpadding="8"
+      cellspacing="0"
+      style="
+        width:100%;
+        border-collapse:collapse;
+        margin-top:15px;
+      "
+    >
+
+      <thead>
+
+        <tr>
+
+          <th>N.º</th>
+
+          <th>Criterio</th>
+
+          <th>Avanzado</th>
+
+          <th>Logrado</th>
+
+          <th>En proceso</th>
+
+          <th>Inicial</th>
+
+          <th>Valor máximo</th>
+
+        </tr>
+
+      </thead>
+
+
+      <tbody>
+
+        ${filas}
+
+        <tr>
+
+          <td
+            colspan="6"
+            style="
+              text-align:right;
+              font-weight:bold;
+            "
+          >
+            Total
+          </td>
+
+          <td
+            style="
+              text-align:center;
+              font-weight:bold;
+            "
+          >
+            ${Number(
+              propuesta.valorTotal
+            ).toFixed(2)}
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  `;
+
+
+  contenedor.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
 
 }
   
