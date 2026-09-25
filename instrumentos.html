@@ -1488,6 +1488,15 @@ filas += `
       >
     </td>
 
+<td style="text-align:center;">
+  <button
+    type="button"
+    onclick="eliminarCriterioRubrica(this)"
+  >
+    Eliminar
+  </button>
+</td>
+
   </tr>
 `;
               }
@@ -1562,6 +1571,7 @@ filas += `
           <th>Inicial</th>
 
           <th>Valor máximo</th>
+          <th>Acción</th>
 
         </tr>
 
@@ -1846,7 +1856,14 @@ function agregarCriterioRubrica(){
         "
       >
     </td>
-
+    <td style="text-align:center;">
+      <button
+        type="button"
+        onclick="eliminarCriterioRubrica(this)"
+      >
+        Eliminar
+      </button>
+    </td>
   `;
 
 
@@ -1873,6 +1890,61 @@ function agregarCriterioRubrica(){
 
 
   actualizarTotalRubrica();
+
+}
+
+function eliminarCriterioRubrica(boton){
+
+  const filas =
+    document.querySelectorAll(
+      ".filaCriterioRubrica"
+    );
+
+  if(filas.length <= 5){
+
+    alert(
+      "La Rúbrica analítica debe conservar un mínimo de 5 criterios."
+    );
+
+    return;
+  }
+
+
+  const fila =
+    boton.closest("tr");
+
+  if(fila){
+    fila.remove();
+  }
+
+
+  renumerarCriteriosRubrica();
+  actualizarTotalRubrica();
+
+}
+
+function renumerarCriteriosRubrica(){
+
+  const filas =
+    document.querySelectorAll(
+      ".filaCriterioRubrica"
+    );
+
+  filas.forEach(
+    (fila, index) => {
+
+      const numero =
+        fila.querySelector(
+          ".numeroCriterioRubrica"
+        );
+
+      if(numero){
+        numero.textContent =
+          index + 1;
+      }
+
+    }
+  );
 
 }
   
