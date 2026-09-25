@@ -2298,80 +2298,97 @@ function aceptarRubrica(){
 
   };
 
-    if(!datosGuia.instrumentosEvaluacion){
-    datosGuia.instrumentosEvaluacion = {};
+   const indiceExistente =
+    datosGuia.instrumentosEvaluacion
+      .elaborados
+      .findIndex(item =>
+
+        item.rubro ===
+          nuevoInstrumento.rubro &&
+
+        Number(item.indiceActividad) ===
+          Number(
+            nuevoInstrumento.indiceActividad
+          ) &&
+
+        Number(item.indiceInstrumento) ===
+          Number(
+            nuevoInstrumento.indiceInstrumento
+          )
+
+      );
+
+
+  if(indiceExistente >= 0){
+
+    datosGuia.instrumentosEvaluacion
+      .elaborados[indiceExistente] =
+        nuevoInstrumento;
+
+  }
+  else{
+
+    datosGuia.instrumentosEvaluacion
+      .elaborados.push(
+        nuevoInstrumento
+      );
+
   }
 
 
-  if(
-    !Array.isArray(
-      datosGuia.instrumentosEvaluacion.elaborados
-    )
-  ){
-    datosGuia.instrumentosEvaluacion.elaborados = [];
+  const respaldoActual =
+    localStorage.getItem(
+      "respaldoGuiaDocente"
+    );
+
+
+  if(!respaldoActual){
+
+    alert(
+      "No fue posible localizar el respaldo de la guía docente."
+    );
+
+    return;
   }
 
 
-  const nuevoInstrumento = {
+  try{
 
-    rubro:
-      instrumentoSeleccionadoActual.rubro,
+    const respaldo =
+      JSON.parse(respaldoActual);
 
-    indiceActividad:
-      instrumentoSeleccionadoActual.indiceActividad,
+    respaldo.datosGuia =
+      datosGuia;
 
-    indiceInstrumento:
-      instrumentoSeleccionadoActual.indiceInstrumento,
+    localStorage.setItem(
+      "respaldoGuiaDocente",
+      JSON.stringify(respaldo)
+    );
 
-    semana:
-      instrumentoSeleccionadoActual.semana,
+  }
+  catch(error){
 
-    tecnica:
-      instrumentoSeleccionadoActual.tecnica,
+    console.error(
+      "Error al guardar la Rúbrica:",
+      error
+    );
 
-    codigosREA:
-      Array.isArray(
-        instrumentoSeleccionadoActual.codigosREA
-      )
-        ? [
-            ...instrumentoSeleccionadoActual.codigosREA
-          ]
-        : [],
+    alert(
+      "La Rúbrica es válida, pero ocurrió un error al guardar el instrumento."
+    );
 
-    tipo:
-      instrumentoSeleccionadoActual.tipo,
+    return;
+  }
 
-    instrumento:
-      "Rúbrica",
 
-    valor:
-      Number(
-        instrumentoSeleccionadoActual.valor
-      ),
+  alert(
+    "La Rúbrica ha sido aceptada y guardada correctamente."
+  );
 
-    estado:
-      "Aceptado",
 
-    contenido: {
+  mostrarInstrumentosPendientes();
 
-      instrumento:
-        "Rúbrica",
-
-      tipoRubrica:
-        "Analítica",
-
-      criterios:
-        criteriosAceptados,
-
-      nivelesHolisticos:
-        [],
-
-      valorTotal:
-        total
-
-    }
-
-  };
+}
   
 async function seleccionarInstrumento(index){
 
