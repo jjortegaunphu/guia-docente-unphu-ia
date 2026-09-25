@@ -1605,6 +1605,8 @@ filas += `
             </span>
           </td>
 
+          <td></td>
+
         </tr>
 
       </tbody>
@@ -1629,6 +1631,17 @@ filas += `
   "
 >
 </div>
+
+<div style="margin-top:18px;">
+  <button
+    type="button"
+    id="btnAceptarRubrica"
+    onclick="aceptarRubrica()"
+  >
+    Aceptar Rúbrica
+  </button>
+</div>
+
   `;
 
   actualizarTotalRubrica();
@@ -1947,6 +1960,418 @@ function renumerarCriteriosRubrica(){
   );
 
 }
+
+function aceptarRubrica(){
+
+  const filas =
+    document.querySelectorAll(
+      ".filaCriterioRubrica"
+    );
+
+
+  if(
+    filas.length < 5 ||
+    filas.length > 8
+  ){
+
+    alert(
+      "La Rúbrica analítica debe contener entre 5 y 8 criterios."
+    );
+
+    return;
+  }
+
+
+  let total = 0;
+
+  let hayCriterioVacio = false;
+
+  let hayDescriptorVacio = false;
+
+  let hayValorInvalido = false;
+
+
+  filas.forEach(fila => {
+
+    const criterio =
+      fila.querySelector(
+        ".criterioRubrica"
+      );
+
+    const avanzado =
+      fila.querySelector(
+        ".descriptorAvanzadoRubrica"
+      );
+
+    const logrado =
+      fila.querySelector(
+        ".descriptorLogradoRubrica"
+      );
+
+    const enProceso =
+      fila.querySelector(
+        ".descriptorEnProcesoRubrica"
+      );
+
+    const inicial =
+      fila.querySelector(
+        ".descriptorInicialRubrica"
+      );
+
+    const campoValor =
+      fila.querySelector(
+        ".valorCriterioRubrica"
+      );
+
+
+    if(
+      !criterio ||
+      criterio.value.trim() === ""
+    ){
+      hayCriterioVacio = true;
+    }
+
+
+    if(
+      !avanzado ||
+      avanzado.value.trim() === "" ||
+      !logrado ||
+      logrado.value.trim() === "" ||
+      !enProceso ||
+      enProceso.value.trim() === "" ||
+      !inicial ||
+      inicial.value.trim() === ""
+    ){
+      hayDescriptorVacio = true;
+    }
+
+
+    if(!campoValor){
+
+      hayValorInvalido = true;
+      return;
+
+    }
+
+
+    const valor =
+      Number(campoValor.value);
+
+
+    if(
+      !Number.isFinite(valor) ||
+      valor < 0
+    ){
+
+      hayValorInvalido = true;
+      return;
+
+    }
+
+
+    total += valor;
+
+  });
+
+    if(hayCriterioVacio){
+
+    alert(
+      "Todos los criterios deben estar completos antes de aceptar la Rúbrica."
+    );
+
+    return;
+  }
+
+
+  if(hayDescriptorVacio){
+
+    alert(
+      "Cada criterio debe tener completos los descriptores de Avanzado, Logrado, En proceso e Inicial."
+    );
+
+    return;
+  }
+
+
+  if(hayValorInvalido){
+
+    alert(
+      "Todos los valores de los criterios deben ser números válidos y no negativos."
+    );
+
+    return;
+  }
+
+
+  const estado =
+    document.getElementById(
+      "estadoTotalRubrica"
+    );
+
+
+  if(!estado){
+
+    alert(
+      "No fue posible verificar el valor establecido para esta Rúbrica."
+    );
+
+    return;
+  }
+
+
+  const valorEstablecido =
+    Number(
+      estado.dataset.valorEstablecido
+    );
+
+
+  if(!Number.isFinite(valorEstablecido)){
+
+    alert(
+      "El valor establecido para esta actividad no es válido."
+    );
+
+    return;
+  }
+
+
+  if(
+    Math.abs(
+      total - valorEstablecido
+    ) >= 0.001
+  ){
+
+    alert(
+      "No puede aceptar la Rúbrica porque la distribución actual es de " +
+      total.toFixed(2) +
+      " punto(s) y debe ser exactamente " +
+      valorEstablecido.toFixed(2) +
+      " punto(s)."
+    );
+
+    return;
+  }
+
+
+  if(!instrumentoSeleccionadoActual){
+
+    alert(
+      "No fue posible identificar la Rúbrica que se desea aceptar."
+    );
+
+    return;
+  }
+    const criteriosAceptados =
+    Array.from(filas).map(fila => {
+
+      const criterio =
+        fila.querySelector(
+          ".criterioRubrica"
+        ).value.trim();
+
+      const valor =
+        Number(
+          fila.querySelector(
+            ".valorCriterioRubrica"
+          ).value
+        );
+
+
+      return {
+
+        criterio: criterio,
+
+        niveles: [
+
+          {
+            nivel: "Avanzado",
+            descriptor:
+              fila.querySelector(
+                ".descriptorAvanzadoRubrica"
+              ).value.trim()
+          },
+
+          {
+            nivel: "Logrado",
+            descriptor:
+              fila.querySelector(
+                ".descriptorLogradoRubrica"
+              ).value.trim()
+          },
+
+          {
+            nivel: "En proceso",
+            descriptor:
+              fila.querySelector(
+                ".descriptorEnProcesoRubrica"
+              ).value.trim()
+          },
+
+          {
+            nivel: "Inicial",
+            descriptor:
+              fila.querySelector(
+                ".descriptorInicialRubrica"
+              ).value.trim()
+          }
+
+        ],
+
+        valorMaximo: valor
+
+      };
+
+    });
+
+    if(!datosGuia.instrumentosEvaluacion){
+    datosGuia.instrumentosEvaluacion = {};
+  }
+
+
+  if(
+    !Array.isArray(
+      datosGuia.instrumentosEvaluacion.elaborados
+    )
+  ){
+    datosGuia.instrumentosEvaluacion.elaborados = [];
+  }
+
+
+  const nuevoInstrumento = {
+
+    rubro:
+      instrumentoSeleccionadoActual.rubro,
+
+    indiceActividad:
+      instrumentoSeleccionadoActual.indiceActividad,
+
+    indiceInstrumento:
+      instrumentoSeleccionadoActual.indiceInstrumento,
+
+    semana:
+      instrumentoSeleccionadoActual.semana,
+
+    tecnica:
+      instrumentoSeleccionadoActual.tecnica,
+
+    codigosREA:
+      Array.isArray(
+        instrumentoSeleccionadoActual.codigosREA
+      )
+        ? [
+            ...instrumentoSeleccionadoActual.codigosREA
+          ]
+        : [],
+
+    tipo:
+      instrumentoSeleccionadoActual.tipo,
+
+    instrumento:
+      "Rúbrica",
+
+    valor:
+      Number(
+        instrumentoSeleccionadoActual.valor
+      ),
+
+    estado:
+      "Aceptado",
+
+    contenido: {
+
+      instrumento:
+        "Rúbrica",
+
+      tipoRubrica:
+        "Analítica",
+
+      criterios:
+        criteriosAceptados,
+
+      nivelesHolisticos:
+        [],
+
+      valorTotal:
+        total
+
+    }
+
+  };
+
+    if(!datosGuia.instrumentosEvaluacion){
+    datosGuia.instrumentosEvaluacion = {};
+  }
+
+
+  if(
+    !Array.isArray(
+      datosGuia.instrumentosEvaluacion.elaborados
+    )
+  ){
+    datosGuia.instrumentosEvaluacion.elaborados = [];
+  }
+
+
+  const nuevoInstrumento = {
+
+    rubro:
+      instrumentoSeleccionadoActual.rubro,
+
+    indiceActividad:
+      instrumentoSeleccionadoActual.indiceActividad,
+
+    indiceInstrumento:
+      instrumentoSeleccionadoActual.indiceInstrumento,
+
+    semana:
+      instrumentoSeleccionadoActual.semana,
+
+    tecnica:
+      instrumentoSeleccionadoActual.tecnica,
+
+    codigosREA:
+      Array.isArray(
+        instrumentoSeleccionadoActual.codigosREA
+      )
+        ? [
+            ...instrumentoSeleccionadoActual.codigosREA
+          ]
+        : [],
+
+    tipo:
+      instrumentoSeleccionadoActual.tipo,
+
+    instrumento:
+      "Rúbrica",
+
+    valor:
+      Number(
+        instrumentoSeleccionadoActual.valor
+      ),
+
+    estado:
+      "Aceptado",
+
+    contenido: {
+
+      instrumento:
+        "Rúbrica",
+
+      tipoRubrica:
+        "Analítica",
+
+      criterios:
+        criteriosAceptados,
+
+      nivelesHolisticos:
+        [],
+
+      valorTotal:
+        total
+
+    }
+
+  };
   
 async function seleccionarInstrumento(index){
 
@@ -1981,6 +2406,21 @@ if(
 ){
 
   mostrarListaCotejo(
+    elaborado.contenido,
+    seleccionado
+  );
+
+  return;
+}
+
+  if(
+  elaborado &&
+  elaborado.instrumento ===
+    "Rúbrica" &&
+  elaborado.contenido
+){
+
+  mostrarRubrica(
     elaborado.contenido,
     seleccionado
   );
