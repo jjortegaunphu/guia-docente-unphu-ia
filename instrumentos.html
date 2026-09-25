@@ -1600,9 +1600,19 @@ filas += `
       </tbody>
 
     </table>
-
+<div
+  id="estadoTotalRubrica"
+  data-valor-establecido="${Number(seleccionado.valor)}"
+  style="
+    margin-top:12px;
+    font-weight:bold;
+  "
+>
+</div>
   `;
 
+  actualizarTotalRubrica();
+  
   contenedor.style.display =
   "block";
 
@@ -1646,6 +1656,67 @@ function actualizarTotalRubrica(){
 
   }
 
+const estado =
+  document.getElementById(
+    "estadoTotalRubrica"
+  );
+
+if(!estado){
+  return;
+}
+
+
+const valorEstablecido =
+  Number(
+    estado.dataset.valorEstablecido
+  );
+
+if(!Number.isFinite(valorEstablecido)){
+  return;
+}
+
+
+const diferencia =
+  total - valorEstablecido;
+
+
+if(Math.abs(diferencia) < 0.001){
+
+  estado.textContent =
+    "Total actual: " +
+    total.toFixed(2) +
+    " / " +
+    valorEstablecido.toFixed(2) +
+    ". La distribución coincide con el valor establecido.";
+
+  return;
+}
+
+
+if(diferencia > 0){
+
+  estado.textContent =
+    "Total actual: " +
+    total.toFixed(2) +
+    " / " +
+    valorEstablecido.toFixed(2) +
+    ". La distribución excede el valor establecido por " +
+    diferencia.toFixed(2) +
+    " punto(s).";
+
+  return;
+}
+
+
+estado.textContent =
+  "Total actual: " +
+  total.toFixed(2) +
+  " / " +
+  valorEstablecido.toFixed(2) +
+  ". Faltan " +
+  Math.abs(diferencia).toFixed(2) +
+  " punto(s) por distribuir.";
+  
 }
   
 async function seleccionarInstrumento(index){
