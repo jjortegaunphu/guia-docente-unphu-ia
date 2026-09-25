@@ -535,7 +535,7 @@ function mostrarListaCotejo(
  propuesta.items.forEach(
   (item, index) => {
 
-    filas += `
+    
       <tr class="filaItemListaCotejo">
 
         <td
@@ -1424,44 +1424,89 @@ function mostrarRubrica(
               nivel.nivel === "Inicial"
           );
 
+filas += `
+  <tr class="filaCriterioRubrica">
 
-        filas += `
-          <tr>
+    <td
+      class="numeroCriterioRubrica"
+      style="text-align:center;"
+    >
+      ${index + 1}
+    </td>
 
-            <td style="text-align:center;">
-              ${index + 1}
-            </td>
+    <td>
+      <textarea
+        class="criterioRubrica"
+        style="
+          width:100%;
+          box-sizing:border-box;
+          min-height:80px;
+        "
+      >${criterio.criterio}</textarea>
+    </td>
 
-            <td>
-              ${criterio.criterio}
-            </td>
+    <td>
+      <textarea
+        class="descriptorRubrica descriptorAvanzadoRubrica"
+        style="
+          width:100%;
+          box-sizing:border-box;
+          min-height:110px;
+        "
+      >${avanzado?.descriptor || ""}</textarea>
+    </td>
 
-            <td>
-              ${avanzado?.descriptor || ""}
-            </td>
+    <td>
+      <textarea
+        class="descriptorRubrica descriptorLogradoRubrica"
+        style="
+          width:100%;
+          box-sizing:border-box;
+          min-height:110px;
+        "
+      >${logrado?.descriptor || ""}</textarea>
+    </td>
 
-            <td>
-              ${logrado?.descriptor || ""}
-            </td>
+    <td>
+      <textarea
+        class="descriptorRubrica descriptorEnProcesoRubrica"
+        style="
+          width:100%;
+          box-sizing:border-box;
+          min-height:110px;
+        "
+      >${enProceso?.descriptor || ""}</textarea>
+    </td>
 
-            <td>
-              ${enProceso?.descriptor || ""}
-            </td>
+    <td>
+      <textarea
+        class="descriptorRubrica descriptorInicialRubrica"
+        style="
+          width:100%;
+          box-sizing:border-box;
+          min-height:110px;
+        "
+      >${inicial?.descriptor || ""}</textarea>
+    </td>
 
-            <td>
-              ${inicial?.descriptor || ""}
-            </td>
+    <td style="text-align:center;">
+      <input
+        type="number"
+        class="valorCriterioRubrica"
+        value="${Number(criterio.valorMaximo)}"
+        min="0"
+        step="0.1"
+        oninput="actualizarTotalRubrica()"
+        style="
+          width:70px;
+          text-align:center;
+        "
+      >
+    </td>
 
-            <td style="text-align:center;">
-              ${Number(
-                criterio.valorMaximo
-              )}
-            </td>
-
-          </tr>
-        `;
-
-      }
+  </tr>
+`;
+              }
     );
 
   }
@@ -1561,9 +1606,9 @@ function mostrarRubrica(
               font-weight:bold;
             "
           >
-            ${Number(
-              propuesta.valorTotal
-            ).toFixed(2)}
+            <span id="totalActualRubrica">
+              ${Number(propuesta.valorTotal).toFixed(2)}
+            </span>
           </td>
 
         </tr>
@@ -1581,6 +1626,41 @@ function mostrarRubrica(
     behavior: "smooth",
     block: "start"
   });
+
+}
+
+function actualizarTotalRubrica(){
+
+  const campos =
+    document.querySelectorAll(
+      ".valorCriterioRubrica"
+    );
+
+  let total = 0;
+
+  campos.forEach(campo => {
+
+    const valor =
+      Number(campo.value);
+
+    if(Number.isFinite(valor)){
+      total += valor;
+    }
+
+  });
+
+
+  const totalVisual =
+    document.getElementById(
+      "totalActualRubrica"
+    );
+
+  if(totalVisual){
+
+    totalVisual.textContent =
+      total.toFixed(2);
+
+  }
 
 }
   
