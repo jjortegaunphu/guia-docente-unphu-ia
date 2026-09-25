@@ -1398,32 +1398,16 @@ function mostrarRubrica(
 
 
         const avanzado =
-          niveles.find(
-            nivel =>
-              nivel.nivel === "Avanzado"
-          );
+  niveles[0] || {};
 
-        const logrado =
-          niveles.find(
-            nivel =>
-              nivel.nivel === "Logrado"
-          );
+const logrado =
+  niveles[1] || {};
 
-        const enProceso =
-         niveles.find(
-          nivel =>
-           String(nivel.nivel)
-          .trim()
-          .toLowerCase() ===
-        "en proceso"
-      );
+const enProceso =
+  niveles[2] || {};
 
-        const inicial =
-          niveles.find(
-            nivel =>
-              nivel.nivel === "Inicial"
-          );
-
+const inicial =
+  niveles[3] || {};
 filas += `
   <tr class="filaCriterioRubrica">
 
