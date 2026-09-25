@@ -727,12 +727,21 @@ function mostrarListaCotejo(
     </div>
 
     <div style="margin-top:18px;">
+      <button
+        type="button"
+        id="btnAceptarListaCotejo"
+       onclick="aceptarListaCotejo()"
+      >
+    Aceptar Lista de cotejo
+  </button>
+</div>
+
+<div style="margin-top:10px;">
   <button
     type="button"
-    id="btnAceptarListaCotejo"
-    onclick="aceptarListaCotejo()"
+    onclick="descargarListaCotejoWord()"
   >
-    Aceptar Lista de cotejo
+    Descargar en Word
   </button>
 </div>
 
@@ -1357,6 +1366,351 @@ alert(
 
 }
 
+function descargarListaCotejoWord(){
+
+  if(!instrumentoSeleccionadoActual){
+
+    alert(
+      "No fue posible identificar la Lista de cotejo."
+    );
+
+    return;
+  }
+
+
+  const filas =
+    document.querySelectorAll(
+      ".filaItemListaCotejo"
+    );
+
+
+  if(filas.length === 0){
+
+    alert(
+      "No hay ítems disponibles para descargar."
+    );
+
+    return;
+  }
+
+
+  const items = [];
+
+  let total = 0;
+
+
+  filas.forEach((fila, index) => {
+
+    const indicador =
+      fila.querySelector(
+        ".indicadorListaCotejo"
+      )?.value.trim() || "";
+
+    const valor =
+      Number(
+        fila.querySelector(
+          ".valorListaCotejo"
+        )?.value || 0
+      );
+
+    total += valor;
+
+
+    items.push({
+
+      numero:
+        index + 1,
+
+      indicador:
+        indicador,
+
+      valor:
+        valor
+
+    });
+
+  });
+
+
+  const seleccionado =
+    instrumentoSeleccionadoActual;
+
+
+  const escaparHTML = texto =>
+
+    String(texto ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+
+
+  let filasWord = "";
+
+
+  items.forEach(item => {
+
+    filasWord += `
+      <tr>
+        <td class="centro">
+          ${item.numero}
+        </td>
+
+        <td>
+          ${escaparHTML(item.indicador)}
+        </td>
+
+        <td class="centro">
+          ☐
+        </td>
+
+        <td class="centro">
+          ☐
+        </td>
+
+        <td class="centro">
+          ${item.valor.toFixed(2)}
+        </td>
+      </tr>
+    `;
+
+  });
+
+
+  const contenidoWord = `
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<style>
+
+  @page {
+    size: A4 portrait;
+    margin: 1.5cm;
+  }
+
+  body {
+    font-family: "Book Antiqua", Palatino, serif;
+    font-size: 10pt;
+    color: #000000;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 14pt;
+    margin-bottom: 18px;
+  }
+
+  .datos {
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  th,
+  td {
+    border: 1px solid #000000;
+    padding: 6px;
+    vertical-align: middle;
+  }
+
+  th {
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .numero {
+    width: 7%;
+  }
+
+  .indicador {
+    width: 57%;
+  }
+
+  .opcion {
+    width: 8%;
+  }
+
+  .valor {
+    width: 20%;
+  }
+
+  .centro {
+    text-align: center;
+  }
+
+  .total {
+    font-weight: bold;
+    text-align: right;
+  }
+
+</style>
+
+</head>
+
+<body>
+
+<h1>
+  Lista de cotejo
+</h1>
+
+<div class="datos">
+
+  <strong>Asignatura:</strong>
+  ${escaparHTML(
+    fuenteInstrumentos?.asignatura?.nombre || ""
+  )}
+  <br>
+
+  <strong>Código:</strong>
+  ${escaparHTML(
+    fuenteInstrumentos?.asignatura?.codigo || ""
+  )}
+  <br>
+
+  <strong>Semana:</strong>
+  ${escaparHTML(seleccionado.semana)}
+  <br>
+
+  <strong>Técnica / evidencia:</strong>
+  ${escaparHTML(seleccionado.tecnica)}
+  <br>
+
+  <strong>REA(s):</strong>
+  ${escaparHTML(
+    Array.isArray(seleccionado.codigosREA)
+      ? seleccionado.codigosREA.join(", ")
+      : ""
+  )}
+  <br>
+
+  <strong>Tipo:</strong>
+  ${escaparHTML(seleccionado.tipo)}
+  <br>
+
+  <strong>Valor:</strong>
+  ${Number(seleccionado.valor).toFixed(2)}
+  punto(s)
+
+</div>
+
+
+<table>
+
+  <thead>
+
+    <tr>
+      <th class="numero">N.º</th>
+      <th class="indicador">
+        Indicador / descriptor
+      </th>
+      <th class="opcion">Sí</th>
+      <th class="opcion">No</th>
+      <th class="valor">Valor</th>
+    </tr>
+
+  </thead>
+
+  <tbody>
+
+    ${filasWord}
+
+    <tr>
+
+      <td
+        colspan="4"
+        class="total"
+      >
+        Total
+      </td>
+
+      <td class="centro">
+        <strong>
+          ${total.toFixed(2)}
+        </strong>
+      </td>
+
+    </tr>
+
+  </tbody>
+
+</table>
+
+</body>
+</html>
+`;
+
+
+  const blob =
+    new Blob(
+      ["\ufeff", contenidoWord],
+      {
+        type:
+          "application/msword;charset=utf-8"
+      }
+    );
+
+
+  const url =
+    URL.createObjectURL(blob);
+
+
+  const enlace =
+    document.createElement("a");
+
+
+  const nombreAsignatura =
+    fuenteInstrumentos
+      ?.asignatura
+      ?.nombre
+      ?.trim()
+      || "Asignatura";
+
+
+  const nombreSeguro =
+    nombreAsignatura
+      .replace(
+        /[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ_-]+/g,
+        "_"
+      );
+
+
+  enlace.href =
+    url;
+
+  enlace.download =
+    "Lista_de_cotejo_" +
+    nombreSeguro +
+    "_Semana_" +
+    seleccionado.semana +
+    ".doc";
+
+
+  document.body.appendChild(
+    enlace
+  );
+
+  enlace.click();
+
+  enlace.remove();
+
+
+  setTimeout(
+    () => URL.revokeObjectURL(url),
+    1000
+  );
+
+}
+  
 function mostrarRubrica(
   propuesta,
   seleccionado
