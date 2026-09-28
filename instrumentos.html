@@ -1873,7 +1873,182 @@ filas += `
 
   }
 
+if(
+  propuesta.tipoRubrica ===
+  "Holística"
+){
 
+  const nivelesHolisticos =
+    Array.isArray(
+      propuesta.nivelesHolisticos
+    )
+      ? propuesta.nivelesHolisticos
+      : [];
+
+  nivelesHolisticos.forEach(
+    nivel => {
+
+      filas += `
+        <tr class="filaNivelRubricaHolistica">
+
+          <td>
+            <strong>
+              ${nivel.nivel || ""}
+            </strong>
+          </td>
+
+          <td>
+            <textarea
+              class="descriptorRubricaHolistica"
+              style="
+                width:100%;
+                box-sizing:border-box;
+                min-height:100px;
+              "
+            >${nivel.descriptor || ""}</textarea>
+          </td>
+
+          <td style="text-align:center;">
+            <input
+              type="number"
+              class="valorRubricaHolistica"
+              value="${Number(nivel.valor)}"
+              min="0"
+              step="0.1"
+              oninput="validarValoresRubricaHolistica()"
+              style="
+                width:70px;
+                text-align:center;
+              "
+            >
+          </td>
+
+        </tr>
+      `;
+
+    }
+  );
+
+}
+
+let encabezadoTabla = "";
+
+if(
+  propuesta.tipoRubrica ===
+  "Analítica"
+){
+
+  encabezadoTabla = `
+    <tr>
+      <th>N.º</th>
+      <th>Criterio</th>
+      <th>Destacado</th>
+      <th>Competente</th>
+      <th>Suficiente</th>
+      <th>En desarrollo</th>
+      <th>Insuficiente</th>
+      <th>Valor máximo</th>
+      <th>Acción</th>
+    </tr>
+  `;
+
+}
+else if(
+  propuesta.tipoRubrica ===
+  "Holística"
+){
+
+  encabezadoTabla = `
+    <tr>
+      <th style="width:18%;">
+        Nivel de desempeño
+      </th>
+
+      <th>
+        Descripción del desempeño
+      </th>
+
+      <th style="width:12%;">
+        Valor
+      </th>
+    </tr>
+  `;
+
+}
+
+let filaTotalRubrica = "";
+
+if(
+  propuesta.tipoRubrica ===
+  "Analítica"
+){
+
+  filaTotalRubrica = `
+    <tr>
+      <td
+        colspan="7"
+        style="
+          text-align:right;
+          font-weight:bold;
+        "
+      >
+        Total
+      </td>
+
+      <td
+        style="
+          text-align:center;
+          font-weight:bold;
+        "
+      >
+        <span id="totalActualRubrica">
+          ${Number(propuesta.valorTotal).toFixed(2)}
+        </span>
+      </td>
+
+      <td></td>
+    </tr>
+  `;
+
+}
+
+let botonAgregarCriterio = "";
+
+if(
+  propuesta.tipoRubrica ===
+  "Analítica"
+){
+
+  botonAgregarCriterio = `
+    <div style="margin-top:12px;">
+      <button
+        type="button"
+        onclick="agregarCriterioRubrica()"
+      >
+        + Agregar criterio
+      </button>
+    </div>
+  `;
+
+}
+
+let accionDescargarRubrica = "";
+
+if(
+  propuesta.tipoRubrica ===
+  "Analítica"
+){
+  accionDescargarRubrica =
+    "descargarRubricaWord()";
+}
+else if(
+  propuesta.tipoRubrica ===
+  "Holística"
+){
+  accionDescargarRubrica =
+    "descargarRubricaHolisticaWord()";
+}
+  
   contenedor.innerHTML = `
 
     <hr>
@@ -1923,82 +2098,28 @@ filas += `
       "
     >
 
-      <thead>
+     <thead>
+        ${encabezadoTabla}
+     </thead>
 
-        <tr>
-
-          <th>N.º</th>
-
-          <th>Criterio</th>
-
-         <th>Destacado</th>
-
-         <th>Competente</th>
-
-         <th>Suficiente</th>
-
-         <th>En desarrollo</th>
-
-         <th>Insuficiente</th>
-
-          <th>Valor máximo</th>
-          <th>Acción</th>
-
-        </tr>
-
-      </thead>
-
-
-      <tbody>
+     <tbody>
 
         ${filas}
 
-        <tr>
-
-          <td
-            colspan="7"
-            style="
-              text-align:right;
-              font-weight:bold;
-            "
-          >
-            Total
-          </td>
-
-          <td
-            style="
-              text-align:center;
-              font-weight:bold;
-            "
-          >
-            <span id="totalActualRubrica">
-              ${Number(propuesta.valorTotal).toFixed(2)}
-            </span>
-          </td>
-
-          <td></td>
-
-        </tr>
+        ${filaTotalRubrica}
 
       </tbody>
 
     </table>
 
-<div style="margin-top:12px;">
-  <button
-    type="button"
-    onclick="agregarCriterioRubrica()"
-  >
-    + Agregar criterio
-  </button>
-</div>
+    ${botonAgregarCriterio}
     
-<div
-  id="estadoTotalRubrica"
-  data-valor-establecido="${Number(seleccionado.valor)}"
-  style="
-    margin-top:12px;
-    font-weight:bold;
+    <div
+     id="estadoTotalRubrica"
+     data-valor-establecido="${Number(seleccionado.valor)}"
+     style="
+      margin-top:12px;
+      font-weight:bold;
   "
 >
 </div>
@@ -2016,7 +2137,7 @@ filas += `
 <div style="margin-top:10px;">
   <button
     type="button"
-    onclick="descargarRubricaWord()"
+    onclick="${accionDescargarRubrica}"
   >
     Descargar en Word
   </button>
@@ -2024,7 +2145,18 @@ filas += `
 
   `;
 
+  if(
+  propuesta.tipoRubrica ===
+  "Analítica"
+){
   actualizarTotalRubrica();
+}
+else if(
+  propuesta.tipoRubrica ===
+  "Holística"
+){
+  validarValoresRubricaHolistica();
+}
   
   contenedor.style.display =
   "block";
@@ -2132,6 +2264,95 @@ estado.textContent =
   
 }
 
+function validarValoresRubricaHolistica(){
+
+  const campos =
+    document.querySelectorAll(
+      ".valorRubricaHolistica"
+    );
+
+  const estado =
+    document.getElementById(
+      "estadoTotalRubrica"
+    );
+
+  if(!estado || campos.length !== 5){
+    return false;
+  }
+
+  const valorEstablecido =
+    Number(
+      estado.dataset.valorEstablecido
+    );
+
+  const valores =
+    Array.from(campos).map(
+      campo => Number(campo.value)
+    );
+
+  if(
+    !Number.isFinite(valorEstablecido) ||
+    valores.some(
+      valor =>
+        !Number.isFinite(valor) ||
+        valor < 0
+    )
+  ){
+    estado.textContent =
+      "Todos los valores deben ser números válidos y no negativos.";
+
+    return false;
+  }
+
+  if(valorEstablecido === 0){
+
+    const correcto =
+      valores.every(valor => valor === 0);
+
+    estado.textContent =
+      correcto
+        ? "Actividad diagnóstica: los niveles conservan valor 0."
+        : "En una actividad diagnóstica, todos los niveles deben tener valor 0.";
+
+    return correcto;
+  }
+
+  if(
+    Math.abs(
+      valores[0] - valorEstablecido
+    ) >= 0.001
+  ){
+    estado.textContent =
+      "El nivel Destacado debe tener exactamente " +
+      valorEstablecido.toFixed(2) +
+      " punto(s).";
+
+    return false;
+  }
+
+  for(
+    let i = 1;
+    i < valores.length;
+    i++
+  ){
+
+    if(valores[i] >= valores[i - 1]){
+
+      estado.textContent =
+        "Los valores deben disminuir progresivamente desde Destacado hasta Insuficiente.";
+
+      return false;
+    }
+
+  }
+
+  estado.textContent =
+    "Distribución válida. Los valores representan puntuaciones alternativas y no se suman.";
+
+  return true;
+
+}
+  
 function agregarCriterioRubrica(){
 
   const filas =
@@ -2352,8 +2573,285 @@ function renumerarCriteriosRubrica(){
 
 }
 
+function aceptarRubricaHolistica(){
+
+  const filas =
+    document.querySelectorAll(
+      ".filaNivelRubricaHolistica"
+    );
+
+  if(filas.length !== 5){
+
+    alert(
+      "La Rúbrica holística debe contener exactamente cinco niveles de desempeño."
+    );
+
+    return;
+  }
+
+
+  if(!validarValoresRubricaHolistica()){
+
+    alert(
+      "Revise los valores de los niveles de desempeño antes de aceptar la Rúbrica."
+    );
+
+    return;
+  }
+
+
+  if(!instrumentoSeleccionadoActual){
+
+    alert(
+      "No fue posible identificar la Rúbrica que se desea aceptar."
+    );
+
+    return;
+  }
+
+
+  const nombresEsperados = [
+    "Destacado",
+    "Competente",
+    "Suficiente",
+    "En desarrollo",
+    "Insuficiente"
+  ];
+
+
+  let hayDescriptorVacio = false;
+
+
+  const nivelesHolisticos =
+    Array.from(filas).map(
+      (fila, index) => {
+
+        const descriptor =
+          fila.querySelector(
+            ".descriptorRubricaHolistica"
+          )?.value.trim() || "";
+
+        const valor =
+          Number(
+            fila.querySelector(
+              ".valorRubricaHolistica"
+            )?.value
+          );
+
+
+        if(descriptor === ""){
+          hayDescriptorVacio = true;
+        }
+
+
+        return {
+
+          nivel:
+            nombresEsperados[index],
+
+          descriptor:
+            descriptor,
+
+          valor:
+            valor
+
+        };
+
+      }
+    );
+
+
+  if(hayDescriptorVacio){
+
+    alert(
+      "Los cinco niveles de desempeño deben tener su descripción completa."
+    );
+
+    return;
+  }
+
+
+  if(!datosGuia.instrumentosEvaluacion){
+    datosGuia.instrumentosEvaluacion = {};
+  }
+
+
+  if(
+    !Array.isArray(
+      datosGuia.instrumentosEvaluacion.elaborados
+    )
+  ){
+    datosGuia.instrumentosEvaluacion.elaborados = [];
+  }
+
+
+  const nuevoInstrumento = {
+
+    rubro:
+      instrumentoSeleccionadoActual.rubro,
+
+    indiceActividad:
+      instrumentoSeleccionadoActual.indiceActividad,
+
+    indiceInstrumento:
+      instrumentoSeleccionadoActual.indiceInstrumento,
+
+    semana:
+      instrumentoSeleccionadoActual.semana,
+
+    tecnica:
+      instrumentoSeleccionadoActual.tecnica,
+
+    codigosREA:
+      Array.isArray(
+        instrumentoSeleccionadoActual.codigosREA
+      )
+        ? [
+            ...instrumentoSeleccionadoActual.codigosREA
+          ]
+        : [],
+
+    tipo:
+      instrumentoSeleccionadoActual.tipo,
+
+    instrumento:
+      "Rúbrica",
+
+    valor:
+      Number(
+        instrumentoSeleccionadoActual.valor
+      ),
+
+    estado:
+      "Aceptado",
+
+    contenido: {
+
+      instrumento:
+        "Rúbrica",
+
+      tipoRubrica:
+        "Holística",
+
+      criterios:
+        [],
+
+      nivelesHolisticos:
+        nivelesHolisticos,
+
+      valorTotal:
+        Number(
+          instrumentoSeleccionadoActual.valor
+        )
+
+    }
+
+  };
+
+
+  const indiceExistente =
+    datosGuia.instrumentosEvaluacion
+      .elaborados
+      .findIndex(item =>
+
+        item.rubro ===
+          nuevoInstrumento.rubro &&
+
+        Number(item.indiceActividad) ===
+          Number(
+            nuevoInstrumento.indiceActividad
+          ) &&
+
+        Number(item.indiceInstrumento) ===
+          Number(
+            nuevoInstrumento.indiceInstrumento
+          )
+
+      );
+
+
+  if(indiceExistente >= 0){
+
+    datosGuia.instrumentosEvaluacion
+      .elaborados[indiceExistente] =
+        nuevoInstrumento;
+
+  }
+  else{
+
+    datosGuia.instrumentosEvaluacion
+      .elaborados.push(
+        nuevoInstrumento
+      );
+
+  }
+
+
+  const respaldoActual =
+    localStorage.getItem(
+      "respaldoGuiaDocente"
+    );
+
+
+  if(!respaldoActual){
+
+    alert(
+      "No fue posible localizar el respaldo de la guía docente."
+    );
+
+    return;
+  }
+
+
+  try{
+
+    const respaldo =
+      JSON.parse(respaldoActual);
+
+    respaldo.datosGuia =
+      datosGuia;
+
+    localStorage.setItem(
+      "respaldoGuiaDocente",
+      JSON.stringify(respaldo)
+    );
+
+  }
+  catch(error){
+
+    console.error(
+      "Error al guardar la Rúbrica holística:",
+      error
+    );
+
+    alert(
+      "La Rúbrica holística es válida, pero ocurrió un error al guardar el instrumento."
+    );
+
+    return;
+  }
+
+
+  alert(
+    "La Rúbrica holística ha sido aceptada y guardada correctamente."
+  );
+
+
+  mostrarInstrumentosPendientes();
+
+}
+  
 function aceptarRubrica(){
 
+if(
+  document.querySelector(
+    ".filaNivelRubricaHolistica"
+  )
+){
+  aceptarRubricaHolistica();
+  return;
+}
+  
   const filas =
     document.querySelectorAll(
       ".filaCriterioRubrica"
@@ -2796,6 +3294,363 @@ const insuficiente =
 
 }
 
+function descargarRubricaHolisticaWord(){
+
+  if(!instrumentoSeleccionadoActual){
+
+    alert(
+      "No fue posible identificar la Rúbrica holística."
+    );
+
+    return;
+  }
+
+
+  const filas =
+    document.querySelectorAll(
+      ".filaNivelRubricaHolistica"
+    );
+
+
+  if(filas.length !== 5){
+
+    alert(
+      "La Rúbrica holística debe contener exactamente cinco niveles de desempeño."
+    );
+
+    return;
+  }
+
+
+  if(!validarValoresRubricaHolistica()){
+
+    alert(
+      "Revise los valores de la Rúbrica holística antes de descargarla."
+    );
+
+    return;
+  }
+
+
+  const nombresEsperados = [
+    "Destacado",
+    "Competente",
+    "Suficiente",
+    "En desarrollo",
+    "Insuficiente"
+  ];
+
+
+  const niveles = [];
+
+  let hayDescriptorVacio = false;
+
+
+  filas.forEach(
+    (fila, index) => {
+
+      const descriptor =
+        fila.querySelector(
+          ".descriptorRubricaHolistica"
+        )?.value.trim() || "";
+
+      const valor =
+        Number(
+          fila.querySelector(
+            ".valorRubricaHolistica"
+          )?.value
+        );
+
+
+      if(descriptor === ""){
+        hayDescriptorVacio = true;
+      }
+
+
+      niveles.push({
+
+        nivel:
+          nombresEsperados[index],
+
+        descriptor:
+          descriptor,
+
+        valor:
+          valor
+
+      });
+
+    }
+  );
+
+
+  if(hayDescriptorVacio){
+
+    alert(
+      "Los cinco niveles deben tener su descripción completa antes de descargar la Rúbrica."
+    );
+
+    return;
+  }
+
+
+  const seleccionado =
+    instrumentoSeleccionadoActual;
+
+
+  const escaparHTML = texto =>
+
+    String(texto ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+
+
+  let filasWord = "";
+
+
+  niveles.forEach(nivel => {
+
+    filasWord += `
+      <tr>
+
+        <td class="nivel">
+          <strong>
+            ${escaparHTML(nivel.nivel)}
+          </strong>
+        </td>
+
+        <td class="descripcion">
+          ${escaparHTML(nivel.descriptor)}
+        </td>
+
+        <td class="valor">
+          ${Number(nivel.valor).toFixed(2)}
+        </td>
+
+      </tr>
+    `;
+
+  });
+
+
+  const contenidoWord = `
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<style>
+
+  @page {
+    size: A4 portrait;
+    margin: 1.5cm;
+  }
+
+  body {
+    font-family: "Book Antiqua", Palatino, serif;
+    font-size: 10pt;
+    color: #000000;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 14pt;
+    margin-bottom: 18px;
+  }
+
+  .datos {
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  th,
+  td {
+    border: 1px solid #000000;
+    padding: 7px;
+    vertical-align: middle;
+  }
+
+  th {
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .nivel {
+    width: 18%;
+    text-align: center;
+  }
+
+  .descripcion {
+    width: 67%;
+  }
+
+  .valor {
+    width: 15%;
+    text-align: center;
+  }
+
+</style>
+
+</head>
+
+<body>
+
+<h1>
+  Rúbrica Holística
+</h1>
+
+
+<div class="datos">
+
+  <strong>Asignatura:</strong>
+  ${escaparHTML(
+    fuenteInstrumentos?.asignatura?.nombre || ""
+  )}
+  <br>
+
+  <strong>Código:</strong>
+  ${escaparHTML(
+    fuenteInstrumentos?.asignatura?.codigo || ""
+  )}
+  <br>
+
+  <strong>Semana:</strong>
+  ${escaparHTML(seleccionado.semana)}
+  <br>
+
+  <strong>Técnica / evidencia:</strong>
+  ${escaparHTML(seleccionado.tecnica)}
+  <br>
+
+  <strong>REA(s):</strong>
+  ${escaparHTML(
+    Array.isArray(seleccionado.codigosREA)
+      ? seleccionado.codigosREA.join(", ")
+      : ""
+  )}
+  <br>
+
+  <strong>Tipo:</strong>
+  ${escaparHTML(seleccionado.tipo)}
+  <br>
+
+  <strong>Valor máximo:</strong>
+  ${Number(seleccionado.valor).toFixed(2)}
+  punto(s)
+
+</div>
+
+
+<table>
+
+  <thead>
+
+    <tr>
+
+      <th class="nivel">
+        Nivel de desempeño
+      </th>
+
+      <th class="descripcion">
+        Descripción del desempeño
+      </th>
+
+      <th class="valor">
+        Valor
+      </th>
+
+    </tr>
+
+  </thead>
+
+
+  <tbody>
+
+    ${filasWord}
+
+  </tbody>
+
+</table>
+
+
+</body>
+</html>
+`;
+
+
+  const blob =
+    new Blob(
+      ["\ufeff", contenidoWord],
+      {
+        type:
+          "application/msword;charset=utf-8"
+      }
+    );
+
+
+  const url =
+    URL.createObjectURL(blob);
+
+
+  const enlace =
+    document.createElement("a");
+
+
+  const nombreAsignatura =
+    fuenteInstrumentos
+      ?.asignatura
+      ?.nombre
+      ?.trim()
+      || "Asignatura";
+
+
+  const nombreSeguro =
+    nombreAsignatura.replace(
+      /[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ_-]+/g,
+      "_"
+    );
+
+
+  enlace.href =
+    url;
+
+
+  enlace.download =
+    "Rubrica_Holistica_" +
+    nombreSeguro +
+    "_Semana_" +
+    seleccionado.semana +
+    ".doc";
+
+
+  document.body.appendChild(
+    enlace
+  );
+
+
+  enlace.click();
+
+  enlace.remove();
+
+
+  setTimeout(
+    () => URL.revokeObjectURL(url),
+    1000
+  );
+
+}
+  
 function descargarRubricaWord(){
 
   if(!instrumentoSeleccionadoActual){
