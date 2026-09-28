@@ -1750,18 +1750,21 @@ function mostrarRubrica(
             ? criterio.niveles
             : [];
 
-
-        const avanzado =
+const destacado =
   niveles[0] || {};
 
-const logrado =
+const competente =
   niveles[1] || {};
 
-const enProceso =
+const suficiente =
   niveles[2] || {};
 
-const inicial =
+const enDesarrollo =
   niveles[3] || {};
+
+const insuficiente =
+  niveles[4] || {};
+        
 filas += `
   <tr class="filaCriterioRubrica">
 
@@ -1784,48 +1787,59 @@ filas += `
     </td>
 
     <td>
-      <textarea
-        class="descriptorRubrica descriptorAvanzadoRubrica"
-        style="
-          width:100%;
-          box-sizing:border-box;
-          min-height:110px;
-        "
-      >${avanzado?.descriptor || ""}</textarea>
-    </td>
+  <textarea
+    class="descriptorRubrica descriptorDestacadoRubrica"
+    style="
+      width:100%;
+      box-sizing:border-box;
+      min-height:110px;
+    "
+  >${destacado?.descriptor || ""}</textarea>
+</td>
 
-    <td>
-      <textarea
-        class="descriptorRubrica descriptorLogradoRubrica"
-        style="
-          width:100%;
-          box-sizing:border-box;
-          min-height:110px;
-        "
-      >${logrado?.descriptor || ""}</textarea>
-    </td>
+<td>
+  <textarea
+    class="descriptorRubrica descriptorCompetenteRubrica"
+    style="
+      width:100%;
+      box-sizing:border-box;
+      min-height:110px;
+    "
+  >${competente?.descriptor || ""}</textarea>
+</td>
 
-    <td>
-      <textarea
-        class="descriptorRubrica descriptorEnProcesoRubrica"
-        style="
-          width:100%;
-          box-sizing:border-box;
-          min-height:110px;
-        "
-      >${enProceso?.descriptor || ""}</textarea>
-    </td>
+<td>
+  <textarea
+    class="descriptorRubrica descriptorSuficienteRubrica"
+    style="
+      width:100%;
+      box-sizing:border-box;
+      min-height:110px;
+    "
+  >${suficiente?.descriptor || ""}</textarea>
+</td>
 
-    <td>
-      <textarea
-        class="descriptorRubrica descriptorInicialRubrica"
-        style="
-          width:100%;
-          box-sizing:border-box;
-          min-height:110px;
-        "
-      >${inicial?.descriptor || ""}</textarea>
-    </td>
+<td>
+  <textarea
+    class="descriptorRubrica descriptorEnDesarrolloRubrica"
+    style="
+      width:100%;
+      box-sizing:border-box;
+      min-height:110px;
+    "
+  >${enDesarrollo?.descriptor || ""}</textarea>
+</td>
+
+<td>
+  <textarea
+    class="descriptorRubrica descriptorInsuficienteRubrica"
+    style="
+      width:100%;
+      box-sizing:border-box;
+      min-height:110px;
+    "
+  >${insuficiente?.descriptor || ""}</textarea>
+</td>
 
     <td style="text-align:center;">
       <input
@@ -1916,13 +1930,15 @@ filas += `
 
           <th>Criterio</th>
 
-          <th>Avanzado</th>
+         <th>Destacado</th>
 
-          <th>Logrado</th>
+         <th>Competente</th>
 
-          <th>En proceso</th>
+         <th>Suficiente</th>
 
-          <th>Inicial</th>
+         <th>En desarrollo</th>
+
+         <th>Insuficiente</th>
 
           <th>Valor máximo</th>
           <th>Acción</th>
@@ -1939,7 +1955,7 @@ filas += `
         <tr>
 
           <td
-            colspan="6"
+            colspan="7"
             style="
               text-align:right;
               font-weight:bold;
@@ -2162,53 +2178,64 @@ function agregarCriterioRubrica(){
     </td>
 
     <td>
-      <textarea
-        class="descriptorRubrica descriptorAvanzadoRubrica"
-        style="
-          width:100%;
-          box-sizing:border-box;
-          min-height:110px;
-        "
-        placeholder="Descriptor del nivel Avanzado."
-      ></textarea>
-    </td>
+  <textarea
+    class="descriptorRubrica descriptorDestacadoRubrica"
+    style="
+      width:100%;
+      box-sizing:border-box;
+      min-height:110px;
+    "
+    placeholder="Descriptor del nivel Destacado."
+  ></textarea>
+</td>
 
-    <td>
-      <textarea
-        class="descriptorRubrica descriptorLogradoRubrica"
-        style="
-          width:100%;
-          box-sizing:border-box;
-          min-height:110px;
-        "
-        placeholder="Descriptor del nivel Logrado."
-      ></textarea>
-    </td>
+<td>
+  <textarea
+    class="descriptorRubrica descriptorCompetenteRubrica"
+    style="
+      width:100%;
+      box-sizing:border-box;
+      min-height:110px;
+    "
+    placeholder="Descriptor del nivel Competente."
+  ></textarea>
+</td>
 
-    <td>
-      <textarea
-        class="descriptorRubrica descriptorEnProcesoRubrica"
-        style="
-          width:100%;
-          box-sizing:border-box;
-          min-height:110px;
-        "
-        placeholder="Descriptor del nivel En proceso."
-      ></textarea>
-    </td>
+<td>
+  <textarea
+    class="descriptorRubrica descriptorSuficienteRubrica"
+    style="
+      width:100%;
+      box-sizing:border-box;
+      min-height:110px;
+    "
+    placeholder="Descriptor del nivel Suficiente."
+  ></textarea>
+</td>
 
-    <td>
-      <textarea
-        class="descriptorRubrica descriptorInicialRubrica"
-        style="
-          width:100%;
-          box-sizing:border-box;
-          min-height:110px;
-        "
-        placeholder="Descriptor del nivel Inicial."
-      ></textarea>
-    </td>
+<td>
+  <textarea
+    class="descriptorRubrica descriptorEnDesarrolloRubrica"
+    style="
+      width:100%;
+      box-sizing:border-box;
+      min-height:110px;
+    "
+    placeholder="Descriptor del nivel En desarrollo."
+  ></textarea>
+</td>
 
+<td>
+  <textarea
+    class="descriptorRubrica descriptorInsuficienteRubrica"
+    style="
+      width:100%;
+      box-sizing:border-box;
+      min-height:110px;
+    "
+    placeholder="Descriptor del nivel Insuficiente."
+  ></textarea>
+</td>
     <td style="text-align:center;">
       <input
         type="number"
@@ -2352,25 +2379,30 @@ function aceptarRubrica(){
         ".criterioRubrica"
       );
 
-    const avanzado =
-      fila.querySelector(
-        ".descriptorAvanzadoRubrica"
-      );
+  const destacado =
+  fila.querySelector(
+    ".descriptorDestacadoRubrica"
+  );
 
-    const logrado =
-      fila.querySelector(
-        ".descriptorLogradoRubrica"
-      );
+const competente =
+  fila.querySelector(
+    ".descriptorCompetenteRubrica"
+  );
 
-    const enProceso =
-      fila.querySelector(
-        ".descriptorEnProcesoRubrica"
-      );
+const suficiente =
+  fila.querySelector(
+    ".descriptorSuficienteRubrica"
+  );
 
-    const inicial =
-      fila.querySelector(
-        ".descriptorInicialRubrica"
-      );
+const enDesarrollo =
+  fila.querySelector(
+    ".descriptorEnDesarrolloRubrica"
+  );
+
+const insuficiente =
+  fila.querySelector(
+    ".descriptorInsuficienteRubrica"
+  );  
 
     const campoValor =
       fila.querySelector(
@@ -2387,17 +2419,19 @@ function aceptarRubrica(){
 
 
     if(
-      !avanzado ||
-      avanzado.value.trim() === "" ||
-      !logrado ||
-      logrado.value.trim() === "" ||
-      !enProceso ||
-      enProceso.value.trim() === "" ||
-      !inicial ||
-      inicial.value.trim() === ""
-    ){
-      hayDescriptorVacio = true;
-    }
+  !destacado ||
+  destacado.value.trim() === "" ||
+  !competente ||
+  competente.value.trim() === "" ||
+  !suficiente ||
+  suficiente.value.trim() === "" ||
+  !enDesarrollo ||
+  enDesarrollo.value.trim() === "" ||
+  !insuficiente ||
+  insuficiente.value.trim() === ""
+){
+  hayDescriptorVacio = true;
+}
 
 
     if(!campoValor){
@@ -2440,7 +2474,7 @@ function aceptarRubrica(){
   if(hayDescriptorVacio){
 
     alert(
-      "Cada criterio debe tener completos los descriptores de Avanzado, Logrado, En proceso e Inicial."
+      "Cada criterio debe tener completos los descriptores de Destacado, Competente, Suficiente, En desarrollo e Insuficiente."
     );
 
     return;
@@ -2537,39 +2571,47 @@ function aceptarRubrica(){
 
         niveles: [
 
-          {
-            nivel: "Avanzado",
-            descriptor:
-              fila.querySelector(
-                ".descriptorAvanzadoRubrica"
-              ).value.trim()
-          },
+  {
+    nivel: "Destacado",
+    descriptor:
+      fila.querySelector(
+        ".descriptorDestacadoRubrica"
+      ).value.trim()
+  },
 
-          {
-            nivel: "Logrado",
-            descriptor:
-              fila.querySelector(
-                ".descriptorLogradoRubrica"
-              ).value.trim()
-          },
+  {
+    nivel: "Competente",
+    descriptor:
+      fila.querySelector(
+        ".descriptorCompetenteRubrica"
+      ).value.trim()
+  },
 
-          {
-            nivel: "En proceso",
-            descriptor:
-              fila.querySelector(
-                ".descriptorEnProcesoRubrica"
-              ).value.trim()
-          },
+  {
+    nivel: "Suficiente",
+    descriptor:
+      fila.querySelector(
+        ".descriptorSuficienteRubrica"
+      ).value.trim()
+  },
 
-          {
-            nivel: "Inicial",
-            descriptor:
-              fila.querySelector(
-                ".descriptorInicialRubrica"
-              ).value.trim()
-          }
+  {
+    nivel: "En desarrollo",
+    descriptor:
+      fila.querySelector(
+        ".descriptorEnDesarrolloRubrica"
+      ).value.trim()
+  },
 
-        ],
+  {
+    nivel: "Insuficiente",
+    descriptor:
+      fila.querySelector(
+        ".descriptorInsuficienteRubrica"
+      ).value.trim()
+  }
+
+],
 
         valorMaximo: valor
 
