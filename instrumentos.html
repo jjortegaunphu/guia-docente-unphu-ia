@@ -513,6 +513,176 @@ function prepararContextoInstrumento(item){
 
 }
 
+function mostrarEscalaEstimacion(
+  propuesta,
+  seleccionado
+){
+
+  const contenedor =
+    document.getElementById(
+      "instrumentoGenerado"
+    );
+
+  if(!contenedor){
+    return;
+  }
+
+  if(
+    !propuesta ||
+    !Array.isArray(propuesta.indicadores)
+  ){
+    return;
+  }
+
+  const rea =
+    Array.isArray(seleccionado.codigosREA)
+      ? seleccionado.codigosREA.join(", ")
+      : "";
+
+  const modalidad =
+    propuesta.modalidadEscala || "";
+
+  const indicadores =
+    propuesta.indicadores;
+
+  const niveles =
+    indicadores.length > 0 &&
+    Array.isArray(indicadores[0].niveles)
+      ? indicadores[0].niveles
+      : [];
+
+  let encabezadosNiveles = "";
+
+  niveles.forEach(nivel => {
+
+    encabezadosNiveles += `
+      <th>
+        ${nivel.nivel || ""}
+      </th>
+    `;
+
+  });
+
+  let filas = "";
+
+  indicadores.forEach(
+    (indicador, index) => {
+
+      const nivelesIndicador =
+        Array.isArray(indicador.niveles)
+          ? indicador.niveles
+          : [];
+
+      let celdasNiveles = "";
+
+      nivelesIndicador.forEach(nivel => {
+
+        celdasNiveles += `
+          <td style="text-align:center;">
+            ${Number(nivel.valor)}
+          </td>
+        `;
+
+      });
+
+      filas += `
+        <tr class="filaIndicadorEscala">
+
+          <td style="text-align:center;">
+            ${index + 1}
+          </td>
+
+          <td>
+            ${indicador.indicador || ""}
+          </td>
+
+          ${celdasNiveles}
+
+          <td style="text-align:center;">
+            ${Number(indicador.valorMaximo)}
+          </td>
+
+        </tr>
+      `;
+
+    }
+  );
+
+  contenedor.innerHTML = `
+
+    <hr>
+
+    <h2>Escala de estimación</h2>
+
+    <p>
+      <strong>Semana:</strong>
+      ${seleccionado.semana}
+    </p>
+
+    <p>
+      <strong>Técnica / evidencia:</strong>
+      ${seleccionado.tecnica}
+    </p>
+
+    <p>
+      <strong>REA(s):</strong>
+      ${rea}
+    </p>
+
+    <p>
+      <strong>Tipo:</strong>
+      ${seleccionado.tipo}
+    </p>
+
+    <p>
+      <strong>Valor:</strong>
+      ${Number(seleccionado.valor)}
+      punto(s)
+    </p>
+
+    <p>
+      <strong>Modalidad:</strong>
+      ${modalidad}
+    </p>
+
+    <table
+      border="1"
+      cellpadding="8"
+      cellspacing="0"
+      style="
+        width:100%;
+        border-collapse:collapse;
+        margin-top:15px;
+      "
+    >
+
+      <thead>
+        <tr>
+          <th>N.º</th>
+          <th>Indicador</th>
+          ${encabezadosNiveles}
+          <th>Valor máximo</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        ${filas}
+      </tbody>
+
+    </table>
+
+  `;
+
+  contenedor.style.display =
+    "block";
+
+  contenedor.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+
+}
+  
 function mostrarListaCotejo(
   propuesta,
   seleccionado
@@ -4331,6 +4501,18 @@ if(
   );
 
 }
+
+if(
+  resultado.propuesta.instrumento ===
+  "Escala de estimación"
+){
+
+  mostrarEscalaEstimacion(
+    resultado.propuesta,
+    seleccionado
+  );
+
+}    
 
 if(
   resultado.propuesta.instrumento ===
