@@ -2082,9 +2082,27 @@ else if(
     </p>
 
     <p>
-      <strong>Tipo de rúbrica:</strong>
-      ${propuesta.tipoRubrica}
-    </p>
+  <strong>Tipo de rúbrica:</strong>
+
+  <select
+    id="selectorTipoRubrica"
+    onchange="cambiarTipoRubrica(this.value)"
+  >
+    <option
+      value="Analítica"
+      ${propuesta.tipoRubrica === "Analítica" ? "selected" : ""}
+    >
+      Analítica
+    </option>
+
+    <option
+      value="Holística"
+      ${propuesta.tipoRubrica === "Holística" ? "selected" : ""}
+    >
+      Holística
+    </option>
+  </select>
+</p>
 
 
     <table
@@ -2350,6 +2368,95 @@ function validarValoresRubricaHolistica(){
     "Distribución válida. Los valores representan puntuaciones alternativas y no se suman.";
 
   return true;
+
+}
+
+  async function cambiarTipoRubrica(nuevoTipo){
+
+  if(
+    nuevoTipo !== "Analítica" &&
+    nuevoTipo !== "Holística"
+  ){
+    return;
+  }
+
+  if(!instrumentoSeleccionadoActual){
+
+    alert(
+      "No fue posible identificar la Rúbrica seleccionada."
+    );
+
+    return;
+  }
+
+  const contexto =
+    prepararContextoInstrumento(
+      instrumentoSeleccionadoActual
+    );
+
+  if(!contexto){
+
+    alert(
+      "No fue posible preparar la información necesaria para generar la Rúbrica."
+    );
+
+    return;
+  }
+
+  contexto.tipoRubricaSolicitado =
+    nuevoTipo;
+
+  try{
+
+    const respuesta =
+      await fetch(
+        "https://guia-docente-unphu-api.jortega-cc4.workers.dev/generar-instrumento-evaluacion",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body:
+            JSON.stringify(contexto)
+        }
+      );
+
+    const resultado =
+      await respuesta.json();
+
+    if(
+      !respuesta.ok ||
+      resultado.correcto !== true
+    ){
+
+      alert(
+        resultado.error ||
+        "No fue posible generar el nuevo tipo de Rúbrica."
+      );
+
+      return;
+    }
+
+    mostrarRubrica(
+      resultado.propuesta,
+      instrumentoSeleccionadoActual
+    );
+
+  }
+  catch(error){
+
+    console.error(
+      "Error al cambiar el tipo de Rúbrica:",
+      error
+    );
+
+    alert(
+      "Ocurrió un error al generar el nuevo tipo de Rúbrica."
+    );
+
+  }
 
 }
   
