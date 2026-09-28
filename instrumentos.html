@@ -641,9 +641,36 @@ function mostrarEscalaEstimacion(
     </p>
 
     <p>
-      <strong>Modalidad:</strong>
-      ${modalidad}
-    </p>
+  <strong>Modalidad:</strong>
+
+  <select
+  id="selectorModalidadEscala"
+  onchange="cambiarModalidadEscala(this.value)"
+>
+
+    <option
+      value="Frecuencia"
+      ${modalidad === "Frecuencia" ? "selected" : ""}
+    >
+      Frecuencia
+    </option>
+
+    <option
+      value="Grado de logro o desempeño"
+      ${modalidad === "Grado de logro o desempeño" ? "selected" : ""}
+    >
+      Grado de logro o desempeño
+    </option>
+
+    <option
+      value="Calidad o intensidad"
+      ${modalidad === "Calidad o intensidad" ? "selected" : ""}
+    >
+      Calidad o intensidad
+    </option>
+
+  </select>
+</p>
 
     <table
       border="1"
@@ -2624,6 +2651,102 @@ function validarValoresRubricaHolistica(){
 
     alert(
       "Ocurrió un error al generar el nuevo tipo de Rúbrica."
+    );
+
+  }
+
+}
+
+async function cambiarModalidadEscala(nuevaModalidad){
+
+  const modalidadesPermitidas = [
+    "Frecuencia",
+    "Grado de logro o desempeño",
+    "Calidad o intensidad"
+  ];
+
+  if(
+    !modalidadesPermitidas.includes(
+      nuevaModalidad
+    )
+  ){
+    return;
+  }
+
+  if(!instrumentoSeleccionadoActual){
+
+    alert(
+      "No fue posible identificar la Escala de estimación seleccionada."
+    );
+
+    return;
+  }
+
+  const contexto =
+    prepararContextoInstrumento(
+      instrumentoSeleccionadoActual
+    );
+
+  if(!contexto){
+
+    alert(
+      "No fue posible preparar la información necesaria para generar la Escala de estimación."
+    );
+
+    return;
+  }
+
+  contexto.modalidadEscalaSolicitada =
+    nuevaModalidad;
+
+  try{
+
+    const respuesta =
+      await fetch(
+        "https://guia-docente-unphu-api.jortega-cc4.workers.dev/generar-instrumento-evaluacion",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body:
+            JSON.stringify(contexto)
+        }
+      );
+
+    const resultado =
+      await respuesta.json();
+
+    if(
+      !respuesta.ok ||
+      resultado.correcto !== true
+    ){
+
+      alert(
+        resultado.error ||
+        "No fue posible generar la nueva modalidad de Escala de estimación."
+      );
+
+      return;
+    }
+
+    mostrarEscalaEstimacion(
+      resultado.propuesta,
+      instrumentoSeleccionadoActual
+    );
+
+  }
+  catch(error){
+
+    console.error(
+      "Error al cambiar la modalidad de la Escala de estimación:",
+      error
+    );
+
+    alert(
+      "Ocurrió un error al generar la nueva modalidad de Escala de estimación."
     );
 
   }
