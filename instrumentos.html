@@ -534,16 +534,20 @@ function mostrarEscalaEstimacion(
     return;
   }
 
+
   const rea =
     Array.isArray(seleccionado.codigosREA)
       ? seleccionado.codigosREA.join(", ")
       : "";
 
+
   const modalidad =
     propuesta.modalidadEscala || "";
 
+
   const indicadores =
     propuesta.indicadores;
+
 
   const niveles =
     indicadores.length > 0 &&
@@ -551,7 +555,9 @@ function mostrarEscalaEstimacion(
       ? indicadores[0].niveles
       : [];
 
+
   let encabezadosNiveles = "";
+
 
   niveles.forEach(nivel => {
 
@@ -563,7 +569,9 @@ function mostrarEscalaEstimacion(
 
   });
 
+
   let filas = "";
+
 
   indicadores.forEach(
     (indicador, index) => {
@@ -573,7 +581,9 @@ function mostrarEscalaEstimacion(
           ? indicador.niveles
           : [];
 
+
       let celdasNiveles = "";
+
 
       nivelesIndicador.forEach(nivel => {
 
@@ -585,21 +595,61 @@ function mostrarEscalaEstimacion(
 
       });
 
+
       filas += `
         <tr class="filaIndicadorEscala">
 
-          <td style="text-align:center;">
+          <td
+            class="numeroIndicadorEscala"
+            style="text-align:center;"
+          >
             ${index + 1}
           </td>
 
+
           <td>
-            ${indicador.indicador || ""}
+
+            <textarea
+              class="indicadorEscala"
+              style="
+                width:100%;
+                box-sizing:border-box;
+                min-height:70px;
+              "
+            >${indicador.indicador || ""}</textarea>
+
           </td>
+
 
           ${celdasNiveles}
 
+
           <td style="text-align:center;">
-            ${Number(indicador.valorMaximo)}
+
+            <input
+              type="number"
+              class="valorMaximoEscala"
+              value="${Number(indicador.valorMaximo)}"
+              min="0"
+              step="0.1"
+              style="
+                width:70px;
+                text-align:center;
+              "
+            >
+
+          </td>
+
+
+          <td style="text-align:center;">
+
+            <button
+              type="button"
+              class="btnEliminarIndicadorEscala"
+            >
+              Eliminar
+            </button>
+
           </td>
 
         </tr>
@@ -608,31 +658,58 @@ function mostrarEscalaEstimacion(
     }
   );
 
+
+  const valorTotalInicial =
+    indicadores.reduce(
+      (acumulado, indicador) => {
+
+        const valor =
+          Number(indicador.valorMaximo);
+
+        return acumulado +
+          (
+            Number.isFinite(valor)
+              ? valor
+              : 0
+          );
+
+      },
+      0
+    );
+
+
   contenedor.innerHTML = `
 
     <hr>
 
-    <h2>Escala de estimación</h2>
+    <h2>
+      Escala de estimación
+    </h2>
+
 
     <p>
       <strong>Semana:</strong>
       ${seleccionado.semana}
     </p>
 
+
     <p>
       <strong>Técnica / evidencia:</strong>
       ${seleccionado.tecnica}
     </p>
+
 
     <p>
       <strong>REA(s):</strong>
       ${rea}
     </p>
 
+
     <p>
       <strong>Tipo:</strong>
       ${seleccionado.tipo}
     </p>
+
 
     <p>
       <strong>Valor:</strong>
@@ -640,37 +717,43 @@ function mostrarEscalaEstimacion(
       punto(s)
     </p>
 
+
     <p>
-  <strong>Modalidad:</strong>
 
-  <select
-  id="selectorModalidadEscala"
-  onchange="cambiarModalidadEscala(this.value)"
->
+      <strong>Modalidad:</strong>
 
-    <option
-      value="Frecuencia"
-      ${modalidad === "Frecuencia" ? "selected" : ""}
-    >
-      Frecuencia
-    </option>
+      <select
+        id="selectorModalidadEscala"
+        onchange="cambiarModalidadEscala(this.value)"
+      >
 
-    <option
-      value="Grado de logro o desempeño"
-      ${modalidad === "Grado de logro o desempeño" ? "selected" : ""}
-    >
-      Grado de logro o desempeño
-    </option>
+        <option
+          value="Frecuencia"
+          ${modalidad === "Frecuencia" ? "selected" : ""}
+        >
+          Frecuencia
+        </option>
 
-    <option
-      value="Calidad o intensidad"
-      ${modalidad === "Calidad o intensidad" ? "selected" : ""}
-    >
-      Calidad o intensidad
-    </option>
 
-  </select>
-</p>
+        <option
+          value="Grado de logro o desempeño"
+          ${modalidad === "Grado de logro o desempeño" ? "selected" : ""}
+        >
+          Grado de logro o desempeño
+        </option>
+
+
+        <option
+          value="Calidad o intensidad"
+          ${modalidad === "Calidad o intensidad" ? "selected" : ""}
+        >
+          Calidad o intensidad
+        </option>
+
+      </select>
+
+    </p>
+
 
     <table
       border="1"
@@ -684,24 +767,144 @@ function mostrarEscalaEstimacion(
     >
 
       <thead>
+
         <tr>
-          <th>N.º</th>
-          <th>Indicador</th>
+
+          <th>
+            N.º
+          </th>
+
+          <th>
+            Indicador
+          </th>
+
           ${encabezadosNiveles}
-          <th>Valor máximo</th>
+
+          <th>
+            Valor máximo
+          </th>
+
+          <th>
+            Acción
+          </th>
+
         </tr>
+
       </thead>
 
-      <tbody>
+
+      <tbody id="cuerpoEscalaEstimacion">
+
         ${filas}
+
+
+        <tr class="filaTotalEscala">
+
+          <td
+            colspan="${niveles.length + 2}"
+            style="
+              text-align:right;
+              font-weight:bold;
+            "
+          >
+            Total
+          </td>
+
+
+          <td
+            style="
+              text-align:center;
+              font-weight:bold;
+            "
+          >
+
+            <span id="totalActualEscala">
+
+              ${valorTotalInicial.toFixed(2)}
+
+            </span>
+
+          </td>
+
+
+          <td></td>
+
+        </tr>
+
       </tbody>
 
     </table>
 
+
+    <div style="margin-top:12px;">
+
+      <button
+        type="button"
+        id="btnAgregarIndicadorEscala"
+      >
+        + Agregar indicador
+      </button>
+
+    </div>
+
+
+    <div
+      id="estadoTotalEscala"
+      data-valor-establecido="${Number(seleccionado.valor)}"
+      style="
+        margin-top:12px;
+        font-weight:bold;
+      "
+    >
+
+      Total actual:
+      ${valorTotalInicial.toFixed(2)}
+      /
+      ${Number(seleccionado.valor).toFixed(2)}.
+
+      ${
+        Math.abs(
+          valorTotalInicial -
+          Number(seleccionado.valor)
+        ) < 0.001
+
+          ? "La distribución coincide con el valor establecido."
+
+          : "La distribución debe ajustarse al valor establecido."
+      }
+
+    </div>
+
+
+    <div style="margin-top:18px;">
+
+      <button
+        type="button"
+        id="btnAceptarEscala"
+      >
+        Aceptar Escala de estimación
+      </button>
+
+    </div>
+
+
+    <div style="margin-top:10px;">
+
+      <button
+        type="button"
+        id="btnDescargarEscalaWord"
+      >
+        Descargar en Word
+      </button>
+
+    </div>
+
   `;
+
 
   contenedor.style.display =
     "block";
+
 
   contenedor.scrollIntoView({
     behavior: "smooth",
