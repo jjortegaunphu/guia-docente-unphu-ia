@@ -626,17 +626,18 @@ function mostrarEscalaEstimacion(
 
           <td style="text-align:center;">
 
-            <input
-              type="number"
-              class="valorMaximoEscala"
-              value="${Number(indicador.valorMaximo)}"
-              min="0"
-              step="0.1"
-              style="
-                width:70px;
-                text-align:center;
-              "
-            >
+<input
+  type="number"
+  class="valorMaximoEscala"
+  value="${Number(indicador.valorMaximo)}"
+  min="0"
+  step="0.1"
+  oninput="actualizarTotalEscala()"
+  style="
+    width:70px;
+    text-align:center;
+  "
+>
 
           </td>
 
@@ -910,6 +911,103 @@ function mostrarEscalaEstimacion(
     behavior: "smooth",
     block: "start"
   });
+
+}
+
+function actualizarTotalEscala(){
+
+  const campos =
+    document.querySelectorAll(
+      ".valorMaximoEscala"
+    );
+
+  let total = 0;
+
+  campos.forEach(campo => {
+
+    const valor =
+      Number(campo.value);
+
+    if(Number.isFinite(valor)){
+      total += valor;
+    }
+
+  });
+
+
+  const totalVisual =
+    document.getElementById(
+      "totalActualEscala"
+    );
+
+  if(totalVisual){
+
+    totalVisual.textContent =
+      total.toFixed(2);
+
+  }
+
+
+  const estado =
+    document.getElementById(
+      "estadoTotalEscala"
+    );
+
+  if(!estado){
+    return;
+  }
+
+
+  const valorEstablecido =
+    Number(
+      estado.dataset.valorEstablecido
+    );
+
+  if(!Number.isFinite(valorEstablecido)){
+    return;
+  }
+
+
+  const diferencia =
+    total - valorEstablecido;
+
+
+  if(Math.abs(diferencia) < 0.001){
+
+    estado.textContent =
+      "Total actual: " +
+      total.toFixed(2) +
+      " / " +
+      valorEstablecido.toFixed(2) +
+      ". La distribución coincide con el valor establecido.";
+
+    return;
+  }
+
+
+  if(diferencia > 0){
+
+    estado.textContent =
+      "Total actual: " +
+      total.toFixed(2) +
+      " / " +
+      valorEstablecido.toFixed(2) +
+      ". La distribución excede el valor establecido por " +
+      diferencia.toFixed(2) +
+      " punto(s).";
+
+    return;
+  }
+
+
+  estado.textContent =
+    "Total actual: " +
+    total.toFixed(2) +
+    " / " +
+    valorEstablecido.toFixed(2) +
+    ". Faltan " +
+    Math.abs(diferencia).toFixed(2) +
+    " punto(s) por distribuir.";
 
 }
   
