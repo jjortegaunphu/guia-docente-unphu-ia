@@ -897,9 +897,10 @@ function mostrarEscalaEstimacion(
       <button
         type="button"
         id="btnDescargarEscalaWord"
+        onclick="descargarEscalaEstimacionWord()"
       >
         Descargar en Word
-      </button>
+     </button>
 
     </div>
 
@@ -1669,6 +1670,511 @@ function aceptarEscalaEstimacion(){
 
 
   mostrarInstrumentosPendientes();
+
+}
+
+function descargarEscalaEstimacionWord(){
+
+  if(!instrumentoSeleccionadoActual){
+
+    alert(
+      "No fue posible identificar la Escala de estimación."
+    );
+
+    return;
+  }
+
+
+  const filas =
+    document.querySelectorAll(
+      ".filaIndicadorEscala"
+    );
+
+
+  if(filas.length === 0){
+
+    alert(
+      "No hay indicadores disponibles para descargar."
+    );
+
+    return;
+  }
+
+
+  const selectorModalidad =
+    document.getElementById(
+      "selectorModalidadEscala"
+    );
+
+
+  const modalidad =
+    selectorModalidad
+      ? selectorModalidad.value
+      : "";
+
+
+  const tabla =
+    document.getElementById(
+      "cuerpoEscalaEstimacion"
+    )?.closest("table");
+
+
+  if(!tabla){
+
+    alert(
+      "No fue posible recuperar la tabla de la Escala de estimación."
+    );
+
+    return;
+  }
+
+
+  const encabezados =
+    Array.from(
+      tabla.querySelectorAll(
+        "thead th"
+      )
+    );
+
+
+  const nombresNiveles =
+    encabezados
+      .slice(2, -2)
+      .map(
+        encabezado =>
+          encabezado.textContent.trim()
+      );
+
+
+  const indicadores = [];
+
+  let total = 0;
+
+
+  filas.forEach(
+    (fila, index) => {
+
+      const indicador =
+        fila.querySelector(
+          ".indicadorEscala"
+        )?.value.trim() || "";
+
+
+      const valorMaximo =
+        Number(
+          fila.querySelector(
+            ".valorMaximoEscala"
+          )?.value || 0
+        );
+
+
+      const celdas =
+        Array.from(
+          fila.querySelectorAll("td")
+        );
+
+
+      const niveles = [];
+
+
+      nombresNiveles.forEach(
+        (nombreNivel, indiceNivel) => {
+
+          const posicionCelda =
+            indiceNivel + 2;
+
+
+          const valor =
+            Number(
+              celdas[posicionCelda]
+                ?.textContent
+                ?.trim() || 0
+            );
+
+
+          niveles.push({
+
+            nivel:
+              nombreNivel,
+
+            valor:
+              Number.isFinite(valor)
+                ? valor
+                : 0
+
+          });
+
+        }
+      );
+
+
+      total +=
+        Number.isFinite(valorMaximo)
+          ? valorMaximo
+          : 0;
+
+
+      indicadores.push({
+
+        numero:
+          index + 1,
+
+        indicador:
+          indicador,
+
+        niveles:
+          niveles,
+
+        valorMaximo:
+          Number.isFinite(valorMaximo)
+            ? valorMaximo
+            : 0
+
+      });
+
+    }
+  );
+
+
+  const seleccionado =
+    instrumentoSeleccionadoActual;
+
+
+  const escaparHTML =
+    texto =>
+
+      String(texto ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+
+  let encabezadosWord = "";
+
+
+  nombresNiveles.forEach(
+    nivel => {
+
+      encabezadosWord += `
+        <th class="nivel">
+          ${escaparHTML(nivel)}
+        </th>
+      `;
+
+    }
+  );
+
+
+  let filasWord = "";
+
+
+  indicadores.forEach(
+    item => {
+
+      let celdasNiveles = "";
+
+
+      item.niveles.forEach(
+        nivel => {
+
+          celdasNiveles += `
+            <td class="centro">
+              ${Number(nivel.valor).toFixed(2)}
+            </td>
+          `;
+
+        }
+      );
+
+
+      filasWord += `
+        <tr>
+
+          <td class="centro numero">
+            ${item.numero}
+          </td>
+
+          <td class="indicador">
+            ${escaparHTML(item.indicador)}
+          </td>
+
+          ${celdasNiveles}
+
+          <td class="centro valor">
+            ${item.valorMaximo.toFixed(2)}
+          </td>
+
+        </tr>
+      `;
+
+    }
+  );
+
+
+  const columnasTotal =
+    nombresNiveles.length + 2;
+
+
+  const contenidoWord = `
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<style>
+
+@page {
+  size: A4 portrait;
+  margin: 1cm;
+}
+
+body {
+  font-family: "Book Antiqua", Palatino, serif;
+  font-size: 9pt;
+  color: #000000;
+}
+
+  h1 {
+    text-align: center;
+    font-size: 14pt;
+    margin-bottom: 16px;
+  }
+
+  .datos {
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+  }
+
+  th,
+  td {
+    border: 1px solid #000000;
+    padding: 5px;
+    vertical-align: middle;
+  }
+
+  th {
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .numero {
+    width: 5%;
+  }
+
+  .indicador {
+    width: 30%;
+  }
+
+  .nivel {
+    text-align: center;
+  }
+
+  .valor {
+    width: 10%;
+  }
+
+  .centro {
+    text-align: center;
+  }
+
+  .total {
+    font-weight: bold;
+    text-align: right;
+  }
+
+</style>
+
+</head>
+
+<body>
+
+<h1>
+  Escala de estimación
+</h1>
+
+
+<div class="datos">
+
+  <strong>Asignatura:</strong>
+  ${escaparHTML(
+    fuenteInstrumentos?.asignatura?.nombre || ""
+  )}
+  <br>
+
+  <strong>Código:</strong>
+  ${escaparHTML(
+    fuenteInstrumentos?.asignatura?.codigo || ""
+  )}
+  <br>
+
+  <strong>Semana:</strong>
+  ${escaparHTML(seleccionado.semana)}
+  <br>
+
+  <strong>Técnica / evidencia:</strong>
+  ${escaparHTML(seleccionado.tecnica)}
+  <br>
+
+  <strong>REA(s):</strong>
+  ${escaparHTML(
+    Array.isArray(seleccionado.codigosREA)
+      ? seleccionado.codigosREA.join(", ")
+      : ""
+  )}
+  <br>
+
+  <strong>Tipo:</strong>
+  ${escaparHTML(seleccionado.tipo)}
+  <br>
+
+  <strong>Modalidad:</strong>
+  ${escaparHTML(modalidad)}
+  <br>
+
+  <strong>Valor:</strong>
+  ${Number(seleccionado.valor).toFixed(2)}
+  punto(s)
+
+</div>
+
+
+<table>
+
+  <thead>
+
+    <tr>
+
+      <th class="numero">
+        N.º
+      </th>
+
+      <th class="indicador">
+        Indicador
+      </th>
+
+      ${encabezadosWord}
+
+      <th class="valor">
+        Valor máximo
+      </th>
+
+    </tr>
+
+  </thead>
+
+
+  <tbody>
+
+    ${filasWord}
+
+
+    <tr>
+
+      <td
+        colspan="${columnasTotal}"
+        class="total"
+      >
+        Total
+      </td>
+
+      <td class="centro">
+
+        <strong>
+          ${total.toFixed(2)}
+        </strong>
+
+      </td>
+
+    </tr>
+
+  </tbody>
+
+</table>
+
+</body>
+
+</html>
+`;
+
+
+  const blob =
+    new Blob(
+      [
+        "\ufeff",
+        contenidoWord
+      ],
+      {
+        type:
+          "application/msword;charset=utf-8"
+      }
+    );
+
+
+  const url =
+    URL.createObjectURL(
+      blob
+    );
+
+
+  const enlace =
+    document.createElement(
+      "a"
+    );
+
+
+  const nombreAsignatura =
+    fuenteInstrumentos
+      ?.asignatura
+      ?.nombre
+      ?.trim()
+      || "Asignatura";
+
+
+  const nombreSeguro =
+    nombreAsignatura.replace(
+      /[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ_-]+/g,
+      "_"
+    );
+
+
+  enlace.href =
+    url;
+
+
+  enlace.download =
+    "Escala_de_estimacion_" +
+    nombreSeguro +
+    "_Semana_" +
+    seleccionado.semana +
+    ".doc";
+
+
+  document.body.appendChild(
+    enlace
+  );
+
+
+  enlace.click();
+
+
+  enlace.remove();
+
+
+  setTimeout(
+    () =>
+      URL.revokeObjectURL(url),
+    1000
+  );
 
 }
   
