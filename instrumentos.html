@@ -647,9 +647,10 @@ function mostrarEscalaEstimacion(
             <button
               type="button"
               class="btnEliminarIndicadorEscala"
-            >
-              Eliminar
-            </button>
+              onclick="eliminarIndicadorEscala(this)"
+             >
+            Eliminar
+           </button>
 
           </td>
 
@@ -1008,6 +1009,65 @@ function actualizarTotalEscala(){
     ". Faltan " +
     Math.abs(diferencia).toFixed(2) +
     " punto(s) por distribuir.";
+
+}
+
+function eliminarIndicadorEscala(boton){
+
+  const filas =
+    document.querySelectorAll(
+      ".filaIndicadorEscala"
+    );
+
+  if(filas.length <= 5){
+
+    alert(
+      "La Escala de estimación debe conservar un mínimo de 5 indicadores."
+    );
+
+    return;
+  }
+
+
+  const fila =
+    boton.closest("tr");
+
+  if(fila){
+    fila.remove();
+  }
+
+
+  renumerarIndicadoresEscala();
+
+  actualizarTotalEscala();
+
+}
+
+
+function renumerarIndicadoresEscala(){
+
+  const filas =
+    document.querySelectorAll(
+      ".filaIndicadorEscala"
+    );
+
+  filas.forEach(
+    (fila, index) => {
+
+      const numero =
+        fila.querySelector(
+          ".numeroIndicadorEscala"
+        );
+
+      if(numero){
+
+        numero.textContent =
+          index + 1;
+
+      }
+
+    }
+  );
 
 }
   
