@@ -7075,6 +7075,7 @@ tiposItemPrueba.forEach(
             ? "block"
             : "none";
 
+        actualizarCamposTiposPrueba();
       }
     );
 
@@ -7092,6 +7093,73 @@ tiposItemPrueba.forEach(
 
 }
 
+function actualizarCamposTiposPrueba(){
+
+  const contenedorCampos =
+    document.getElementById(
+      "camposDistribucionTiposPrueba"
+    );
+
+  if(!contenedorCampos){
+    return;
+  }
+
+  const tiposSeleccionados =
+    document.querySelectorAll(
+      ".tipoItemPrueba:checked"
+    );
+
+  let contenido = "";
+
+  tiposSeleccionados.forEach(
+    tipo => {
+
+      const nombre =
+        tipo.parentElement
+          ?.textContent
+          ?.trim() || tipo.value;
+
+      contenido += `
+
+        <div
+          style="
+            margin-bottom:10px;
+          "
+        >
+
+          <label>
+
+            ${nombre}:
+
+            <input
+              type="number"
+              class="cantidadTipoItemPrueba"
+              data-tipo="${tipo.value}"
+              min="0"
+              step="1"
+              value="0"
+              style="
+                width:70px;
+                margin-left:6px;
+              "
+            >
+
+            ítems
+
+          </label>
+
+        </div>
+
+      `;
+
+    }
+  );
+
+  contenedorCampos.innerHTML =
+    contenido;
+
+}
+  
 function actualizarCamposCoberturaPrueba(){
 
   const contenedorCampos =
