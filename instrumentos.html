@@ -7419,6 +7419,79 @@ function actualizarConfiguracionesEspecificasPrueba(){
   </label>
 </div>
 
+<div
+  style="
+    margin-top:14px;
+  "
+>
+  <strong>
+    Cantidad de respuestas correctas:
+  </strong>
+
+  <br><br>
+
+  <label>
+    <input
+      type="radio"
+      name="cantidadCorrectasSeleccionMultiple"
+      value="automatica"
+      checked
+      onchange="actualizarCantidadCorrectasSeleccionMultiple()"
+    >
+    Automática
+  </label>
+
+  <br><br>
+
+  <label>
+    <input
+      type="radio"
+      name="cantidadCorrectasSeleccionMultiple"
+      value="personalizada"
+      onchange="actualizarCantidadCorrectasSeleccionMultiple()"
+    >
+    Personalizada
+  </label>
+
+  <div
+    id="configuracionCantidadCorrectasSeleccionMultiple"
+    style="
+      display:none;
+      margin-top:12px;
+      padding:12px;
+      background:#f7f7f7;
+    "
+  >
+    <label>
+      <strong>
+        Número de respuestas correctas:
+      </strong>
+
+      <input
+        type="number"
+        id="cantidadCorrectasSeleccionMultiple"
+        min="2"
+        step="1"
+        value="2"
+        style="
+          width:70px;
+          margin-left:6px;
+          padding:4px;
+        "
+      >
+    </label>
+
+    <p
+      style="
+        margin-top:8px;
+        margin-bottom:0;
+      "
+    >
+      Debe existir al menos una alternativa incorrecta.
+    </p>
+  </div>
+</div>
+
           </div>
 
         `;
@@ -7430,6 +7503,32 @@ function actualizarConfiguracionesEspecificasPrueba(){
 
   contenedor.innerHTML =
     contenido;
+
+}
+
+function actualizarCantidadCorrectasSeleccionMultiple(){
+
+  const opcionPersonalizada =
+    document.querySelector(
+      'input[name="cantidadCorrectasSeleccionMultiple"][value="personalizada"]'
+    );
+
+  const configuracion =
+    document.getElementById(
+      "configuracionCantidadCorrectasSeleccionMultiple"
+    );
+
+  if(
+    !opcionPersonalizada ||
+    !configuracion
+  ){
+    return;
+  }
+
+  configuracion.style.display =
+    opcionPersonalizada.checked
+      ? "block"
+      : "none";
 
 }
   
