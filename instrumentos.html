@@ -6340,6 +6340,13 @@ cobertura.forEach(
     entre las semanas seleccionadas.
   </p>
 
+  <div
+  id="camposCoberturaPersonalizada"
+  style="
+    margin-top:12px;
+  "
+></div>
+
 </div>
 
     </div>
@@ -6714,6 +6721,13 @@ opcionesCobertura.forEach(
             ? "block"
             : "none";
 
+        if(
+  opcion.value === "personalizada" &&
+  opcion.checked
+){
+  actualizarCamposCoberturaPrueba();
+}
+
       }
     );
 
@@ -6788,6 +6802,80 @@ opcionesNivelCognitivo.forEach(
   });
 
 }
+
+function actualizarCamposCoberturaPrueba(){
+
+  const contenedorCampos =
+    document.getElementById(
+      "camposCoberturaPersonalizada"
+    );
+
+  if(!contenedorCampos){
+    return;
+  }
+
+  const semanasSeleccionadas =
+    document.querySelectorAll(
+      ".semanaCoberturaPrueba:checked"
+    );
+
+  let contenido = "";
+
+  semanasSeleccionadas.forEach(
+    semana => {
+
+      contenido += `
+
+        <div
+          style="
+            margin-bottom:10px;
+          "
+        >
+
+          <label>
+
+            Semana ${semana.value}:
+
+            <input
+              type="number"
+              class="cantidadItemsSemanaPrueba"
+              data-semana="${semana.value}"
+              min="0"
+              step="1"
+              value="0"
+              style="
+                width:70px;
+                margin-left:6px;
+              "
+            >
+
+            ítems
+
+          </label>
+
+        </div>
+
+      `;
+
+    }
+  );
+
+  if(semanasSeleccionadas.length === 0){
+
+    contenido = `
+      <p>
+        Seleccione al menos una semana
+        en la cobertura de la prueba.
+      </p>
+    `;
+
+  }
+
+  contenedorCampos.innerHTML =
+    contenido;
+
+}
+  
 function actualizarDificultadPrueba(){
 
   const campoFacil =
