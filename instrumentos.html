@@ -7552,6 +7552,204 @@ function actualizarConfiguracionesEspecificasPrueba(){
         `;
 
       }
+
+      if(
+        tipo.value === "verdadero_falso"
+      ){
+
+        contenido += `
+
+          <div
+            style="
+              padding:14px;
+              margin-top:12px;
+              border:1px solid #dddddd;
+            "
+          >
+
+            <strong>
+              Verdadero/Falso
+            </strong>
+
+            <p
+              style="
+                margin-top:6px;
+                margin-bottom:0;
+              "
+            >
+              Configure las características
+              de este tipo de ítem.
+            </p>
+
+
+            <div
+              style="
+                margin-top:14px;
+              "
+            >
+
+              <strong>
+                Contextualización:
+              </strong>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="contextualizacionVerdaderoFalso"
+                  value="automatica"
+                  checked
+                >
+                Automática según el contenido y los REA
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="contextualizacionVerdaderoFalso"
+                  value="directa"
+                >
+                Enunciados directos
+              </label>
+
+            </div>
+
+
+            <div
+              style="
+                margin-top:14px;
+              "
+            >
+
+              <strong>
+                Uso de cálculos:
+              </strong>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="calculosVerdaderoFalso"
+                  value="segun_contenido"
+                  checked
+                >
+                Según corresponda al contenido
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="calculosVerdaderoFalso"
+                  value="sin_calculos"
+                >
+                Sin cálculos
+              </label>
+
+            </div>
+
+
+            <div
+              style="
+                margin-top:14px;
+              "
+            >
+
+              <strong>
+                Distribución de respuestas:
+              </strong>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="distribucionVerdaderoFalso"
+                  value="equilibrada"
+                  checked
+                  onchange="actualizarDistribucionVerdaderoFalso()"
+                >
+                Equilibrada automáticamente
+              </label>
+
+              <p
+                style="
+                  margin-top:5px;
+                  margin-left:24px;
+                  margin-bottom:12px;
+                "
+              >
+                El sistema distribuirá las respuestas
+                verdaderas y falsas de forma equilibrada,
+                evitando secuencias predecibles.
+              </p>
+
+              <label>
+                <input
+                  type="radio"
+                  name="distribucionVerdaderoFalso"
+                  value="personalizada"
+                  onchange="actualizarDistribucionVerdaderoFalso()"
+                >
+                Personalizada
+              </label>
+
+
+              <div
+                id="configuracionDistribucionVerdaderoFalso"
+                style="
+                  display:none;
+                  margin-top:12px;
+                  padding:12px;
+                  background:#f7f7f7;
+                "
+              >
+
+                <label>
+
+                  <strong>
+                    Cantidad de enunciados verdaderos:
+                  </strong>
+
+                  <input
+                    type="number"
+                    id="cantidadVerdaderosPrueba"
+                    min="0"
+                    step="1"
+                    value="0"
+                    oninput="actualizarDistribucionVerdaderoFalso()"
+                    style="
+                      width:70px;
+                      margin-left:6px;
+                      padding:4px;
+                    "
+                  >
+
+                </label>
+
+
+                <p
+                  id="estadoDistribucionVerdaderoFalso"
+                  style="
+                    margin-top:8px;
+                    margin-bottom:0;
+                  "
+                ></p>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        `;
+
+      }
       
     }
   );
@@ -7630,6 +7828,112 @@ function actualizarCantidadCorrectasSeleccionMultiple(){
     campoCorrectas.value =
       String(maximoCorrectas);
   }
+
+}
+
+function actualizarDistribucionVerdaderoFalso(){
+
+  const opcionPersonalizada =
+    document.querySelector(
+      'input[name="distribucionVerdaderoFalso"][value="personalizada"]'
+    );
+
+  const configuracion =
+    document.getElementById(
+      "configuracionDistribucionVerdaderoFalso"
+    );
+
+  const campoVerdaderos =
+    document.getElementById(
+      "cantidadVerdaderosPrueba"
+    );
+
+  const estado =
+    document.getElementById(
+      "estadoDistribucionVerdaderoFalso"
+    );
+
+  if(
+    !opcionPersonalizada ||
+    !configuracion
+  ){
+    return;
+  }
+
+  configuracion.style.display =
+    opcionPersonalizada.checked
+      ? "block"
+      : "none";
+
+  if(!opcionPersonalizada.checked){
+    return;
+  }
+
+  const campoCantidadTipo =
+    document.querySelector(
+      '.cantidadTipoItemPrueba[data-tipo="verdadero_falso"]'
+    );
+
+  if(
+    !campoCantidadTipo ||
+    !campoVerdaderos ||
+    !estado
+  ){
+    return;
+  }
+
+  const totalItems =
+    Number(campoCantidadTipo.value);
+
+  let cantidadVerdaderos =
+    Number(campoVerdaderos.value);
+
+  if(
+    !Number.isFinite(totalItems) ||
+    totalItems <= 0
+  ){
+
+    estado.textContent =
+      "Primero debe asignar una cantidad de ítems de Verdadero/Falso.";
+
+    return;
+  }
+
+  campoVerdaderos.min = "0";
+
+  campoVerdaderos.max =
+    String(totalItems);
+
+  if(
+    !Number.isFinite(cantidadVerdaderos) ||
+    cantidadVerdaderos < 0
+  ){
+
+    cantidadVerdaderos = 0;
+
+    campoVerdaderos.value = "0";
+
+  }
+
+  if(cantidadVerdaderos > totalItems){
+
+    cantidadVerdaderos =
+      totalItems;
+
+    campoVerdaderos.value =
+      String(totalItems);
+
+  }
+
+  const cantidadFalsos =
+    totalItems - cantidadVerdaderos;
+
+  estado.textContent =
+    "Distribución: " +
+    cantidadVerdaderos +
+    " verdadero(s) y " +
+    cantidadFalsos +
+    " falso(s).";
 
 }
   
