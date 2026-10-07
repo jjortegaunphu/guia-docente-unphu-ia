@@ -6347,6 +6347,17 @@ cobertura.forEach(
   "
 ></div>
 
+<p
+  id="estadoCoberturaPrueba"
+  style="
+    margin-top:12px;
+    margin-bottom:0;
+    font-weight:bold;
+  "
+>
+  Total distribuido: 0 ítems.
+</p>
+
 </div>
 
     </div>
@@ -6873,6 +6884,7 @@ function actualizarCamposCoberturaPrueba(){
               min="0"
               step="1"
               value="0"
+              oninput="actualizarTotalCoberturaPrueba()"
               style="
                 width:70px;
                 margin-left:6px;
@@ -6903,6 +6915,82 @@ function actualizarCamposCoberturaPrueba(){
 
   contenedorCampos.innerHTML =
     contenido;
+
+}
+
+function actualizarTotalCoberturaPrueba(){
+
+  const campos =
+    document.querySelectorAll(
+      ".cantidadItemsSemanaPrueba"
+    );
+
+  const campoTotal =
+    document.getElementById(
+      "cantidadItemsPrueba"
+    );
+
+  const estado =
+    document.getElementById(
+      "estadoCoberturaPrueba"
+    );
+
+  if(
+    !campoTotal ||
+    !estado
+  ){
+    return;
+  }
+
+  const cantidadTotal =
+    Number(campoTotal.value);
+
+  let totalDistribuido = 0;
+
+  campos.forEach(
+    campo => {
+
+      const valor =
+        Number(campo.value);
+
+      if(Number.isFinite(valor)){
+        totalDistribuido += valor;
+      }
+
+    }
+  );
+
+  if(
+    !Number.isFinite(cantidadTotal) ||
+    cantidadTotal < 1
+  ){
+
+    estado.textContent =
+      "Indique una cantidad total de ítems válida.";
+
+    return;
+  }
+
+  if(totalDistribuido === cantidadTotal){
+
+    estado.textContent =
+      "Total distribuido: " +
+      totalDistribuido +
+      " / " +
+      cantidadTotal +
+      " ítems. La distribución es válida.";
+
+  }
+  else{
+
+    estado.textContent =
+      "Total distribuido: " +
+      totalDistribuido +
+      " / " +
+      cantidadTotal +
+      " ítems. La distribución debe coincidir con la cantidad total de ítems.";
+
+  }
 
 }
   
