@@ -6851,6 +6851,45 @@ cobertura.forEach(
         >
         Identificación
       </label>
+
+<div
+  id="configuracionDistribucionTiposPrueba"
+  style="
+    display:none;
+    margin-top:20px;
+    padding-top:16px;
+    border-top:1px solid #dddddd;
+  "
+>
+  <strong>
+    Distribución de ítems por tipo
+  </strong>
+
+  <p
+    style="
+      margin-top:6px;
+      margin-bottom:12px;
+    "
+  >
+    Distribuya la cantidad total de ítems
+    entre los tipos seleccionados.
+  </p>
+
+  <div
+    id="camposDistribucionTiposPrueba"
+  ></div>
+
+  <p
+    id="estadoDistribucionTiposPrueba"
+    style="
+      margin-top:12px;
+      margin-bottom:0;
+      font-weight:bold;
+    "
+  >
+    Total distribuido: 0 ítems.
+  </p>
+</div>
   
 </div>
 
@@ -7000,6 +7039,39 @@ opcionesPuntuacion.forEach(
         configuracionPuntuacion.style.display =
           opcion.value === "personalizada" &&
           opcion.checked
+            ? "block"
+            : "none";
+
+      }
+    );
+
+  }
+);
+
+    const tiposItemPrueba =
+  contenedor.querySelectorAll(
+    ".tipoItemPrueba"
+  );
+
+const configuracionDistribucionTipos =
+  contenedor.querySelector(
+    "#configuracionDistribucionTiposPrueba"
+  );
+
+tiposItemPrueba.forEach(
+  tipo => {
+
+    tipo.addEventListener(
+      "change",
+      () => {
+
+        const seleccionados =
+          contenedor.querySelectorAll(
+            ".tipoItemPrueba:checked"
+          );
+
+        configuracionDistribucionTipos.style.display =
+          seleccionados.length > 0
             ? "block"
             : "none";
 
