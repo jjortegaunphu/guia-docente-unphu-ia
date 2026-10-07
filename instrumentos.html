@@ -6540,6 +6540,7 @@ cobertura.forEach(
       min="0"
       max="100"
       value="10"
+      oninput="actualizarNivelCognitivoPrueba()"
       style="width:70px;"
     >
   </label>
@@ -6554,6 +6555,7 @@ cobertura.forEach(
       min="0"
       max="100"
       value="20"
+      oninput="actualizarNivelCognitivoPrueba()"
       style="width:70px;"
     >
   </label>
@@ -6568,6 +6570,7 @@ cobertura.forEach(
       min="0"
       max="100"
       value="30"
+      oninput="actualizarNivelCognitivoPrueba()"
       style="width:70px;"
     >
   </label>
@@ -6582,6 +6585,7 @@ cobertura.forEach(
       min="0"
       max="100"
       value="30"
+      oninput="actualizarNivelCognitivoPrueba()"
       style="width:70px;"
     >
   </label>
@@ -6596,9 +6600,21 @@ cobertura.forEach(
       min="0"
       max="100"
       value="10"
+      oninput="actualizarNivelCognitivoPrueba()"
       style="width:70px;"
     >
   </label>
+
+<p
+  id="estadoNivelCognitivoPrueba"
+  style="
+    margin-top:12px;
+    margin-bottom:0;
+    font-weight:bold;
+  "
+>
+  Total: 100 %. La distribución es válida.
+</p>
 
 </div>
 
@@ -6746,6 +6762,102 @@ function actualizarDificultadPrueba(){
   }
 
 }  
+
+function actualizarNivelCognitivoPrueba(){
+
+  const campoRecordar =
+    document.getElementById(
+      "porcentajeNivelRecordar"
+    );
+
+  const campoComprender =
+    document.getElementById(
+      "porcentajeNivelComprender"
+    );
+
+  const campoAplicar =
+    document.getElementById(
+      "porcentajeNivelAplicar"
+    );
+
+  const campoAnalizar =
+    document.getElementById(
+      "porcentajeNivelAnalizar"
+    );
+
+  const campoEvaluar =
+    document.getElementById(
+      "porcentajeNivelEvaluar"
+    );
+
+  const estado =
+    document.getElementById(
+      "estadoNivelCognitivoPrueba"
+    );
+
+  if(
+    !campoRecordar ||
+    !campoComprender ||
+    !campoAplicar ||
+    !campoAnalizar ||
+    !campoEvaluar ||
+    !estado
+  ){
+    return;
+  }
+
+  const recordar =
+    Number(campoRecordar.value);
+
+  const comprender =
+    Number(campoComprender.value);
+
+  const aplicar =
+    Number(campoAplicar.value);
+
+  const analizar =
+    Number(campoAnalizar.value);
+
+  const evaluar =
+    Number(campoEvaluar.value);
+
+  const total =
+    recordar +
+    comprender +
+    aplicar +
+    analizar +
+    evaluar;
+
+  if(
+    !Number.isFinite(recordar) ||
+    !Number.isFinite(comprender) ||
+    !Number.isFinite(aplicar) ||
+    !Number.isFinite(analizar) ||
+    !Number.isFinite(evaluar)
+  ){
+    estado.textContent =
+      "Introduzca porcentajes válidos.";
+
+    return;
+  }
+
+  if(total === 100){
+
+    estado.textContent =
+      "Total: 100 %. La distribución es válida.";
+
+  }
+  else{
+
+    estado.textContent =
+      "Total: " +
+      total +
+      " %. La distribución debe sumar exactamente 100 %.";
+
+  }
+
+}
+  
 async function seleccionarInstrumento(index){
 
   const instrumentos =
