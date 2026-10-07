@@ -7114,6 +7114,8 @@ tiposItemPrueba.forEach(
              : "none";
 
         actualizarCamposTiposPrueba();
+
+        actualizarConfiguracionesEspecificasPrueba();
       }
     );
 
@@ -7131,6 +7133,69 @@ tiposItemPrueba.forEach(
 
 }
 
+function actualizarConfiguracionesEspecificasPrueba(){
+
+  const contenedor =
+    document.getElementById(
+      "camposConfiguracionesEspecificasPrueba"
+    );
+
+  if(!contenedor){
+    return;
+  }
+
+  const tiposSeleccionados =
+    document.querySelectorAll(
+      ".tipoItemPrueba:checked"
+    );
+
+  let contenido = "";
+
+  tiposSeleccionados.forEach(
+    tipo => {
+
+      if(
+        tipo.value === "seleccion_unica"
+      ){
+
+        contenido += `
+
+          <div
+            style="
+              padding:14px;
+              margin-top:12px;
+              border:1px solid #dddddd;
+            "
+          >
+
+            <strong>
+              Selección múltiple – respuesta única
+            </strong>
+
+            <p
+              style="
+                margin-top:6px;
+                margin-bottom:0;
+              "
+            >
+              Configure las características
+              de este tipo de ítem.
+            </p>
+
+          </div>
+
+        `;
+
+      }
+
+    }
+  );
+
+  contenedor.innerHTML =
+    contenido;
+
+}
+  
 function actualizarCamposTiposPrueba(){
 
   const contenedorCampos =
