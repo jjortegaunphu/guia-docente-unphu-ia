@@ -6717,6 +6717,27 @@ cobertura.forEach(
     Personalizada
   </label>
 
+<div
+  id="configuracionPuntuacionPersonalizada"
+  style="
+    display:none;
+    margin-top:15px;
+    padding:12px;
+    background:#f7f7f7;
+  "
+>
+  <p
+    style="
+      margin-top:0;
+      margin-bottom:0;
+    "
+  >
+    La puntuación personalizada se configurará
+    después de definir los tipos y la cantidad
+    de ítems de la prueba.
+  </p>
+</div>
+
 </div>
       
 </div>
@@ -6836,6 +6857,35 @@ opcionesNivelCognitivo.forEach(
       () => {
 
         configuracionNivelCognitivo.style.display =
+          opcion.value === "personalizada" &&
+          opcion.checked
+            ? "block"
+            : "none";
+
+      }
+    );
+
+  }
+);
+
+const opcionesPuntuacion =
+  contenedor.querySelectorAll(
+    'input[name="asignacionPuntuacionPrueba"]'
+  );
+
+const configuracionPuntuacion =
+  contenedor.querySelector(
+    "#configuracionPuntuacionPersonalizada"
+  );
+
+opcionesPuntuacion.forEach(
+  opcion => {
+
+    opcion.addEventListener(
+      "change",
+      () => {
+
+        configuracionPuntuacion.style.display =
           opcion.value === "personalizada" &&
           opcion.checked
             ? "block"
