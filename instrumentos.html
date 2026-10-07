@@ -5957,6 +5957,123 @@ setTimeout(
   1000
 );
 }
+
+  function mostrarConfiguracionPruebaObjetiva(
+  seleccionado
+){
+
+  const contenedor =
+    document.getElementById(
+      "instrumentoGenerado"
+    );
+
+  if(!contenedor){
+    return;
+  }
+
+
+  if(!seleccionado){
+
+    alert(
+      "No fue posible identificar la Prueba objetiva seleccionada."
+    );
+
+    return;
+  }
+
+
+  const rea =
+    Array.isArray(
+      seleccionado.codigosREA
+    )
+      ? seleccionado.codigosREA.join(", ")
+      : "";
+
+
+  contenedor.innerHTML = `
+
+    <hr>
+
+    <h2>
+      Prueba objetiva
+    </h2>
+
+
+    <h3>
+      1. Información de la evaluación
+    </h3>
+
+
+    <div
+      style="
+        border:1px solid #cccccc;
+        padding:16px;
+        margin-top:12px;
+      "
+    >
+
+      <p>
+        <strong>
+          Actividad evaluativa:
+        </strong>
+
+        ${seleccionado.tecnica || ""}
+      </p>
+
+
+      <p>
+        <strong>
+          Semana de aplicación:
+        </strong>
+
+        ${seleccionado.semana || ""}
+      </p>
+
+
+      <p>
+        <strong>
+          Instrumento:
+        </strong>
+
+        ${seleccionado.instrumento || ""}
+      </p>
+
+
+      <p>
+        <strong>
+          Valor:
+        </strong>
+
+        ${Number(
+          seleccionado.valor || 0
+        ).toFixed(2)}
+        punto(s)
+      </p>
+
+
+      <p>
+        <strong>
+          REA evaluados:
+        </strong>
+
+        ${rea || "No especificados"}
+      </p>
+
+    </div>
+
+  `;
+
+
+  contenedor.style.display =
+    "block";
+
+
+  contenedor.scrollIntoView({
+    behavior: "smooth",
+    block: "start"
+  });
+
+}
   
 async function seleccionarInstrumento(index){
 
@@ -5977,6 +6094,18 @@ async function seleccionarInstrumento(index){
 
   instrumentoSeleccionadoActual =
   seleccionado;
+
+  if(
+  seleccionado.instrumento ===
+    "Prueba objetiva"
+){
+
+  mostrarConfiguracionPruebaObjetiva(
+    seleccionado
+  );
+
+  return;
+}
 
 const elaborado =
   buscarInstrumentoElaborado(
