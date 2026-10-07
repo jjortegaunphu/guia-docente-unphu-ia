@@ -7899,31 +7899,34 @@ function actualizarDistribucionVerdaderoFalso(){
     return;
   }
 
-  campoVerdaderos.min = "0";
+ campoVerdaderos.min = "1";
 
-  campoVerdaderos.max =
-    String(totalItems);
+ campoVerdaderos.max =
+  String(totalItems - 1);
 
   if(
-    !Number.isFinite(cantidadVerdaderos) ||
-    cantidadVerdaderos < 0
-  ){
+  !Number.isFinite(cantidadVerdaderos) ||
+  cantidadVerdaderos < 1
+){
 
-    cantidadVerdaderos = 0;
+  cantidadVerdaderos = 1;
 
-    campoVerdaderos.value = "0";
+  campoVerdaderos.value = "1";
 
-  }
+}
 
-  if(cantidadVerdaderos > totalItems){
+  if(
+  cantidadVerdaderos >
+  totalItems - 1
+){
 
-    cantidadVerdaderos =
-      totalItems;
+  cantidadVerdaderos =
+    totalItems - 1;
 
-    campoVerdaderos.value =
-      String(totalItems);
+  campoVerdaderos.value =
+    String(totalItems - 1);
 
-  }
+}
 
   const cantidadFalsos =
     totalItems - cantidadVerdaderos;
