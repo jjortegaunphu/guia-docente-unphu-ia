@@ -6428,6 +6428,7 @@ cobertura.forEach(
       min="0"
       max="100"
       value="30"
+      oninput="actualizarDificultadPrueba()"
       style="width:70px;"
     >
   </label>
@@ -6442,6 +6443,7 @@ cobertura.forEach(
       min="0"
       max="100"
       value="40"
+      oninput="actualizarDificultadPrueba()"
       style="width:70px;"
     >
   </label>
@@ -6456,9 +6458,21 @@ cobertura.forEach(
       min="0"
       max="100"
       value="30"
+      oninput="actualizarDificultadPrueba()"
       style="width:70px;"
     >
   </label>
+
+  <p
+  id="estadoDificultadPrueba"
+  style="
+    margin-top:12px;
+    margin-bottom:0;
+    font-weight:bold;
+  "
+>
+  Total: 100 %. La distribución es válida.
+</p>
 
 </div>
 
@@ -6508,7 +6522,76 @@ opcionesDificultad.forEach(
   });
 
 }
-  
+function actualizarDificultadPrueba(){
+
+  const campoFacil =
+    document.getElementById(
+      "porcentajeDificultadFacil"
+    );
+
+  const campoMedia =
+    document.getElementById(
+      "porcentajeDificultadMedia"
+    );
+
+  const campoDificil =
+    document.getElementById(
+      "porcentajeDificultadDificil"
+    );
+
+  const estado =
+    document.getElementById(
+      "estadoDificultadPrueba"
+    );
+
+  if(
+    !campoFacil ||
+    !campoMedia ||
+    !campoDificil ||
+    !estado
+  ){
+    return;
+  }
+
+  const facil =
+    Number(campoFacil.value);
+
+  const media =
+    Number(campoMedia.value);
+
+  const dificil =
+    Number(campoDificil.value);
+
+  const total =
+    facil + media + dificil;
+
+  if(
+    !Number.isFinite(facil) ||
+    !Number.isFinite(media) ||
+    !Number.isFinite(dificil)
+  ){
+    estado.textContent =
+      "Introduzca porcentajes válidos.";
+
+    return;
+  }
+
+  if(total === 100){
+
+    estado.textContent =
+      "Total: 100 %. La distribución es válida.";
+
+  }
+  else{
+
+    estado.textContent =
+      "Total: " +
+      total +
+      " %. La distribución debe sumar exactamente 100 %.";
+
+  }
+
+}  
 async function seleccionarInstrumento(index){
 
   const instrumentos =
