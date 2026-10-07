@@ -7182,6 +7182,74 @@ function actualizarConfiguracionesEspecificasPrueba(){
               de este tipo de ítem.
             </p>
 
+            <div
+  style="
+    margin-top:14px;
+  "
+>
+  <label>
+    <strong>
+      Número de alternativas:
+    </strong>
+
+    <select
+      id="alternativasSeleccionUnica"
+      style="
+        margin-left:6px;
+        padding:4px;
+      "
+    >
+      <option value="3">
+        3
+      </option>
+
+      <option
+        value="4"
+        selected
+      >
+        4 (recomendado)
+      </option>
+
+      <option value="5">
+        5
+      </option>
+    </select>
+  </label>
+</div>
+
+<div
+  style="
+    margin-top:14px;
+  "
+>
+  <strong>
+    Contextualización:
+  </strong>
+
+  <br><br>
+
+  <label>
+    <input
+      type="radio"
+      name="contextualizacionSeleccionUnica"
+      value="automatica"
+      checked
+    >
+    Automática según el contenido y los REA
+  </label>
+
+  <br><br>
+
+  <label>
+    <input
+      type="radio"
+      name="contextualizacionSeleccionUnica"
+      value="directa"
+    >
+    Enunciados directos
+  </label>
+</div>
+
           </div>
 
         `;
