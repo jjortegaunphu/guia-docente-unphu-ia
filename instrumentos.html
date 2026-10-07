@@ -6320,6 +6320,28 @@ cobertura.forEach(
         Personalizada
       </label>
 
+      <div
+  id="configuracionCoberturaPersonalizada"
+  style="
+    display:none;
+    margin-top:15px;
+    padding:12px;
+    background:#f7f7f7;
+  "
+>
+
+  <p
+    style="
+      margin-top:0;
+      margin-bottom:0;
+    "
+  >
+    Distribuya la cantidad de ítems
+    entre las semanas seleccionadas.
+  </p>
+
+</div>
+
     </div>
 
     <h3
@@ -6669,6 +6691,35 @@ cobertura.forEach(
 
   `;
 
+const opcionesCobertura =
+  contenedor.querySelectorAll(
+    'input[name="distribucionCoberturaPrueba"]'
+  );
+
+const configuracionCobertura =
+  contenedor.querySelector(
+    "#configuracionCoberturaPersonalizada"
+  );
+
+opcionesCobertura.forEach(
+  opcion => {
+
+    opcion.addEventListener(
+      "change",
+      () => {
+
+        configuracionCobertura.style.display =
+          opcion.value === "personalizada" &&
+          opcion.checked
+            ? "block"
+            : "none";
+
+      }
+    );
+
+  }
+);
+    
     const opcionesDificultad =
   contenedor.querySelectorAll(
     'input[name="distribucionDificultadPrueba"]'
