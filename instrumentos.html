@@ -6890,6 +6890,34 @@ cobertura.forEach(
     Total distribuido: 0 ítems.
   </p>
 </div>
+
+      <div
+        id="configuracionesEspecificasTiposPrueba"
+        style="
+          display:none;
+          margin-top:22px;
+          padding-top:16px;
+          border-top:1px solid #dddddd;
+        "
+      >
+        <strong>
+          Configuración específica de los tipos de ítems
+        </strong>
+
+        <p
+          style="
+            margin-top:6px;
+            margin-bottom:12px;
+          "
+        >
+          Configure las características particulares
+          de los tipos de ítems seleccionados.
+        </p>
+
+        <div
+          id="camposConfiguracionesEspecificasPrueba"
+        ></div>
+      </div>
   
 </div>
 
@@ -7058,6 +7086,11 @@ const configuracionDistribucionTipos =
     "#configuracionDistribucionTiposPrueba"
   );
 
+    const configuracionesEspecificasTipos =
+  contenedor.querySelector(
+    "#configuracionesEspecificasTiposPrueba"
+  );
+
 tiposItemPrueba.forEach(
   tipo => {
 
@@ -7074,6 +7107,11 @@ tiposItemPrueba.forEach(
           seleccionados.length > 0
             ? "block"
             : "none";
+
+        configuracionesEspecificasTipos.style.display =
+          seleccionados.length > 0
+             ? "block"
+             : "none";
 
         actualizarCamposTiposPrueba();
       }
