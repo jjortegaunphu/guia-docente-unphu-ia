@@ -7330,6 +7330,7 @@ function actualizarConfiguracionesEspecificasPrueba(){
 
     <select
       id="alternativasSeleccionMultiple"
+      onchange="actualizarCantidadCorrectasSeleccionMultiple()"
       style="
         margin-left:6px;
         padding:4px;
@@ -7518,6 +7519,16 @@ function actualizarCantidadCorrectasSeleccionMultiple(){
       "configuracionCantidadCorrectasSeleccionMultiple"
     );
 
+  const selectorAlternativas =
+    document.getElementById(
+      "alternativasSeleccionMultiple"
+    );
+
+  const campoCorrectas =
+    document.getElementById(
+      "cantidadCorrectasSeleccionMultiple"
+    );
+
   if(
     !opcionPersonalizada ||
     !configuracion
@@ -7529,6 +7540,42 @@ function actualizarCantidadCorrectasSeleccionMultiple(){
     opcionPersonalizada.checked
       ? "block"
       : "none";
+
+  if(
+    !selectorAlternativas ||
+    !campoCorrectas
+  ){
+    return;
+  }
+
+  const cantidadAlternativas =
+    Number(selectorAlternativas.value);
+
+  const maximoCorrectas =
+    cantidadAlternativas - 1;
+
+  campoCorrectas.min = "2";
+
+  campoCorrectas.max =
+    String(maximoCorrectas);
+
+  const cantidadActual =
+    Number(campoCorrectas.value);
+
+  if(
+    !Number.isFinite(cantidadActual) ||
+    cantidadActual < 2
+  ){
+    campoCorrectas.value = "2";
+  }
+
+  if(
+    Number(campoCorrectas.value) >
+    maximoCorrectas
+  ){
+    campoCorrectas.value =
+      String(maximoCorrectas);
+  }
 
 }
   
