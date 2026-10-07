@@ -7138,6 +7138,7 @@ function actualizarCamposTiposPrueba(){
               min="0"
               step="1"
               value="0"
+              oninput="actualizarTotalTiposPrueba()"
               style="
                 width:70px;
                 margin-left:6px;
@@ -7157,6 +7158,102 @@ function actualizarCamposTiposPrueba(){
 
   contenedorCampos.innerHTML =
     contenido;
+
+}
+
+function actualizarTotalTiposPrueba(){
+
+  const campos =
+    document.querySelectorAll(
+      ".cantidadTipoItemPrueba"
+    );
+
+  const campoTotal =
+    document.getElementById(
+      "cantidadItemsPrueba"
+    );
+
+  const estado =
+    document.getElementById(
+      "estadoDistribucionTiposPrueba"
+    );
+
+  if(
+    !campoTotal ||
+    !estado
+  ){
+    return;
+  }
+
+  const cantidadTotal =
+    Number(campoTotal.value);
+
+  let totalDistribuido = 0;
+
+  campos.forEach(
+    campo => {
+
+      const valor =
+        Number(campo.value);
+
+      if(Number.isFinite(valor)){
+        totalDistribuido += valor;
+      }
+
+    }
+  );
+
+  if(
+    !Number.isFinite(cantidadTotal) ||
+    cantidadTotal < 1
+  ){
+
+    estado.textContent =
+      "Indique una cantidad total de ítems válida.";
+
+    return;
+  }
+
+  if(totalDistribuido === cantidadTotal){
+
+    estado.textContent =
+      "Total distribuido: " +
+      totalDistribuido +
+      " / " +
+      cantidadTotal +
+      " ítems. La distribución es válida.";
+
+    return;
+  }
+
+  if(totalDistribuido < cantidadTotal){
+
+    const faltantes =
+      cantidadTotal - totalDistribuido;
+
+    estado.textContent =
+      "Total distribuido: " +
+      totalDistribuido +
+      " / " +
+      cantidadTotal +
+      " ítems. Faltan " +
+      faltantes +
+      " ítem(s) por distribuir.";
+
+    return;
+  }
+
+  const excedentes =
+    totalDistribuido - cantidadTotal;
+
+  estado.textContent =
+    "Total distribuido: " +
+    totalDistribuido +
+    " / " +
+    cantidadTotal +
+    " ítems. La distribución excede en " +
+    excedentes +
+    " ítem(s).";
 
 }
   
