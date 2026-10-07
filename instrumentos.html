@@ -7318,6 +7318,107 @@ function actualizarConfiguracionesEspecificasPrueba(){
               de este tipo de ítem.
             </p>
 
+            <div
+  style="
+    margin-top:14px;
+  "
+>
+  <label>
+    <strong>
+      Número de alternativas:
+    </strong>
+
+    <select
+      id="alternativasSeleccionMultiple"
+      style="
+        margin-left:6px;
+        padding:4px;
+      "
+    >
+      <option value="4">
+        4
+      </option>
+
+      <option
+        value="5"
+        selected
+      >
+        5 (recomendado)
+      </option>
+
+      <option value="6">
+        6
+      </option>
+    </select>
+  </label>
+</div>
+
+<div
+  style="
+    margin-top:14px;
+  "
+>
+  <strong>
+    Contextualización:
+  </strong>
+
+  <br><br>
+
+  <label>
+    <input
+      type="radio"
+      name="contextualizacionSeleccionMultiple"
+      value="automatica"
+      checked
+    >
+    Automática según el contenido y los REA
+  </label>
+
+  <br><br>
+
+  <label>
+    <input
+      type="radio"
+      name="contextualizacionSeleccionMultiple"
+      value="directa"
+    >
+    Enunciados directos
+  </label>
+</div>
+
+<div
+  style="
+    margin-top:14px;
+  "
+>
+  <strong>
+    Uso de cálculos:
+  </strong>
+
+  <br><br>
+
+  <label>
+    <input
+      type="radio"
+      name="calculosSeleccionMultiple"
+      value="segun_contenido"
+      checked
+    >
+    Según corresponda al contenido
+  </label>
+
+  <br><br>
+
+  <label>
+    <input
+      type="radio"
+      name="calculosSeleccionMultiple"
+      value="sin_calculos"
+    >
+    Sin cálculos
+  </label>
+</div>
+
           </div>
 
         `;
