@@ -5958,10 +5958,77 @@ setTimeout(
 );
 }
 
+function obtenerCoberturaPruebaObjetiva(
+  seleccionado
+){
+
+  if(
+    !seleccionado ||
+    !fuenteInstrumentos
+  ){
+    return [];
+  }
+
+
+  const semanaExamen =
+    Number(seleccionado.semana);
+
+
+  if(
+    !Number.isFinite(semanaExamen) ||
+    semanaExamen <= 1
+  ){
+    return [];
+  }
+
+
+  const cronograma =
+    Array.isArray(
+      fuenteInstrumentos.cronograma
+    )
+      ? fuenteInstrumentos.cronograma
+      : [];
+
+
+  const cobertura =
+    cronograma
+      .filter(semana => {
+
+        const numeroSemana =
+          Number(semana.semana);
+
+        return (
+          Number.isFinite(numeroSemana) &&
+          numeroSemana >= 1 &&
+          numeroSemana < semanaExamen
+        );
+
+      })
+      .sort(
+        (a, b) =>
+          Number(a.semana) -
+          Number(b.semana)
+      );
+
+
+  return cobertura;
+
+}
+  
   function mostrarConfiguracionPruebaObjetiva(
   seleccionado
 ){
 
+const cobertura =
+  obtenerCoberturaPruebaObjetiva(
+    seleccionado
+  );
+
+console.log(
+  "Cobertura identificada para la Prueba objetiva:",
+  cobertura
+);
+    
   const contenedor =
     document.getElementById(
       "instrumentoGenerado"
