@@ -6522,6 +6522,86 @@ cobertura.forEach(
     Personalizado
   </label>
 
+  <div
+  id="configuracionNivelCognitivoPersonalizado"
+  style="
+    display:none;
+    margin-top:15px;
+    padding:12px;
+    background:#f7f7f7;
+  "
+>
+
+  <label>
+    Recordar (%):
+    <input
+      type="number"
+      id="porcentajeNivelRecordar"
+      min="0"
+      max="100"
+      value="10"
+      style="width:70px;"
+    >
+  </label>
+
+  &nbsp;&nbsp;
+
+  <label>
+    Comprender (%):
+    <input
+      type="number"
+      id="porcentajeNivelComprender"
+      min="0"
+      max="100"
+      value="20"
+      style="width:70px;"
+    >
+  </label>
+
+  &nbsp;&nbsp;
+
+  <label>
+    Aplicar (%):
+    <input
+      type="number"
+      id="porcentajeNivelAplicar"
+      min="0"
+      max="100"
+      value="30"
+      style="width:70px;"
+    >
+  </label>
+
+  &nbsp;&nbsp;
+
+  <label>
+    Analizar (%):
+    <input
+      type="number"
+      id="porcentajeNivelAnalizar"
+      min="0"
+      max="100"
+      value="30"
+      style="width:70px;"
+    >
+  </label>
+
+  &nbsp;&nbsp;
+
+  <label>
+    Evaluar (%):
+    <input
+      type="number"
+      id="porcentajeNivelEvaluar"
+      min="0"
+      max="100"
+      value="10"
+      style="width:70px;"
+    >
+  </label>
+
+</div>
+
 </div>
       
     </div>
@@ -6557,7 +6637,35 @@ opcionesDificultad.forEach(
   }
 );
 
+const opcionesNivelCognitivo =
+  contenedor.querySelectorAll(
+    'input[name="distribucionNivelCognitivoPrueba"]'
+  );
 
+const configuracionNivelCognitivo =
+  contenedor.querySelector(
+    "#configuracionNivelCognitivoPersonalizado"
+  );
+
+opcionesNivelCognitivo.forEach(
+  opcion => {
+
+    opcion.addEventListener(
+      "change",
+      () => {
+
+        configuracionNivelCognitivo.style.display =
+          opcion.value === "personalizada" &&
+          opcion.checked
+            ? "block"
+            : "none";
+
+      }
+    );
+
+  }
+);
+    
   contenedor.style.display =
     "block";
 
