@@ -6410,11 +6410,92 @@ cobertura.forEach(
           Personalizada
         </label>
 
+        <div
+  id="configuracionDificultadPersonalizada"
+  style="
+    display:none;
+    margin-top:15px;
+    padding:12px;
+    background:#f7f7f7;
+  "
+>
+
+  <label>
+    Fácil (%):
+    <input
+      type="number"
+      id="porcentajeDificultadFacil"
+      min="0"
+      max="100"
+      value="30"
+      style="width:70px;"
+    >
+  </label>
+
+  &nbsp;&nbsp;
+
+  <label>
+    Media (%):
+    <input
+      type="number"
+      id="porcentajeDificultadMedia"
+      min="0"
+      max="100"
+      value="40"
+      style="width:70px;"
+    >
+  </label>
+
+  &nbsp;&nbsp;
+
+  <label>
+    Difícil (%):
+    <input
+      type="number"
+      id="porcentajeDificultadDificil"
+      min="0"
+      max="100"
+      value="30"
+      style="width:70px;"
+    >
+  </label>
+
+</div>
+
       </div>
 
     </div>
 
   `;
+
+    const opcionesDificultad =
+  contenedor.querySelectorAll(
+    'input[name="distribucionDificultadPrueba"]'
+  );
+
+const configuracionDificultad =
+  contenedor.querySelector(
+    "#configuracionDificultadPersonalizada"
+  );
+
+opcionesDificultad.forEach(
+  opcion => {
+
+    opcion.addEventListener(
+      "change",
+      () => {
+
+        configuracionDificultad.style.display =
+          opcion.value === "personalizada" &&
+          opcion.checked
+            ? "block"
+            : "none";
+
+      }
+    );
+
+  }
+);
 
 
   contenedor.style.display =
