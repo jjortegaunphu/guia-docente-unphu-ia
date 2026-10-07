@@ -6056,6 +6056,94 @@ console.log(
       ? seleccionado.codigosREA.join(", ")
       : "";
 
+    let filasCobertura = "";
+
+cobertura.forEach(
+  semana => {
+
+    const contenidos =
+      Array.isArray(semana.clases)
+        ? semana.clases
+            .map(clase =>
+              clase.contenido || ""
+            )
+            .filter(contenido =>
+              contenido.trim() !== ""
+            )
+        : [];
+
+
+    filasCobertura += `
+
+      <tr>
+
+        <td
+          style="
+            text-align:center;
+            vertical-align:top;
+          "
+        >
+
+          <input
+            type="checkbox"
+            class="semanaCoberturaPrueba"
+            value="${semana.semana}"
+            checked
+          >
+
+        </td>
+
+
+        <td
+          style="
+            text-align:center;
+            vertical-align:top;
+          "
+        >
+
+          <strong>
+            Semana ${semana.semana}
+          </strong>
+
+        </td>
+
+
+        <td>
+
+          ${
+            contenidos.length > 0
+
+              ? contenidos
+                  .map(
+                    (contenido, index) =>
+                      `
+                        <div
+                          style="
+                            margin-bottom:8px;
+                          "
+                        >
+                          <strong>
+                            Clase ${index + 1}:
+                          </strong>
+
+                          ${contenido}
+                        </div>
+                      `
+                  )
+                  .join("")
+
+              : "No se encontraron contenidos."
+          }
+
+        </td>
+
+      </tr>
+
+    `;
+
+  }
+);
+
 
   contenedor.innerHTML = `
 
@@ -6127,6 +6215,62 @@ console.log(
       </p>
 
     </div>
+
+    <h3
+      style="
+        margin-top:25px;
+      "
+    >
+      2. Cobertura de la prueba
+    </h3>
+
+
+    <p>
+      Se han identificado automáticamente
+      los contenidos trabajados antes de
+      esta evaluación.
+    </p>
+
+
+    <table
+      border="1"
+      cellspacing="0"
+      cellpadding="8"
+      style="
+        width:100%;
+        border-collapse:collapse;
+        margin-top:12px;
+      "
+    >
+
+      <thead>
+
+        <tr>
+
+          <th style="width:7%;">
+            Incluir
+          </th>
+
+          <th style="width:13%;">
+            Semana
+          </th>
+
+          <th>
+            Contenidos trabajados
+          </th>
+
+        </tr>
+
+      </thead>
+
+
+      <tbody>
+
+        ${filasCobertura}
+
+      </tbody>
+
+    </table>
 
   `;
 
