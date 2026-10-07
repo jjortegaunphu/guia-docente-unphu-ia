@@ -6733,6 +6733,36 @@ opcionesCobertura.forEach(
 
   }
 );
+
+    const semanasCobertura =
+  contenedor.querySelectorAll(
+    ".semanaCoberturaPrueba"
+  );
+
+semanasCobertura.forEach(
+  semana => {
+
+    semana.addEventListener(
+      "change",
+      () => {
+
+        const opcionPersonalizada =
+          contenedor.querySelector(
+            'input[name="distribucionCoberturaPrueba"][value="personalizada"]'
+          );
+
+        if(
+          opcionPersonalizada &&
+          opcionPersonalizada.checked
+        ){
+          actualizarCamposCoberturaPrueba();
+        }
+
+      }
+    );
+
+  }
+);
     
     const opcionesDificultad =
   contenedor.querySelectorAll(
