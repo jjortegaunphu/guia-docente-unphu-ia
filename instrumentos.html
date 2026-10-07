@@ -7104,6 +7104,22 @@ function actualizarCamposTiposPrueba(){
     return;
   }
 
+const valoresActuales = {};
+
+contenedorCampos
+  .querySelectorAll(
+    ".cantidadTipoItemPrueba"
+  )
+  .forEach(
+    campo => {
+
+      valoresActuales[
+        campo.dataset.tipo
+      ] = campo.value;
+
+    }
+  );
+  
   const tiposSeleccionados =
     document.querySelectorAll(
       ".tipoItemPrueba:checked"
@@ -7137,7 +7153,7 @@ function actualizarCamposTiposPrueba(){
               data-tipo="${tipo.value}"
               min="0"
               step="1"
-              value="0"
+              value="${valoresActuales[tipo.value] ?? 0}"
               oninput="actualizarTotalTiposPrueba()"
               style="
                 width:70px;
