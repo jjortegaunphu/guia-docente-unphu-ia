@@ -8429,6 +8429,333 @@ function actualizarConfiguracionesEspecificasPrueba(){
 
       }
 
+      if(
+        tipo.value === "respuesta_corta"
+      ){
+
+        contenido += `
+
+          <div
+            style="
+              padding:14px;
+              margin-top:12px;
+              border:1px solid #dddddd;
+            "
+          >
+
+            <strong>
+              Respuesta corta objetiva
+            </strong>
+
+            <p
+              style="
+                margin-top:6px;
+                margin-bottom:0;
+              "
+            >
+              Configure las características de este tipo de ítem.
+            </p>
+
+
+            <div
+              style="
+                margin-top:14px;
+              "
+            >
+
+              <strong>
+                Tipo de respuesta esperada:
+              </strong>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="tipoRespuestaCorta"
+                  value="automatico"
+                  checked
+                >
+                Automático según el contenido y los REA
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="tipoRespuestaCorta"
+                  value="palabra"
+                >
+                Palabra o término
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="tipoRespuestaCorta"
+                  value="numero"
+                >
+                Número
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="tipoRespuestaCorta"
+                  value="simbolo_formula"
+                >
+                Símbolo o fórmula
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="tipoRespuestaCorta"
+                  value="frase_breve"
+                >
+                Frase breve
+              </label>
+
+            </div>
+
+
+            <div
+              style="
+                margin-top:14px;
+              "
+            >
+
+              <strong>
+                Respuestas equivalentes:
+              </strong>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="equivalenciasRespuestaCorta"
+                  value="permitir"
+                  checked
+                >
+                Permitir equivalencias válidas
+              </label>
+
+              <div
+                style="
+                  margin-left:24px;
+                  margin-top:4px;
+                "
+              >
+                La clave podrá reconocer respuestas equivalentes
+                cuando mantengan el mismo significado o valor.
+              </div>
+
+              <br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="equivalenciasRespuestaCorta"
+                  value="exacta"
+                >
+                Exigir una respuesta exacta
+              </label>
+
+            </div>
+
+
+            <div
+              style="
+                margin-top:14px;
+              "
+            >
+
+              <strong>
+                Uso de cálculos:
+              </strong>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="calculosRespuestaCorta"
+                  value="automatico"
+                  checked
+                >
+                Automático según el contenido y los REA
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="calculosRespuestaCorta"
+                  value="incluir"
+                >
+                Incluir ítems que requieran cálculos
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="calculosRespuestaCorta"
+                  value="sin_calculos"
+                >
+                No incluir cálculos
+              </label>
+
+            </div>
+
+
+            <div
+              style="
+                margin-top:14px;
+              "
+            >
+
+              <strong>
+                Uso de unidades:
+              </strong>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="unidadesRespuestaCorta"
+                  value="segun_contenido"
+                  checked
+                >
+                Incluir cuando correspondan al contenido
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="unidadesRespuestaCorta"
+                  value="no_requerir"
+                >
+                No requerir unidades
+              </label>
+
+            </div>
+
+
+            <div
+              style="
+                margin-top:14px;
+              "
+            >
+
+              <strong>
+                Espacio de respuesta en la prueba impresa:
+              </strong>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="espacioRespuestaCorta"
+                  value="automatico"
+                  checked
+                >
+                Automático según el tipo de respuesta
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="espacioRespuestaCorta"
+                  value="una_linea"
+                >
+                Una línea
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="espacioRespuestaCorta"
+                  value="dos_lineas"
+                >
+                Dos líneas
+              </label>
+
+            </div>
+
+
+            <div
+              style="
+                margin-top:14px;
+              "
+            >
+
+              <strong>
+                Contextualización:
+              </strong>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="contextualizacionRespuestaCorta"
+                  value="automatica"
+                  checked
+                >
+                Automática según el contenido y los REA
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="contextualizacionRespuestaCorta"
+                  value="directa"
+                >
+                Preguntas directas
+              </label>
+
+            </div>
+
+
+            <p
+              style="
+                margin-top:14px;
+                margin-bottom:0;
+              "
+            >
+              Cada ítem deberá admitir una respuesta breve,
+              objetiva y verificable. No se utilizarán preguntas
+              que requieran explicar, justificar, describir
+              o desarrollar una respuesta extensa.
+            </p>
+
+          </div>
+
+        `;
+
+      }
+      
     }
     
   );
