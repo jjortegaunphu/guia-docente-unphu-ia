@@ -8755,6 +8755,316 @@ function actualizarConfiguracionesEspecificasPrueba(){
         `;
 
       }
+
+      if(
+        tipo.value === "ordenamiento"
+      ){
+
+        contenido += `
+
+          <div
+            style="
+              padding:14px;
+              margin-top:12px;
+              border:1px solid #dddddd;
+            "
+          >
+
+            <strong>
+              Ordenamiento / secuenciación
+            </strong>
+
+            <p
+              style="
+                margin-top:6px;
+                margin-bottom:0;
+              "
+            >
+              Configure las características de este tipo de ítem.
+            </p>
+
+
+            <div
+              style="
+                margin-top:14px;
+              "
+            >
+
+              <strong>
+                Cantidad de elementos por ítem:
+              </strong>
+
+              <br><br>
+
+              <select
+                id="elementosOrdenamiento"
+              >
+                <option value="3">
+                  3
+                </option>
+
+                <option
+                  value="4"
+                  selected
+                >
+                  4 (recomendado)
+                </option>
+
+                <option value="5">
+                  5
+                </option>
+
+                <option value="6">
+                  6
+                </option>
+
+                <option value="7">
+                  7
+                </option>
+
+                <option value="8">
+                  8
+                </option>
+              </select>
+
+            </div>
+
+
+            <div
+              style="
+                margin-top:14px;
+              "
+            >
+
+              <strong>
+                Criterio de ordenamiento:
+              </strong>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="criterioOrdenamiento"
+                  value="automatico"
+                  checked
+                >
+                Automático según el contenido y los REA
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="criterioOrdenamiento"
+                  value="cronologico"
+                >
+                Orden cronológico
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="criterioOrdenamiento"
+                  value="proceso"
+                >
+                Etapas de un proceso
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="criterioOrdenamiento"
+                  value="magnitud"
+                >
+                Orden por magnitud
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="criterioOrdenamiento"
+                  value="jerarquia"
+                >
+                Orden jerárquico
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="criterioOrdenamiento"
+                  value="logico"
+                >
+                Secuencia lógica
+              </label>
+
+            </div>
+
+
+            <div
+              style="
+                margin-top:14px;
+              "
+            >
+
+              <strong>
+                Forma de respuesta en la prueba impresa:
+              </strong>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="respuestaOrdenamiento"
+                  value="automatica"
+                  checked
+                >
+                Automática según el tipo de secuencia
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="respuestaOrdenamiento"
+                  value="secuencia"
+                >
+                Escribir la secuencia mediante letras o números
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="respuestaOrdenamiento"
+                  value="numerar"
+                >
+                Numerar los elementos en el orden correcto
+              </label>
+
+            </div>
+
+
+            <div
+              style="
+                margin-top:14px;
+              "
+            >
+
+              <strong>
+                Criterio de puntuación:
+              </strong>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="puntuacionOrdenamiento"
+                  value="completa"
+                  checked
+                >
+                Secuencia completa correcta
+              </label>
+
+              <div
+                style="
+                  margin-left:24px;
+                  margin-top:4px;
+                "
+              >
+                Se otorga la puntuación del ítem cuando
+                toda la secuencia es correcta.
+              </div>
+
+              <br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="puntuacionOrdenamiento"
+                  value="parcial"
+                >
+                Puntuación parcial
+              </label>
+
+              <div
+                style="
+                  margin-left:24px;
+                  margin-top:4px;
+                "
+              >
+                Permite asignar puntuación proporcional
+                según los elementos correctamente ordenados.
+              </div>
+
+            </div>
+
+
+            <div
+              style="
+                margin-top:14px;
+              "
+            >
+
+              <strong>
+                Contextualización:
+              </strong>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="contextualizacionOrdenamiento"
+                  value="automatica"
+                  checked
+                >
+                Automática según el contenido y los REA
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="contextualizacionOrdenamiento"
+                  value="directa"
+                >
+                Enunciados directos
+              </label>
+
+            </div>
+
+
+            <p
+              style="
+                margin-top:14px;
+                margin-bottom:0;
+              "
+            >
+              Los elementos se presentarán desordenados en la
+              prueba impresa y la clave del docente conservará
+              la secuencia correcta.
+            </p>
+
+          </div>
+
+        `;
+
+      }
       
     }
     
