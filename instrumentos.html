@@ -8036,6 +8036,352 @@ function actualizarConfiguracionesEspecificasPrueba(){
       }
       
     }
+
+      if(
+        tipo.value === "completacion"
+      ){
+
+        contenido += `
+
+          <div
+            style="
+              padding:14px;
+              margin-top:12px;
+              border:1px solid #dddddd;
+            "
+          >
+
+            <strong>
+              Completación
+            </strong>
+
+            <p
+              style="
+                margin-top:6px;
+                margin-bottom:0;
+              "
+            >
+              Configure las características
+              de este tipo de ítem.
+            </p>
+
+
+            <div
+              style="
+                margin-top:14px;
+              "
+            >
+
+              <strong>
+                Tipo de respuesta esperada:
+              </strong>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="tipoRespuestaCompletacion"
+                  value="automatica"
+                  checked
+                >
+                Automática según el contenido y los REA
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="tipoRespuestaCompletacion"
+                  value="palabra"
+                >
+                Palabra o término
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="tipoRespuestaCompletacion"
+                  value="numero"
+                >
+                Número
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="tipoRespuestaCompletacion"
+                  value="simbolo_formula"
+                >
+                Símbolo o fórmula
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="tipoRespuestaCompletacion"
+                  value="expresion_corta"
+                >
+                Expresión corta
+              </label>
+
+            </div>
+
+
+            <div
+              style="
+                margin-top:14px;
+              "
+            >
+
+              <strong>
+                Banco de respuestas:
+              </strong>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="bancoRespuestasCompletacion"
+                  value="sin_banco"
+                  checked
+                  onchange="actualizarConfiguracionCompletacion()"
+                >
+                Sin banco de respuestas
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="bancoRespuestasCompletacion"
+                  value="con_banco"
+                  onchange="actualizarConfiguracionCompletacion()"
+                >
+                Incluir banco de respuestas
+              </label>
+
+
+              <div
+                id="configuracionBancoCompletacion"
+                style="
+                  display:none;
+                  margin-top:12px;
+                  padding:12px;
+                  background:#f7f7f7;
+                "
+              >
+
+                <strong>
+                  Opciones adicionales:
+                </strong>
+
+                <p
+                  style="
+                    margin-top:6px;
+                    margin-bottom:10px;
+                  "
+                >
+                  Indique cuántas respuestas adicionales
+                  desea incluir como distractores en el banco.
+                </p>
+
+                <input
+                  type="number"
+                  id="distractoresBancoCompletacion"
+                  min="1"
+                  max="5"
+                  step="1"
+                  value="2"
+                  style="
+                    width:70px;
+                    padding:4px;
+                  "
+                >
+
+              </div>
+
+            </div>
+
+
+            <div
+              style="
+                margin-top:14px;
+              "
+            >
+
+              <strong>
+                Respuestas equivalentes:
+              </strong>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="equivalenciasCompletacion"
+                  value="permitir"
+                  checked
+                >
+                Permitir equivalencias válidas
+              </label>
+
+              <p
+                style="
+                  margin-top:5px;
+                  margin-left:24px;
+                  margin-bottom:12px;
+                "
+              >
+                La clave podrá reconocer formas equivalentes
+                cuando mantengan el mismo significado o valor.
+              </p>
+
+              <label>
+                <input
+                  type="radio"
+                  name="equivalenciasCompletacion"
+                  value="exacta"
+                >
+                Exigir una respuesta exacta
+              </label>
+
+            </div>
+
+
+            <div
+              style="
+                margin-top:14px;
+              "
+            >
+
+              <strong>
+                Uso de cálculos:
+              </strong>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="calculosCompletacion"
+                  value="segun_contenido"
+                  checked
+                >
+                Según corresponda al contenido
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="calculosCompletacion"
+                  value="sin_calculos"
+                >
+                Sin cálculos
+              </label>
+
+            </div>
+
+
+            <div
+              style="
+                margin-top:14px;
+              "
+            >
+
+              <strong>
+                Uso de unidades:
+              </strong>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="unidadesCompletacion"
+                  value="segun_contenido"
+                  checked
+                >
+                Incluir cuando correspondan al contenido
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="unidadesCompletacion"
+                  value="no_requerir"
+                >
+                No requerir unidades
+              </label>
+
+            </div>
+
+
+            <div
+              style="
+                margin-top:14px;
+              "
+            >
+
+              <strong>
+                Contextualización:
+              </strong>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="contextualizacionCompletacion"
+                  value="automatica"
+                  checked
+                >
+                Automática según el contenido y los REA
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="contextualizacionCompletacion"
+                  value="directa"
+                >
+                Enunciados directos
+              </label>
+
+            </div>
+
+
+            <p
+              style="
+                margin-top:14px;
+                margin-bottom:0;
+              "
+            >
+              Cada ítem deberá tener una respuesta
+              breve, objetiva y verificable.
+            </p>
+
+          </div>
+
+        `;
+
+      }
+    
   );
 
   contenedor.innerHTML =
@@ -8138,6 +8484,32 @@ function actualizarConfiguracionPareamiento(){
       cantidadPremisas
     ) +
     " distractor(es).";
+
+}
+
+  function actualizarConfiguracionCompletacion(){
+
+  const opcionBanco =
+    document.querySelector(
+      'input[name="bancoRespuestasCompletacion"][value="con_banco"]'
+    );
+
+  const configuracion =
+    document.getElementById(
+      "configuracionBancoCompletacion"
+    );
+
+  if(
+    !opcionBanco ||
+    !configuracion
+  ){
+    return;
+  }
+
+  configuracion.style.display =
+    opcionBanco.checked
+      ? "block"
+      : "none";
 
 }
   
