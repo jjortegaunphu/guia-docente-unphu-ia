@@ -7750,6 +7750,290 @@ function actualizarConfiguracionesEspecificasPrueba(){
         `;
 
       }
+
+      if(
+        tipo.value === "pareamiento"
+      ){
+
+        contenido += `
+
+          <div
+            style="
+              padding:14px;
+              margin-top:12px;
+              border:1px solid #dddddd;
+            "
+          >
+
+            <strong>
+              Pareamiento/correspondencia
+            </strong>
+
+            <p
+              style="
+                margin-top:6px;
+                margin-bottom:0;
+              "
+            >
+              Configure las características
+              de este tipo de ítem.
+            </p>
+
+
+            <div
+              style="
+                margin-top:14px;
+              "
+            >
+
+              <label>
+
+                <strong>
+                  Cantidad de premisas por ejercicio:
+                </strong>
+
+                <select
+                  id="premisasPareamiento"
+                  onchange="actualizarConfiguracionPareamiento()"
+                  style="
+                    margin-left:6px;
+                    padding:4px;
+                  "
+                >
+
+                  <option value="4">
+                    4
+                  </option>
+
+                  <option
+                    value="5"
+                    selected
+                  >
+                    5 (recomendado)
+                  </option>
+
+                  <option value="6">
+                    6
+                  </option>
+
+                  <option value="7">
+                    7
+                  </option>
+
+                  <option value="8">
+                    8
+                  </option>
+
+                  <option value="9">
+                    9
+                  </option>
+
+                  <option value="10">
+                    10
+                  </option>
+
+                </select>
+
+              </label>
+
+              <p
+                style="
+                  margin-top:6px;
+                  margin-bottom:0;
+                "
+              >
+                Cada ejercicio de pareamiento cuenta
+                como un ítem de la prueba.
+              </p>
+
+            </div>
+
+
+            <div
+              style="
+                margin-top:14px;
+              "
+            >
+
+              <strong>
+                Cantidad de opciones:
+              </strong>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="cantidadOpcionesPareamiento"
+                  value="automatica"
+                  checked
+                  onchange="actualizarConfiguracionPareamiento()"
+                >
+                Automática
+              </label>
+
+              <p
+                style="
+                  margin-top:5px;
+                  margin-left:24px;
+                  margin-bottom:12px;
+                "
+              >
+                El sistema incluirá opciones adicionales
+                como distractores.
+              </p>
+
+              <label>
+                <input
+                  type="radio"
+                  name="cantidadOpcionesPareamiento"
+                  value="personalizada"
+                  onchange="actualizarConfiguracionPareamiento()"
+                >
+                Personalizada
+              </label>
+
+
+              <div
+                id="configuracionOpcionesPareamiento"
+                style="
+                  display:none;
+                  margin-top:12px;
+                  padding:12px;
+                  background:#f7f7f7;
+                "
+              >
+
+                <label>
+
+                  <strong>
+                    Número de opciones:
+                  </strong>
+
+                  <input
+                    type="number"
+                    id="opcionesPareamiento"
+                    min="6"
+                    step="1"
+                    value="6"
+                    oninput="actualizarConfiguracionPareamiento()"
+                    style="
+                      width:70px;
+                      margin-left:6px;
+                      padding:4px;
+                    "
+                  >
+
+                </label>
+
+                <p
+                  id="estadoOpcionesPareamiento"
+                  style="
+                    margin-top:8px;
+                    margin-bottom:0;
+                  "
+                ></p>
+
+              </div>
+
+            </div>
+
+
+            <div
+              style="
+                margin-top:14px;
+              "
+            >
+
+              <strong>
+                Reutilización de opciones:
+              </strong>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="reutilizacionPareamiento"
+                  value="no"
+                  checked
+                >
+                No permitir
+              </label>
+
+              <p
+                style="
+                  margin-top:5px;
+                  margin-left:24px;
+                  margin-bottom:12px;
+                "
+              >
+                Cada opción se utilizará una sola vez.
+              </p>
+
+              <label>
+                <input
+                  type="radio"
+                  name="reutilizacionPareamiento"
+                  value="si"
+                >
+                Permitir cuando corresponda al contenido
+              </label>
+
+              <p
+                style="
+                  margin-top:5px;
+                  margin-left:24px;
+                  margin-bottom:0;
+                "
+              >
+                Una opción podrá corresponder a más
+                de una premisa cuando sea necesario.
+              </p>
+
+            </div>
+
+
+            <div
+              style="
+                margin-top:14px;
+              "
+            >
+
+              <strong>
+                Contextualización:
+              </strong>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="contextualizacionPareamiento"
+                  value="automatica"
+                  checked
+                >
+                Automática según el contenido y los REA
+              </label>
+
+              <br><br>
+
+              <label>
+                <input
+                  type="radio"
+                  name="contextualizacionPareamiento"
+                  value="directa"
+                >
+                Relaciones directas
+              </label>
+
+            </div>
+
+          </div>
+
+        `;
+
+      }
       
     }
   );
@@ -7759,6 +8043,104 @@ function actualizarConfiguracionesEspecificasPrueba(){
 
 }
 
+function actualizarConfiguracionPareamiento(){
+
+  const selectorPremisas =
+    document.getElementById(
+      "premisasPareamiento"
+    );
+
+  const opcionPersonalizada =
+    document.querySelector(
+      'input[name="cantidadOpcionesPareamiento"][value="personalizada"]'
+    );
+
+  const configuracion =
+    document.getElementById(
+      "configuracionOpcionesPareamiento"
+    );
+
+  const campoOpciones =
+    document.getElementById(
+      "opcionesPareamiento"
+    );
+
+  const estado =
+    document.getElementById(
+      "estadoOpcionesPareamiento"
+    );
+
+  if(
+    !selectorPremisas ||
+    !opcionPersonalizada ||
+    !configuracion ||
+    !campoOpciones ||
+    !estado
+  ){
+    return;
+  }
+
+
+  configuracion.style.display =
+    opcionPersonalizada.checked
+      ? "block"
+      : "none";
+
+
+  const cantidadPremisas =
+    Number(selectorPremisas.value);
+
+  if(
+    !Number.isFinite(cantidadPremisas)
+  ){
+    return;
+  }
+
+
+  const minimoOpciones =
+    cantidadPremisas + 1;
+
+  campoOpciones.min =
+    String(minimoOpciones);
+
+
+  if(!opcionPersonalizada.checked){
+    return;
+  }
+
+
+  let cantidadOpciones =
+    Number(campoOpciones.value);
+
+
+  if(
+    !Number.isFinite(cantidadOpciones) ||
+    cantidadOpciones < minimoOpciones
+  ){
+
+    cantidadOpciones =
+      minimoOpciones;
+
+    campoOpciones.value =
+      String(minimoOpciones);
+
+  }
+
+
+  estado.textContent =
+    "Configuración: " +
+    cantidadPremisas +
+    " premisa(s) y " +
+    cantidadOpciones +
+    " opción(es), con " +
+    (
+      cantidadOpciones -
+      cantidadPremisas
+    ) +
+    " distractor(es).";
+
+}
+  
 function actualizarCantidadCorrectasSeleccionMultiple(){
 
   const opcionPersonalizada =
