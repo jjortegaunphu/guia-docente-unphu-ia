@@ -7255,6 +7255,7 @@ function actualizarConfiguracionesEspecificasPrueba(){
     margin-top:14px;
   "
 >
+
   <strong>
     Uso de cálculos:
   </strong>
@@ -7265,10 +7266,21 @@ function actualizarConfiguracionesEspecificasPrueba(){
     <input
       type="radio"
       name="calculosSeleccionUnica"
-      value="segun_contenido"
+      value="automatico"
       checked
     >
-    Según corresponda al contenido
+    Automático según el contenido y los REA
+  </label>
+
+  <br><br>
+
+  <label>
+    <input
+      type="radio"
+      name="calculosSeleccionUnica"
+      value="incluir"
+    >
+    Incluir ítems que requieran cálculos
   </label>
 
   <br><br>
@@ -7279,10 +7291,10 @@ function actualizarConfiguracionesEspecificasPrueba(){
       name="calculosSeleccionUnica"
       value="sin_calculos"
     >
-    Sin cálculos
+    No incluir cálculos
   </label>
-</div>
 
+</div>
 
           </div>
 
