@@ -10033,6 +10033,74 @@ const dificultadPrueba = {
     porcentajesDificultad
 
 }; 
+
+  const opcionNivelCognitivo =
+  document.querySelector(
+    'input[name="nivelCognitivoPrueba"]:checked'
+  );
+
+
+const modoNivelCognitivo =
+  opcionNivelCognitivo
+    ? opcionNivelCognitivo.value
+    : "";
+
+
+const porcentajesNivelCognitivo = {};
+
+
+if(
+  modoNivelCognitivo ===
+    "personalizado"
+){
+
+  porcentajesNivelCognitivo.recordar =
+    Number(
+      document.getElementById(
+        "porcentajeNivelRecordar"
+      )?.value || 0
+    );
+
+  porcentajesNivelCognitivo.comprender =
+    Number(
+      document.getElementById(
+        "porcentajeNivelComprender"
+      )?.value || 0
+    );
+
+  porcentajesNivelCognitivo.aplicar =
+    Number(
+      document.getElementById(
+        "porcentajeNivelAplicar"
+      )?.value || 0
+    );
+
+  porcentajesNivelCognitivo.analizar =
+    Number(
+      document.getElementById(
+        "porcentajeNivelAnalizar"
+      )?.value || 0
+    );
+
+  porcentajesNivelCognitivo.evaluar =
+    Number(
+      document.getElementById(
+        "porcentajeNivelEvaluar"
+      )?.value || 0
+    );
+
+}
+
+
+const nivelCognitivoPrueba = {
+
+  modo:
+    modoNivelCognitivo,
+
+  porcentajes:
+    porcentajesNivelCognitivo
+
+};
   
   const configuracion = {
 
@@ -10049,7 +10117,10 @@ const dificultadPrueba = {
     coberturaPrueba,
 
     dificultad:
-    dificultadPrueba
+      dificultadPrueba,
+
+    nivelCognitivo:
+      nivelCognitivoPrueba
 
 };
 
