@@ -9908,19 +9908,93 @@ document
 
     }
   );
+
+const semanasSeleccionadas =
+  Array.from(
+    document.querySelectorAll(
+      ".semanaCoberturaPrueba:checked"
+    )
+  ).map(
+    campo => Number(campo.value)
+  );
+
+
+const opcionDistribucionCobertura =
+  document.querySelector(
+    'input[name="distribucionCoberturaPrueba"]:checked'
+  );
+
+
+const modoDistribucionCobertura =
+  opcionDistribucionCobertura
+    ? opcionDistribucionCobertura.value
+    : "";
+
+
+const distribucionSemanas = {};
+
+
+if(
+  modoDistribucionCobertura ===
+    "personalizada"
+){
+
+  document
+    .querySelectorAll(
+      ".cantidadSemanaCoberturaPrueba"
+    )
+    .forEach(
+      campo => {
+
+        const semana =
+          Number(campo.dataset.semana);
+
+        const cantidad =
+          Number(campo.value || 0);
+
+        if(
+          Number.isFinite(semana)
+        ){
+
+          distribucionSemanas[semana] =
+            cantidad;
+
+        }
+
+      }
+    );
+
+}
+
+
+const coberturaPrueba = {
+
+  semanasSeleccionadas:
+    semanasSeleccionadas,
+
+  modoDistribucion:
+    modoDistribucionCobertura,
+
+  distribucionSemanas:
+    distribucionSemanas
+
+};
   
   const configuracion = {
 
-    cantidadItems:
-      cantidadItems,
+  cantidadItems:
+    cantidadItems,
 
-    tiposSeleccionados:
-      tiposSeleccionados,
+  tiposSeleccionados:
+    tiposSeleccionados,
 
-    distribucionTipos:
-    distribucionTipos
+  distribucionTipos:
+    distribucionTipos,
 
-  };
+  cobertura:
+    coberturaPrueba
+
+};
 
   console.log(
     "Configuración actual de la Prueba objetiva:",
