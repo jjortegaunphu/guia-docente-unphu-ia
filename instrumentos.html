@@ -10101,6 +10101,25 @@ const nivelCognitivoPrueba = {
     porcentajesNivelCognitivo
 
 };
+
+  const opcionPuntuacion =
+  document.querySelector(
+    'input[name="asignacionPuntuacionPrueba"]:checked'
+  );
+
+
+const modoPuntuacion =
+  opcionPuntuacion
+    ? opcionPuntuacion.value
+    : "";
+
+
+const puntuacionPrueba = {
+
+  modo:
+    modoPuntuacion
+
+};
   
   const configuracion = {
 
@@ -10120,7 +10139,10 @@ const nivelCognitivoPrueba = {
       dificultadPrueba,
 
     nivelCognitivo:
-      nivelCognitivoPrueba
+      nivelCognitivoPrueba,
+
+    puntuacion:
+  puntuacionPrueba
 
 };
 
