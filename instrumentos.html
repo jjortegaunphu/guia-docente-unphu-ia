@@ -10662,6 +10662,24 @@ if(
   return configuracion;
 
 }
+
+function validarConfiguracionPruebaObjetiva(){
+
+  const configuracion =
+    obtenerConfiguracionPruebaObjetiva();
+
+  if(
+    configuracion.tiposSeleccionados.length === 0
+  ){
+    alert(
+      "Debe seleccionar al menos un tipo de ítem para la prueba objetiva."
+    );
+
+    return false;
+  }
+
+  return true;
+}
   
 async function seleccionarInstrumento(index){
 
