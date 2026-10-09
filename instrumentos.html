@@ -10315,6 +10315,78 @@ if(
   };
 
 }
+
+  if(
+  tiposSeleccionados.includes(
+    "pareamiento"
+  )
+){
+
+  const modoOpciones =
+    document.querySelector(
+      'input[name="cantidadOpcionesPareamiento"]:checked'
+    );
+
+  const reutilizacion =
+    document.querySelector(
+      'input[name="reutilizacionPareamiento"]:checked'
+    );
+
+  const contextualizacion =
+    document.querySelector(
+      'input[name="contextualizacionPareamiento"]:checked'
+    );
+
+
+  const modoCantidadOpciones =
+    modoOpciones
+      ? modoOpciones.value
+      : "";
+
+
+  configuracionesTipos.pareamiento = {
+
+    cantidad:
+      Number(
+        distribucionTipos.pareamiento || 0
+      ),
+
+    numeroPremisas:
+      Number(
+        document.getElementById(
+          "premisasPareamiento"
+        )?.value || 0
+      ),
+
+    opciones: {
+
+      modo:
+        modoCantidadOpciones,
+
+      cantidad:
+        modoCantidadOpciones === "personalizada"
+          ? Number(
+              document.getElementById(
+                "opcionesPareamiento"
+              )?.value || 0
+            )
+          : null
+
+    },
+
+    reutilizacion:
+      reutilizacion
+        ? reutilizacion.value
+        : "",
+
+    contextualizacion:
+      contextualizacion
+        ? contextualizacion.value
+        : ""
+
+  };
+
+}
   
   const configuracion = {
 
