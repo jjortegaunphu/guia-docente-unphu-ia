@@ -10560,6 +10560,71 @@ if(
   };
 
 }
+
+  if(
+  tiposSeleccionados.includes(
+    "ordenamiento"
+  )
+){
+
+  const criterio =
+    document.querySelector(
+      'input[name="criterioOrdenamiento"]:checked'
+    );
+
+  const formaRespuesta =
+    document.querySelector(
+      'input[name="respuestaOrdenamiento"]:checked'
+    );
+
+  const puntuacion =
+    document.querySelector(
+      'input[name="puntuacionOrdenamiento"]:checked'
+    );
+
+  const contextualizacion =
+    document.querySelector(
+      'input[name="contextualizacionOrdenamiento"]:checked'
+    );
+
+
+  configuracionesTipos.ordenamiento = {
+
+    cantidad:
+      Number(
+        distribucionTipos.ordenamiento || 0
+      ),
+
+    numeroElementos:
+      Number(
+        document.getElementById(
+          "elementosOrdenamiento"
+        )?.value || 0
+      ),
+
+    criterio:
+      criterio
+        ? criterio.value
+        : "",
+
+    formaRespuesta:
+      formaRespuesta
+        ? formaRespuesta.value
+        : "",
+
+    criterioPuntuacion:
+      puntuacion
+        ? puntuacion.value
+        : "",
+
+    contextualizacion:
+      contextualizacion
+        ? contextualizacion.value
+        : ""
+
+  };
+
+}
   
   const configuracion = {
 
