@@ -10697,6 +10697,17 @@ if(
 
   return false;
 }
+
+if(
+  configuracion.cobertura
+    .semanasSeleccionadas.length === 0
+){
+  alert(
+    "Debe seleccionar al menos una semana para la cobertura de la prueba."
+  );
+
+  return false;
+}
   
   return true;
 }
