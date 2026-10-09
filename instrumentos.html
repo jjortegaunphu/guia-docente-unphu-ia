@@ -10168,6 +10168,88 @@ if(
   };
 
 }
+
+ if(
+  tiposSeleccionados.includes(
+    "seleccion_multiple"
+  )
+){
+
+  const contextualizacion =
+    document.querySelector(
+      'input[name="contextualizacionSeleccionMultiple"]:checked'
+    );
+
+  const calculos =
+    document.querySelector(
+      'input[name="calculosSeleccionMultiple"]:checked'
+    );
+
+  const modoRespuestasCorrectas =
+    document.querySelector(
+      'input[name="respuestasCorrectasSeleccionMultiple"]:checked'
+    );
+
+  const criterioPuntuacion =
+    document.querySelector(
+      'input[name="puntuacionSeleccionMultiple"]:checked'
+    );
+
+
+  const modoCorrectas =
+    modoRespuestasCorrectas
+      ? modoRespuestasCorrectas.value
+      : "";
+
+
+  configuracionesTipos.seleccion_multiple = {
+
+    cantidad:
+      Number(
+        distribucionTipos.seleccion_multiple || 0
+      ),
+
+    numeroAlternativas:
+      Number(
+        document.getElementById(
+          "alternativasSeleccionMultiple"
+        )?.value || 0
+      ),
+
+    contextualizacion:
+      contextualizacion
+        ? contextualizacion.value
+        : "",
+
+    calculos:
+      calculos
+        ? calculos.value
+        : "",
+
+    respuestasCorrectas: {
+
+      modo:
+        modoCorrectas,
+
+      cantidad:
+        modoCorrectas === "personalizada"
+          ? Number(
+              document.getElementById(
+                "cantidadCorrectasSeleccionMultiple"
+              )?.value || 0
+            )
+          : null
+
+    },
+
+    criterioPuntuacion:
+      criterioPuntuacion
+        ? criterioPuntuacion.value
+        : ""
+
+  };
+
+} 
   
   const configuracion = {
 
