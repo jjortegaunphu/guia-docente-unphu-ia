@@ -10387,6 +10387,101 @@ if(
   };
 
 }
+
+if(
+  tiposSeleccionados.includes(
+    "completacion"
+  )
+){
+
+  const tipoRespuesta =
+    document.querySelector(
+      'input[name="tipoRespuestaCompletacion"]:checked'
+    );
+
+  const bancoRespuestas =
+    document.querySelector(
+      'input[name="bancoCompletacion"]:checked'
+    );
+
+  const equivalencias =
+    document.querySelector(
+      'input[name="equivalenciasCompletacion"]:checked'
+    );
+
+  const calculos =
+    document.querySelector(
+      'input[name="calculosCompletacion"]:checked'
+    );
+
+  const unidades =
+    document.querySelector(
+      'input[name="unidadesCompletacion"]:checked'
+    );
+
+  const contextualizacion =
+    document.querySelector(
+      'input[name="contextualizacionCompletacion"]:checked'
+    );
+
+
+  const modoBanco =
+    bancoRespuestas
+      ? bancoRespuestas.value
+      : "";
+
+
+  configuracionesTipos.completacion = {
+
+    cantidad:
+      Number(
+        distribucionTipos.completacion || 0
+      ),
+
+    tipoRespuesta:
+      tipoRespuesta
+        ? tipoRespuesta.value
+        : "",
+
+    bancoRespuestas: {
+
+      modo:
+        modoBanco,
+
+      cantidadDistractores:
+        modoBanco === "incluir"
+          ? Number(
+              document.getElementById(
+                "distractoresBancoCompletacion"
+              )?.value || 0
+            )
+          : null
+
+    },
+
+    equivalencias:
+      equivalencias
+        ? equivalencias.value
+        : "",
+
+    calculos:
+      calculos
+        ? calculos.value
+        : "",
+
+    unidades:
+      unidades
+        ? unidades.value
+        : "",
+
+    contextualizacion:
+      contextualizacion
+        ? contextualizacion.value
+        : ""
+
+  };
+
+}
   
   const configuracion = {
 
