@@ -10400,9 +10400,9 @@ if(
     );
 
   const bancoRespuestas =
-    document.querySelector(
-      'input[name="bancoCompletacion"]:checked'
-    );
+  document.querySelector(
+    'input[name="bancoRespuestasCompletacion"]:checked'
+  );
 
   const equivalencias =
     document.querySelector(
@@ -10449,7 +10449,7 @@ if(
         modoBanco,
 
       cantidadDistractores:
-        modoBanco === "incluir"
+       modoBanco === "con_banco"
           ? Number(
               document.getElementById(
                 "distractoresBancoCompletacion"
