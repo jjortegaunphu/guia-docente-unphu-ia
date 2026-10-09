@@ -10760,6 +10760,32 @@ if(
   }
 
 }
+
+if(
+  configuracion.nivelCognitivo.modo ===
+    "personalizada"
+){
+
+  const porcentajes =
+    configuracion.nivelCognitivo.porcentajes;
+
+  const totalNivelCognitivo =
+    Number(porcentajes.recordar || 0) +
+    Number(porcentajes.comprender || 0) +
+    Number(porcentajes.aplicar || 0) +
+    Number(porcentajes.analizar || 0) +
+    Number(porcentajes.evaluar || 0);
+
+  if(totalNivelCognitivo !== 100){
+
+    alert(
+      "La distribución personalizada del nivel cognitivo debe sumar exactamente 100 %."
+    );
+
+    return false;
+  }
+
+}
   
   return true;
 }
