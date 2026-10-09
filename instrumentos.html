@@ -10250,6 +10250,71 @@ const criterioPuntuacion =
   };
 
 } 
+
+if(
+  tiposSeleccionados.includes(
+    "verdadero_falso"
+  )
+){
+
+  const contextualizacion =
+    document.querySelector(
+      'input[name="contextualizacionVerdaderoFalso"]:checked'
+    );
+
+  const calculos =
+    document.querySelector(
+      'input[name="calculosVerdaderoFalso"]:checked'
+    );
+
+  const distribucion =
+    document.querySelector(
+      'input[name="distribucionVerdaderoFalso"]:checked'
+    );
+
+
+  const modoDistribucion =
+    distribucion
+      ? distribucion.value
+      : "";
+
+
+  configuracionesTipos.verdadero_falso = {
+
+    cantidad:
+      Number(
+        distribucionTipos.verdadero_falso || 0
+      ),
+
+    contextualizacion:
+      contextualizacion
+        ? contextualizacion.value
+        : "",
+
+    calculos:
+      calculos
+        ? calculos.value
+        : "",
+
+    distribucionRespuestas: {
+
+      modo:
+        modoDistribucion,
+
+      cantidadVerdaderos:
+        modoDistribucion === "personalizada"
+          ? Number(
+              document.getElementById(
+                "cantidadVerdaderosPrueba"
+              )?.value || 0
+            )
+          : null
+
+    }
+
+  };
+
+}
   
   const configuracion = {
 
