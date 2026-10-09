@@ -9865,6 +9865,43 @@ function actualizarNivelCognitivoPrueba(){
   }
 
 }
+
+function obtenerConfiguracionPruebaObjetiva(){
+
+  const cantidadItems =
+    Number(
+      document.getElementById(
+        "cantidadItemsPrueba"
+      )?.value || 0
+    );
+
+  const tiposSeleccionados =
+    Array.from(
+      document.querySelectorAll(
+        ".tipoItemPrueba:checked"
+      )
+    ).map(
+      campo => campo.value
+    );
+
+  const configuracion = {
+
+    cantidadItems:
+      cantidadItems,
+
+    tiposSeleccionados:
+      tiposSeleccionados
+
+  };
+
+  console.log(
+    "Configuración actual de la Prueba objetiva:",
+    configuracion
+  );
+
+  return configuracion;
+
+}
   
 async function seleccionarInstrumento(index){
 
