@@ -10482,6 +10482,84 @@ if(
   };
 
 }
+
+  if(
+  tiposSeleccionados.includes(
+    "respuesta_corta"
+  )
+){
+
+  const tipoRespuesta =
+    document.querySelector(
+      'input[name="tipoRespuestaCorta"]:checked'
+    );
+
+  const equivalencias =
+    document.querySelector(
+      'input[name="equivalenciasRespuestaCorta"]:checked'
+    );
+
+  const calculos =
+    document.querySelector(
+      'input[name="calculosRespuestaCorta"]:checked'
+    );
+
+  const unidades =
+    document.querySelector(
+      'input[name="unidadesRespuestaCorta"]:checked'
+    );
+
+  const espacioRespuesta =
+    document.querySelector(
+      'input[name="espacioRespuestaCorta"]:checked'
+    );
+
+  const contextualizacion =
+    document.querySelector(
+      'input[name="contextualizacionRespuestaCorta"]:checked'
+    );
+
+
+  configuracionesTipos.respuesta_corta = {
+
+    cantidad:
+      Number(
+        distribucionTipos.respuesta_corta || 0
+      ),
+
+    tipoRespuesta:
+      tipoRespuesta
+        ? tipoRespuesta.value
+        : "",
+
+    equivalencias:
+      equivalencias
+        ? equivalencias.value
+        : "",
+
+    calculos:
+      calculos
+        ? calculos.value
+        : "",
+
+    unidades:
+      unidades
+        ? unidades.value
+        : "",
+
+    espacioRespuesta:
+      espacioRespuesta
+        ? espacioRespuesta.value
+        : "",
+
+    contextualizacion:
+      contextualizacion
+        ? contextualizacion.value
+        : ""
+
+  };
+
+}
   
   const configuracion = {
 
