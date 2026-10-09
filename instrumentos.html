@@ -10736,6 +10736,30 @@ if(
   }
 
 }
+
+  if(
+  configuracion.dificultad.modo ===
+    "personalizada"
+){
+
+  const porcentajes =
+    configuracion.dificultad.porcentajes;
+
+  const totalDificultad =
+    Number(porcentajes.facil || 0) +
+    Number(porcentajes.media || 0) +
+    Number(porcentajes.dificil || 0);
+
+  if(totalDificultad !== 100){
+
+    alert(
+      "La distribución personalizada de dificultad debe sumar exactamente 100 %."
+    );
+
+    return false;
+  }
+
+}
   
   return true;
 }
