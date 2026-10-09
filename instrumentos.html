@@ -9884,6 +9884,31 @@ function obtenerConfiguracionPruebaObjetiva(){
       campo => campo.value
     );
 
+const distribucionTipos = {};
+
+document
+  .querySelectorAll(
+    ".cantidadTipoItemPrueba"
+  )
+  .forEach(
+    campo => {
+
+      const tipo =
+        campo.dataset.tipo;
+
+      const cantidad =
+        Number(campo.value || 0);
+
+      if(tipo){
+
+        distribucionTipos[tipo] =
+          cantidad;
+
+      }
+
+    }
+  );
+  
   const configuracion = {
 
     cantidadItems:
@@ -9891,6 +9916,9 @@ function obtenerConfiguracionPruebaObjetiva(){
 
     tiposSeleccionados:
       tiposSeleccionados
+
+    distribucionTipos:
+    distribucionTipos
 
   };
 
