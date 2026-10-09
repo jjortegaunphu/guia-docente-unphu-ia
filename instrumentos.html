@@ -10678,6 +10678,26 @@ function validarConfiguracionPruebaObjetiva(){
     return false;
   }
 
+const totalDistribuido =
+  Object.values(
+    configuracion.distribucionTipos
+  ).reduce(
+    (acumulado, cantidad) =>
+      acumulado + Number(cantidad || 0),
+    0
+  );
+
+if(
+  totalDistribuido !==
+    configuracion.cantidadItems
+){
+  alert(
+    "La suma de los ítems asignados por tipo debe coincidir con la cantidad total de ítems de la prueba."
+  );
+
+  return false;
+}
+  
   return true;
 }
   
