@@ -10708,6 +10708,34 @@ if(
 
   return false;
 }
+
+  if(
+  configuracion.cobertura.modoDistribucion ===
+    "personalizada"
+){
+
+  const totalCobertura =
+    Object.values(
+      configuracion.cobertura
+        .distribucionSemanas
+    ).reduce(
+      (acumulado, cantidad) =>
+        acumulado + Number(cantidad || 0),
+      0
+    );
+
+  if(
+    totalCobertura !==
+      configuracion.cantidadItems
+  ){
+    alert(
+      "La suma de los ítems distribuidos entre las semanas debe coincidir con la cantidad total de ítems de la prueba."
+    );
+
+    return false;
+  }
+
+}
   
   return true;
 }
