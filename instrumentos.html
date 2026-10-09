@@ -9979,6 +9979,60 @@ const coberturaPrueba = {
     distribucionSemanas
 
 };
+
+ const opcionDificultad =
+  document.querySelector(
+    'input[name="distribucionDificultadPrueba"]:checked'
+  );
+
+
+const modoDificultad =
+  opcionDificultad
+    ? opcionDificultad.value
+    : "";
+
+
+const porcentajesDificultad = {};
+
+
+if(
+  modoDificultad ===
+    "personalizada"
+){
+
+  porcentajesDificultad.facil =
+    Number(
+      document.getElementById(
+        "porcentajeDificultadFacil"
+      )?.value || 0
+    );
+
+  porcentajesDificultad.media =
+    Number(
+      document.getElementById(
+        "porcentajeDificultadMedia"
+      )?.value || 0
+    );
+
+  porcentajesDificultad.dificil =
+    Number(
+      document.getElementById(
+        "porcentajeDificultadDificil"
+      )?.value || 0
+    );
+
+}
+
+
+const dificultadPrueba = {
+
+  modo:
+    modoDificultad,
+
+  porcentajes:
+    porcentajesDificultad
+
+}; 
   
   const configuracion = {
 
@@ -9992,7 +10046,10 @@ const coberturaPrueba = {
     distribucionTipos,
 
   cobertura:
-    coberturaPrueba
+    coberturaPrueba,
+
+    dificultad:
+    dificultadPrueba
 
 };
 
