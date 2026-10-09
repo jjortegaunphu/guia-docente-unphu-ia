@@ -10120,6 +10120,54 @@ const puntuacionPrueba = {
     modoPuntuacion
 
 };
+
+  const configuracionesTipos = {};
+
+
+if(
+  tiposSeleccionados.includes(
+    "seleccion_unica"
+  )
+){
+
+  const contextualizacion =
+    document.querySelector(
+      'input[name="contextualizacionSeleccionUnica"]:checked'
+    );
+
+  const calculos =
+    document.querySelector(
+      'input[name="calculosSeleccionUnica"]:checked'
+    );
+
+
+  configuracionesTipos.seleccion_unica = {
+
+    cantidad:
+      Number(
+        distribucionTipos.seleccion_unica || 0
+      ),
+
+    numeroAlternativas:
+      Number(
+        document.getElementById(
+          "alternativasSeleccionUnica"
+        )?.value || 0
+      ),
+
+    contextualizacion:
+      contextualizacion
+        ? contextualizacion.value
+        : "",
+
+    calculos:
+      calculos
+        ? calculos.value
+        : ""
+
+  };
+
+}
   
   const configuracion = {
 
@@ -10142,7 +10190,10 @@ const puntuacionPrueba = {
       nivelCognitivoPrueba,
 
     puntuacion:
-  puntuacionPrueba
+      puntuacionPrueba,
+
+    configuracionesTipos:
+      configuracionesTipos
 
 };
 
