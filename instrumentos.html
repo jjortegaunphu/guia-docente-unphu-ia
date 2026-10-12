@@ -11105,9 +11105,15 @@ function construirSolicitudGeneracionPruebaObjetiva(){
       configuracion
     );
 
+  const contrato =
+    construirContratoPruebaObjetiva(
+      configuracion
+    );
+
   const solicitud = {
     configuracion,
-    contextoAcademico
+    contextoAcademico,
+    contrato
   };
 
   console.log(
