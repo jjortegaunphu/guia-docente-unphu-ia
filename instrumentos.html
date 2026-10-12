@@ -10851,6 +10851,50 @@ if(configuracionSeleccionMultiple){
   }
 
 }
+
+const configuracionVerdaderoFalso =
+  configuracion.configuracionesTipos
+    .verdadero_falso;
+
+if(configuracionVerdaderoFalso){
+
+  const distribucionRespuestas =
+    configuracionVerdaderoFalso
+      .distribucionRespuestas;
+
+  if(
+    distribucionRespuestas &&
+    distribucionRespuestas.modo ===
+      "personalizada"
+  ){
+
+    const cantidadVerdaderos =
+      Number(
+        distribucionRespuestas
+          .cantidadVerdaderos || 0
+      );
+
+    const cantidadItemsVF =
+      Number(
+        configuracionVerdaderoFalso
+          .cantidad || 0
+      );
+
+    if(
+      cantidadVerdaderos < 0 ||
+      cantidadVerdaderos > cantidadItemsVF
+    ){
+
+      alert(
+        "La cantidad de enunciados verdaderos no puede superar la cantidad total de ítems de Verdadero/Falso."
+      );
+
+      return false;
+    }
+
+  }
+
+}
   
   return true;
 }
