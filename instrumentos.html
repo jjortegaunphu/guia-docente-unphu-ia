@@ -10992,6 +10992,50 @@ function prepararGeneracionPruebaObjetiva(){
 
   return configuracion;
 }
+
+function obtenerContextoAcademicoPruebaObjetiva(
+  configuracion
+){
+
+  if(
+    !configuracion ||
+    !fuenteInstrumentos
+  ){
+    return [];
+  }
+
+  const semanasSeleccionadas =
+    configuracion.cobertura
+      ?.semanasSeleccionadas || [];
+
+  const cronograma =
+    Array.isArray(
+      fuenteInstrumentos.cronograma
+    )
+      ? fuenteInstrumentos.cronograma
+      : [];
+
+  const contexto =
+    cronograma
+      .filter(
+        semana =>
+          semanasSeleccionadas.includes(
+            Number(semana.semana)
+          )
+      )
+      .sort(
+        (a, b) =>
+          Number(a.semana) -
+          Number(b.semana)
+      );
+
+  console.log(
+    "Contexto académico de la Prueba objetiva:",
+    contexto
+  );
+
+  return contexto;
+}
   
 async function seleccionarInstrumento(index){
 
