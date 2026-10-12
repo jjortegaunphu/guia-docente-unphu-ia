@@ -11117,6 +11117,38 @@ function construirSolicitudGeneracionPruebaObjetiva(){
 
   return solicitud;
 }
+
+function obtenerEstructuraSalidaPruebaObjetiva(){
+
+  return {
+    prueba: {
+      titulo: "",
+      instruccionesGenerales: "",
+      valorTotal: 0,
+      cantidadItems: 0,
+
+      items: [
+        {
+          numero: 1,
+          tipo: "",
+          enunciado: "",
+
+          semanaOrigen: 0,
+          contenidoOrigen: "",
+          reaOrigen: [],
+
+          nivelCognitivo: "",
+          dificultad: "",
+
+          puntos: 0,
+
+          respuestaCorrecta: null,
+          justificacionRespuesta: ""
+        }
+      ]
+    }
+  };
+}
   
 async function seleccionarInstrumento(index){
 
