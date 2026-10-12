@@ -11127,25 +11127,30 @@ function obtenerEstructuraSalidaPruebaObjetiva(){
       valorTotal: 0,
       cantidadItems: 0,
 
-      items: [
-        {
-          numero: 1,
-          tipo: "",
-          enunciado: "",
+      estructuraItems: {
+        seleccion_unica:
+          obtenerEstructuraSeleccionUnicaPruebaObjetiva(),
 
-          semanaOrigen: 0,
-          contenidoOrigen: "",
-          reaOrigen: [],
+        seleccion_multiple:
+          obtenerEstructuraSeleccionMultiplePruebaObjetiva(),
 
-          nivelCognitivo: "",
-          dificultad: "",
+        verdadero_falso:
+          obtenerEstructuraVerdaderoFalsoPruebaObjetiva(),
 
-          puntos: 0,
+        pareamiento:
+          obtenerEstructuraPareamientoPruebaObjetiva(),
 
-          respuestaCorrecta: null,
-          justificacionRespuesta: ""
-        }
-      ]
+        completacion:
+          obtenerEstructuraCompletacionPruebaObjetiva(),
+
+        respuesta_corta:
+          obtenerEstructuraRespuestaCortaPruebaObjetiva(),
+
+        ordenamiento:
+          obtenerEstructuraOrdenamientoPruebaObjetiva()
+      },
+
+      items: []
     }
   };
 }
