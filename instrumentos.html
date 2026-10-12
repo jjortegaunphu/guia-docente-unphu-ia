@@ -11408,6 +11408,31 @@ respuesta_corta: [
     
   };
 }  
+
+ function construirContratoPruebaObjetiva(){
+
+  const reglasGenerales =
+    obtenerReglasGeneralesPruebaObjetiva();
+
+  const reglasEspecificas =
+    obtenerReglasEspecificasPruebaObjetiva();
+
+  const estructuraSalida =
+    obtenerEstructuraSalidaPruebaObjetiva();
+
+  const contrato = {
+    reglasGenerales,
+    reglasEspecificas,
+    estructuraSalida
+  };
+
+  console.log(
+    "Contrato de generación de la Prueba objetiva:",
+    contrato
+  );
+
+  return contrato;
+} 
   
 function obtenerEstructuraSeleccionUnicaPruebaObjetiva(){
 
