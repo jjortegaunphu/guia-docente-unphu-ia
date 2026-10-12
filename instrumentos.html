@@ -10935,6 +10935,40 @@ if(configuracionPareamiento){
   }
 
 }
+
+const configuracionCompletacion =
+  configuracion.configuracionesTipos
+    .completacion;
+
+if(configuracionCompletacion){
+
+  const bancoRespuestas =
+    configuracionCompletacion
+      .bancoRespuestas;
+
+  if(
+    bancoRespuestas &&
+    bancoRespuestas.modo === "con_banco"
+  ){
+
+    const cantidadDistractores =
+      Number(
+        bancoRespuestas
+          .cantidadDistractores || 0
+      );
+
+    if(cantidadDistractores < 1){
+
+      alert(
+        "El banco de respuestas de los ítems de completación debe incluir al menos un distractor."
+      );
+
+      return false;
+    }
+
+  }
+
+}
   
   return true;
 }
