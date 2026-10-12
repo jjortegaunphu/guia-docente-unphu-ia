@@ -11302,6 +11302,36 @@ function obtenerEstructuraPareamientoPruebaObjetiva(){
     justificacionRespuesta: ""
   };
 }
+
+ function obtenerEstructuraCompletacionPruebaObjetiva(){
+
+  return {
+    numero: 1,
+    tipo: "completacion",
+    enunciado: "",
+
+    respuestaCorrecta: "",
+
+    respuestasEquivalentes: [],
+
+    bancoRespuestas: {
+      incluido: false,
+      opciones: []
+    },
+
+    unidadRespuesta: "",
+
+    semanaOrigen: 0,
+    contenidoOrigen: "",
+    reaOrigen: [],
+
+    nivelCognitivo: "",
+    dificultad: "",
+    puntos: 0,
+
+    justificacionRespuesta: ""
+  };
+} 
   
 async function seleccionarInstrumento(index){
 
