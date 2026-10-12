@@ -11262,6 +11262,46 @@ function obtenerEstructuraVerdaderoFalsoPruebaObjetiva(){
     justificacionRespuesta: ""
   };
 }
+
+function obtenerEstructuraPareamientoPruebaObjetiva(){
+
+  return {
+    numero: 1,
+    tipo: "pareamiento",
+    enunciado: "",
+
+    premisas: [
+      {
+        id: 1,
+        texto: ""
+      }
+    ],
+
+    opciones: [
+      {
+        letra: "A",
+        texto: ""
+      }
+    ],
+
+    correspondenciasCorrectas: [
+      {
+        premisaId: 1,
+        opcionLetra: "A"
+      }
+    ],
+
+    semanaOrigen: 0,
+    contenidoOrigen: "",
+    reaOrigen: [],
+
+    nivelCognitivo: "",
+    dificultad: "",
+    puntos: 0,
+
+    justificacionRespuesta: ""
+  };
+}
   
 async function seleccionarInstrumento(index){
 
