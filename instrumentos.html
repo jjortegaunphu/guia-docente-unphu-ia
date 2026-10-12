@@ -11199,6 +11199,39 @@ function obtenerReglasGeneralesPruebaObjetiva(){
     "La salida debe respetar estrictamente la estructura JSON solicitada y no debe incluir texto, comentarios ni explicaciones fuera del JSON."
   ];
 }
+
+function obtenerReglasEspecificasPruebaObjetiva(){
+
+  return {
+
+    seleccion_unica: [
+      "Generar exactamente una respuesta correcta por ítem.",
+
+      "Generar exactamente el número de alternativas indicado en la configuración del docente.",
+
+      "Todas las alternativas deben ser plausibles, homogéneas y gramaticalmente compatibles con el enunciado.",
+
+      "Los distractores deben representar errores o concepciones plausibles relacionados con el contenido evaluado.",
+
+      "Evitar alternativas evidentemente absurdas o fácilmente descartables sin conocer el contenido.",
+
+      "Evitar utilizar opciones como 'Todas las anteriores' o 'Ninguna de las anteriores'.",
+
+      "Evitar pistas sobre la respuesta correcta producidas por diferencias evidentes de longitud, redacción, precisión o repetición de palabras del enunciado.",
+
+      "Variar la posición de la respuesta correcta entre los ítems y evitar patrones predecibles.",
+
+      "Si la configuración indica contextualización automática, decidir si el contexto aporta valor académico al ítem; si indica contextualización directa, formular el ítem sin contexto adicional.",
+
+      "Si la configuración permite cálculos, incluirlos únicamente cuando sean pertinentes al contenido y al nivel cognitivo asignado.",
+
+      "Registrar la respuesta correcta mediante su letra y su texto.",
+
+      "Incluir una justificación breve y académicamente correcta de por qué la alternativa seleccionada es la respuesta correcta."
+    ]
+
+  };
+}  
   
 function obtenerEstructuraSeleccionUnicaPruebaObjetiva(){
 
