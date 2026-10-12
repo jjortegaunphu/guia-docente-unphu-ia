@@ -11192,6 +11192,55 @@ function obtenerEstructuraSeleccionUnicaPruebaObjetiva(){
     justificacionRespuesta: ""
   };
 }
+
+function obtenerEstructuraSeleccionMultiplePruebaObjetiva(){
+
+  return {
+    numero: 1,
+    tipo: "seleccion_multiple",
+    enunciado: "",
+
+    alternativas: [
+      {
+        letra: "A",
+        texto: ""
+      },
+      {
+        letra: "B",
+        texto: ""
+      },
+      {
+        letra: "C",
+        texto: ""
+      },
+      {
+        letra: "D",
+        texto: ""
+      },
+      {
+        letra: "E",
+        texto: ""
+      }
+    ],
+
+    respuestasCorrectas: [
+      {
+        letra: "",
+        texto: ""
+      }
+    ],
+
+    semanaOrigen: 0,
+    contenidoOrigen: "",
+    reaOrigen: [],
+
+    nivelCognitivo: "",
+    dificultad: "",
+    puntos: 0,
+
+    justificacionRespuesta: ""
+  };
+}
   
 async function seleccionarInstrumento(index){
 
