@@ -10786,6 +10786,29 @@ if(
   }
 
 }
+
+for(
+  const tipo of
+    configuracion.tiposSeleccionados
+){
+
+  const cantidad =
+    Number(
+      configuracion.distribucionTipos[
+        tipo
+      ] || 0
+    );
+
+  if(cantidad <= 0){
+
+    alert(
+      "Cada tipo de ítem seleccionado debe tener al menos un ítem asignado."
+    );
+
+    return false;
+  }
+
+}
   
   return true;
 }
