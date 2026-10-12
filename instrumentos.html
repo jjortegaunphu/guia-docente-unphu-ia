@@ -11090,6 +11090,33 @@ function construirContextoGeneracionPruebaObjetiva(
 
   return contexto;
 }  
+
+function construirSolicitudGeneracionPruebaObjetiva(){
+
+  const configuracion =
+    prepararGeneracionPruebaObjetiva();
+
+  if(!configuracion){
+    return null;
+  }
+
+  const contextoAcademico =
+    construirContextoGeneracionPruebaObjetiva(
+      configuracion
+    );
+
+  const solicitud = {
+    configuracion,
+    contextoAcademico
+  };
+
+  console.log(
+    "Solicitud preparada para generar la Prueba objetiva:",
+    solicitud
+  );
+
+  return solicitud;
+}
   
 async function seleccionarInstrumento(index){
 
