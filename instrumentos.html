@@ -11155,6 +11155,51 @@ function obtenerEstructuraSalidaPruebaObjetiva(){
   };
 }
 
+function obtenerReglasGeneralesPruebaObjetiva(){
+
+  return [
+    "Generar exclusivamente una prueba objetiva de aplicación presencial y respuesta en formato físico.",
+
+    "Utilizar únicamente los contenidos académicos incluidos en el contexto proporcionado.",
+
+    "Respetar exactamente la cantidad total de ítems solicitada.",
+
+    "Respetar exactamente la cantidad de ítems asignada a cada tipo seleccionado.",
+
+    "No generar tipos de ítems que no hayan sido seleccionados por el docente.",
+
+    "Respetar la cobertura de semanas y la distribución configurada por el docente.",
+
+    "Respetar la distribución de dificultad configurada: fácil, media y difícil.",
+
+    "Respetar la distribución de niveles cognitivos configurada según la taxonomía de Bloom.",
+
+    "Cada ítem debe estar relacionado de forma verificable con al menos uno de los contenidos académicos proporcionados.",
+
+    "No inventar contenidos, resultados de aprendizaje, conceptos, datos o temas que no estén sustentados por el contexto académico.",
+
+    "Los ítems deben ser claros, precisos, independientes entre sí y redactados sin ambigüedad.",
+
+    "Evitar pistas involuntarias que permitan inferir la respuesta correcta a partir de otros ítems.",
+
+    "Evitar preguntas capciosas, formulaciones innecesariamente complejas y dobles negaciones.",
+
+    "Cuando la configuración permita cálculos, incluirlos únicamente cuando sean pertinentes al contenido evaluado.",
+
+    "Cuando se solicite contextualización, construir situaciones coherentes con el contenido académico sin alterar el conocimiento evaluado.",
+
+    "La respuesta correcta de cada ítem debe ser inequívoca y estar sustentada por el contenido académico proporcionado.",
+
+    "La justificación de la respuesta correcta debe estar dirigida exclusivamente al docente y no formar parte de la versión del estudiante.",
+
+    "Asignar a cada ítem su semana de origen, contenido de origen, REA de origen cuando exista, nivel cognitivo y dificultad.",
+
+    "No incluir la clave de respuestas dentro del enunciado, las instrucciones o cualquier elemento visible para el estudiante.",
+
+    "La salida debe respetar estrictamente la estructura JSON solicitada y no debe incluir texto, comentarios ni explicaciones fuera del JSON."
+  ];
+}
+  
 function obtenerEstructuraSeleccionUnicaPruebaObjetiva(){
 
   return {
