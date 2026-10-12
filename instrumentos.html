@@ -11409,13 +11409,31 @@ respuesta_corta: [
   };
 }  
 
- function construirContratoPruebaObjetiva(){
+function construirContratoPruebaObjetiva(
+  configuracion
+){
 
   const reglasGenerales =
     obtenerReglasGeneralesPruebaObjetiva();
 
-  const reglasEspecificas =
+  const todasReglasEspecificas =
     obtenerReglasEspecificasPruebaObjetiva();
+
+  const tiposSeleccionados =
+    configuracion?.tiposSeleccionados || [];
+
+  const reglasEspecificas = {};
+
+  tiposSeleccionados.forEach(
+    tipo => {
+      if(
+        todasReglasEspecificas[tipo]
+      ){
+        reglasEspecificas[tipo] =
+          todasReglasEspecificas[tipo];
+      }
+    }
+  );
 
   const estructuraSalida =
     obtenerEstructuraSalidaPruebaObjetiva();
@@ -11432,7 +11450,7 @@ respuesta_corta: [
   );
 
   return contrato;
-} 
+}
   
 function obtenerEstructuraSeleccionUnicaPruebaObjetiva(){
 
