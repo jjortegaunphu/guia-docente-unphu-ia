@@ -10809,6 +10809,48 @@ for(
   }
 
 }
+
+  const configuracionSeleccionMultiple =
+  configuracion.configuracionesTipos
+    .seleccion_multiple;
+
+if(configuracionSeleccionMultiple){
+
+  const numeroAlternativas =
+    Number(
+      configuracionSeleccionMultiple
+        .numeroAlternativas || 0
+    );
+
+  const respuestasCorrectas =
+    configuracionSeleccionMultiple
+      .respuestasCorrectas;
+
+  if(
+    respuestasCorrectas &&
+    respuestasCorrectas.modo ===
+      "personalizada"
+  ){
+
+    const cantidadCorrectas =
+      Number(
+        respuestasCorrectas.cantidad || 0
+      );
+
+    if(
+      cantidadCorrectas < 2 ||
+      cantidadCorrectas >= numeroAlternativas
+    ){
+      alert(
+        "En selección múltiple con respuestas múltiples, la cantidad de respuestas correctas debe ser al menos 2 y menor que el número total de alternativas."
+      );
+
+      return false;
+    }
+
+  }
+
+}
   
   return true;
 }
