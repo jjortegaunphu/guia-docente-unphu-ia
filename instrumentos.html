@@ -10972,6 +10972,26 @@ if(configuracionCompletacion){
   
   return true;
 }
+
+function prepararGeneracionPruebaObjetiva(){
+
+  const esValida =
+    validarConfiguracionPruebaObjetiva();
+
+  if(!esValida){
+    return null;
+  }
+
+  const configuracion =
+    obtenerConfiguracionPruebaObjetiva();
+
+  console.log(
+    "Configuración lista para generar la Prueba objetiva:",
+    configuracion
+  );
+
+  return configuracion;
+}
   
 async function seleccionarInstrumento(index){
 
