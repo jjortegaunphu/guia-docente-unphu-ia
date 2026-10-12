@@ -11036,6 +11036,60 @@ function obtenerContextoAcademicoPruebaObjetiva(
 
   return contexto;
 }
+
+function construirContextoGeneracionPruebaObjetiva(
+  configuracion
+){
+
+  const semanas =
+    obtenerContextoAcademicoPruebaObjetiva(
+      configuracion
+    );
+
+  const contexto =
+    semanas.map(
+      semana => {
+
+        const clases =
+          Array.isArray(
+            semana.propuesta?.clases
+          )
+            ? semana.propuesta.clases
+            : (
+                Array.isArray(semana.clases)
+                  ? semana.clases
+                  : []
+              );
+
+        return {
+          semana: Number(semana.semana),
+
+          clases: clases.map(
+            clase => ({
+              clase: Number(clase.clase),
+
+              contenido:
+                clase.contenido || "",
+
+              reaSugeridos:
+                Array.isArray(
+                  clase.reaSugeridos
+                )
+                  ? clase.reaSugeridos
+                  : []
+            })
+          )
+        };
+      }
+    );
+
+  console.log(
+    "Contexto preparado para generar la Prueba objetiva:",
+    contexto
+  );
+
+  return contexto;
+}  
   
 async function seleccionarInstrumento(index){
 
