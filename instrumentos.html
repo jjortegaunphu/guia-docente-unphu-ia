@@ -11435,8 +11435,33 @@ function construirContratoPruebaObjetiva(
     }
   );
 
-  const estructuraSalida =
-    obtenerEstructuraSalidaPruebaObjetiva();
+ const estructuraSalidaCompleta =
+  obtenerEstructuraSalidaPruebaObjetiva();
+
+const estructurasSeleccionadas = {};
+
+tiposSeleccionados.forEach(
+  tipo => {
+    const estructura =
+      estructuraSalidaCompleta
+        ?.prueba
+        ?.estructuraItems
+        ?.[tipo];
+
+    if(estructura){
+      estructurasSeleccionadas[tipo] =
+        estructura;
+    }
+  }
+);
+
+const estructuraSalida = {
+  prueba: {
+    ...estructuraSalidaCompleta.prueba,
+    estructuraItems:
+      estructurasSeleccionadas
+  }
+};
 
   const contrato = {
     reglasGenerales,
