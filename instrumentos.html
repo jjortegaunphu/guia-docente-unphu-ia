@@ -10895,6 +10895,46 @@ if(configuracionVerdaderoFalso){
   }
 
 }
+
+const configuracionPareamiento =
+  configuracion.configuracionesTipos
+    .pareamiento;
+
+if(configuracionPareamiento){
+
+  const numeroPremisas =
+    Number(
+      configuracionPareamiento
+        .numeroPremisas || 0
+    );
+
+  const opciones =
+    configuracionPareamiento.opciones;
+
+  if(
+    opciones &&
+    opciones.modo === "personalizada"
+  ){
+
+    const cantidadOpciones =
+      Number(
+        opciones.cantidad || 0
+      );
+
+    if(
+      cantidadOpciones <= numeroPremisas
+    ){
+
+      alert(
+        "En pareamiento, la cantidad de opciones debe ser mayor que la cantidad de premisas."
+      );
+
+      return false;
+    }
+
+  }
+
+}
   
   return true;
 }
