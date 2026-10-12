@@ -11149,6 +11149,49 @@ function obtenerEstructuraSalidaPruebaObjetiva(){
     }
   };
 }
+
+function obtenerEstructuraSeleccionUnicaPruebaObjetiva(){
+
+  return {
+    numero: 1,
+    tipo: "seleccion_unica",
+    enunciado: "",
+
+    alternativas: [
+      {
+        letra: "A",
+        texto: ""
+      },
+      {
+        letra: "B",
+        texto: ""
+      },
+      {
+        letra: "C",
+        texto: ""
+      },
+      {
+        letra: "D",
+        texto: ""
+      }
+    ],
+
+    respuestaCorrecta: {
+      letra: "",
+      texto: ""
+    },
+
+    semanaOrigen: 0,
+    contenidoOrigen: "",
+    reaOrigen: [],
+
+    nivelCognitivo: "",
+    dificultad: "",
+    puntos: 0,
+
+    justificacionRespuesta: ""
+  };
+}
   
 async function seleccionarInstrumento(index){
 
