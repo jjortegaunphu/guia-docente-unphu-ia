@@ -13198,7 +13198,7 @@ function mostrarFormularioAgregarItemPruebaObjetiva(){
 
 }
 
-  function obtenerOpcionesAcademicasNuevoItemPruebaObjetiva(){
+function obtenerOpcionesAcademicasNuevoItemPruebaObjetiva(){
 
   const semanas =
     solicitudGeneracionPruebaObjetivaActual
@@ -13225,39 +13225,30 @@ function mostrarFormularioAgregarItemPruebaObjetiva(){
       clases.forEach(
         clase => {
 
-          const contenidos =
-            Array.isArray(clase.contenidos)
-              ? clase.contenidos
-              : [];
+          const contenido =
+            String(
+              clase.contenido || ""
+            ).trim();
 
-          contenidos.forEach(
-            contenido => {
+          if(!contenido){
+            return;
+          }
 
-              const texto =
-                String(contenido || "").trim();
+          const yaExiste =
+            opciones.some(
+              opcion =>
+                opcion.semana === numeroSemana &&
+                opcion.contenido === contenido
+            );
 
-              if(!texto){
-                return;
-              }
+          if(!yaExiste){
 
-              const yaExiste =
-                opciones.some(
-                  opcion =>
-                    opcion.semana === numeroSemana &&
-                    opcion.contenido === texto
-                );
+            opciones.push({
+              semana: numeroSemana,
+              contenido: contenido
+            });
 
-              if(!yaExiste){
-
-                opciones.push({
-                  semana: numeroSemana,
-                  contenido: texto
-                });
-
-              }
-
-            }
-          );
+          }
 
         }
       );
@@ -13268,7 +13259,7 @@ function mostrarFormularioAgregarItemPruebaObjetiva(){
   return opciones;
 
 }
-
+  
 function actualizarFormularioNuevoItemPruebaObjetiva(){
 
   const selector =
