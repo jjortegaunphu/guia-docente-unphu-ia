@@ -100,6 +100,191 @@ let solicitudGeneracionPruebaObjetivaActual = null;
 
 let numeroItemPruebaObjetivaEnEdicion = null;
 
+  const CLAVE_BORRADOR_PRUEBA_OBJETIVA =
+  "borradorPruebaObjetivaGuiaDocente";
+
+
+function guardarBorradorPruebaObjetiva(){
+
+  if(
+    !pruebaObjetivaGeneradaActual ||
+    !solicitudGeneracionPruebaObjetivaActual ||
+    !instrumentoSeleccionadoActual
+  ){
+    return false;
+  }
+
+  const borrador = {
+
+    prueba:
+      pruebaObjetivaGeneradaActual,
+
+    solicitudGeneracion:
+      solicitudGeneracionPruebaObjetivaActual,
+
+    instrumento: {
+
+      rubro:
+        instrumentoSeleccionadoActual.rubro || "",
+
+      indiceActividad:
+        Number(
+          instrumentoSeleccionadoActual
+            .indiceActividad
+        ),
+
+      indiceInstrumento:
+        Number(
+          instrumentoSeleccionadoActual
+            .indiceInstrumento
+        )
+
+    },
+
+    guardadoEn:
+      new Date().toISOString()
+
+  };
+
+  try {
+
+    localStorage.setItem(
+      CLAVE_BORRADOR_PRUEBA_OBJETIVA,
+      JSON.stringify(borrador)
+    );
+
+    console.log(
+      "Borrador de Prueba objetiva guardado:",
+      borrador
+    );
+
+    return true;
+
+  }
+  catch(error){
+
+    console.error(
+      "No fue posible guardar el borrador de la Prueba objetiva:",
+      error
+    );
+
+    return false;
+
+  }
+
+}
+
+
+function obtenerBorradorPruebaObjetiva(){
+
+  try {
+
+    const texto =
+      localStorage.getItem(
+        CLAVE_BORRADOR_PRUEBA_OBJETIVA
+      );
+
+    if(!texto){
+      return null;
+    }
+
+    const borrador =
+      JSON.parse(texto);
+
+    if(
+      !borrador ||
+      !borrador.prueba ||
+      !Array.isArray(
+        borrador.prueba.items
+      ) ||
+      !borrador.solicitudGeneracion ||
+      !borrador.instrumento
+    ){
+      return null;
+    }
+
+    return borrador;
+
+  }
+  catch(error){
+
+    console.error(
+      "No fue posible recuperar el borrador de la Prueba objetiva:",
+      error
+    );
+
+    return null;
+
+  }
+
+}
+
+
+function borrarBorradorPruebaObjetiva(){
+
+  localStorage.removeItem(
+    CLAVE_BORRADOR_PRUEBA_OBJETIVA
+  );
+
+}
+
+  function restaurarBorradorPruebaObjetiva(){
+
+  if(!instrumentoSeleccionadoActual){
+    return false;
+  }
+
+  const borrador =
+    obtenerBorradorPruebaObjetiva();
+
+  if(!borrador){
+    return false;
+  }
+
+  const mismoInstrumento =
+    borrador.instrumento.rubro ===
+      (instrumentoSeleccionadoActual.rubro || "") &&
+
+    Number(
+      borrador.instrumento.indiceActividad
+    ) ===
+    Number(
+      instrumentoSeleccionadoActual.indiceActividad
+    ) &&
+
+    Number(
+      borrador.instrumento.indiceInstrumento
+    ) ===
+    Number(
+      instrumentoSeleccionadoActual.indiceInstrumento
+    );
+
+  if(!mismoInstrumento){
+    return false;
+  }
+
+  pruebaObjetivaGeneradaActual =
+    borrador.prueba;
+
+  solicitudGeneracionPruebaObjetivaActual =
+    borrador.solicitudGeneracion;
+
+  numeroItemPruebaObjetivaEnEdicion =
+    null;
+
+  console.log(
+    "Borrador de Prueba objetiva restaurado:",
+    pruebaObjetivaGeneradaActual
+  );
+
+  mostrarRevisionPruebaObjetiva(
+    pruebaObjetivaGeneradaActual
+  );
+
+  return true;
+
+}
+
 
 function cargarDatosInstrumentos(){
 
@@ -11257,10 +11442,12 @@ pruebaObjetivaGeneradaActual =
 console.log(
   "Prueba objetiva almacenada para revisión:",
   pruebaObjetivaGeneradaActual
-);   
+);  
+
+   guardarBorradorPruebaObjetiva();
 
    mostrarRevisionPruebaObjetiva(
-  pruebaObjetivaGeneradaActual
+      pruebaObjetivaGeneradaActual
 );
 
 } 
@@ -12873,6 +13060,8 @@ if(
   numeroItemPruebaObjetivaEnEdicion =
     null;
 
+  guardarBorradorPruebaObjetiva();
+
   mostrarRevisionPruebaObjetiva(
     pruebaObjetivaGeneradaActual
   );
@@ -13496,6 +13685,8 @@ try {
   numeroItemPruebaObjetivaEnEdicion =
     null;
 
+  guardarBorradorPruebaObjetiva();
+
   mostrarRevisionPruebaObjetiva(
     pruebaObjetivaGeneradaActual
   );
@@ -13573,6 +13764,8 @@ function eliminarItemPruebaObjetiva(
           Number(item.puntos || 0),
         0
       );
+
+  guardarBorradorPruebaObjetiva();
 
   mostrarRevisionPruebaObjetiva(
     pruebaObjetivaGeneradaActual
@@ -14236,6 +14429,13 @@ async function seleccionarInstrumento(index){
   seleccionado.instrumento ===
     "Prueba objetiva"
 ){
+
+  const borradorRestaurado =
+    restaurarBorradorPruebaObjetiva();
+
+  if(borradorRestaurado){
+    return;
+  }
 
   mostrarConfiguracionPruebaObjetiva(
     seleccionado
