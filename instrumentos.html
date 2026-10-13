@@ -96,6 +96,8 @@ let instrumentoSeleccionadoActual = null;
 
 let pruebaObjetivaGeneradaActual = null;
 
+let numeroItemPruebaObjetivaEnEdicion = null;
+
 
 function cargarDatosInstrumentos(){
 
@@ -11258,6 +11260,176 @@ let htmlItems = "";
 
     let respuestaRevision = "";
 
+    const itemEnEdicion =
+       Number(
+         numeroItemPruebaObjetivaEnEdicion
+     ) ===
+     Number(item.numero);
+
+    let camposEspecificosEdicion = "";
+
+if(
+  itemEnEdicion &&
+  item.tipo === "seleccion_unica" &&
+  Array.isArray(item.alternativas)
+){
+
+  camposEspecificosEdicion = `
+
+    <div style="margin-top:14px;">
+
+      <p>
+        <strong>
+          Alternativas
+        </strong>
+      </p>
+
+      ${
+        item.alternativas
+          .map(
+            alternativa => `
+              <div
+                style="
+                  display:flex;
+                  gap:8px;
+                  align-items:center;
+                  margin:8px 0;
+                "
+              >
+
+                <input
+                  type="radio"
+                  name="respuestaCorrectaEdicion-${Number(item.numero)}"
+                  value="${alternativa.letra || ""}"
+                  ${
+                    item.respuestaCorrecta?.letra ===
+                    alternativa.letra
+                      ? "checked"
+                      : ""
+                  }
+                >
+
+                <strong>
+                  ${alternativa.letra || ""}.
+                </strong>
+
+                <input
+                  type="text"
+                  id="editarAlternativa-${Number(item.numero)}-${alternativa.letra || ""}"
+                  value="${alternativa.texto || ""}"
+                  style="
+                    flex:1;
+                    padding:7px;
+                  "
+                >
+
+              </div>
+            `
+          )
+          .join("")
+      }
+
+      <small>
+        Selecciona el botón circular correspondiente
+        a la respuesta correcta.
+      </small>
+
+    </div>
+
+  `;
+
+}
+
+
+if(
+  itemEnEdicion &&
+  item.tipo === "verdadero_falso"
+){
+
+  camposEspecificosEdicion = `
+
+    <div style="margin-top:14px;">
+
+      <p>
+        <strong>
+          Respuesta correcta
+        </strong>
+      </p>
+
+      <label>
+        <input
+          type="radio"
+          name="respuestaVFEdicion-${Number(item.numero)}"
+          value="Verdadero"
+          ${
+            String(item.respuestaCorrecta)
+              .toLowerCase() === "verdadero"
+                ? "checked"
+                : ""
+          }
+        >
+        Verdadero
+      </label>
+
+      <br>
+
+      <label>
+        <input
+          type="radio"
+          name="respuestaVFEdicion-${Number(item.numero)}"
+          value="Falso"
+          ${
+            String(item.respuestaCorrecta)
+              .toLowerCase() === "falso"
+                ? "checked"
+                : ""
+          }
+        >
+        Falso
+      </label>
+
+    </div>
+
+  `;
+
+}
+
+
+if(
+  itemEnEdicion &&
+  (
+    item.tipo === "completacion" ||
+    item.tipo === "respuesta_corta"
+  )
+){
+
+  camposEspecificosEdicion = `
+
+    <div style="margin-top:14px;">
+
+      <p>
+        <strong>
+          Respuesta correcta
+        </strong>
+      </p>
+
+      <input
+        type="text"
+        id="editarRespuestaCorrecta-${Number(item.numero)}"
+        value="${item.respuestaCorrecta || ""}"
+        style="
+          width:100%;
+          box-sizing:border-box;
+          padding:8px;
+        "
+      >
+
+    </div>
+
+  `;
+
+}
+
 if(
   item.tipo === "seleccion_unica" &&
   Array.isArray(item.alternativas)
@@ -11573,6 +11745,38 @@ if(
           </strong>
         </p>
 
+<div
+  style="
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin:8px 0 14px 0;
+  "
+>
+
+  <button
+    type="button"
+    onclick="editarItemPruebaObjetiva(${Number(item.numero || 0)})"
+  >
+    ✏️ Editar
+  </button>
+
+  <button
+    type="button"
+    onclick="regenerarItemPruebaObjetiva(${Number(item.numero || 0)})"
+  >
+    🔄 Regenerar
+  </button>
+
+  <button
+    type="button"
+    onclick="eliminarItemPruebaObjetiva(${Number(item.numero || 0)})"
+  >
+    🗑️ Eliminar
+  </button>
+
+</div>
+
         <p>
           <strong>
             Tipo:
@@ -11581,11 +11785,71 @@ if(
          ${obtenerNombreTipoItemPruebaObjetiva(item.tipo)}
         </p>
 
+        ${
+  itemEnEdicion
+    ? `
+      <div
+        style="
+          margin-top:14px;
+          padding:14px;
+          border:1px solid #cccccc;
+          background:#fafafa;
+        "
+      >
+
         <p>
-          ${item.enunciado || ""}
+          <strong>
+            Editar enunciado
+          </strong>
         </p>
 
-        ${contenidoEspecifico}
+        <textarea
+          id="editarEnunciadoPruebaObjetiva-${Number(item.numero)}"
+          rows="4"
+          style="
+            width:100%;
+            box-sizing:border-box;
+            padding:8px;
+          "
+        >${item.enunciado || ""}</textarea>
+
+        ${camposEspecificosEdicion}
+
+        <div
+          style="
+            display:flex;
+            gap:8px;
+            margin-top:12px;
+            flex-wrap:wrap;
+          "
+        >
+
+          <button
+            type="button"
+            onclick="guardarEdicionItemPruebaObjetiva(${Number(item.numero)})"
+          >
+            💾 Guardar cambios
+          </button>
+
+          <button
+            type="button"
+            onclick="cancelarEdicionItemPruebaObjetiva()"
+          >
+            Cancelar
+          </button>
+
+        </div>
+
+      </div>
+    `
+    : `
+      <p>
+        ${item.enunciado || ""}
+      </p>
+
+      ${contenidoEspecifico}
+    `
+}
 
         ${
   respuestaRevision
@@ -11720,6 +11984,315 @@ contenedor.innerHTML = `
 ${htmlItems}
 
 `;  
+
+}  
+
+function editarItemPruebaObjetiva(
+  numeroItem
+){
+
+  if(
+    !pruebaObjetivaGeneradaActual ||
+    !Array.isArray(
+      pruebaObjetivaGeneradaActual.items
+    )
+  ){
+    return;
+  }
+
+  const item =
+    pruebaObjetivaGeneradaActual.items
+      .find(
+        item =>
+          Number(item.numero) ===
+          Number(numeroItem)
+      );
+
+  if(!item){
+    return;
+  }
+
+  numeroItemPruebaObjetivaEnEdicion =
+    Number(numeroItem);
+
+  mostrarRevisionPruebaObjetiva(
+    pruebaObjetivaGeneradaActual
+  );
+
+}
+
+function guardarEdicionItemPruebaObjetiva(
+  numeroItem
+){
+
+  if(
+    !pruebaObjetivaGeneradaActual ||
+    !Array.isArray(
+      pruebaObjetivaGeneradaActual.items
+    )
+  ){
+    return;
+  }
+
+  const item =
+    pruebaObjetivaGeneradaActual.items
+      .find(
+        item =>
+          Number(item.numero) ===
+          Number(numeroItem)
+      );
+
+  if(!item){
+    return;
+  }
+
+  const campoEnunciado =
+    document.getElementById(
+      `editarEnunciadoPruebaObjetiva-${numeroItem}`
+    );
+
+  if(!campoEnunciado){
+    return;
+  }
+
+  const nuevoEnunciado =
+    campoEnunciado.value.trim();
+
+  if(!nuevoEnunciado){
+
+    alert(
+      "El enunciado del ítem no puede quedar vacío."
+    );
+
+    return;
+  }
+
+  item.enunciado =
+    nuevoEnunciado;
+
+  if(
+  item.tipo === "seleccion_unica" &&
+  Array.isArray(item.alternativas)
+){
+
+  const respuestaSeleccionada =
+    document.querySelector(
+      `input[name="respuestaCorrectaEdicion-${numeroItem}"]:checked`
+    );
+
+  if(!respuestaSeleccionada){
+
+    alert(
+      "Selecciona la respuesta correcta del ítem."
+    );
+
+    return;
+  }
+
+  for(
+    const alternativa of
+    item.alternativas
+  ){
+
+    const campoAlternativa =
+      document.getElementById(
+        `editarAlternativa-${numeroItem}-${alternativa.letra}`
+      );
+
+    if(
+      !campoAlternativa ||
+      !campoAlternativa.value.trim()
+    ){
+
+      alert(
+        "Las alternativas no pueden quedar vacías."
+      );
+
+      return;
+    }
+
+  }
+
+  item.alternativas.forEach(
+    alternativa => {
+
+      const campoAlternativa =
+        document.getElementById(
+          `editarAlternativa-${numeroItem}-${alternativa.letra}`
+        );
+
+      alternativa.texto =
+        campoAlternativa.value.trim();
+
+    }
+  );
+
+  const letraCorrecta =
+    respuestaSeleccionada.value;
+
+  const alternativaCorrecta =
+    item.alternativas.find(
+      alternativa =>
+        alternativa.letra ===
+        letraCorrecta
+    );
+
+  item.respuestaCorrecta = {
+    letra:
+      letraCorrecta,
+
+    texto:
+      alternativaCorrecta?.texto || ""
+  };
+
+}
+
+
+if(
+  item.tipo === "verdadero_falso"
+){
+
+  const respuestaSeleccionada =
+    document.querySelector(
+      `input[name="respuestaVFEdicion-${numeroItem}"]:checked`
+    );
+
+  if(!respuestaSeleccionada){
+
+    alert(
+      "Selecciona Verdadero o Falso."
+    );
+
+    return;
+  }
+
+  item.respuestaCorrecta =
+    respuestaSeleccionada.value;
+
+}
+
+
+if(
+  item.tipo === "completacion" ||
+  item.tipo === "respuesta_corta"
+){
+
+  const campoRespuesta =
+    document.getElementById(
+      `editarRespuestaCorrecta-${numeroItem}`
+    );
+
+  if(
+    !campoRespuesta ||
+    !campoRespuesta.value.trim()
+  ){
+
+    alert(
+      "La respuesta correcta no puede quedar vacía."
+    );
+
+    return;
+  }
+
+  item.respuestaCorrecta =
+    campoRespuesta.value.trim();
+
+}
+
+  numeroItemPruebaObjetivaEnEdicion =
+    null;
+
+  mostrarRevisionPruebaObjetiva(
+    pruebaObjetivaGeneradaActual
+  );
+
+}
+
+
+function cancelarEdicionItemPruebaObjetiva(){
+
+  numeroItemPruebaObjetivaEnEdicion =
+    null;
+
+  mostrarRevisionPruebaObjetiva(
+    pruebaObjetivaGeneradaActual
+  );
+
+}  
+
+function regenerarItemPruebaObjetiva(
+  numeroItem
+){
+
+  console.log(
+    "Regenerar ítem de la Prueba objetiva:",
+    numeroItem
+  );
+
+}
+
+
+function eliminarItemPruebaObjetiva(
+  numeroItem
+){
+
+  if(
+    !pruebaObjetivaGeneradaActual ||
+    !Array.isArray(
+      pruebaObjetivaGeneradaActual.items
+    )
+  ){
+    return;
+  }
+
+  const indiceItem =
+    pruebaObjetivaGeneradaActual.items
+      .findIndex(
+        item =>
+          Number(item.numero) ===
+          Number(numeroItem)
+      );
+
+  if(indiceItem === -1){
+    return;
+  }
+
+  const confirmar =
+    window.confirm(
+      `¿Deseas eliminar el ítem ${numeroItem} de la prueba?`
+    );
+
+  if(!confirmar){
+    return;
+  }
+
+  pruebaObjetivaGeneradaActual.items.splice(
+    indiceItem,
+    1
+  );
+
+  pruebaObjetivaGeneradaActual.items
+    .forEach(
+      (item, indice) => {
+        item.numero = indice + 1;
+      }
+    );
+
+  pruebaObjetivaGeneradaActual.cantidadItems =
+    pruebaObjetivaGeneradaActual.items.length;
+
+  pruebaObjetivaGeneradaActual.valorTotal =
+    pruebaObjetivaGeneradaActual.items
+      .reduce(
+        (total, item) =>
+          total +
+          Number(item.puntos || 0),
+        0
+      );
+
+  mostrarRevisionPruebaObjetiva(
+    pruebaObjetivaGeneradaActual
+  );
 
 }  
 
