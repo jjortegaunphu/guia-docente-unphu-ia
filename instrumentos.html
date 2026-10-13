@@ -11247,6 +11247,33 @@ if(
 
 }
 
+if(
+  item.tipo === "seleccion_multiple" &&
+  Array.isArray(item.alternativas)
+){
+
+  contenidoEspecifico =
+    item.alternativas
+      .map(
+        alternativa => `
+          <div
+            style="
+              margin:6px 0 6px 20px;
+            "
+          >
+            ☐
+            <strong>
+              ${alternativa.letra || ""}
+            </strong>.
+
+            ${alternativa.texto || ""}
+          </div>
+        `
+      )
+      .join("");
+
+}
+    
     if(
   item.tipo === "verdadero_falso"
 ){
