@@ -13005,6 +13005,347 @@ function mostrarFormularioAgregarItemPruebaObjetiva(){
   `;
 
 }
+
+function actualizarFormularioNuevoItemPruebaObjetiva(){
+
+  const selector =
+    document.getElementById(
+      "tipoNuevoItemPruebaObjetiva"
+    );
+
+  const contenedor =
+    document.getElementById(
+      "camposNuevoItemPruebaObjetiva"
+    );
+
+  if(
+    !selector ||
+    !contenedor
+  ){
+    return;
+  }
+
+  const tipo =
+    selector.value;
+
+  if(!tipo){
+
+    contenedor.innerHTML = "";
+    return;
+
+  }
+
+  let camposEspecificos = "";
+
+  if(
+    tipo === "seleccion_multiple"
+  ){
+
+    const letras =
+      ["A", "B", "C", "D", "E"];
+
+    camposEspecificos = `
+
+      <p>
+        <strong>
+          Alternativas
+        </strong>
+      </p>
+
+      ${
+        letras
+          .map(
+            letra => `
+
+              <div
+                style="
+                  display:flex;
+                  gap:8px;
+                  align-items:center;
+                  margin:8px 0;
+                "
+              >
+
+                <input
+                  type="checkbox"
+                  name="respuestaCorrectaNuevoItem"
+                  value="${letra}"
+                >
+
+                <strong>
+                  ${letra}.
+                </strong>
+
+                <input
+                  type="text"
+                  id="alternativaNuevoItem-${letra}"
+                  style="
+                    flex:1;
+                    padding:7px;
+                  "
+                  placeholder="Escriba la alternativa ${letra}"
+                >
+
+              </div>
+
+            `
+          )
+          .join("")
+      }
+
+      <small>
+        Marca todas las alternativas correctas.
+      </small>
+
+    `;
+
+  }
+
+
+  if(
+    tipo === "pareamiento"
+  ){
+
+    const ids =
+      [1, 2, 3, 4];
+
+    const letras =
+      ["A", "B", "C", "D"];
+
+    camposEspecificos = `
+
+      <p>
+        <strong>
+          Premisas
+        </strong>
+      </p>
+
+      ${
+        ids
+          .map(
+            id => `
+
+              <div
+                style="
+                  display:grid;
+                  grid-template-columns:40px 1fr 160px;
+                  gap:8px;
+                  align-items:center;
+                  margin:8px 0;
+                "
+              >
+
+                <strong>
+                  ${id}.
+                </strong>
+
+                <input
+                  type="text"
+                  id="premisaNuevoItem-${id}"
+                  style="
+                    width:100%;
+                    box-sizing:border-box;
+                    padding:7px;
+                  "
+                  placeholder="Premisa ${id}"
+                >
+
+                <select
+                  id="correspondenciaNuevoItem-${id}"
+                  style="padding:7px;"
+                >
+
+                  <option value="">
+                    Correspondencia
+                  </option>
+
+                  ${
+                    letras
+                      .map(
+                        letra => `
+                          <option value="${letra}">
+                            ${letra}
+                          </option>
+                        `
+                      )
+                      .join("")
+                  }
+
+                </select>
+
+              </div>
+
+            `
+          )
+          .join("")
+      }
+
+      <p style="margin-top:14px;">
+        <strong>
+          Opciones
+        </strong>
+      </p>
+
+      ${
+        letras
+          .map(
+            letra => `
+
+              <div
+                style="
+                  display:flex;
+                  gap:8px;
+                  align-items:center;
+                  margin:8px 0;
+                "
+              >
+
+                <strong>
+                  ${letra}.
+                </strong>
+
+                <input
+                  type="text"
+                  id="opcionNuevoItem-${letra}"
+                  style="
+                    flex:1;
+                    padding:7px;
+                  "
+                  placeholder="Opción ${letra}"
+                >
+
+              </div>
+
+            `
+          )
+          .join("")
+      }
+
+    `;
+
+  }
+
+
+  if(
+    tipo === "ordenamiento"
+  ){
+
+    const ids =
+      [1, 2, 3, 4];
+
+    camposEspecificos = `
+
+      <p>
+        <strong>
+          Elementos y orden correcto
+        </strong>
+      </p>
+
+      ${
+        ids
+          .map(
+            id => `
+
+              <div
+                style="
+                  display:grid;
+                  grid-template-columns:40px 1fr 120px;
+                  gap:8px;
+                  align-items:center;
+                  margin:8px 0;
+                "
+              >
+
+                <strong>
+                  ${id}.
+                </strong>
+
+                <input
+                  type="text"
+                  id="elementoNuevoItem-${id}"
+                  style="
+                    width:100%;
+                    box-sizing:border-box;
+                    padding:7px;
+                  "
+                  placeholder="Elemento ${id}"
+                >
+
+                <input
+                  type="number"
+                  id="posicionNuevoItem-${id}"
+                  min="1"
+                  max="4"
+                  style="
+                    width:90px;
+                    padding:7px;
+                  "
+                  placeholder="Orden"
+                >
+
+              </div>
+
+            `
+          )
+          .join("")
+      }
+
+      <small>
+        Indica la posición correcta de cada elemento:
+        1, 2, 3 y 4, sin repetir.
+      </small>
+
+    `;
+
+  }
+
+
+  if(
+    !camposEspecificos
+  ){
+
+    contenedor.innerHTML = `
+
+      <p>
+        La incorporación manual de este tipo
+        se habilitará en el siguiente paso.
+      </p>
+
+    `;
+
+    return;
+
+  }
+
+
+  contenedor.innerHTML = `
+
+    <div style="margin-top:14px;">
+
+      <p>
+        <strong>
+          Enunciado
+        </strong>
+      </p>
+
+      <textarea
+        id="enunciadoNuevoItemPruebaObjetiva"
+        rows="4"
+        style="
+          width:100%;
+          box-sizing:border-box;
+          padding:8px;
+        "
+        placeholder="Escriba el enunciado del nuevo ítem."
+      ></textarea>
+
+      ${camposEspecificos}
+
+    </div>
+
+  `;
+
+}
   
 async function regenerarItemPruebaObjetiva(
   numeroItem
