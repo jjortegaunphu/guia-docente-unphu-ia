@@ -94,6 +94,8 @@ let fuenteInstrumentos = null;
 
 let instrumentoSeleccionadoActual = null;
 
+let pruebaObjetivaGeneradaActual = null;
+
 
 function cargarDatosInstrumentos(){
 
@@ -11174,6 +11176,14 @@ console.log(
 
   return;
 }
+
+pruebaObjetivaGeneradaActual =
+  resultado.prueba;
+
+console.log(
+  "Prueba objetiva almacenada para revisión:",
+  pruebaObjetivaGeneradaActual
+);   
 
 } 
 
