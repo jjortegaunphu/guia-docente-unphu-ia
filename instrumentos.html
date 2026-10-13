@@ -12220,13 +12220,83 @@ function cancelarEdicionItemPruebaObjetiva(){
 
 }  
 
-function regenerarItemPruebaObjetiva(
+async function regenerarItemPruebaObjetiva(
   numeroItem
 ){
 
+  if(
+    !pruebaObjetivaGeneradaActual ||
+    !Array.isArray(
+      pruebaObjetivaGeneradaActual.items
+    )
+  ){
+    return;
+  }
+
+  const itemActual =
+    pruebaObjetivaGeneradaActual.items
+      .find(
+        item =>
+          Number(item.numero) ===
+          Number(numeroItem)
+      );
+
+  if(!itemActual){
+
+    alert(
+      "No fue posible localizar el ítem que deseas regenerar."
+    );
+
+    return;
+  }
+
+  const configuracion =
+    prepararGeneracionPruebaObjetiva();
+
+  if(!configuracion){
+    return;
+  }
+
+  const contextoAcademico =
+    construirContextoGeneracionPruebaObjetiva(
+      configuracion
+    );
+
+  const contrato =
+    construirContratoPruebaObjetiva(
+      configuracion
+    );
+
+  const solicitud = {
+
+    itemActual:
+      itemActual,
+
+    configuracion:
+      configuracion,
+
+    contextoAcademico:
+      contextoAcademico,
+
+    reglasGenerales:
+      contrato.reglasGenerales,
+
+    reglasTipo:
+      contrato.reglasEspecificas[
+        itemActual.tipo
+      ] || [],
+
+    estructuraTipo:
+      contrato.estructuraSalida
+        ?.prueba
+        ?.estructuraItems
+        ?.[itemActual.tipo] || null
+
+  };
+
   console.log(
-    "Regenerar ítem de la Prueba objetiva:",
-    numeroItem
+    "Solicitud preparada para regenerar ítem:",
+    solicitud
   );
 
 }
