@@ -11543,7 +11543,7 @@ if(
             Tipo:
           </strong>
 
-          ${item.tipo || ""}
+         ${obtenerNombreTipoItemPruebaObjetiva(item.tipo)}
         </p>
 
         <p>
@@ -11568,6 +11568,57 @@ if(
     `
     : ""
 }
+
+<div
+  style="
+    margin-top:14px;
+    padding-top:12px;
+    border-top:1px solid #eeeeee;
+    font-size:14px;
+  "
+>
+
+  <p>
+    <strong>Puntuación:</strong>
+    ${Number(item.puntos || 0)} punto(s)
+  </p>
+
+  <p>
+    <strong>Nivel cognitivo:</strong>
+    ${item.nivelCognitivo || "No especificado"}
+  </p>
+
+  <p>
+    <strong>Dificultad:</strong>
+    ${item.dificultad || "No especificada"}
+  </p>
+
+  <p>
+    <strong>Semana de origen:</strong>
+    ${Number(item.semanaOrigen || 0) || "No especificada"}
+  </p>
+
+  <p>
+    <strong>Contenido de origen:</strong>
+    ${item.contenidoOrigen || "No especificado"}
+  </p>
+
+  <p>
+  <strong>REA de origen:</strong>
+  ${
+    Array.isArray(item.reaOrigen) &&
+    item.reaOrigen.length > 0
+      ? item.reaOrigen.join(" | ")
+      : "⚠ Sin REA de origen"
+  }
+</p>
+
+<p>
+  <strong>Justificación de la respuesta:</strong>
+  ${item.justificacionRespuesta || "No especificada"}
+</p>
+
+</div>
 
       </div>
 
@@ -11634,6 +11685,37 @@ contenedor.innerHTML = `
 ${htmlItems}
 
 `;  
+
+}  
+
+function obtenerNombreTipoItemPruebaObjetiva(
+  tipo
+){
+
+  const nombres = {
+    seleccion_unica:
+      "Selección única",
+
+    seleccion_multiple:
+      "Selección múltiple",
+
+    verdadero_falso:
+      "Verdadero o falso",
+
+    pareamiento:
+      "Pareamiento",
+
+    completacion:
+      "Completación",
+
+    respuesta_corta:
+      "Respuesta corta objetiva",
+
+    ordenamiento:
+      "Ordenamiento"
+  };
+
+  return nombres[tipo] || tipo || "";
 
 }  
 
