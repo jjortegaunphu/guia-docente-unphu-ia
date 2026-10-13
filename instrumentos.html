@@ -13198,6 +13198,77 @@ function mostrarFormularioAgregarItemPruebaObjetiva(){
 
 }
 
+  function obtenerOpcionesAcademicasNuevoItemPruebaObjetiva(){
+
+  const semanas =
+    solicitudGeneracionPruebaObjetivaActual
+      ?.contextoAcademico
+      ?.semanas;
+
+  if(!Array.isArray(semanas)){
+    return [];
+  }
+
+  const opciones = [];
+
+  semanas.forEach(
+    semana => {
+
+      const numeroSemana =
+        Number(semana.semana);
+
+      const clases =
+        Array.isArray(semana.clases)
+          ? semana.clases
+          : [];
+
+      clases.forEach(
+        clase => {
+
+          const contenidos =
+            Array.isArray(clase.contenidos)
+              ? clase.contenidos
+              : [];
+
+          contenidos.forEach(
+            contenido => {
+
+              const texto =
+                String(contenido || "").trim();
+
+              if(!texto){
+                return;
+              }
+
+              const yaExiste =
+                opciones.some(
+                  opcion =>
+                    opcion.semana === numeroSemana &&
+                    opcion.contenido === texto
+                );
+
+              if(!yaExiste){
+
+                opciones.push({
+                  semana: numeroSemana,
+                  contenido: texto
+                });
+
+              }
+
+            }
+          );
+
+        }
+      );
+
+    }
+  );
+
+  return opciones;
+
+}
+
 function actualizarFormularioNuevoItemPruebaObjetiva(){
 
   const selector =
@@ -13226,6 +13297,9 @@ function actualizarFormularioNuevoItemPruebaObjetiva(){
     return;
 
   }
+
+  const opcionesAcademicas =
+  obtenerOpcionesAcademicasNuevoItemPruebaObjetiva();
 
   let camposEspecificos = "";
 
@@ -13512,31 +13586,80 @@ function actualizarFormularioNuevoItemPruebaObjetiva(){
 
   contenedor.innerHTML = `
 
-    <div style="margin-top:14px;">
+  <div style="margin-top:14px;">
+
+    <p>
+      <strong>
+        Enunciado
+      </strong>
+    </p>
+
+    <textarea
+      id="enunciadoNuevoItemPruebaObjetiva"
+      rows="4"
+      style="
+        width:100%;
+        box-sizing:border-box;
+        padding:8px;
+      "
+      placeholder="Escriba el enunciado del nuevo ítem."
+    ></textarea>
+
+    ${camposEspecificos}
+
+    <div
+      style="
+        margin-top:18px;
+        padding-top:14px;
+        border-top:1px solid #dddddd;
+      "
+    >
 
       <p>
         <strong>
-          Enunciado
+          Vinculación académica
         </strong>
       </p>
 
-      <textarea
-        id="enunciadoNuevoItemPruebaObjetiva"
-        rows="4"
+      <label>
+        Semana y contenido de origen
+      </label>
+
+      <select
+        id="origenAcademicoNuevoItemPruebaObjetiva"
         style="
           width:100%;
           box-sizing:border-box;
           padding:8px;
+          margin-top:6px;
         "
-        placeholder="Escriba el enunciado del nuevo ítem."
-      ></textarea>
+      >
 
-      ${camposEspecificos}
+        <option value="">
+          Seleccione el contenido evaluado
+        </option>
+
+        ${
+          opcionesAcademicas
+            .map(
+              (opcion, indice) => `
+
+                <option value="${indice}">
+                  Semana ${opcion.semana} — ${opcion.contenido}
+                </option>
+
+              `
+            )
+            .join("")
+        }
+
+      </select>
 
     </div>
 
-  `;
+  </div>
 
+`;
 }
   
 async function regenerarItemPruebaObjetiva(
