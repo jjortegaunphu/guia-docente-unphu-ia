@@ -11209,6 +11209,13 @@ if(!contenedor){
   return;
 }
 
+  const items =
+  Array.isArray(prueba.items)
+    ? prueba.items
+    : [];
+
+let htmlItems = "";
+
 contenedor.innerHTML = `
 
   <hr>
