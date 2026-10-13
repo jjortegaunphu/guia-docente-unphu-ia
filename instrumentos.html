@@ -12341,9 +12341,87 @@ const contrato =
   };
 
   console.log(
-    "Solicitud preparada para regenerar ítem:",
-    solicitud
+  "Solicitud preparada para regenerar ítem:",
+  solicitud
+);
+
+try {
+
+  const respuesta =
+    await fetch(
+      "https://guia-docente-unphu-api.jortega-cc4.workers.dev/regenerar-item-prueba-objetiva",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body:
+          JSON.stringify(solicitud)
+      }
+    );
+
+  const resultado =
+    await respuesta.json();
+
+  console.log(
+    "Respuesta del Worker al regenerar ítem:",
+    resultado
   );
+
+  if (
+    !respuesta.ok ||
+    resultado.correcto !== true ||
+    !resultado.item
+  ) {
+
+    alert(
+      resultado.error ||
+      "No fue posible regenerar el ítem."
+    );
+
+    return;
+  }
+
+  const indiceItem =
+    pruebaObjetivaGeneradaActual.items
+      .findIndex(
+        item =>
+          Number(item.numero) ===
+          Number(numeroItem)
+      );
+
+  if (indiceItem === -1) {
+
+    alert(
+      "No fue posible localizar el ítem original para sustituirlo."
+    );
+
+    return;
+  }
+
+  pruebaObjetivaGeneradaActual.items[
+    indiceItem
+  ] = resultado.item;
+
+  numeroItemPruebaObjetivaEnEdicion =
+    null;
+
+  mostrarRevisionPruebaObjetiva(
+    pruebaObjetivaGeneradaActual
+  );
+
+} catch (error) {
+
+  console.error(
+    "Error al regenerar el ítem:",
+    error
+  );
+
+  alert(
+    "No fue posible conectar con el servicio para regenerar el ítem."
+  );
+
+}
 
 }
 
