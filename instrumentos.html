@@ -11209,6 +11209,55 @@ if(!contenedor){
   return;
 }
 
+contenedor.innerHTML = `
+
+  <hr>
+
+  <h2>
+    Revisión de la Prueba objetiva
+  </h2>
+
+  <div
+    style="
+      border:1px solid #cccccc;
+      padding:16px;
+      margin-top:12px;
+    "
+  >
+
+    <h3>
+      ${prueba.titulo || "Prueba objetiva"}
+    </h3>
+
+    <p>
+      <strong>
+        Cantidad de ítems:
+      </strong>
+
+      ${Number(prueba.cantidadItems || 0)}
+    </p>
+
+    <p>
+      <strong>
+        Valor total:
+      </strong>
+
+      ${Number(prueba.valorTotal || 0)}
+      punto(s)
+    </p>
+
+    <p>
+      <strong>
+        Instrucciones:
+      </strong>
+
+      ${prueba.instruccionesGenerales || ""}
+    </p>
+
+  </div>
+
+`;  
+
 }  
 
 function obtenerEstructuraSalidaPruebaObjetiva(){
