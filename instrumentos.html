@@ -11425,6 +11425,102 @@ if(
       .join("");
 
 }
+
+    if(
+  item.tipo === "seleccion_unica" &&
+  item.respuestaCorrecta
+){
+
+  respuestaRevision = `
+    <strong>Respuesta correcta:</strong>
+    ${item.respuestaCorrecta.letra || ""}.
+    ${item.respuestaCorrecta.texto || ""}
+  `;
+
+}
+
+if(
+  item.tipo === "seleccion_multiple" &&
+  Array.isArray(item.respuestasCorrectas)
+){
+
+  respuestaRevision = `
+    <strong>Respuestas correctas:</strong>
+    ${
+      item.respuestasCorrectas
+        .map(
+          respuesta =>
+            `${respuesta.letra || ""}. ${respuesta.texto || ""}`
+        )
+        .join(" | ")
+    }
+  `;
+
+}
+
+if(
+  item.tipo === "verdadero_falso"
+){
+
+  respuestaRevision = `
+    <strong>Respuesta correcta:</strong>
+    ${item.respuestaCorrecta || ""}
+  `;
+
+}
+
+if(
+  item.tipo === "pareamiento" &&
+  Array.isArray(item.correspondenciasCorrectas)
+){
+
+  respuestaRevision = `
+    <strong>Correspondencias correctas:</strong>
+    ${
+      item.correspondenciasCorrectas
+        .map(
+          correspondencia =>
+            `${correspondencia.premisaId || ""} → ${correspondencia.opcionLetra || ""}`
+        )
+        .join(" | ")
+    }
+  `;
+
+}
+
+if(
+  item.tipo === "completacion"
+){
+
+  respuestaRevision = `
+    <strong>Respuesta correcta:</strong>
+    ${item.respuestaCorrecta || ""}
+  `;
+
+}
+
+if(
+  item.tipo === "respuesta_corta"
+){
+
+  respuestaRevision = `
+    <strong>Respuesta correcta:</strong>
+    ${item.respuestaCorrecta || ""}
+  `;
+
+}
+
+if(
+  item.tipo === "ordenamiento" &&
+  Array.isArray(item.ordenCorrecto)
+){
+
+  respuestaRevision = `
+    <strong>Orden correcto:</strong>
+    ${item.ordenCorrecto.join(" → ")}
+  `;
+
+}
     
     htmlItems += `
 
@@ -11455,6 +11551,23 @@ if(
         </p>
 
         ${contenidoEspecifico}
+
+        ${
+  respuestaRevision
+    ? `
+      <div
+        style="
+          margin-top:14px;
+          padding:10px;
+          background:#f5f5f5;
+          border-left:4px solid #555555;
+        "
+      >
+        ${respuestaRevision}
+      </div>
+    `
+    : ""
+}
 
       </div>
 
