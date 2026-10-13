@@ -11048,6 +11048,35 @@ function construirContextoGeneracionPruebaObjetiva(
       configuracion
     );
 
+  const codigosREA =
+  Array.isArray(
+    instrumentoSeleccionadoActual?.codigosREA
+  )
+    ? instrumentoSeleccionadoActual.codigosREA
+    : [];
+
+const reaOficiales =
+  Array.isArray(
+    fuenteInstrumentos?.reaOficiales
+  )
+    ? fuenteInstrumentos.reaOficiales
+        .filter(
+          rea =>
+            codigosREA.includes(
+              rea.codigo
+            )
+        )
+        .map(
+          rea => ({
+            codigo:
+              rea.codigo || "",
+
+            texto:
+              rea.texto || ""
+          })
+        )
+    : [];
+
   const contexto =
     semanas.map(
       semana => {
@@ -11090,7 +11119,13 @@ function construirContextoGeneracionPruebaObjetiva(
     contexto
   );
 
-  return contexto;
+ return {
+  semanas:
+    contexto,
+
+  reaOficiales:
+    reaOficiales
+};
 }  
 
 function construirSolicitudGeneracionPruebaObjetiva(){
