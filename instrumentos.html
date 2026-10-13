@@ -11124,9 +11124,21 @@ function construirSolicitudGeneracionPruebaObjetiva(){
   return solicitud;
 }
 
-  async function generarPruebaObjetiva(){
+ async function generarPruebaObjetiva(){
 
-}
+  const solicitud =
+    construirSolicitudGeneracionPruebaObjetiva();
+
+  if(!solicitud){
+    return;
+  }
+
+  console.log(
+    "Solicitud que se enviará al Worker:",
+    solicitud
+  );
+
+} 
 
 function obtenerEstructuraSalidaPruebaObjetiva(){
 
