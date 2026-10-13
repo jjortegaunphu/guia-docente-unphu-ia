@@ -11400,6 +11400,29 @@ if(
   `;
 
 }
+
+    if(
+  item.tipo === "ordenamiento" &&
+  Array.isArray(item.elementos)
+){
+
+  contenidoEspecifico =
+    item.elementos
+      .map(
+        elemento => `
+          <div
+            style="
+              margin:6px 0 6px 20px;
+            "
+          >
+            _____
+            ${elemento.texto || ""}
+          </div>
+        `
+      )
+      .join("");
+
+}
     
     htmlItems += `
 
