@@ -11219,6 +11219,34 @@ let htmlItems = "";
   items.forEach(
   item => {
 
+    let contenidoEspecifico = "";
+
+if(
+  item.tipo === "seleccion_unica" &&
+  Array.isArray(item.alternativas)
+){
+
+  contenidoEspecifico =
+    item.alternativas
+      .map(
+        alternativa => `
+          <div
+            style="
+              margin:6px 0 6px 20px;
+            "
+          >
+            <strong>
+              ${alternativa.letra || ""}
+            </strong>.
+
+            ${alternativa.texto || ""}
+          </div>
+        `
+      )
+      .join("");
+
+}
+
     htmlItems += `
 
       <div
@@ -11246,6 +11274,8 @@ let htmlItems = "";
         <p>
           ${item.enunciado || ""}
         </p>
+
+        ${contenidoEspecifico}
 
       </div>
 
