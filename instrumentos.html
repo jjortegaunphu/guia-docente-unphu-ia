@@ -11273,6 +11273,71 @@ if(
       .join("");
 
 }
+
+    if(
+  item.tipo === "pareamiento" &&
+  Array.isArray(item.premisas) &&
+  Array.isArray(item.opciones)
+){
+
+  const premisas =
+    item.premisas
+      .map(
+        premisa => `
+          <div
+            style="
+              margin:6px 0 6px 20px;
+            "
+          >
+            ${premisa.id || ""}.
+            ${premisa.texto || ""}
+          </div>
+        `
+      )
+      .join("");
+
+  const opciones =
+    item.opciones
+      .map(
+        opcion => `
+          <div
+            style="
+              margin:6px 0 6px 20px;
+            "
+          >
+            <strong>
+              ${opcion.letra || ""}
+            </strong>.
+
+            ${opcion.texto || ""}
+          </div>
+        `
+      )
+      .join("");
+
+  contenidoEspecifico = `
+
+    <div style="margin-top:10px;">
+
+      <strong>
+        Premisas
+      </strong>
+
+      ${premisas}
+
+      <div style="margin-top:12px;">
+        <strong>
+          Opciones
+        </strong>
+      </div>
+
+      ${opciones}
+
+    </div>
+
+  `;
+
+}
     
     if(
   item.tipo === "verdadero_falso"
