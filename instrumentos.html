@@ -11138,6 +11138,21 @@ function construirSolicitudGeneracionPruebaObjetiva(){
     solicitud
   );
 
+   const respuesta =
+  await fetch(
+    "https://guia-docente-unphu-api.jortega-cc4.workers.dev/generar-prueba-objetiva",
+    {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body:
+        JSON.stringify(solicitud)
+    }
+  );
+
 } 
 
 function obtenerEstructuraSalidaPruebaObjetiva(){
