@@ -11216,6 +11216,44 @@ if(!contenedor){
 
 let htmlItems = "";
 
+  items.forEach(
+  item => {
+
+    htmlItems += `
+
+      <div
+        style="
+          border:1px solid #dddddd;
+          padding:14px;
+          margin-top:12px;
+        "
+      >
+
+        <p>
+          <strong>
+            Ítem ${Number(item.numero || 0)}
+          </strong>
+        </p>
+
+        <p>
+          <strong>
+            Tipo:
+          </strong>
+
+          ${item.tipo || ""}
+        </p>
+
+        <p>
+          ${item.enunciado || ""}
+        </p>
+
+      </div>
+
+    `;
+
+  }
+);
+
 contenedor.innerHTML = `
 
   <hr>
@@ -11262,6 +11300,16 @@ contenedor.innerHTML = `
     </p>
 
   </div>
+
+  <h3
+  style="
+    margin-top:25px;
+  "
+>
+  Ítems de la prueba
+</h3>
+
+${htmlItems}
 
 `;  
 
