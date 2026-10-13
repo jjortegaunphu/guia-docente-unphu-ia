@@ -11153,6 +11153,14 @@ function construirSolicitudGeneracionPruebaObjetiva(){
     }
   );
 
+   const resultado =
+  await respuesta.json();
+
+console.log(
+  "Respuesta del Worker para la Prueba objetiva:",
+  resultado
+);
+
 } 
 
 function obtenerEstructuraSalidaPruebaObjetiva(){
