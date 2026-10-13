@@ -11468,6 +11468,339 @@ if(
 }
 
 if(
+  itemEnEdicion &&
+  item.tipo === "seleccion_multiple" &&
+  Array.isArray(item.alternativas)
+){
+
+  const letrasCorrectas =
+    Array.isArray(item.respuestasCorrectas)
+      ? item.respuestasCorrectas.map(
+          respuesta =>
+            String(respuesta.letra || "")
+        )
+      : [];
+
+  camposEspecificosEdicion = `
+
+    <div style="margin-top:14px;">
+
+      <p>
+        <strong>
+          Alternativas
+        </strong>
+      </p>
+
+      ${
+        item.alternativas
+          .map(
+            alternativa => `
+
+              <div
+                style="
+                  display:flex;
+                  gap:8px;
+                  align-items:center;
+                  margin:8px 0;
+                "
+              >
+
+                <input
+                  type="checkbox"
+                  name="respuestasMultiplesEdicion-${Number(item.numero)}"
+                  value="${alternativa.letra || ""}"
+                  ${
+                    letrasCorrectas.includes(
+                      String(alternativa.letra || "")
+                    )
+                      ? "checked"
+                      : ""
+                  }
+                >
+
+                <strong>
+                  ${alternativa.letra || ""}.
+                </strong>
+
+                <input
+                  type="text"
+                  id="editarAlternativaMultiple-${Number(item.numero)}-${alternativa.letra || ""}"
+                  value="${alternativa.texto || ""}"
+                  style="
+                    flex:1;
+                    padding:7px;
+                  "
+                >
+
+              </div>
+
+            `
+          )
+          .join("")
+      }
+
+      <small>
+        Marca todas las alternativas que correspondan
+        a respuestas correctas.
+      </small>
+
+    </div>
+
+  `;
+
+}
+
+
+if(
+  itemEnEdicion &&
+  item.tipo === "pareamiento" &&
+  Array.isArray(item.premisas) &&
+  Array.isArray(item.opciones)
+){
+
+  camposEspecificosEdicion = `
+
+    <div style="margin-top:14px;">
+
+      <p>
+        <strong>
+          Premisas
+        </strong>
+      </p>
+
+      ${
+        item.premisas
+          .map(
+            premisa => {
+
+              const correspondencia =
+                Array.isArray(
+                  item.correspondenciasCorrectas
+                )
+                  ? item.correspondenciasCorrectas
+                      .find(
+                        relacion =>
+                          Number(relacion.premisaId) ===
+                          Number(premisa.id)
+                      )
+                  : null;
+
+              return `
+
+                <div
+                  style="
+                    display:grid;
+                    grid-template-columns:40px 1fr 160px;
+                    gap:8px;
+                    align-items:center;
+                    margin:8px 0;
+                  "
+                >
+
+                  <strong>
+                    ${premisa.id || ""}.
+                  </strong>
+
+                  <input
+                    type="text"
+                    id="editarPremisa-${Number(item.numero)}-${premisa.id}"
+                    value="${premisa.texto || ""}"
+                    style="
+                      width:100%;
+                      box-sizing:border-box;
+                      padding:7px;
+                    "
+                  >
+
+                  <select
+                    id="editarCorrespondencia-${Number(item.numero)}-${premisa.id}"
+                    style="
+                      padding:7px;
+                    "
+                  >
+
+                    <option value="">
+                      Seleccionar
+                    </option>
+
+                    ${
+                      item.opciones
+                        .map(
+                          opcion => `
+                            <option
+                              value="${opcion.letra || ""}"
+                              ${
+                                String(
+                                  correspondencia?.opcionLetra || ""
+                                ) ===
+                                String(opcion.letra || "")
+                                  ? "selected"
+                                  : ""
+                              }
+                            >
+                              ${opcion.letra || ""}
+                            </option>
+                          `
+                        )
+                        .join("")
+                    }
+
+                  </select>
+
+                </div>
+
+              `;
+
+            }
+          )
+          .join("")
+      }
+
+      <p style="margin-top:14px;">
+        <strong>
+          Opciones
+        </strong>
+      </p>
+
+      ${
+        item.opciones
+          .map(
+            opcion => `
+
+              <div
+                style="
+                  display:flex;
+                  gap:8px;
+                  align-items:center;
+                  margin:8px 0;
+                "
+              >
+
+                <strong>
+                  ${opcion.letra || ""}.
+                </strong>
+
+                <input
+                  type="text"
+                  id="editarOpcionPareamiento-${Number(item.numero)}-${opcion.letra || ""}"
+                  value="${opcion.texto || ""}"
+                  style="
+                    flex:1;
+                    padding:7px;
+                  "
+                >
+
+              </div>
+
+            `
+          )
+          .join("")
+      }
+
+      <small>
+        Selecciona para cada premisa la letra de
+        la opción que le corresponde.
+      </small>
+
+    </div>
+
+  `;
+
+}
+
+
+if(
+  itemEnEdicion &&
+  item.tipo === "ordenamiento" &&
+  Array.isArray(item.elementos)
+){
+
+  camposEspecificosEdicion = `
+
+    <div style="margin-top:14px;">
+
+      <p>
+        <strong>
+          Elementos y orden correcto
+        </strong>
+      </p>
+
+      ${
+        item.elementos
+          .map(
+            elemento => {
+
+              const posicionActual =
+                Array.isArray(item.ordenCorrecto)
+                  ? item.ordenCorrecto
+                      .findIndex(
+                        id =>
+                          Number(id) ===
+                          Number(elemento.id)
+                      ) + 1
+                  : 0;
+
+              return `
+
+                <div
+                  style="
+                    display:grid;
+                    grid-template-columns:40px 1fr 110px;
+                    gap:8px;
+                    align-items:center;
+                    margin:8px 0;
+                  "
+                >
+
+                  <strong>
+                    ${elemento.id || ""}.
+                  </strong>
+
+                  <input
+                    type="text"
+                    id="editarElementoOrden-${Number(item.numero)}-${elemento.id}"
+                    value="${elemento.texto || ""}"
+                    style="
+                      width:100%;
+                      box-sizing:border-box;
+                      padding:7px;
+                    "
+                  >
+
+                  <input
+                    type="number"
+                    id="editarPosicionOrden-${Number(item.numero)}-${elemento.id}"
+                    value="${posicionActual || ""}"
+                    min="1"
+                    max="${item.elementos.length}"
+                    style="
+                      width:90px;
+                      padding:7px;
+                    "
+                    title="Posición correcta"
+                  >
+
+                </div>
+
+              `;
+
+            }
+          )
+          .join("")
+      }
+
+      <small>
+        En la última columna indica la posición correcta
+        de cada elemento: 1, 2, 3...
+      </small>
+
+    </div>
+
+  `;
+
+}
+    
+if(
   item.tipo === "seleccion_unica" &&
   Array.isArray(item.alternativas)
 ){
@@ -12233,6 +12566,285 @@ if(
 
   item.respuestaCorrecta =
     campoRespuesta.value.trim();
+
+}
+
+  if(
+  item.tipo === "seleccion_multiple" &&
+  Array.isArray(item.alternativas)
+){
+
+  const respuestasSeleccionadas =
+    Array.from(
+      document.querySelectorAll(
+        `input[name="respuestasMultiplesEdicion-${numeroItem}"]:checked`
+      )
+    );
+
+  if(respuestasSeleccionadas.length === 0){
+
+    alert(
+      "Selecciona al menos una respuesta correcta."
+    );
+
+    return;
+  }
+
+  for(
+    const alternativa of
+    item.alternativas
+  ){
+
+    const campoAlternativa =
+      document.getElementById(
+        `editarAlternativaMultiple-${numeroItem}-${alternativa.letra}`
+      );
+
+    if(
+      !campoAlternativa ||
+      !campoAlternativa.value.trim()
+    ){
+
+      alert(
+        "Las alternativas no pueden quedar vacías."
+      );
+
+      return;
+    }
+
+  }
+
+  item.alternativas.forEach(
+    alternativa => {
+
+      const campoAlternativa =
+        document.getElementById(
+          `editarAlternativaMultiple-${numeroItem}-${alternativa.letra}`
+        );
+
+      alternativa.texto =
+        campoAlternativa.value.trim();
+
+    }
+  );
+
+  item.respuestasCorrectas =
+    respuestasSeleccionadas.map(
+      campo => {
+
+        const letra =
+          campo.value;
+
+        const alternativa =
+          item.alternativas.find(
+            alternativa =>
+              alternativa.letra === letra
+          );
+
+        return {
+          letra:
+            letra,
+
+          texto:
+            alternativa?.texto || ""
+        };
+
+      }
+    );
+
+}
+
+
+if(
+  item.tipo === "pareamiento" &&
+  Array.isArray(item.premisas) &&
+  Array.isArray(item.opciones)
+){
+
+  const nuevasCorrespondencias = [];
+
+  for(
+    const premisa of
+    item.premisas
+  ){
+
+    const campoPremisa =
+      document.getElementById(
+        `editarPremisa-${numeroItem}-${premisa.id}`
+      );
+
+    const campoCorrespondencia =
+      document.getElementById(
+        `editarCorrespondencia-${numeroItem}-${premisa.id}`
+      );
+
+    if(
+      !campoPremisa ||
+      !campoPremisa.value.trim()
+    ){
+
+      alert(
+        "Las premisas no pueden quedar vacías."
+      );
+
+      return;
+    }
+
+    if(
+      !campoCorrespondencia ||
+      !campoCorrespondencia.value
+    ){
+
+      alert(
+        "Cada premisa debe tener una correspondencia correcta."
+      );
+
+      return;
+    }
+
+    premisa.texto =
+      campoPremisa.value.trim();
+
+    nuevasCorrespondencias.push({
+      premisaId:
+        premisa.id,
+
+      opcionLetra:
+        campoCorrespondencia.value
+    });
+
+  }
+
+  for(
+    const opcion of
+    item.opciones
+  ){
+
+    const campoOpcion =
+      document.getElementById(
+        `editarOpcionPareamiento-${numeroItem}-${opcion.letra}`
+      );
+
+    if(
+      !campoOpcion ||
+      !campoOpcion.value.trim()
+    ){
+
+      alert(
+        "Las opciones de pareamiento no pueden quedar vacías."
+      );
+
+      return;
+    }
+
+    opcion.texto =
+      campoOpcion.value.trim();
+
+  }
+
+  item.correspondenciasCorrectas =
+    nuevasCorrespondencias;
+
+}
+
+
+if(
+  item.tipo === "ordenamiento" &&
+  Array.isArray(item.elementos)
+){
+
+  const posiciones = [];
+
+  for(
+    const elemento of
+    item.elementos
+  ){
+
+    const campoElemento =
+      document.getElementById(
+        `editarElementoOrden-${numeroItem}-${elemento.id}`
+      );
+
+    const campoPosicion =
+      document.getElementById(
+        `editarPosicionOrden-${numeroItem}-${elemento.id}`
+      );
+
+    if(
+      !campoElemento ||
+      !campoElemento.value.trim()
+    ){
+
+      alert(
+        "Los elementos de ordenamiento no pueden quedar vacíos."
+      );
+
+      return;
+    }
+
+    const posicion =
+      Number(
+        campoPosicion?.value
+      );
+
+    if(
+      !Number.isInteger(posicion) ||
+      posicion < 1 ||
+      posicion > item.elementos.length
+    ){
+
+      alert(
+        "Cada elemento debe tener una posición válida entre 1 y " +
+        item.elementos.length +
+        "."
+      );
+
+      return;
+    }
+
+    elemento.texto =
+      campoElemento.value.trim();
+
+    posiciones.push({
+      posicion:
+        posicion,
+
+      id:
+        elemento.id
+    });
+
+  }
+
+  const posicionesUnicas =
+    new Set(
+      posiciones.map(
+        elemento =>
+          elemento.posicion
+      )
+    );
+
+  if(
+    posicionesUnicas.size !==
+    item.elementos.length
+  ){
+
+    alert(
+      "Las posiciones del ordenamiento no pueden repetirse."
+    );
+
+    return;
+  }
+
+  posiciones.sort(
+    (a, b) =>
+      a.posicion - b.posicion
+  );
+
+  item.ordenCorrecto =
+    posiciones.map(
+      elemento =>
+        elemento.id
+    );
 
 }
 
