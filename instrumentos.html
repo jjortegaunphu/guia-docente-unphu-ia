@@ -95,6 +95,8 @@ let fuenteInstrumentos = null;
 let instrumentoSeleccionadoActual = null;
 
 let pruebaObjetivaGeneradaActual = null;
+  
+let solicitudGeneracionPruebaObjetivaActual = null;
 
 let numeroItemPruebaObjetivaEnEdicion = null;
 
@@ -11204,6 +11206,9 @@ function construirSolicitudGeneracionPruebaObjetiva(){
     return;
   }
 
+  solicitudGeneracionPruebaObjetivaActual =
+    solicitud;
+
   console.log(
     "Solicitud que se enviará al Worker:",
     solicitud
@@ -12282,22 +12287,31 @@ async function regenerarItemPruebaObjetiva(
     return;
   }
 
-  const configuracion =
-    prepararGeneracionPruebaObjetiva();
+  if(
+  !solicitudGeneracionPruebaObjetivaActual ||
+  !solicitudGeneracionPruebaObjetivaActual.configuracion ||
+  !solicitudGeneracionPruebaObjetivaActual.contextoAcademico ||
+  !solicitudGeneracionPruebaObjetivaActual.contrato
+){
 
-  if(!configuracion){
-    return;
-  }
+  alert(
+    "No fue posible recuperar la configuración original de la Prueba objetiva."
+  );
 
-  const contextoAcademico =
-    construirContextoGeneracionPruebaObjetiva(
-      configuracion
-    );
+  return;
+}
 
-  const contrato =
-    construirContratoPruebaObjetiva(
-      configuracion
-    );
+const configuracion =
+  solicitudGeneracionPruebaObjetivaActual
+    .configuracion;
+
+const contextoAcademico =
+  solicitudGeneracionPruebaObjetivaActual
+    .contextoAcademico;
+
+const contrato =
+  solicitudGeneracionPruebaObjetivaActual
+    .contrato;
 
   const solicitud = {
 
