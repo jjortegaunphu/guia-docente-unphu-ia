@@ -12353,7 +12353,29 @@ contenedor.innerHTML = `
 
 ${htmlItems}
 
-`;  
+<div
+  style="
+    margin-top:20px;
+    padding-top:16px;
+    border-top:1px solid #cccccc;
+  "
+>
+
+  <button
+    type="button"
+    onclick="mostrarFormularioAgregarItemPruebaObjetiva()"
+  >
+    ➕ Agregar ítem
+  </button>
+
+  <div
+    id="formularioAgregarItemPruebaObjetiva"
+    style="display:none;"
+  ></div>
+
+</div>
+
+`; 
 
 }  
 
@@ -12869,6 +12891,121 @@ function cancelarEdicionItemPruebaObjetiva(){
 
 }  
 
+function mostrarFormularioAgregarItemPruebaObjetiva(){
+
+  const contenedor =
+    document.getElementById(
+      "formularioAgregarItemPruebaObjetiva"
+    );
+
+  if(!contenedor){
+    return;
+  }
+
+  contenedor.style.display =
+    "block";
+
+  contenedor.innerHTML = `
+
+    <div
+      style="
+        margin-top:16px;
+        padding:16px;
+        border:1px solid #cccccc;
+        background:#fafafa;
+      "
+    >
+
+      <h4>
+        Agregar nuevo ítem
+      </h4>
+
+      <p>
+        <strong>
+          Tipo de ítem
+        </strong>
+      </p>
+
+      <select
+        id="tipoNuevoItemPruebaObjetiva"
+        onchange="actualizarFormularioNuevoItemPruebaObjetiva()"
+        style="
+          width:100%;
+          max-width:420px;
+          padding:8px;
+        "
+      >
+
+        <option value="">
+          Seleccione un tipo
+        </option>
+
+        <option value="seleccion_unica">
+          Selección única
+        </option>
+
+        <option value="seleccion_multiple">
+          Selección múltiple
+        </option>
+
+        <option value="verdadero_falso">
+          Verdadero o falso
+        </option>
+
+        <option value="pareamiento">
+          Pareamiento
+        </option>
+
+        <option value="completacion">
+          Completación
+        </option>
+
+        <option value="respuesta_corta">
+          Respuesta corta objetiva
+        </option>
+
+        <option value="ordenamiento">
+          Ordenamiento
+        </option>
+
+      </select>
+
+      <div
+        id="camposNuevoItemPruebaObjetiva"
+        style="margin-top:16px;"
+      ></div>
+
+      <div
+        style="
+          display:flex;
+          gap:8px;
+          margin-top:16px;
+          flex-wrap:wrap;
+        "
+      >
+
+        <button
+          type="button"
+          onclick="guardarNuevoItemPruebaObjetiva()"
+        >
+          💾 Agregar a la prueba
+        </button>
+
+        <button
+          type="button"
+          onclick="cancelarNuevoItemPruebaObjetiva()"
+        >
+          Cancelar
+        </button>
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+  
 async function regenerarItemPruebaObjetiva(
   numeroItem
 ){
