@@ -13646,12 +13646,695 @@ function actualizarFormularioNuevoItemPruebaObjetiva(){
 
       </select>
 
+      <p style="margin-top:14px;">
+  <strong>
+    REA oficial(es)
+  </strong>
+</p>
+
+<div
+  id="reaNuevoItemPruebaObjetiva"
+  style="
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+  "
+>
+  ${
+    (
+      solicitudGeneracionPruebaObjetivaActual
+        ?.contextoAcademico
+        ?.reaOficiales || []
+    )
+      .map(
+        rea => `
+
+          <label>
+            <input
+              type="checkbox"
+              name="reaNuevoItemPruebaObjetiva"
+              value="${rea.codigo}"
+            >
+            ${rea.codigo} — ${rea.texto}
+          </label>
+
+        `
+      )
+      .join("")
+  }
+</div>
+
+
+<p style="margin-top:14px;">
+  <strong>
+    Nivel cognitivo
+  </strong>
+</p>
+
+<select
+  id="nivelCognitivoNuevoItemPruebaObjetiva"
+  style="
+    width:100%;
+    max-width:420px;
+    padding:8px;
+  "
+>
+  <option value="">
+    Seleccione el nivel cognitivo
+  </option>
+  <option value="Recordar">Recordar</option>
+  <option value="Comprender">Comprender</option>
+  <option value="Aplicar">Aplicar</option>
+  <option value="Analizar">Analizar</option>
+  <option value="Evaluar">Evaluar</option>
+  <option value="Crear">Crear</option>
+</select>
+
+
+<p style="margin-top:14px;">
+  <strong>
+    Dificultad
+  </strong>
+</p>
+
+<select
+  id="dificultadNuevoItemPruebaObjetiva"
+  style="
+    width:100%;
+    max-width:420px;
+    padding:8px;
+  "
+>
+  <option value="">
+    Seleccione la dificultad
+  </option>
+  <option value="Fácil">Fácil</option>
+  <option value="Media">Media</option>
+  <option value="Difícil">Difícil</option>
+</select>
+
+
+<p style="margin-top:14px;">
+  <strong>
+    Puntuación
+  </strong>
+</p>
+
+<input
+  type="number"
+  id="puntosNuevoItemPruebaObjetiva"
+  min="0.01"
+  step="0.01"
+  value="1"
+  style="
+    width:120px;
+    padding:8px;
+  "
+>
+
     </div>
 
   </div>
 
 `;
 }
+
+function cancelarNuevoItemPruebaObjetiva(){
+
+  const contenedor =
+    document.getElementById(
+      "formularioAgregarItemPruebaObjetiva"
+    );
+
+  if(!contenedor){
+    return;
+  }
+
+  contenedor.innerHTML = "";
+  contenedor.style.display = "none";
+
+}
+
+  function guardarNuevoItemPruebaObjetiva(){
+
+  if(
+    !pruebaObjetivaGeneradaActual ||
+    !Array.isArray(
+      pruebaObjetivaGeneradaActual.items
+    )
+  ){
+    alert(
+      "No existe una Prueba objetiva activa."
+    );
+    return;
+  }
+
+
+  const selectorTipo =
+    document.getElementById(
+      "tipoNuevoItemPruebaObjetiva"
+    );
+
+  const campoEnunciado =
+    document.getElementById(
+      "enunciadoNuevoItemPruebaObjetiva"
+    );
+
+  const selectorOrigen =
+    document.getElementById(
+      "origenAcademicoNuevoItemPruebaObjetiva"
+    );
+
+  const selectorNivel =
+    document.getElementById(
+      "nivelCognitivoNuevoItemPruebaObjetiva"
+    );
+
+  const selectorDificultad =
+    document.getElementById(
+      "dificultadNuevoItemPruebaObjetiva"
+    );
+
+  const campoPuntos =
+    document.getElementById(
+      "puntosNuevoItemPruebaObjetiva"
+    );
+
+
+  const tipo =
+    selectorTipo?.value || "";
+
+  const enunciado =
+    String(
+      campoEnunciado?.value || ""
+    ).trim();
+
+
+  if(
+    ![
+      "seleccion_multiple",
+      "pareamiento",
+      "ordenamiento"
+    ].includes(tipo)
+  ){
+    alert(
+      "Seleccione uno de los tipos habilitados para incorporación manual."
+    );
+    return;
+  }
+
+
+  if(!enunciado){
+    alert(
+      "Debe escribir el enunciado del nuevo ítem."
+    );
+    return;
+  }
+
+
+  const opcionesAcademicas =
+    obtenerOpcionesAcademicasNuevoItemPruebaObjetiva();
+
+  const indiceOrigen =
+    Number(selectorOrigen?.value);
+
+  if(
+    !selectorOrigen ||
+    selectorOrigen.value === "" ||
+    !Number.isInteger(indiceOrigen) ||
+    !opcionesAcademicas[indiceOrigen]
+  ){
+    alert(
+      "Debe seleccionar la semana y el contenido de origen."
+    );
+    return;
+  }
+
+
+  const origen =
+    opcionesAcademicas[indiceOrigen];
+
+
+  const reaSeleccionados =
+    Array.from(
+      document.querySelectorAll(
+        'input[name="reaNuevoItemPruebaObjetiva"]:checked'
+      )
+    )
+      .map(
+        campo =>
+          String(campo.value || "").trim()
+      )
+      .filter(Boolean);
+
+
+  if(reaSeleccionados.length === 0){
+    alert(
+      "Debe seleccionar al menos un REA oficial."
+    );
+    return;
+  }
+
+
+  const nivelCognitivo =
+    selectorNivel?.value || "";
+
+  if(!nivelCognitivo){
+    alert(
+      "Debe seleccionar el nivel cognitivo."
+    );
+    return;
+  }
+
+
+  const dificultad =
+    selectorDificultad?.value || "";
+
+  if(!dificultad){
+    alert(
+      "Debe seleccionar la dificultad."
+    );
+    return;
+  }
+
+
+  const puntos =
+    Number(campoPuntos?.value);
+
+  if(
+    !Number.isFinite(puntos) ||
+    puntos <= 0
+  ){
+    alert(
+      "La puntuación debe ser mayor que cero."
+    );
+    return;
+  }
+
+
+  const nuevoItem = {
+
+    numero:
+      pruebaObjetivaGeneradaActual.items.length + 1,
+
+    tipo:
+      tipo,
+
+    enunciado:
+      enunciado,
+
+    semanaOrigen:
+      origen.semana,
+
+    contenidoOrigen:
+      origen.contenido,
+
+    reaOrigen:
+      reaSeleccionados,
+
+    nivelCognitivo:
+      nivelCognitivo,
+
+    dificultad:
+      dificultad,
+
+    puntos:
+      puntos,
+
+    justificacionRespuesta:
+      ""
+
+  };
+
+   if(
+  tipo === "seleccion_multiple"
+){
+
+  const letras =
+    ["A", "B", "C", "D", "E"];
+
+  const alternativas =
+    letras.map(
+      letra => ({
+
+        letra:
+          letra,
+
+        texto:
+          String(
+            document.getElementById(
+              `alternativaNuevoItem-${letra}`
+            )?.value || ""
+          ).trim()
+
+      })
+    );
+
+
+  const hayAlternativaVacia =
+    alternativas.some(
+      alternativa =>
+        !alternativa.texto
+    );
+
+  if(hayAlternativaVacia){
+
+    alert(
+      "Debe completar todas las alternativas."
+    );
+
+    return;
+  }
+
+
+  const letrasCorrectas =
+    Array.from(
+      document.querySelectorAll(
+        'input[name="respuestaCorrectaNuevoItem"]:checked'
+      )
+    )
+      .map(
+        campo =>
+          campo.value
+      );
+
+
+  if(letrasCorrectas.length === 0){
+
+    alert(
+      "Debe marcar al menos una alternativa correcta."
+    );
+
+    return;
+  }
+
+
+  nuevoItem.alternativas =
+    alternativas;
+
+
+  nuevoItem.respuestasCorrectas =
+    alternativas
+      .filter(
+        alternativa =>
+          letrasCorrectas.includes(
+            alternativa.letra
+          )
+      )
+      .map(
+        alternativa => ({
+
+          letra:
+            alternativa.letra,
+
+          texto:
+            alternativa.texto
+
+        })
+      );
+
+} 
+
+    if(
+  tipo === "pareamiento"
+){
+
+  const ids =
+    [1, 2, 3, 4];
+
+  const letras =
+    ["A", "B", "C", "D"];
+
+
+  const premisas =
+    ids.map(
+      id => ({
+
+        id:
+          id,
+
+        texto:
+          String(
+            document.getElementById(
+              `premisaNuevoItem-${id}`
+            )?.value || ""
+          ).trim()
+
+      })
+    );
+
+
+  const opciones =
+    letras.map(
+      letra => ({
+
+        letra:
+          letra,
+
+        texto:
+          String(
+            document.getElementById(
+              `opcionNuevoItem-${letra}`
+            )?.value || ""
+          ).trim()
+
+      })
+    );
+
+
+  if(
+    premisas.some(
+      premisa =>
+        !premisa.texto
+    ) ||
+    opciones.some(
+      opcion =>
+        !opcion.texto
+    )
+  ){
+
+    alert(
+      "Debe completar todas las premisas y opciones."
+    );
+
+    return;
+  }
+
+
+  const correspondenciasCorrectas =
+    ids.map(
+      id => ({
+
+        premisaId:
+          id,
+
+        opcionLetra:
+          document.getElementById(
+            `correspondenciaNuevoItem-${id}`
+          )?.value || ""
+
+      })
+    );
+
+
+  if(
+    correspondenciasCorrectas.some(
+      correspondencia =>
+        !correspondencia.opcionLetra
+    )
+  ){
+
+    alert(
+      "Debe establecer la correspondencia de todas las premisas."
+    );
+
+    return;
+  }
+
+      const opcionesCorrespondidas =
+  new Set(
+    correspondenciasCorrectas.map(
+      correspondencia =>
+        correspondencia.opcionLetra
+    )
+  );
+
+
+if(
+  opcionesCorrespondidas.size !==
+  correspondenciasCorrectas.length
+){
+
+  alert(
+    "Cada opción de pareamiento debe utilizarse una sola vez."
+  );
+
+  return;
+}
+
+
+  nuevoItem.premisas =
+    premisas;
+
+  nuevoItem.opciones =
+    opciones;
+
+  nuevoItem.correspondenciasCorrectas =
+    correspondenciasCorrectas;
+
+}
+
+    if(
+  tipo === "ordenamiento"
+){
+
+  const ids =
+    [1, 2, 3, 4];
+
+
+  const elementos =
+    ids.map(
+      id => ({
+
+        id:
+          id,
+
+        texto:
+          String(
+            document.getElementById(
+              `elementoNuevoItem-${id}`
+            )?.value || ""
+          ).trim()
+
+      })
+    );
+
+
+  if(
+    elementos.some(
+      elemento =>
+        !elemento.texto
+    )
+  ){
+
+    alert(
+      "Debe completar todos los elementos."
+    );
+
+    return;
+  }
+
+
+  const posiciones =
+    ids.map(
+      id => ({
+
+        id:
+          id,
+
+        posicion:
+          Number(
+            document.getElementById(
+              `posicionNuevoItem-${id}`
+            )?.value
+          )
+
+      })
+    );
+
+
+  if(
+    posiciones.some(
+      registro =>
+        !Number.isInteger(
+          registro.posicion
+        ) ||
+        registro.posicion < 1 ||
+        registro.posicion > 4
+    )
+  ){
+
+    alert(
+      "Las posiciones deben ser números enteros del 1 al 4."
+    );
+
+    return;
+  }
+
+
+  const posicionesUnicas =
+    new Set(
+      posiciones.map(
+        registro =>
+          registro.posicion
+      )
+    );
+
+
+  if(
+    posicionesUnicas.size !== 4
+  ){
+
+    alert(
+      "Las posiciones 1, 2, 3 y 4 no pueden repetirse."
+    );
+
+    return;
+  }
+
+
+  nuevoItem.elementos =
+    elementos;
+
+
+  nuevoItem.ordenCorrecto =
+    posiciones
+      .slice()
+      .sort(
+        (a, b) =>
+          a.posicion -
+          b.posicion
+      )
+      .map(
+        registro =>
+          registro.id
+      );
+
+
+  nuevoItem.criterioOrdenamiento =
+    "";
+
+}
+
+ pruebaObjetivaGeneradaActual.items.push(
+  nuevoItem
+);
+
+
+pruebaObjetivaGeneradaActual.cantidadItems =
+  pruebaObjetivaGeneradaActual.items.length;
+
+
+pruebaObjetivaGeneradaActual.valorTotal =
+  pruebaObjetivaGeneradaActual.items.reduce(
+    (total, item) =>
+      total +
+      Number(item.puntos || 0),
+    0
+  );
+
+
+guardarBorradorPruebaObjetiva();
+
+
+cancelarNuevoItemPruebaObjetiva();
+
+
+mostrarRevisionPruebaObjetiva(
+  pruebaObjetivaGeneradaActual
+);
+
+}   
   
 async function regenerarItemPruebaObjetiva(
   numeroItem
