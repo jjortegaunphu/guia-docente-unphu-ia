@@ -11161,6 +11161,20 @@ console.log(
   resultado
 );
 
+   if(
+  !respuesta.ok ||
+  resultado.correcto !== true ||
+  !resultado.prueba
+){
+
+  alert(
+    resultado.error ||
+    "No fue posible generar la Prueba objetiva."
+  );
+
+  return;
+}
+
 } 
 
 function obtenerEstructuraSalidaPruebaObjetiva(){
