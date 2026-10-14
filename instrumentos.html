@@ -12576,11 +12576,29 @@ ${htmlItems}
     📋 Ver pauta de respuestas
   </button>
 
+  <button
+    type="button"
+    onclick="mostrarVersionEstudiantePruebaObjetiva()"
+    style="
+    margin-left:8px;
+   "
+  >
+  👨‍🎓 Ver versión estudiante
+</button>
+
 </div>
 
 
 <div
   id="pautaPruebaObjetiva"
+  style="
+    display:none;
+    margin-top:16px;
+  "
+></div>
+
+<div
+  id="versionEstudiantePruebaObjetiva"
   style="
     display:none;
     margin-top:16px;
@@ -12878,6 +12896,406 @@ ${htmlItems}
           pruebaObjetivaGeneradaActual.valorTotal || 0
         )} punto(s)
       </p>
+
+    </div>
+
+  `;
+
+
+  contenedor.style.display =
+    "block";
+
+}
+
+  function mostrarVersionEstudiantePruebaObjetiva(){
+
+  const contenedor =
+    document.getElementById(
+      "versionEstudiantePruebaObjetiva"
+    );
+
+  if(
+    !contenedor ||
+    !pruebaObjetivaGeneradaActual ||
+    !Array.isArray(
+      pruebaObjetivaGeneradaActual.items
+    )
+  ){
+    return;
+  }
+
+
+  if(
+    contenedor.style.display === "block"
+  ){
+
+    contenedor.style.display =
+      "none";
+
+    contenedor.innerHTML =
+      "";
+
+    return;
+  }
+
+
+  let htmlItems = "";
+
+
+  pruebaObjetivaGeneradaActual.items
+    .forEach(
+      item => {
+
+        let contenido = "";
+
+
+        if(
+          (
+            item.tipo === "seleccion_unica" ||
+            item.tipo === "seleccion_multiple"
+          ) &&
+          Array.isArray(item.alternativas)
+        ){
+
+          contenido =
+            item.alternativas
+              .map(
+                alternativa => `
+                  <div
+                    style="
+                      margin:7px 0 7px 20px;
+                    "
+                  >
+                    <strong>
+                      ${alternativa.letra || ""}
+                    </strong>.
+                    ${alternativa.texto || ""}
+                  </div>
+                `
+              )
+              .join("");
+
+        }
+
+
+        if(
+          item.tipo === "verdadero_falso"
+        ){
+
+          contenido = `
+
+            <div
+              style="
+                margin:8px 0 8px 20px;
+              "
+            >
+              ☐ Verdadero
+            </div>
+
+            <div
+              style="
+                margin:8px 0 8px 20px;
+              "
+            >
+              ☐ Falso
+            </div>
+
+          `;
+
+        }
+
+
+        if(
+          item.tipo === "pareamiento" &&
+          Array.isArray(item.premisas) &&
+          Array.isArray(item.opciones)
+        ){
+
+          const premisas =
+            item.premisas
+              .map(
+                premisa => `
+                  <div
+                    style="
+                      margin:7px 0 7px 20px;
+                    "
+                  >
+                    _____
+                    <strong>
+                      ${premisa.id || ""}
+                    </strong>.
+                    ${premisa.texto || ""}
+                  </div>
+                `
+              )
+              .join("");
+
+
+          const opciones =
+            item.opciones
+              .map(
+                opcion => `
+                  <div
+                    style="
+                      margin:7px 0 7px 40px;
+                    "
+                  >
+                    <strong>
+                      ${opcion.letra || ""}
+                    </strong>.
+                    ${opcion.texto || ""}
+                  </div>
+                `
+              )
+              .join("");
+
+
+          contenido = `
+
+            <div
+              style="
+                margin-top:10px;
+              "
+            >
+
+              <p>
+                <strong>
+                  Premisas
+                </strong>
+              </p>
+
+              ${premisas}
+
+              <p
+                style="
+                  margin-top:12px;
+                "
+              >
+                <strong>
+                  Opciones
+                </strong>
+              </p>
+
+              ${opciones}
+
+            </div>
+
+          `;
+
+        }
+
+
+        if(
+          item.tipo === "completacion"
+        ){
+
+          contenido = `
+
+            <div
+              style="
+                margin:12px 0 8px 20px;
+              "
+            >
+              __________________________________________
+            </div>
+
+          `;
+
+        }
+
+
+        if(
+          item.tipo === "respuesta_corta"
+        ){
+
+          const espacio =
+            item.espacioRespuesta === "dos_lineas"
+              ? `
+                  <div>
+                    __________________________________________
+                  </div>
+
+                  <div
+                    style="
+                      margin-top:10px;
+                    "
+                  >
+                    __________________________________________
+                  </div>
+                `
+              : `
+                  <div>
+                    __________________________________________
+                  </div>
+                `;
+
+
+          contenido = `
+
+            <div
+              style="
+                margin:12px 0 8px 20px;
+              "
+            >
+              ${espacio}
+            </div>
+
+          `;
+
+        }
+
+
+        if(
+          item.tipo === "ordenamiento" &&
+          Array.isArray(item.elementos)
+        ){
+
+          contenido =
+            item.elementos
+              .map(
+                elemento => `
+                  <div
+                    style="
+                      margin:7px 0 7px 20px;
+                    "
+                  >
+                    _____
+                    ${elemento.texto || ""}
+                  </div>
+                `
+              )
+              .join("");
+
+        }
+
+
+        htmlItems += `
+
+          <div
+            style="
+              margin-top:20px;
+              page-break-inside:avoid;
+            "
+          >
+
+            <p>
+              <strong>
+                ${Number(item.numero || 0)}.
+              </strong>
+
+              ${item.enunciado || ""}
+
+              <span
+                style="
+                  float:right;
+                  margin-left:12px;
+                "
+              >
+                (${Number(item.puntos || 0)} punto(s))
+              </span>
+            </p>
+
+            ${contenido}
+
+          </div>
+
+        `;
+
+      }
+    );
+
+
+  contenedor.innerHTML = `
+
+    <div
+      style="
+        border:1px solid #cccccc;
+        padding:24px;
+        background:#ffffff;
+      "
+    >
+
+      <div
+        style="
+          text-align:center;
+          margin-bottom:24px;
+        "
+      >
+
+        <h2
+          style="
+            margin-bottom:6px;
+          "
+        >
+          ${pruebaObjetivaGeneradaActual.titulo || "Prueba objetiva"}
+        </h2>
+
+      </div>
+
+
+      <div
+        style="
+          margin-bottom:20px;
+        "
+      >
+
+        <p>
+          <strong>
+            Nombre:
+          </strong>
+
+          __________________________________________
+        </p>
+
+        <p>
+          <strong>
+            Matrícula:
+          </strong>
+
+          ______________________
+
+          &nbsp;&nbsp;&nbsp;
+
+          <strong>
+            Fecha:
+          </strong>
+
+          ______________________
+        </p>
+
+        <p>
+          <strong>
+            Valor:
+          </strong>
+
+          ${Number(
+            pruebaObjetivaGeneradaActual.valorTotal || 0
+          )} punto(s)
+        </p>
+
+      </div>
+
+
+      <div
+        style="
+          margin-bottom:22px;
+        "
+      >
+
+        <p>
+          <strong>
+            Instrucciones:
+          </strong>
+        </p>
+
+        <p>
+          ${pruebaObjetivaGeneradaActual.instruccionesGenerales || ""}
+        </p>
+
+      </div>
+
+
+      ${htmlItems}
 
     </div>
 
