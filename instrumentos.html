@@ -13526,25 +13526,42 @@ pruebaObjetivaGeneradaActual.items.forEach(
 
     if(item.tipo === "seleccion_unica"){
 
-      const alternativaCorrecta =
-        Array.isArray(item.alternativas)
-          ? item.alternativas.find(
-              alternativa =>
-                alternativa.letra ===
-                item.respuestaCorrecta
-            )
-          : null;
+  const correcta =
+    item.respuestaCorrecta;
 
-      respuesta =
-        item.respuestaCorrecta || "";
+  const letra =
+    typeof correcta === "object"
+      ? correcta?.letra || ""
+      : correcta || "";
 
-      if(alternativaCorrecta?.texto){
-        respuesta +=
-          ". " +
-          alternativaCorrecta.texto;
-      }
+  const texto =
+    typeof correcta === "object"
+      ? correcta?.texto || ""
+      : "";
 
-    }
+  if(texto){
+
+    respuesta =
+      `${letra}. ${texto}`;
+
+  }else{
+
+    const alternativaCorrecta =
+      Array.isArray(item.alternativas)
+        ? item.alternativas.find(
+            alternativa =>
+              alternativa.letra === letra
+          )
+        : null;
+
+    respuesta =
+      alternativaCorrecta?.texto
+        ? `${letra}. ${alternativaCorrecta.texto}`
+        : letra;
+
+  }
+
+}
 
 
     else if(
@@ -13588,23 +13605,48 @@ pruebaObjetivaGeneradaActual.items.forEach(
     }
 
 
-    else if(
-      item.tipo === "pareamiento"
-    ){
+   else if(
+  item.tipo === "pareamiento"
+){
 
-      respuesta =
-        Array.isArray(
-          item.respuestasCorrectas
-        )
-          ? item.respuestasCorrectas
-              .map(
-                relacion =>
-                  `${relacion.premisaId} → ${relacion.opcionLetra}`
-              )
-              .join(" | ")
-          : "";
+  const relaciones =
+    Array.isArray(item.respuestaCorrecta)
+      ? item.respuestaCorrecta
+      : Array.isArray(item.respuestasCorrectas)
+        ? item.respuestasCorrectas
+        : [];
 
-    }
+  respuesta =
+    relaciones
+      .map(relacion => {
+
+        if(
+          relacion &&
+          typeof relacion === "object"
+        ){
+
+          const premisa =
+            relacion.premisaId ??
+            relacion.premisa ??
+            relacion.izquierda ??
+            "";
+
+          const opcion =
+            relacion.opcionLetra ??
+            relacion.opcion ??
+            relacion.derecha ??
+            "";
+
+          return `${premisa} → ${opcion}`;
+        }
+
+        return String(relacion || "");
+
+      })
+      .filter(Boolean)
+      .join(" | ");
+
+}
 
 
     else if(
