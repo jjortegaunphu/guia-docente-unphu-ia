@@ -12620,6 +12620,16 @@ ${htmlItems}
   👨‍🏫 Ver versión docente
 </button>
 
+<button
+  type="button"
+  onclick="descargarWordEstudiantePruebaObjetiva()"
+  style="
+    margin-left:8px;
+  "
+>
+  📄 Descargar Word — Estudiante
+</button>
+
 </div>
 
 
@@ -13796,6 +13806,189 @@ if(pautaInterna){
   contenedor.style.display = "block";
 
 }
+
+async function descargarWordEstudiantePruebaObjetiva(){
+
+  if(
+    !pruebaObjetivaGeneradaActual ||
+    !Array.isArray(
+      pruebaObjetivaGeneradaActual.items
+    )
+  ){
+    alert(
+      "No hay una Prueba objetiva disponible."
+    );
+
+    return;
+  }
+
+
+  const contenedorEstudiante =
+    document.getElementById(
+      "versionEstudiantePruebaObjetiva"
+    );
+
+
+  if(!contenedorEstudiante){
+    return;
+  }
+
+
+  /*
+    Si todavía no se ha construido la versión
+    estudiante, la generamos para reutilizar
+    exactamente el formato ya validado.
+  */
+
+  if(
+    !contenedorEstudiante.innerHTML.trim()
+  ){
+    mostrarVersionEstudiantePruebaObjetiva();
+
+    contenedorEstudiante.style.display =
+      "none";
+  }
+
+
+  let contenidoExamen =
+    contenedorEstudiante.innerHTML;
+
+
+  /*
+    Convertimos el logo a Base64 para que quede
+    incorporado dentro del archivo Word y no
+    dependa de una dirección externa.
+  */
+
+  try{
+
+    const respuestaLogo =
+      await fetch("logo-unphu.png");
+
+    const blobLogo =
+      await respuestaLogo.blob();
+
+    const logoBase64 =
+      await new Promise(
+        (resolve, reject) => {
+
+          const lector =
+            new FileReader();
+
+          lector.onloadend =
+            () => resolve(
+              lector.result
+            );
+
+          lector.onerror =
+            reject;
+
+          lector.readAsDataURL(
+            blobLogo
+          );
+
+        }
+      );
+
+
+    contenidoExamen =
+      contenidoExamen.replace(
+        /src=["']logo-unphu\.png["']/gi,
+        `src="${logoBase64}"`
+      );
+
+  }catch(error){
+
+    console.warn(
+      "No fue posible incorporar el logo al Word.",
+      error
+    );
+
+  }
+
+
+  const documentoWord = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="UTF-8">
+
+        <style>
+
+          @page {
+            size: 8.5in 11in;
+            margin: 0.65in;
+          }
+
+          body {
+            font-family: Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.25;
+            color: #000000;
+          }
+
+          table {
+            border-collapse: collapse;
+          }
+
+          img {
+            max-width: 100%;
+            height: auto;
+          }
+
+        </style>
+
+      </head>
+
+      <body>
+
+        ${contenidoExamen}
+
+      </body>
+    </html>
+  `;
+
+
+  const blob =
+    new Blob(
+      ["\ufeff", documentoWord],
+      {
+        type:
+          "application/msword"
+      }
+    );
+
+
+  const url =
+    URL.createObjectURL(blob);
+
+
+  const enlace =
+    document.createElement("a");
+
+
+  enlace.href = url;
+
+  enlace.download =
+    "Prueba_objetiva_version_estudiante.doc";
+
+
+  document.body.appendChild(
+    enlace
+  );
+
+
+  enlace.click();
+
+
+  document.body.removeChild(
+    enlace
+  );
+
+
+  URL.revokeObjectURL(url);
+
+}  
 
 function editarItemPruebaObjetiva(
   numeroItem
