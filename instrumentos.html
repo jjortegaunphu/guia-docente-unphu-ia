@@ -12797,17 +12797,7 @@ ${htmlItems}
               ${respuesta || "No especificada"}
             </td>
 
-            <td
-              style="
-                border:1px solid #cccccc;
-                padding:8px;
-                text-align:center;
-                vertical-align:top;
-              "
-            >
-              ${Number(item.puntos || 0)}
-            </td>
-
+           
           </tr>
 
         `;
@@ -12884,15 +12874,7 @@ ${htmlItems}
                 Respuesta correcta
               </th>
 
-              <th
-                style="
-                  border:1px solid #cccccc;
-                  padding:8px;
-                "
-              >
-                Puntos
-              </th>
-
+             
             </tr>
 
           </thead>
@@ -12920,6 +12902,41 @@ ${htmlItems}
           pruebaObjetivaGeneradaActual.valorTotal || 0
         )} punto(s)
       </p>
+
+      <div
+  style="
+    margin-top:14px;
+    padding:12px;
+    border:1px solid #cccccc;
+  "
+>
+  <strong>
+    Criterio de calificación:
+  </strong>
+
+  <p>
+    La prueba contiene
+    ${pruebaObjetivaGeneradaActual.items.length}
+    ítems y tiene un valor de
+    ${Number(
+      pruebaObjetivaGeneradaActual.valorTotal || 0
+    )}
+    punto(s).
+  </p>
+
+  <p>
+    <strong>
+      Fórmula:
+    </strong>
+
+    (Cantidad de aciertos ÷
+    ${pruebaObjetivaGeneradaActual.items.length})
+    ×
+    ${Number(
+      pruebaObjetivaGeneradaActual.valorTotal || 0
+    )}
+  </p>
+</div>
 
     </div>
 
@@ -13221,14 +13238,6 @@ const instruccionesEstudiante =
 
               ${item.enunciado || ""}
 
-              <span
-                style="
-                  float:right;
-                  margin-left:12px;
-                "
-              >
-                (${Number(item.puntos || 0)} punto(s))
-              </span>
             </p>
 
             ${contenido}
