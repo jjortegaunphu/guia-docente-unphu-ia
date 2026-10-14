@@ -13,6 +13,9 @@
   <title>
     Instrumentos de Evaluación · Guía Docente UNPHU IA
   </title>
+
+  <script src="https://unpkg.com/docx@9.5.1/dist/index.umd.cjs"></script>
+  
 </head>
 
 <body>
@@ -13818,46 +13821,56 @@ async function descargarWordEstudiantePruebaObjetiva(){
     alert(
       "No hay una Prueba objetiva disponible."
     );
-
     return;
   }
 
 
-  const contenedorEstudiante =
-    document.getElementById(
-      "versionEstudiantePruebaObjetiva"
+  if(
+    typeof docx === "undefined"
+  ){
+    alert(
+      "No fue posible cargar la librería para generar el documento Word."
+    );
+    return;
+  }
+
+
+  const {
+    Document,
+    Packer,
+    Paragraph,
+    TextRun,
+    ImageRun,
+    AlignmentType,
+    HeadingLevel,
+    UnderlineType
+  } = docx;
+
+
+  const prueba =
+    pruebaObjetivaGeneradaActual;
+
+  const cantidadItems =
+    prueba.items.length;
+
+  const valorTotal =
+    Number(prueba.valorTotal || 0);
+
+
+  const instrucciones =
+    String(
+      prueba.instruccionesGenerales || ""
+    ).replace(
+      /Responda\s+los\s+\d+\s+ítems/i,
+      `Responda los ${cantidadItems} ítems`
     );
 
 
-  if(!contenedorEstudiante){
-    return;
-  }
+  const parrafos = [];
 
 
   /*
-    Si todavía no se ha construido la versión
-    estudiante, la generamos para reutilizar
-    exactamente el formato ya validado.
-  */
-
-  if(
-    !contenedorEstudiante.innerHTML.trim()
-  ){
-    mostrarVersionEstudiantePruebaObjetiva();
-
-    contenedorEstudiante.style.display =
-      "none";
-  }
-
-
-  let contenidoExamen =
-    contenedorEstudiante.innerHTML;
-
-
-  /*
-    Convertimos el logo a Base64 para que quede
-    incorporado dentro del archivo Word y no
-    dependa de una dirección externa.
+    LOGO UNPHU
   */
 
   try{
@@ -13865,147 +13878,819 @@ async function descargarWordEstudiantePruebaObjetiva(){
     const respuestaLogo =
       await fetch("logo-unphu.png");
 
-    const blobLogo =
-      await respuestaLogo.blob();
+    if(respuestaLogo.ok){
 
-    const logoBase64 =
-      await new Promise(
-        (resolve, reject) => {
+      const bufferLogo =
+        await respuestaLogo.arrayBuffer();
 
-          const lector =
-            new FileReader();
 
-          lector.onloadend =
-            () => resolve(
-              lector.result
-            );
+      parrafos.push(
 
-          lector.onerror =
-            reject;
+        new Paragraph({
 
-          lector.readAsDataURL(
-            blobLogo
-          );
+          alignment:
+            AlignmentType.CENTER,
 
-        }
+          spacing: {
+            after: 180
+          },
+
+          children: [
+
+            new ImageRun({
+
+              data:
+                new Uint8Array(
+                  bufferLogo
+                ),
+
+              transformation: {
+                width: 300,
+                height: 98
+              }
+
+            })
+
+          ]
+
+        })
+
       );
 
-
-    contenidoExamen =
-  contenidoExamen.replace(
-    /<img[^>]*src=["']logo-unphu\.png["'][^>]*>/gi,
-    `
-      <div
-        style="
-          text-align:center;
-          margin-bottom:14px;
-        "
-      >
-        <img
-          src="${logoBase64}"
-          width="260"
-          style="
-            width:260px;
-            height:auto;
-          "
-        >
-      </div>
-    `
-  );
+    }
 
   }catch(error){
 
     console.warn(
-      "No fue posible incorporar el logo al Word.",
+      "No fue posible incorporar el logo UNPHU.",
       error
     );
 
   }
 
 
-  const documentoWord = `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="UTF-8">
+  /*
+    TÍTULO
+  */
 
-        <style>
+  parrafos.push(
 
-          @page {
-            size: 8.5in 11in;
-            margin: 0.65in;
+    new Paragraph({
+
+      alignment:
+        AlignmentType.CENTER,
+
+      heading:
+        HeadingLevel.HEADING_2,
+
+      spacing: {
+        after: 120
+      },
+
+      children: [
+
+        new TextRun({
+
+          text:
+            prueba.titulo ||
+            "Prueba objetiva",
+
+          bold: true
+
+        })
+
+      ]
+
+    })
+
+  );
+
+
+  /*
+    ASIGNATURA Y CÓDIGO
+  */
+
+  parrafos.push(
+
+    new Paragraph({
+
+      alignment:
+        AlignmentType.CENTER,
+
+      spacing: {
+        after: 240
+      },
+
+      children: [
+
+        new TextRun({
+          text: "Asignatura: ",
+          bold: true
+        }),
+
+        new TextRun({
+          text:
+            fuenteInstrumentos
+              ?.asignatura
+              ?.nombre || ""
+        }),
+
+        new TextRun({
+          text: "     Código: ",
+          bold: true
+        }),
+
+        new TextRun({
+          text:
+            fuenteInstrumentos
+              ?.asignatura
+              ?.codigo || ""
+        })
+
+      ]
+
+    })
+
+  );
+
+
+  /*
+    DATOS DEL ESTUDIANTE
+  */
+
+  parrafos.push(
+
+    new Paragraph({
+
+      spacing: {
+        after: 100
+      },
+
+      children: [
+
+        new TextRun({
+          text: "Nombre: ",
+          bold: true
+        }),
+
+        new TextRun({
+          text:
+            "________________________________________"
+        })
+
+      ]
+
+    })
+
+  );
+
+
+  parrafos.push(
+
+    new Paragraph({
+
+      spacing: {
+        after: 100
+      },
+
+      children: [
+
+        new TextRun({
+          text: "Matrícula: ",
+          bold: true
+        }),
+
+        new TextRun({
+          text: "________________"
+        }),
+
+        new TextRun({
+          text: "     Sección: ",
+          bold: true
+        }),
+
+        new TextRun({
+          text: "__________"
+        }),
+
+        new TextRun({
+          text: "     Fecha: ",
+          bold: true
+        }),
+
+        new TextRun({
+          text: "________________"
+        })
+
+      ]
+
+    })
+
+  );
+
+
+  parrafos.push(
+
+    new Paragraph({
+
+      spacing: {
+        after: 220
+      },
+
+      children: [
+
+        new TextRun({
+          text: "Valor: ",
+          bold: true
+        }),
+
+        new TextRun({
+          text:
+            `${valorTotal} ${
+              valorTotal === 1
+                ? "punto"
+                : "puntos"
+            }`
+        })
+
+      ]
+
+    })
+
+  );
+
+
+  /*
+    INSTRUCCIONES
+  */
+
+  parrafos.push(
+
+    new Paragraph({
+
+      spacing: {
+        after: 80
+      },
+
+      children: [
+
+        new TextRun({
+          text: "Instrucciones:",
+          bold: true
+        })
+
+      ]
+
+    })
+
+  );
+
+
+  parrafos.push(
+
+    new Paragraph({
+
+      spacing: {
+        after: 260
+      },
+
+      children: [
+
+        new TextRun({
+          text: instrucciones
+        })
+
+      ]
+
+    })
+
+  );
+
+
+  /*
+    ÍTEMS
+  */
+
+  prueba.items.forEach(
+    item => {
+
+      parrafos.push(
+
+        new Paragraph({
+
+          keepNext: true,
+
+          spacing: {
+            before: 180,
+            after: 100
+          },
+
+          children: [
+
+            new TextRun({
+              text:
+                `${Number(item.numero || 0)}. `,
+              bold: true
+            }),
+
+            new TextRun({
+              text:
+                String(
+                  item.enunciado || ""
+                )
+            })
+
+          ]
+
+        })
+
+      );
+
+
+      /*
+        SELECCIÓN ÚNICA Y MÚLTIPLE
+      */
+
+      if(
+        (
+          item.tipo ===
+            "seleccion_unica" ||
+          item.tipo ===
+            "seleccion_multiple"
+        ) &&
+        Array.isArray(
+          item.alternativas
+        )
+      ){
+
+        item.alternativas.forEach(
+          alternativa => {
+
+            parrafos.push(
+
+              new Paragraph({
+
+                indent: {
+                  left: 360
+                },
+
+                spacing: {
+                  after: 70
+                },
+
+                children: [
+
+                  new TextRun({
+                    text:
+                      `${alternativa.letra || ""}. `,
+                    bold: true
+                  }),
+
+                  new TextRun({
+                    text:
+                      String(
+                        alternativa.texto || ""
+                      )
+                  })
+
+                ]
+
+              })
+
+            );
+
           }
+        );
 
-          body {
-            font-family: Arial, sans-serif;
-            font-size: 11pt;
-            line-height: 1.25;
-            color: #000000;
-          }
-
-          table {
-            border-collapse: collapse;
-          }
-
-          img {
-            max-width: 100%;
-            height: auto;
-          }
-
-        </style>
-
-      </head>
-
-      <body>
-
-        ${contenidoExamen}
-
-      </body>
-    </html>
-  `;
-
-
-  const blob =
-    new Blob(
-      ["\ufeff", documentoWord],
-      {
-        type:
-          "application/msword"
       }
+
+
+      /*
+        VERDADERO / FALSO
+      */
+
+      else if(
+        item.tipo ===
+          "verdadero_falso"
+      ){
+
+        parrafos.push(
+
+          new Paragraph({
+
+            indent: {
+              left: 360
+            },
+
+            children: [
+              new TextRun({
+                text: "☐ Verdadero"
+              })
+            ]
+
+          }),
+
+          new Paragraph({
+
+            indent: {
+              left: 360
+            },
+
+            spacing: {
+              after: 80
+            },
+
+            children: [
+              new TextRun({
+                text: "☐ Falso"
+              })
+            ]
+
+          })
+
+        );
+
+      }
+
+
+      /*
+        PAREAMIENTO
+      */
+
+      else if(
+        item.tipo ===
+          "pareamiento" &&
+        Array.isArray(item.premisas) &&
+        Array.isArray(item.opciones)
+      ){
+
+        parrafos.push(
+
+          new Paragraph({
+
+            keepNext: true,
+
+            spacing: {
+              before: 80,
+              after: 70
+            },
+
+            children: [
+
+              new TextRun({
+                text: "Premisas",
+                bold: true
+              })
+
+            ]
+
+          })
+
+        );
+
+
+        item.premisas.forEach(
+          premisa => {
+
+            parrafos.push(
+
+              new Paragraph({
+
+                keepNext: true,
+
+                indent: {
+                  left: 360
+                },
+
+                spacing: {
+                  after: 60
+                },
+
+                children: [
+
+                  new TextRun({
+                    text:
+                      `_____ ${premisa.id || ""}. ${premisa.texto || ""}`
+                  })
+
+                ]
+
+              })
+
+            );
+
+          }
+        );
+
+
+        parrafos.push(
+
+          new Paragraph({
+
+            keepNext: true,
+
+            spacing: {
+              before: 100,
+              after: 70
+            },
+
+            children: [
+
+              new TextRun({
+                text: "Opciones",
+                bold: true
+              })
+
+            ]
+
+          })
+
+        );
+
+
+        item.opciones.forEach(
+          opcion => {
+
+            parrafos.push(
+
+              new Paragraph({
+
+                indent: {
+                  left: 540
+                },
+
+                spacing: {
+                  after: 60
+                },
+
+                children: [
+
+                  new TextRun({
+                    text:
+                      `${opcion.letra || ""}. `,
+                    bold: true
+                  }),
+
+                  new TextRun({
+                    text:
+                      String(
+                        opcion.texto || ""
+                      )
+                  })
+
+                ]
+
+              })
+
+            );
+
+          }
+        );
+
+      }
+
+
+      /*
+        COMPLETACIÓN
+      */
+
+      else if(
+        item.tipo ===
+          "completacion"
+      ){
+
+        parrafos.push(
+
+          new Paragraph({
+
+            indent: {
+              left: 360
+            },
+
+            spacing: {
+              after: 80
+            },
+
+            children: [
+
+              new TextRun({
+                text:
+                  "__________________________________________",
+                underline: {
+                  type:
+                    UnderlineType.SINGLE
+                }
+              })
+
+            ]
+
+          })
+
+        );
+
+      }
+
+
+      /*
+        RESPUESTA CORTA
+      */
+
+      else if(
+        item.tipo ===
+          "respuesta_corta"
+      ){
+
+        const cantidadLineas =
+          item.espacioRespuesta ===
+            "dos_lineas"
+            ? 2
+            : 1;
+
+
+        for(
+          let i = 0;
+          i < cantidadLineas;
+          i++
+        ){
+
+          parrafos.push(
+
+            new Paragraph({
+
+              indent: {
+                left: 360
+              },
+
+              spacing: {
+                after: 100
+              },
+
+              children: [
+
+                new TextRun({
+                  text:
+                    "__________________________________________"
+                })
+
+              ]
+
+            })
+
+          );
+
+        }
+
+      }
+
+
+      /*
+        ORDENAMIENTO
+      */
+
+      else if(
+        item.tipo ===
+          "ordenamiento" &&
+        Array.isArray(
+          item.elementos
+        )
+      ){
+
+        item.elementos.forEach(
+          elemento => {
+
+            parrafos.push(
+
+              new Paragraph({
+
+                indent: {
+                  left: 360
+                },
+
+                spacing: {
+                  after: 70
+                },
+
+                children: [
+
+                  new TextRun({
+                    text:
+                      `_____ ${elemento.texto || ""}`
+                  })
+
+                ]
+
+              })
+
+            );
+
+          }
+        );
+
+      }
+
+    }
+  );
+
+
+  /*
+    DOCUMENTO DOCX
+  */
+
+  const documento =
+    new Document({
+
+      sections: [
+
+        {
+
+          properties: {
+
+            page: {
+
+              margin: {
+                top: 720,
+                right: 720,
+                bottom: 720,
+                left: 720
+              }
+
+            }
+
+          },
+
+          children:
+            parrafos
+
+        }
+
+      ]
+
+    });
+
+
+  try{
+
+    const blob =
+      await Packer.toBlob(
+        documento
+      );
+
+
+    const url =
+      URL.createObjectURL(
+        blob
+      );
+
+
+    const enlace =
+      document.createElement(
+        "a"
+      );
+
+
+    enlace.href =
+      url;
+
+
+    enlace.download =
+      "Prueba_objetiva_version_estudiante.docx";
+
+
+    document.body.appendChild(
+      enlace
     );
 
 
-  const url =
-    URL.createObjectURL(blob);
+    enlace.click();
 
 
-  const enlace =
-    document.createElement("a");
+    enlace.remove();
 
 
-  enlace.href = url;
+    setTimeout(
+      () =>
+        URL.revokeObjectURL(
+          url
+        ),
+      1000
+    );
 
-  enlace.download =
-    "Prueba_objetiva_version_estudiante.doc";
+  }catch(error){
 
-
-  document.body.appendChild(
-    enlace
-  );
-
-
-  enlace.click();
-
-
-  document.body.removeChild(
-    enlace
-  );
+    console.error(
+      "Error al generar el archivo DOCX:",
+      error
+    );
 
 
-  URL.revokeObjectURL(url);
+    alert(
+      "No fue posible generar el documento Word."
+    );
 
-}  
+  }
 
+}
+  
 function editarItemPruebaObjetiva(
   numeroItem
 ){
