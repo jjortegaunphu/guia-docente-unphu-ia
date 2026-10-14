@@ -12563,11 +12563,331 @@ ${htmlItems}
     style="display:none;"
   ></div>
 
+  <div
+  style="
+    margin-top:12px;
+  "
+>
+
+  <button
+    type="button"
+    onclick="mostrarPautaPruebaObjetiva()"
+  >
+    📋 Ver pauta de respuestas
+  </button>
+
+</div>
+
+
+<div
+  id="pautaPruebaObjetiva"
+  style="
+    display:none;
+    margin-top:16px;
+  "
+></div>
+
 </div>
 
 `; 
 
 }  
+
+  function mostrarPautaPruebaObjetiva(){
+
+  const contenedor =
+    document.getElementById(
+      "pautaPruebaObjetiva"
+    );
+
+  if(
+    !contenedor ||
+    !pruebaObjetivaGeneradaActual ||
+    !Array.isArray(
+      pruebaObjetivaGeneradaActual.items
+    )
+  ){
+    return;
+  }
+
+
+  if(
+    contenedor.style.display === "block"
+  ){
+
+    contenedor.style.display =
+      "none";
+
+    contenedor.innerHTML =
+      "";
+
+    return;
+  }
+
+
+  let htmlPauta = "";
+
+
+  pruebaObjetivaGeneradaActual.items
+    .forEach(
+      item => {
+
+        let respuesta = "";
+
+
+        if(
+          item.tipo === "seleccion_unica" &&
+          item.respuestaCorrecta
+        ){
+
+          respuesta =
+            `${item.respuestaCorrecta.letra || ""}. ` +
+            `${item.respuestaCorrecta.texto || ""}`;
+
+        }
+
+
+        if(
+          item.tipo === "seleccion_multiple" &&
+          Array.isArray(
+            item.respuestasCorrectas
+          )
+        ){
+
+          respuesta =
+            item.respuestasCorrectas
+              .map(
+                opcion =>
+                  `${opcion.letra || ""}. ${opcion.texto || ""}`
+              )
+              .join(" | ");
+
+        }
+
+
+        if(
+          item.tipo === "verdadero_falso"
+        ){
+
+          respuesta =
+            item.respuestaCorrecta || "";
+
+        }
+
+
+        if(
+          item.tipo === "pareamiento" &&
+          Array.isArray(
+            item.correspondenciasCorrectas
+          )
+        ){
+
+          respuesta =
+            item.correspondenciasCorrectas
+              .map(
+                correspondencia =>
+                  `${correspondencia.premisaId || ""} → ${correspondencia.opcionLetra || ""}`
+              )
+              .join(" | ");
+
+        }
+
+
+        if(
+          item.tipo === "completacion" ||
+          item.tipo === "respuesta_corta"
+        ){
+
+          respuesta =
+            item.respuestaCorrecta || "";
+
+        }
+
+
+        if(
+          item.tipo === "ordenamiento" &&
+          Array.isArray(
+            item.ordenCorrecto
+          )
+        ){
+
+          respuesta =
+            item.ordenCorrecto
+              .join(" → ");
+
+        }
+
+
+        htmlPauta += `
+
+          <tr>
+
+            <td
+              style="
+                border:1px solid #cccccc;
+                padding:8px;
+                text-align:center;
+                vertical-align:top;
+              "
+            >
+              ${Number(item.numero || 0)}
+            </td>
+
+            <td
+              style="
+                border:1px solid #cccccc;
+                padding:8px;
+                vertical-align:top;
+              "
+            >
+              ${obtenerNombreTipoItemPruebaObjetiva(
+                item.tipo
+              )}
+            </td>
+
+            <td
+              style="
+                border:1px solid #cccccc;
+                padding:8px;
+                vertical-align:top;
+              "
+            >
+              ${respuesta || "No especificada"}
+            </td>
+
+            <td
+              style="
+                border:1px solid #cccccc;
+                padding:8px;
+                text-align:center;
+                vertical-align:top;
+              "
+            >
+              ${Number(item.puntos || 0)}
+            </td>
+
+          </tr>
+
+        `;
+
+      }
+    );
+
+
+  contenedor.innerHTML = `
+
+    <div
+      style="
+        border:1px solid #cccccc;
+        padding:16px;
+        background:#fafafa;
+      "
+    >
+
+      <h3
+        style="
+          margin-top:0;
+        "
+      >
+        Pauta de respuestas
+      </h3>
+
+      <p>
+        <strong>
+          ${pruebaObjetivaGeneradaActual.titulo || "Prueba objetiva"}
+        </strong>
+      </p>
+
+      <div
+        style="
+          overflow-x:auto;
+        "
+      >
+
+        <table
+          style="
+            width:100%;
+            border-collapse:collapse;
+          "
+        >
+
+          <thead>
+
+            <tr>
+
+              <th
+                style="
+                  border:1px solid #cccccc;
+                  padding:8px;
+                "
+              >
+                Ítem
+              </th>
+
+              <th
+                style="
+                  border:1px solid #cccccc;
+                  padding:8px;
+                "
+              >
+                Tipo
+              </th>
+
+              <th
+                style="
+                  border:1px solid #cccccc;
+                  padding:8px;
+                "
+              >
+                Respuesta correcta
+              </th>
+
+              <th
+                style="
+                  border:1px solid #cccccc;
+                  padding:8px;
+                "
+              >
+                Puntos
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            ${htmlPauta}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <p
+        style="
+          margin-top:14px;
+        "
+      >
+        <strong>
+          Valor total:
+        </strong>
+
+        ${Number(
+          pruebaObjetivaGeneradaActual.valorTotal || 0
+        )} punto(s)
+      </p>
+
+    </div>
+
+  `;
+
+
+  contenedor.style.display =
+    "block";
+
+}
 
 function editarItemPruebaObjetiva(
   numeroItem
@@ -12602,7 +12922,7 @@ function editarItemPruebaObjetiva(
   );
 
 }
-
+  
 function guardarEdicionItemPruebaObjetiva(
   numeroItem
 ){
