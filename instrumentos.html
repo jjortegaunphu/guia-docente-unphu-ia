@@ -266,6 +266,18 @@ function borrarBorradorPruebaObjetiva(){
   pruebaObjetivaGeneradaActual =
     borrador.prueba;
 
+    pruebaObjetivaGeneradaActual.valorTotal =
+  Number(
+    instrumentoSeleccionadoActual?.valor || 0
+  );
+
+pruebaObjetivaGeneradaActual.cantidadItems =
+  Array.isArray(
+    pruebaObjetivaGeneradaActual.items
+  )
+    ? pruebaObjetivaGeneradaActual.items.length
+    : 0;
+
   solicitudGeneracionPruebaObjetivaActual =
     borrador.solicitudGeneracion;
 
@@ -11439,6 +11451,18 @@ console.log(
 pruebaObjetivaGeneradaActual =
   resultado.prueba;
 
+   pruebaObjetivaGeneradaActual.valorTotal =
+  Number(
+    instrumentoSeleccionadoActual?.valor || 0
+  );
+
+pruebaObjetivaGeneradaActual.cantidadItems =
+  Array.isArray(
+    pruebaObjetivaGeneradaActual.items
+  )
+    ? pruebaObjetivaGeneradaActual.items.length
+    : 0;
+
 console.log(
   "Prueba objetiva almacenada para revisión:",
   pruebaObjetivaGeneradaActual
@@ -12938,6 +12962,18 @@ ${htmlItems}
     return;
   }
 
+    const cantidadItems =
+  pruebaObjetivaGeneradaActual.items.length;
+
+const instruccionesOriginales =
+  pruebaObjetivaGeneradaActual
+    .instruccionesGenerales || "";
+
+const instruccionesEstudiante =
+  instruccionesOriginales.replace(
+    /Responda\s+los\s+\d+\s+ítems/i,
+    `Responda los ${cantidadItems} ítems`
+  );
 
   let htmlItems = "";
 
@@ -13289,7 +13325,7 @@ ${htmlItems}
         </p>
 
         <p>
-          ${pruebaObjetivaGeneradaActual.instruccionesGenerales || ""}
+           ${instruccionesEstudiante}
         </p>
 
       </div>
@@ -15053,15 +15089,6 @@ pruebaObjetivaGeneradaActual.cantidadItems =
   pruebaObjetivaGeneradaActual.items.length;
 
 
-pruebaObjetivaGeneradaActual.valorTotal =
-  pruebaObjetivaGeneradaActual.items.reduce(
-    (total, item) =>
-      total +
-      Number(item.puntos || 0),
-    0
-  );
-
-
 guardarBorradorPruebaObjetiva();
 
 
@@ -15293,15 +15320,6 @@ function eliminarItemPruebaObjetiva(
 
   pruebaObjetivaGeneradaActual.cantidadItems =
     pruebaObjetivaGeneradaActual.items.length;
-
-  pruebaObjetivaGeneradaActual.valorTotal =
-    pruebaObjetivaGeneradaActual.items
-      .reduce(
-        (total, item) =>
-          total +
-          Number(item.puntos || 0),
-        0
-      );
 
   guardarBorradorPruebaObjetiva();
 
