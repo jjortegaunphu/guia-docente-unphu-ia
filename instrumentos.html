@@ -13268,25 +13268,17 @@ const instruccionesEstudiante =
   "
 >
 
-  <div
-    style="
-      font-size:18px;
-      font-weight:bold;
-      text-transform:uppercase;
-    "
-  >
-    Universidad Nacional Pedro Henríquez Ureña
-  </div>
-
-  <div
-    style="
-      font-size:16px;
-      font-weight:bold;
-      margin-top:3px;
-    "
-  >
-    UNPHU
-  </div>
+ <img
+  src="logo-unphu.png"
+  alt="Universidad Nacional Pedro Henríquez Ureña"
+  style="
+    display:block;
+    width:320px;
+    max-width:80%;
+    height:auto;
+    margin:0 auto 18px auto;
+  "
+>
 
   <h2
     style="
@@ -13329,32 +13321,48 @@ const instruccionesEstudiante =
           __________________________________________
         </p>
 
-        <p>
-          <strong>
-            Matrícula:
-          </strong>
+<p>
+  <strong>
+    Matrícula:
+  </strong>
 
-          ______________________
+  __________________
 
-          &nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;
 
-          <strong>
-            Fecha:
-          </strong>
+  <strong>
+    Sección:
+  </strong>
 
-          ______________________
-        </p>
+  __________
 
-        <p>
-          <strong>
-            Valor:
-          </strong>
+  &nbsp;&nbsp;&nbsp;
 
-          ${Number(
-            pruebaObjetivaGeneradaActual.valorTotal || 0
-          )} punto(s)
-        </p>
+  <strong>
+    Fecha:
+  </strong>
 
+  __________________
+</p>
+
+<p>
+  <strong>
+    Valor:
+  </strong>
+
+  ${Number(
+    pruebaObjetivaGeneradaActual.valorTotal || 0
+  )}
+
+  ${
+    Number(
+      pruebaObjetivaGeneradaActual.valorTotal || 0
+    ) === 1
+      ? "punto"
+      : "puntos"
+  }
+</p>
+       
       </div>
 
 
