@@ -13892,10 +13892,26 @@ async function descargarWordEstudiantePruebaObjetiva(){
 
 
     contenidoExamen =
-      contenidoExamen.replace(
-        /src=["']logo-unphu\.png["']/gi,
-        `src="${logoBase64}"`
-      );
+  contenidoExamen.replace(
+    /<img[^>]*src=["']logo-unphu\.png["'][^>]*>/gi,
+    `
+      <div
+        style="
+          text-align:center;
+          margin-bottom:14px;
+        "
+      >
+        <img
+          src="${logoBase64}"
+          width="260"
+          style="
+            width:260px;
+            height:auto;
+          "
+        >
+      </div>
+    `
+  );
 
   }catch(error){
 
