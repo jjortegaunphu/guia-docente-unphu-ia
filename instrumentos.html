@@ -12551,12 +12551,22 @@ contenedor.innerHTML = `
     </p>
 
     <p>
-      <strong>
-        Instrucciones:
-      </strong>
+  <strong>
+    Instrucciones:
+  </strong>
 
-      ${prueba.instruccionesGenerales || ""}
-    </p>
+  ${
+    (prueba.instruccionesGenerales || "")
+      .replace(
+        /Responda\s+los\s+\d+\s+ítems/i,
+        `Responda los ${
+          Array.isArray(prueba.items)
+            ? prueba.items.length
+            : Number(prueba.cantidadItems || 0)
+        } ítems`
+      )
+  }
+</p>
 
   </div>
 
