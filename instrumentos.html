@@ -13564,37 +13564,22 @@ pruebaObjetivaGeneradaActual.items.forEach(
 }
 
 
-    else if(
-      item.tipo === "seleccion_multiple"
-    ){
+   else if(
+  item.tipo === "seleccion_multiple" &&
+  Array.isArray(
+    item.respuestasCorrectas
+  )
+){
 
-      const correctas =
-        Array.isArray(
-          item.respuestasCorrectas
-        )
-          ? item.respuestasCorrectas
-          : [];
+  respuesta =
+    item.respuestasCorrectas
+      .map(
+        opcion =>
+          `${opcion.letra || ""}. ${opcion.texto || ""}`
+      )
+      .join(" | ");
 
-      respuesta =
-        correctas
-          .map(letra => {
-
-            const alternativa =
-              Array.isArray(item.alternativas)
-                ? item.alternativas.find(
-                    opcion =>
-                      opcion.letra === letra
-                  )
-                : null;
-
-            return alternativa?.texto
-              ? `${letra}. ${alternativa.texto}`
-              : letra;
-
-          })
-          .join(" | ");
-
-    }
+}
 
 
     else if(
@@ -13606,48 +13591,21 @@ pruebaObjetivaGeneradaActual.items.forEach(
 
 
    else if(
-  item.tipo === "pareamiento"
+  item.tipo === "pareamiento" &&
+  Array.isArray(
+    item.correspondenciasCorrectas
+  )
 ){
 
-  const relaciones =
-    Array.isArray(item.respuestaCorrecta)
-      ? item.respuestaCorrecta
-      : Array.isArray(item.respuestasCorrectas)
-        ? item.respuestasCorrectas
-        : [];
-
   respuesta =
-    relaciones
-      .map(relacion => {
-
-        if(
-          relacion &&
-          typeof relacion === "object"
-        ){
-
-          const premisa =
-            relacion.premisaId ??
-            relacion.premisa ??
-            relacion.izquierda ??
-            "";
-
-          const opcion =
-            relacion.opcionLetra ??
-            relacion.opcion ??
-            relacion.derecha ??
-            "";
-
-          return `${premisa} → ${opcion}`;
-        }
-
-        return String(relacion || "");
-
-      })
-      .filter(Boolean)
+    item.correspondenciasCorrectas
+      .map(
+        correspondencia =>
+          `${correspondencia.premisaId || ""} → ${correspondencia.opcionLetra || ""}`
+      )
       .join(" | ");
 
 }
-
 
     else if(
       item.tipo === "completacion" ||
