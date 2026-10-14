@@ -12610,6 +12610,16 @@ ${htmlItems}
   👨‍🎓 Ver versión estudiante
 </button>
 
+<button
+  type="button"
+  onclick="mostrarVersionDocentePruebaObjetiva()"
+  style="
+    margin-left:8px;
+  "
+>
+  👨‍🏫 Ver versión docente
+</button>
+
 </div>
 
 
@@ -12623,6 +12633,14 @@ ${htmlItems}
 
 <div
   id="versionEstudiantePruebaObjetiva"
+  style="
+    display:none;
+    margin-top:16px;
+  "
+></div>
+
+<div
+  id="versionDocentePruebaObjetiva"
   style="
     display:none;
     margin-top:16px;
@@ -13394,6 +13412,388 @@ const instruccionesEstudiante =
 
   contenedor.style.display =
     "block";
+
+}
+
+  function mostrarVersionDocentePruebaObjetiva(){
+
+  if(
+    !pruebaObjetivaGeneradaActual ||
+    !Array.isArray(
+      pruebaObjetivaGeneradaActual.items
+    )
+  ){
+    alert(
+      "No hay una Prueba objetiva disponible."
+    );
+
+    return;
+  }
+
+
+  const contenedor =
+    document.getElementById(
+      "versionDocentePruebaObjetiva"
+    );
+
+
+  const contenedorEstudiante =
+    document.getElementById(
+      "versionEstudiantePruebaObjetiva"
+    );
+
+
+  if(
+    !contenedor ||
+    !contenedorEstudiante
+  ){
+    return;
+  }
+
+
+  if(
+    contenedor.style.display === "block"
+  ){
+    contenedor.style.display = "none";
+    return;
+  }
+
+
+  /*
+    Generamos primero la versión estudiante
+    para reutilizar exactamente el formato
+    institucional ya validado.
+  */
+
+  mostrarVersionEstudiantePruebaObjetiva();
+
+
+  const examenEstudiante =
+    contenedorEstudiante.innerHTML;
+
+
+  /*
+    Ocultamos nuevamente la versión estudiante.
+    Solo queremos utilizar su contenido como base
+    de la versión docente.
+  */
+
+  contenedorEstudiante.style.display =
+    "none";
+
+
+  contenedor.innerHTML = `
+    ${examenEstudiante}
+
+    <div
+      style="
+        margin-top:32px;
+        padding-top:20px;
+        border-top:2px solid #000000;
+      "
+    >
+
+      <h2
+        style="
+          text-align:center;
+          margin-bottom:18px;
+        "
+      >
+        Pauta de respuestas — Uso docente
+      </h2>
+
+      <div
+        id="pautaInternaVersionDocente"
+      ></div>
+
+    </div>
+  `;
+
+const pautaInterna =
+  document.getElementById(
+    "pautaInternaVersionDocente"
+  );
+
+
+let filasPautaDocente = "";
+
+
+pruebaObjetivaGeneradaActual.items.forEach(
+  item => {
+
+    let respuesta = "";
+
+
+    if(item.tipo === "seleccion_unica"){
+
+      const alternativaCorrecta =
+        Array.isArray(item.alternativas)
+          ? item.alternativas.find(
+              alternativa =>
+                alternativa.letra ===
+                item.respuestaCorrecta
+            )
+          : null;
+
+      respuesta =
+        item.respuestaCorrecta || "";
+
+      if(alternativaCorrecta?.texto){
+        respuesta +=
+          ". " +
+          alternativaCorrecta.texto;
+      }
+
+    }
+
+
+    else if(
+      item.tipo === "seleccion_multiple"
+    ){
+
+      const correctas =
+        Array.isArray(
+          item.respuestasCorrectas
+        )
+          ? item.respuestasCorrectas
+          : [];
+
+      respuesta =
+        correctas
+          .map(letra => {
+
+            const alternativa =
+              Array.isArray(item.alternativas)
+                ? item.alternativas.find(
+                    opcion =>
+                      opcion.letra === letra
+                  )
+                : null;
+
+            return alternativa?.texto
+              ? `${letra}. ${alternativa.texto}`
+              : letra;
+
+          })
+          .join(" | ");
+
+    }
+
+
+    else if(
+      item.tipo === "verdadero_falso"
+    ){
+      respuesta =
+        item.respuestaCorrecta || "";
+    }
+
+
+    else if(
+      item.tipo === "pareamiento"
+    ){
+
+      respuesta =
+        Array.isArray(
+          item.respuestasCorrectas
+        )
+          ? item.respuestasCorrectas
+              .map(
+                relacion =>
+                  `${relacion.premisaId} → ${relacion.opcionLetra}`
+              )
+              .join(" | ")
+          : "";
+
+    }
+
+
+    else if(
+      item.tipo === "completacion" ||
+      item.tipo === "respuesta_corta"
+    ){
+      respuesta =
+        item.respuestaCorrecta || "";
+    }
+
+
+    else if(
+      item.tipo === "ordenamiento"
+    ){
+      respuesta =
+        Array.isArray(item.ordenCorrecto)
+          ? item.ordenCorrecto.join(" → ")
+          : "";
+    }
+
+
+    filasPautaDocente += `
+      <tr>
+
+        <td
+          style="
+            border:1px solid #cccccc;
+            padding:8px;
+            text-align:center;
+            vertical-align:top;
+            width:10%;
+          "
+        >
+          ${Number(item.numero || 0)}
+        </td>
+
+        <td
+          style="
+            border:1px solid #cccccc;
+            padding:8px;
+            vertical-align:top;
+            width:30%;
+          "
+        >
+          ${obtenerNombreTipoItemPruebaObjetiva(
+            item.tipo
+          )}
+        </td>
+
+        <td
+          style="
+            border:1px solid #cccccc;
+            padding:8px;
+            vertical-align:top;
+          "
+        >
+          ${respuesta}
+        </td>
+
+      </tr>
+    `;
+
+  }
+);
+
+
+if(pautaInterna){
+
+  pautaInterna.innerHTML = `
+
+    <table
+      style="
+        width:100%;
+        border-collapse:collapse;
+      "
+    >
+
+      <thead>
+
+        <tr>
+
+          <th
+            style="
+              border:1px solid #cccccc;
+              padding:8px;
+              width:10%;
+            "
+          >
+            Ítem
+          </th>
+
+          <th
+            style="
+              border:1px solid #cccccc;
+              padding:8px;
+              width:30%;
+            "
+          >
+            Tipo
+          </th>
+
+          <th
+            style="
+              border:1px solid #cccccc;
+              padding:8px;
+            "
+          >
+            Respuesta correcta
+          </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+        ${filasPautaDocente}
+      </tbody>
+
+    </table>
+
+
+    <p
+      style="
+        margin-top:16px;
+      "
+    >
+      <strong>
+        Valor total:
+      </strong>
+
+      ${Number(
+        pruebaObjetivaGeneradaActual.valorTotal || 0
+      )}
+
+      ${
+        Number(
+          pruebaObjetivaGeneradaActual.valorTotal || 0
+        ) === 1
+          ? "punto"
+          : "puntos"
+      }
+    </p>
+
+
+    <div
+      style="
+        margin-top:14px;
+        padding:12px;
+        border:1px solid #cccccc;
+      "
+    >
+
+      <strong>
+        Criterio de calificación:
+      </strong>
+
+      <p>
+        La prueba contiene
+        ${pruebaObjetivaGeneradaActual.items.length}
+        ítems y tiene un valor de
+        ${Number(
+          pruebaObjetivaGeneradaActual.valorTotal || 0
+        )}
+        ${
+          Number(
+            pruebaObjetivaGeneradaActual.valorTotal || 0
+          ) === 1
+            ? "punto"
+            : "puntos"
+        }.
+      </p>
+
+      <p>
+        <strong>Fórmula:</strong>
+
+        (Cantidad de aciertos ÷
+        ${pruebaObjetivaGeneradaActual.items.length})
+        ×
+        ${Number(
+          pruebaObjetivaGeneradaActual.valorTotal || 0
+        )}
+      </p>
+
+    </div>
+  `;
+
+}
+    
+  contenedor.style.display = "block";
 
 }
 
