@@ -15565,70 +15565,9 @@ async function descargarWordEstudiantePruebaObjetiva(){
     CONSTRUIR RESPUESTAS
   */
 
-  const filasPauta = [];
-
-
-  filasPauta.push(
-
-    new TableRow({
-
-      tableHeader: true,
-
-      children: [
-
-        new TableCell({
-
-          children: [
-
-            new Paragraph({
-
-              alignment:
-                AlignmentType.CENTER,
-
-              children: [
-
-                new TextRun({
-                  text: "N.º",
-                  bold: true
-                })
-
-              ]
-
-            })
-
-          ]
-
-        }),
-
-
-        new TableCell({
-
-          children: [
-
-            new Paragraph({
-
-              children: [
-
-                new TextRun({
-                  text:
-                    "Respuesta correcta",
-                  bold: true
-                })
-
-              ]
-
-            })
-
-          ]
-
-        })
-
-      ]
-
-    })
-
-  );
-
+    /*
+    PAUTA DE RESPUESTAS
+  */
 
   prueba.items.forEach(
     item => {
@@ -15787,72 +15726,29 @@ async function descargarWordEstudiantePruebaObjetiva(){
       }
 
 
-      filasPauta.push(
+      /*
+        AGREGAR RESPUESTA A LA PAUTA
+      */
 
-        new TableRow({
+      contenido.push(
 
-          cantSplit: true,
+        new Paragraph({
+
+          spacing: {
+            after: 100
+          },
 
           children: [
 
-            new TableCell({
-
-              width: {
-                size: 10,
-                type:
-                  WidthType.PERCENTAGE
-              },
-
-              children: [
-
-                new Paragraph({
-
-                  alignment:
-                    AlignmentType.CENTER,
-
-                  children: [
-
-                    new TextRun({
-                      text:
-                        String(
-                          item.numero || ""
-                        )
-                    })
-
-                  ]
-
-                })
-
-              ]
-
+            new TextRun({
+              text:
+                `${Number(item.numero || 0)}. `,
+              bold: true
             }),
 
-
-            new TableCell({
-
-              width: {
-                size: 90,
-                type:
-                  WidthType.PERCENTAGE
-              },
-
-              children: [
-
-                new Paragraph({
-
-                  children: [
-
-                    new TextRun({
-                      text:
-                        respuesta
-                    })
-
-                  ]
-
-                })
-
-              ]
-
+            new TextRun({
+              text:
+                respuesta
             })
 
           ]
@@ -15862,64 +15758,6 @@ async function descargarWordEstudiantePruebaObjetiva(){
       );
 
     }
-  );
-
-
-  contenido.push(
-
-    new Table({
-
-      width: {
-        size: 100,
-        type:
-          WidthType.PERCENTAGE
-      },
-
-      borders: {
-
-        top: {
-          style:
-            BorderStyle.SINGLE,
-          size: 1
-        },
-
-        bottom: {
-          style:
-            BorderStyle.SINGLE,
-          size: 1
-        },
-
-        left: {
-          style:
-            BorderStyle.SINGLE,
-          size: 1
-        },
-
-        right: {
-          style:
-            BorderStyle.SINGLE,
-          size: 1
-        },
-
-        insideHorizontal: {
-          style:
-            BorderStyle.SINGLE,
-          size: 1
-        },
-
-        insideVertical: {
-          style:
-            BorderStyle.SINGLE,
-          size: 1
-        }
-
-      },
-
-      rows:
-        filasPauta
-
-    })
-
   );
 
 
