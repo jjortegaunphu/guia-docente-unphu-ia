@@ -14226,12 +14226,17 @@ async function descargarWordEstudiantePruebaObjetiva(){
               bold: true
             }),
 
-            new TextRun({
-              text:
-                String(
-                  item.enunciado || ""
+          new TextRun({
+            text:
+             String(
+              item.tipo === "completacion"
+                ? (item.enunciado || "").replace(
+                     /_{3,}/g,
+                     "______________________________"
                 )
-            })
+              : (item.enunciado || "")
+             )
+          }) 
 
           ]
 
@@ -15093,11 +15098,16 @@ async function descargarWordEstudiantePruebaObjetiva(){
             }),
 
             new TextRun({
-              text:
-                String(
-                  item.enunciado || ""
-                )
-            })
+             text:
+              String(
+                item.tipo === "completacion"
+                 ? (item.enunciado || "").replace(
+                 /_{3,}/g,
+                 "______________________________"
+              )
+           : (item.enunciado || "")
+           )
+     })
 
           ]
 
