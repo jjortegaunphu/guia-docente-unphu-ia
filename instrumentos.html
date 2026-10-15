@@ -14488,37 +14488,12 @@ async function descargarWordEstudiantePruebaObjetiva(){
       */
 
       else if(
-        item.tipo ===
-          "completacion"
-      ){
-
-        parrafos.push(
-
-          new Paragraph({
-
-            indent: {
-              left: 360
-            },
-
-            spacing: {
-              after: 80
-            },
-
-            children: [
-
-              new TextRun({
-                 text:
-                   "__________________________________________"
-                 })
-
-            ]
-
-          })
-
-        );
-
-      }
-
+  item.tipo ===
+    "completacion"
+){
+  // El espacio de respuesta ya forma parte
+  // del enunciado del ítem.
+}
 
       /*
         RESPUESTA CORTA
@@ -15388,37 +15363,13 @@ async function descargarWordEstudiantePruebaObjetiva(){
         COMPLETACIÓN
       */
 
-      else if(
-        item.tipo ===
-          "completacion"
-      ){
-
-        contenido.push(
-
-          new Paragraph({
-
-            indent: {
-              left: 360
-            },
-
-            spacing: {
-              after: 80
-            },
-
-            children: [
-
-              new TextRun({
-               text:
-                 "__________________________________________"
-             })
-
-            ]
-
-          })
-
-        );
-
-      }
+     else if(
+  item.tipo ===
+    "completacion"
+){
+  // El espacio de respuesta ya forma parte
+  // del enunciado del ítem.
+}
 
 
       /*
