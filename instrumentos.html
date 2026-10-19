@@ -11604,16 +11604,18 @@ console.log(
   resultado
 );
 
-   if(
+  if(
   !respuesta.ok ||
   resultado.correcto !== true ||
-  !resultado.prueba
+  !resultado.prueba ||
+  !Array.isArray(resultado.prueba.items) ||
+  resultado.prueba.items.length === 0
 ){
 
   alert(
-    resultado.error ||
-    "No fue posible generar la Prueba objetiva."
-  );
+  resultado.error ||
+  "La Prueba objetiva generada no contiene ítems válidos. Intente generar nuevamente."
+);
 
   return;
 }
