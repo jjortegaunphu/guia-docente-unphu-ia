@@ -6164,6 +6164,32 @@ setTimeout(
 );
 }
 
+ function esPruebaDiagnosticaPruebaObjetiva(
+  seleccionado = instrumentoSeleccionadoActual
+){
+
+  if(!seleccionado){
+    return false;
+  }
+
+  const texto =
+    [
+      seleccionado.rubro || "",
+      seleccionado.tecnica || "",
+      seleccionado.tipo || ""
+    ]
+      .join(" ")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+
+  return (
+    texto.includes("diagnostica") ||
+    texto.includes("diagnostico")
+  );
+
+} 
+
 function obtenerCoberturaPruebaObjetiva(
   seleccionado
 ){
@@ -6225,6 +6251,11 @@ function obtenerCoberturaPruebaObjetiva(
   seleccionado
 ){
 
+const esDiagnostica =
+  esPruebaDiagnosticaPruebaObjetiva(
+    seleccionado
+  );
+    
 const cobertura =
   obtenerCoberturaPruebaObjetiva(
     seleccionado
@@ -6422,73 +6453,142 @@ cobertura.forEach(
 
     </div>
 
-    <h3
-      style="
-        margin-top:25px;
-      "
-    >
-      2. Cobertura de la prueba
-    </h3>
+    ${
 
+  esDiagnostica
 
-    <p>
-      Se han identificado automáticamente
-      los contenidos trabajados antes de
-      esta evaluación.
-    </p>
+    ? `
 
+      <h3
+        style="
+          margin-top:25px;
+        "
+      >
+        2. Conocimientos previos
+      </h3>
 
-    <table
-      border="1"
-      cellspacing="0"
-      cellpadding="8"
-      style="
-        width:100%;
-        border-collapse:collapse;
-        margin-top:12px;
-      "
-    >
+      <p>
+        Indique los conocimientos, habilidades o contenidos
+        que los estudiantes deben dominar antes de iniciar
+        la asignatura.
+      </p>
 
-      <thead>
+      <div
+        style="
+          margin-top:12px;
+          padding:16px;
+          border:1px solid #cccccc;
+        "
+      >
 
-        <tr>
+        <label
+          for="conocimientosPreviosPrueba"
+        >
+          <strong>
+            Conocimientos previos a evaluar:
+          </strong>
+        </label>
 
-          <th style="width:7%;">
-            Incluir
-          </th>
+        <textarea
+          id="conocimientosPreviosPrueba"
+          rows="6"
+          style="
+            width:100%;
+            box-sizing:border-box;
+            margin-top:10px;
+            padding:10px;
+            resize:vertical;
+          "
+          placeholder="Escriba aquí los conocimientos previos que desea evaluar."
+        ></textarea>
 
-          <th style="width:13%;">
-            Semana
-          </th>
+        <p
+          style="
+            margin-top:10px;
+            margin-bottom:0;
+          "
+        >
+          <em>
+            La IA utilizará únicamente los conocimientos
+            previos indicados para establecer la cobertura
+            académica de esta prueba diagnóstica.
+          </em>
+        </p>
 
-          <th>
-            Contenidos trabajados
-          </th>
+      </div>
 
-        </tr>
+    `
 
-      </thead>
+    : `
 
+      <h3
+        style="
+          margin-top:25px;
+        "
+      >
+        2. Cobertura de la prueba
+      </h3>
 
-      <tbody>
+      <p>
+        Se han identificado automáticamente
+        los contenidos trabajados antes de
+        esta evaluación.
+      </p>
 
-        ${filasCobertura}
+      <table
+        border="1"
+        cellspacing="0"
+        cellpadding="8"
+        style="
+          width:100%;
+          border-collapse:collapse;
+          margin-top:12px;
+        "
+      >
 
-      </tbody>
+        <thead>
 
-    </table>
+          <tr>
 
-        <div
-      style="
-        display:block;
-        clear:both;
-        margin-top:22px;
-        padding-top:16px;
-        border-top:1px solid #dddddd;
-"
-    >
+            <th style="width:7%;">
+              Incluir
+            </th>
 
-          </div>
+            <th style="width:13%;">
+              Semana
+            </th>
+
+            <th>
+              Contenidos trabajados
+            </th>
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          ${filasCobertura}
+
+        </tbody>
+
+      </table>
+
+      <div
+        style="
+          display:block;
+          clear:both;
+          margin-top:22px;
+          padding-top:16px;
+          border-top:1px solid #dddddd;
+        "
+      >
+
+      </div>
+
+    `
+
+}
 
     <h3
       style="
@@ -10205,16 +10305,41 @@ if(
 }
 
 
+const campoConocimientosPrevios =
+  document.getElementById(
+    "conocimientosPreviosPrueba"
+  );
+
+const conocimientosPrevios =
+  campoConocimientosPrevios
+    ? campoConocimientosPrevios.value.trim()
+    : "";
+
+const esDiagnostica =
+  esPruebaDiagnosticaPruebaObjetiva();
+
 const coberturaPrueba = {
 
+  esDiagnostica:
+    esDiagnostica,
+
+  conocimientosPrevios:
+    conocimientosPrevios,
+
   semanasSeleccionadas:
-    semanasSeleccionadas,
+    esDiagnostica
+      ? []
+      : semanasSeleccionadas,
 
   modoDistribucion:
-    modoDistribucionCobertura,
+    esDiagnostica
+      ? "no_aplica"
+      : modoDistribucionCobertura,
 
   distribucionSemanas:
-    distribucionSemanas
+    esDiagnostica
+      ? {}
+      : distribucionSemanas
 
 };
 
@@ -10937,17 +11062,42 @@ if(
 }
 
 if(
-  configuracion.cobertura
-    .semanasSeleccionadas.length === 0
+  configuracion.cobertura.esDiagnostica
 ){
-  alert(
-    "Debe seleccionar al menos una semana para la cobertura de la prueba."
-  );
 
-  return false;
+  if(
+    !configuracion.cobertura
+      .conocimientosPrevios ||
+    configuracion.cobertura
+      .conocimientosPrevios.trim() === ""
+  ){
+
+    alert(
+      "Debe indicar los conocimientos previos que desea evaluar en la Prueba Diagnóstica."
+    );
+
+    return false;
+  }
+
+}
+else{
+
+  if(
+    configuracion.cobertura
+      .semanasSeleccionadas.length === 0
+  ){
+
+    alert(
+      "Debe seleccionar al menos una semana para la cobertura de la prueba."
+    );
+
+    return false;
+  }
+
 }
 
   if(
+  !configuracion.cobertura.esDiagnostica &&
   configuracion.cobertura.modoDistribucion ===
     "personalizada"
 ){
@@ -11355,12 +11505,28 @@ const reaOficiales =
     contexto
   );
 
- return {
+return {
+
+  esDiagnostica:
+    configuracion.cobertura
+      ?.esDiagnostica === true,
+
+  conocimientosPrevios:
+    configuracion.cobertura
+      ?.esDiagnostica === true
+        ? configuracion.cobertura
+            .conocimientosPrevios || ""
+        : "",
+
   semanas:
-    contexto,
+    configuracion.cobertura
+      ?.esDiagnostica === true
+        ? []
+        : contexto,
 
   reaOficiales:
     reaOficiales
+
 };
 }  
 
