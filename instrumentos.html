@@ -195,16 +195,17 @@ function obtenerBorradorPruebaObjetiva(){
       JSON.parse(texto);
 
     if(
-      !borrador ||
-      !borrador.prueba ||
-      !Array.isArray(
-        borrador.prueba.items
-      ) ||
-      !borrador.solicitudGeneracion ||
-      !borrador.instrumento
-    ){
-      return null;
-    }
+  !borrador ||
+  !borrador.prueba ||
+  !Array.isArray(
+    borrador.prueba.items
+  ) ||
+  borrador.prueba.items.length === 0 ||
+  !borrador.solicitudGeneracion ||
+  !borrador.instrumento
+){
+  return null;
+}
 
     return borrador;
 
