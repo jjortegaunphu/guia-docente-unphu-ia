@@ -407,7 +407,7 @@ function validarInstrumentosRevision(){
            Array.isArray(elaborados) &&
            elaborados.some(
             elaborado =>
-              elaborado?.rubro === rubro?.nombre &&
+              elaborado?.rubro === rubro?.rubro &&
               elaborado?.indiceActividad === indiceActividad &&
               elaborado?.indiceInstrumento === indiceInstrumento
             );
