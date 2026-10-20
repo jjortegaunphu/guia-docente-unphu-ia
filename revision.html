@@ -6149,6 +6149,26 @@ document
     "click",
     function(){
 
+      const parametros =
+        new URLSearchParams(
+          window.location.search
+        );
+
+      const idGuiaFinalizada =
+        parametros.get(
+          "guia"
+        );
+
+
+      if(idGuiaFinalizada){
+
+        window.location.href =
+          "mis-guias.html";
+
+        return;
+      }
+
+
       window.location.href =
         "instrumentos.html";
 
