@@ -621,11 +621,17 @@ function abrirGuiaFinalizada(idGuia){
 
 
   const cronograma =
-    Array.isArray(
-      datos?.cronograma
-    )
-      ? datos.cronograma
-      : [];
+  Array.isArray(
+    datos
+      ?.instrumentosEvaluacion
+      ?.fuente
+      ?.cronograma
+  )
+    ? datos
+        .instrumentosEvaluacion
+        .fuente
+        .cronograma
+    : [];
 
 
   const rubros =
