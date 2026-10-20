@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    Mis Guías Finalizadas | Guía Docente UNPHU IA
+  </title>
+
+  <style>
+
+    :root {
+      --verde-unphu: #006b54;
+      --verde-oscuro: #004c3f;
+      --verde-claro: #e9f4f1;
+      --blanco: #ffffff;
+      --gris-fondo: #f5f7f7;
+      --gris-texto: #4b5563;
+      --texto: #1f2937;
+    }
+
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+
+    body {
+      font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+      background:
+        var(--gris-fondo);
+
+      color:
+        var(--texto);
+
+      min-height: 100vh;
+    }
+
+
+    /* ENCABEZADO */
+
+    header {
+
+      background:
+        linear-gradient(
+          135deg,
+          var(--verde-oscuro),
+          var(--verde-unphu)
+        );
+
+      color:
+        var(--blanco);
+
+      padding:
+        20px 8%;
+    }
+
+
+    .header-content {
+
+      max-width:
+        1200px;
+
+      margin:
+        auto;
+    }
+
+
+    .header-main {
+
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      gap:
+        24px;
+    }
+
+
+    .logo-unphu {
+
+      width:
+        190px;
+
+      height:
+        auto;
+
+      background:
+        var(--blanco);
+
+      padding:
+        8px 10px;
+
+      border-radius:
+        6px;
+
+      flex-shrink:
+        0;
+    }
+
+
+    .header-text {
+
+      border-left:
+        1px solid
+        rgba(
+          255,
+          255,
+          255,
+          0.45
+        );
+
+      padding-left:
+        24px;
+    }
+
+
+    header h1 {
+
+      font-size:
+        30px;
+
+      margin-bottom:
+        6px;
+    }
+
+
+    header p {
+
+      font-size:
+        16px;
+
+      opacity:
+        0.95;
+    }
+
+
+    /* CONTENIDO */
+
+    main {
+
+      max-width:
+        1100px;
+
+      margin:
+        auto;
+
+      padding:
+        55px 25px;
+    }
+
+
+    .barra-superior {
+
+      margin-bottom:
+        30px;
+    }
+
+
+    .volver {
+
+      color:
+        var(--verde-unphu);
+
+      text-decoration:
+        none;
+
+      font-weight:
+        bold;
+    }
+
+
+    .volver:hover {
+
+      text-decoration:
+        underline;
+    }
+
+
+    .titulo-seccion {
+
+      margin-bottom:
+        32px;
+    }
+
+
+    .titulo-seccion h2 {
+
+      color:
+        var(--verde-oscuro);
+
+      font-size:
+        28px;
+
+      margin-bottom:
+        10px;
+    }
+
+
+    .titulo-seccion p {
+
+      color:
+        var(--gris-texto);
+
+      line-height:
+        1.6;
+    }
+
+
+    /* LISTA DE GUÍAS */
+
+    .lista-guias {
+
+      display:
+        grid;
+
+      gap:
+        20px;
+    }
+
+
+    .guia-card {
+
+      background:
+        var(--blanco);
+
+      border:
+        1px solid #e1e7e5;
+
+      border-radius:
+        14px;
+
+      padding:
+        26px;
+
+      box-shadow:
+        0 6px 18px
+        rgba(
+          0,
+          76,
+          63,
+          0.07
+        );
+    }
+
+
+    .guia-card h3 {
+
+      color:
+        var(--verde-oscuro);
+
+      margin-bottom:
+        14px;
+
+      font-size:
+        21px;
+    }
+
+
+    .guia-card p {
+
+      color:
+        var(--gris-texto);
+
+      margin-bottom:
+        8px;
+
+      line-height:
+        1.5;
+    }
+
+
+    .estado {
+
+      display:
+        inline-block;
+
+      margin-top:
+        8px;
+
+      padding:
+        6px 10px;
+
+      background:
+        var(--verde-claro);
+
+      color:
+        var(--verde-oscuro);
+
+      border-radius:
+        6px;
+
+      font-size:
+        13px;
+
+      font-weight:
+        bold;
+    }
+
+
+    .sin-guias {
+
+      background:
+        var(--blanco);
+
+      border:
+        1px solid #e1e7e5;
+
+      border-radius:
+        14px;
+
+      padding:
+        35px;
+
+      text-align:
+        center;
+
+      color:
+        var(--gris-texto);
+    }
+
+
+    /* PIE */
+
+    footer {
+
+      text-align:
+        center;
+
+      color:
+        #6b7280;
+
+      font-size:
+        13px;
+
+      padding:
+        30px 20px;
+    }
+
+
+    /* CELULARES */
+
+    @media (max-width: 750px) {
+
+      .header-main {
+
+        flex-direction:
+          column;
+
+        align-items:
+          flex-start;
+
+        gap:
+          16px;
+      }
+
+
+      .header-text {
+
+        border-left:
+          none;
+
+        padding-left:
+          0;
+      }
+
+
+      .logo-unphu {
+
+        width:
+          165px;
+      }
+
+
+      header h1 {
+
+        font-size:
+          25px;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <header>
+
+    <div class="header-content">
+
+      <div class="header-main">
+
+        <img
+          src="logo-unphu.png"
+          alt="Universidad Nacional Pedro Henríquez Ureña"
+          class="logo-unphu"
+        >
+
+        <div class="header-text">
+
+          <h1>
+            Guía Docente UNPHU IA
+          </h1>
+
+          <p>
+            Guías docentes finalizadas
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <main>
+
+
+    <div class="barra-superior">
+
+      <a
+        href="index.html"
+        class="volver"
+      >
+        ← Volver al inicio
+      </a>
+
+    </div>
+
+
+    <section class="titulo-seccion">
+
+      <h2>
+        Mis guías finalizadas
+      </h2>
+
+      <p>
+        Consulta las Guías Docentes que han sido
+        revisadas y finalizadas.
+      </p>
+
+    </section>
+
+
+    <section
+      id="listaGuias"
+      class="lista-guias"
+    >
+    </section>
+
+
+  </main>
+
+
+  <footer>
+
+    Guía Docente UNPHU IA ·
+    Herramienta de apoyo académico
+
+  </footer>
+
+
+  <script>
+
+
+    function obtenerGuiasFinalizadas(){
+
+      try {
+
+        const guardadas =
+          localStorage.getItem(
+            "guiasDocentesFinalizadas"
+          );
+
+
+        if(!guardadas){
+          return [];
+        }
+
+
+        const guias =
+          JSON.parse(
+            guardadas
+          );
+
+
+        return Array.isArray(guias)
+          ? guias
+          : [];
+
+      }
+      catch(error){
+
+        console.error(
+          "No fue posible recuperar las guías finalizadas:",
+          error
+        );
+
+        return [];
+
+      }
+
+    }
+
+
+
+    function formatearFecha(fecha){
+
+      if(!fecha){
+        return "Fecha no disponible";
+      }
+
+
+      const fechaObjeto =
+        new Date(fecha);
+
+
+      if(
+        Number.isNaN(
+          fechaObjeto.getTime()
+        )
+      ){
+        return "Fecha no disponible";
+      }
+
+
+      return fechaObjeto
+        .toLocaleString(
+          "es-DO",
+          {
+            dateStyle:
+              "long",
+
+            timeStyle:
+              "short"
+          }
+        );
+
+    }
+
+
+
+    function mostrarGuiasFinalizadas(){
+
+      const contenedor =
+        document.getElementById(
+          "listaGuias"
+        );
+
+
+      const guias =
+        obtenerGuiasFinalizadas();
+
+
+      if(guias.length === 0){
+
+        contenedor.innerHTML = `
+
+          <div class="sin-guias">
+
+            <p>
+              Todavía no hay Guías Docentes
+              finalizadas.
+            </p>
+
+          </div>
+
+        `;
+
+        return;
+
+      }
+
+
+      contenedor.innerHTML = "";
+
+
+      const guiasOrdenadas =
+        [...guias].sort(
+          (a, b) =>
+            new Date(
+              b.fechaFinalizacion || 0
+            ) -
+            new Date(
+              a.fechaFinalizacion || 0
+            )
+        );
+
+
+      guiasOrdenadas.forEach(
+        guia => {
+
+
+          const datos =
+            guia?.datosGuia || {};
+
+
+          const asignatura =
+            datos
+              ?.instrumentosEvaluacion
+              ?.fuente
+              ?.asignatura;
+
+
+          const nombreAsignatura =
+            asignatura?.nombre ||
+            datos
+              ?.configuracion
+              ?.nombreAsignatura ||
+            "Guía Docente";
+
+
+          const codigoAsignatura =
+            asignatura?.codigo ||
+            datos
+              ?.configuracion
+              ?.codigoAsignatura ||
+            "No disponible";
+
+
+          const tarjeta =
+            document.createElement(
+              "article"
+            );
+
+
+          tarjeta.className =
+            "guia-card";
+
+
+          const titulo =
+            document.createElement(
+              "h3"
+            );
+
+
+          titulo.textContent =
+            nombreAsignatura;
+
+
+          const codigo =
+            document.createElement(
+              "p"
+            );
+
+
+          codigo.textContent =
+            "Código: " +
+            codigoAsignatura;
+
+
+          const fecha =
+            document.createElement(
+              "p"
+            );
+
+
+          fecha.textContent =
+            "Finalizada: " +
+            formatearFecha(
+              guia.fechaFinalizacion
+            );
+
+
+          const estado =
+            document.createElement(
+              "span"
+            );
+
+
+          estado.className =
+            "estado";
+
+
+          estado.textContent =
+            "Finalizada";
+
+
+          tarjeta.appendChild(
+            titulo
+          );
+
+
+          tarjeta.appendChild(
+            codigo
+          );
+
+
+          tarjeta.appendChild(
+            fecha
+          );
+
+
+          tarjeta.appendChild(
+            estado
+          );
+
+
+          contenedor.appendChild(
+            tarjeta
+          );
+
+        }
+      );
+
+    }
+
+
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      mostrarGuiasFinalizadas
+    );
+
+
+  </script>
+
+
+</body>
+
+</html>
