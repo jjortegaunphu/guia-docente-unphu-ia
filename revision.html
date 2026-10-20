@@ -76,6 +76,58 @@
 
 </section>
 
+    <section
+  id="guiaFinalizada"
+  style="
+    display:none;
+    margin-top:25px;
+  "
+>
+
+  <h2>
+    Guía Docente finalizada
+  </h2>
+
+  <p>
+    La Guía Docente ha sido revisada y finalizada
+    correctamente. Toda la información elaborada
+    permanece guardada.
+  </p>
+
+  <div
+    style="
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:20px;
+    "
+  >
+
+    <button
+      type="button"
+      id="btnDescargarGuia"
+    >
+      Descargar Guía Docente
+    </button>
+
+    <button
+      type="button"
+      id="btnVolverGuia"
+    >
+      Volver a la guía
+    </button>
+
+    <button
+      type="button"
+      id="btnNuevaGuia"
+    >
+      Crear nueva Guía Docente
+    </button>
+
+  </div>
+
+</section>
+
 <section
   id="errorRevision"
   style="display:none;"
@@ -138,11 +190,34 @@ function cargarDatosRevision(){
 
 
     console.log(
-      "Datos recuperados para revisión:",
-      datosGuia
-    );
+  "Datos recuperados para revisión:",
+  datosGuia
+);
 
-    mostrarResumenRevision();
+
+if(datosGuia.estadoGuia === "finalizada"){
+
+  document
+    .getElementById("cargando")
+    .style.display = "none";
+
+  document
+    .getElementById("revisionGuia")
+    .style.display = "none";
+
+  document
+    .getElementById("errorRevision")
+    .style.display = "none";
+
+  document
+    .getElementById("guiaFinalizada")
+    .style.display = "block";
+
+  return;
+}
+
+
+mostrarResumenRevision();
 
   }
   catch(error){
@@ -963,6 +1038,16 @@ function finalizarGuiaDocente(){
   alert(
     "La Guía Docente ha sido finalizada correctamente."
   );
+
+
+  document
+    .getElementById("revisionGuia")
+    .style.display = "none";
+
+
+  document
+    .getElementById("guiaFinalizada")
+    .style.display = "block";
 
 }
   
