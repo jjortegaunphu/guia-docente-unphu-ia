@@ -920,6 +920,130 @@ const cronogramaHTML =
     )
     .join("");
 
+  const sistemaEvaluacionHTML =
+  rubros
+    .map(
+      rubro => {
+
+        const actividades =
+          Array.isArray(
+            rubro?.actividades
+          )
+            ? rubro.actividades
+            : [];
+
+        const filasActividades =
+          actividades
+            .map(
+              actividad => {
+
+                const rea =
+                  Array.isArray(
+                    actividad?.codigosREA
+                  )
+                    ? actividad
+                        .codigosREA
+                        .join(", ")
+                    : "";
+
+                const instrumentosActividad =
+                  Array.isArray(
+                    actividad?.instrumentos
+                  )
+                    ? actividad
+                        .instrumentos
+                        .join(", ")
+                    : "";
+
+                return `
+                  <tr>
+                    <td>
+                      ${escaparHTML(
+                        actividad?.semana
+                      )}
+                    </td>
+
+                    <td>
+                      ${escaparHTML(
+                        actividad?.tecnica
+                      )}
+                    </td>
+
+                    <td>
+                      ${escaparHTML(rea)}
+                    </td>
+
+                    <td>
+                      ${escaparHTML(
+                        actividad?.tipo
+                      )}
+                    </td>
+
+                    <td>
+                      ${escaparHTML(
+                        instrumentosActividad
+                      )}
+                    </td>
+
+                    <td
+                      style="
+                        text-align:center;
+                        font-weight:700;
+                      "
+                    >
+                      ${escaparHTML(
+                        actividad?.valor
+                      )}
+                    </td>
+                  </tr>
+                `;
+              }
+            )
+            .join("");
+
+        return `
+
+          ${filasActividades}
+
+          <tr
+            style="
+              background:#e9f4f1;
+              font-weight:700;
+            "
+          >
+            <td colspan="5">
+              ${escaparHTML(
+                rubro?.rubro
+              )}
+            </td>
+
+            <td
+              style="
+                text-align:center;
+              "
+            >
+              ${escaparHTML(
+                rubro?.pesoTotal
+              )}
+            </td>
+          </tr>
+
+        `;
+      }
+    )
+    .join("");
+
+
+const totalSistemaEvaluacion =
+  rubros.reduce(
+    (total, rubro) =>
+      total +
+      Number(
+        rubro?.pesoTotal || 0
+      ),
+    0
+  );
+
   const detalle =
     document.getElementById(
       "detalleGuia"
@@ -1033,6 +1157,144 @@ const cronogramaHTML =
 </h2>
 
 ${cronogramaHTML}
+
+<hr
+  style="
+    margin: 40px 0;
+    border: 0;
+    border-top: 1px solid #d8e3e0;
+  "
+>
+
+<h2
+  style="
+    color:#004c3f;
+    margin-bottom:18px;
+  "
+>
+  Sistema de Evaluación
+</h2>
+
+<div
+  style="
+    overflow-x:auto;
+  "
+>
+
+  <table
+    style="
+      width:100%;
+      border-collapse:collapse;
+      min-width:850px;
+    "
+  >
+
+    <thead>
+
+      <tr
+        style="
+          background:#006b54;
+          color:#ffffff;
+        "
+      >
+
+        <th
+          style="
+            padding:12px;
+            border:1px solid #dce5e2;
+          "
+        >
+          Semana
+        </th>
+
+        <th
+          style="
+            padding:12px;
+            border:1px solid #dce5e2;
+          "
+        >
+          Técnica
+        </th>
+
+        <th
+          style="
+            padding:12px;
+            border:1px solid #dce5e2;
+          "
+        >
+          REA(s)
+        </th>
+
+        <th
+          style="
+            padding:12px;
+            border:1px solid #dce5e2;
+          "
+        >
+          Tipo (D, F, S)
+        </th>
+
+        <th
+          style="
+            padding:12px;
+            border:1px solid #dce5e2;
+          "
+        >
+          Instrumento(s)
+        </th>
+
+        <th
+          style="
+            padding:12px;
+            border:1px solid #dce5e2;
+          "
+        >
+          Valor
+        </th>
+
+      </tr>
+
+    </thead>
+
+    <tbody>
+
+      ${sistemaEvaluacionHTML}
+
+      <tr
+        style="
+          font-weight:700;
+          background:#f5f7f7;
+        "
+      >
+
+        <td
+          colspan="5"
+          style="
+            padding:12px;
+            border:1px solid #dce5e2;
+            text-align:right;
+          "
+        >
+          Total:
+        </td>
+
+        <td
+          style="
+            padding:12px;
+            border:1px solid #dce5e2;
+            text-align:center;
+          "
+        >
+          ${totalSistemaEvaluacion}
+        </td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
+</div>
 
 </article>
       
