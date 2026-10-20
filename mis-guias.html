@@ -559,7 +559,81 @@
 
     }
 
+function abrirGuiaFinalizada(idGuia){
 
+  const guias =
+    obtenerGuiasFinalizadas();
+
+
+  const guiaSeleccionada =
+    guias.find(
+      guia =>
+        guia.id === idGuia
+    );
+
+
+  if(!guiaSeleccionada){
+
+    alert(
+      "No fue posible localizar la Guía Docente seleccionada."
+    );
+
+    return;
+  }
+
+
+  if(!guiaSeleccionada.datosGuia){
+
+    alert(
+      "La Guía Docente seleccionada no contiene información válida."
+    );
+
+    return;
+  }
+
+
+  /*
+    CREAR UN RESPALDO TEMPORAL
+    PARA QUE revision.html PUEDA
+    MOSTRAR LA GUÍA SELECCIONADA
+  */
+
+  const respaldoTemporal = {
+
+    datosGuia:
+      JSON.parse(
+        JSON.stringify(
+          guiaSeleccionada.datosGuia
+        )
+      ),
+
+    estadoGuia:
+      "finalizada",
+
+    fechaFinalizacion:
+      guiaSeleccionada.fechaFinalizacion,
+
+    origen:
+      "guiasFinalizadas",
+
+    idGuiaFinalizada:
+      guiaSeleccionada.id
+
+  };
+
+
+  localStorage.setItem(
+    "respaldoGuiaDocente",
+    JSON.stringify(
+      respaldoTemporal
+    )
+  );
+
+
+  window.location.href =
+    "revision.html";
+
+}
 
     function mostrarGuiasFinalizadas(){
 
@@ -696,6 +770,58 @@
           estado.textContent =
             "Finalizada";
 
+          const acciones =
+  document.createElement(
+    "div"
+  );
+
+
+acciones.style.marginTop =
+  "20px";
+
+
+const btnAbrir =
+  document.createElement(
+    "button"
+  );
+
+
+btnAbrir.type =
+  "button";
+
+
+btnAbrir.textContent =
+  "Abrir guía";
+
+
+btnAbrir.className =
+  "button";
+
+
+btnAbrir.style.border =
+  "none";
+
+
+btnAbrir.style.cursor =
+  "pointer";
+
+
+btnAbrir.addEventListener(
+  "click",
+  function(){
+
+    abrirGuiaFinalizada(
+      guia.id
+    );
+
+  }
+);
+
+
+acciones.appendChild(
+  btnAbrir
+);
+
 
           tarjeta.appendChild(
             titulo
@@ -714,6 +840,10 @@
 
           tarjeta.appendChild(
             estado
+          );
+
+          tarjeta.appendChild(
+           acciones
           );
 
 
