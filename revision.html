@@ -196,6 +196,65 @@ function validarCronogramaRevision(){
 
 }
 
+  function validarREARevision(){
+
+  const fuente =
+    datosGuia
+      ?.instrumentosEvaluacion
+      ?.fuente;
+
+
+  const rea =
+    fuente?.reaOficiales;
+
+
+  if(
+    !Array.isArray(rea) ||
+    rea.length === 0
+  ){
+
+    return {
+      estado: "error",
+      titulo: "Resultados de Aprendizaje (REA)",
+      mensaje:
+        "No se encontraron Resultados de Aprendizaje asociados a la Guía Docente."
+    };
+
+  }
+
+
+  const reaInvalidos =
+    rea.filter(
+      item =>
+        !item ||
+        (
+          typeof item === "string" &&
+          item.trim() === ""
+        )
+    );
+
+
+  if(reaInvalidos.length > 0){
+
+    return {
+      estado: "advertencia",
+      titulo: "Resultados de Aprendizaje (REA)",
+      mensaje:
+        "Se encontraron REA, pero existen registros incompletos que deben revisarse."
+    };
+
+  }
+
+
+  return {
+    estado: "correcto",
+    titulo: "Resultados de Aprendizaje (REA)",
+    mensaje:
+      `Se encontraron ${rea.length} Resultado(s) de Aprendizaje asociados a la asignatura.`
+  };
+
+}
+
 function mostrarResumenRevision(){
 
   document
@@ -244,6 +303,9 @@ function mostrarResumenRevision(){
 const resultadoCronograma =
   validarCronogramaRevision();
 
+const resultadoREA =
+  validarREARevision();
+
 
 const resultado =
   document.getElementById(
@@ -251,13 +313,25 @@ const resultado =
   );
 
 
-const simbolo =
-  resultadoCronograma.estado === "correcto"
-    ? "✅"
-    : "❌";
+const obtenerSimboloEstado =
+  estado => {
+
+    if(estado === "correcto"){
+      return "✅";
+    }
+
+    if(estado === "advertencia"){
+      return "⚠️";
+    }
+
+    return "❌";
+
+  };
 
 
 resultado.innerHTML = `
+
+  resultado.innerHTML = `
 
   <div
     style="
@@ -268,12 +342,32 @@ resultado.innerHTML = `
   >
 
     <strong>
-      ${simbolo}
+      ${obtenerSimboloEstado(resultadoCronograma.estado)}
       ${resultadoCronograma.titulo}
     </strong>
 
     <p>
       ${resultadoCronograma.mensaje}
+    </p>
+
+  </div>
+
+
+  <div
+    style="
+      border:1px solid #cccccc;
+      padding:15px;
+      margin-top:12px;
+    "
+  >
+
+    <strong>
+      ${obtenerSimboloEstado(resultadoREA.estado)}
+      ${resultadoREA.titulo}
+    </strong>
+
+    <p>
+      ${resultadoREA.mensaje}
     </p>
 
   </div>
