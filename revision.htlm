@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    Revisión de la Guía Docente · Guía Docente UNPHU IA
+  </title>
+</head>
+
+<body>
+
+  <header>
+    <h1>Guía Docente UNPHU IA</h1>
+    <p>Revisión y Finalización de la Guía Docente</p>
+  </header>
+
+  <main>
+
+    <section id="cargando">
+
+      <h2>
+        Revisando la Guía Docente...
+      </h2>
+
+      <p>
+        Se está recuperando la información elaborada
+        en las etapas anteriores.
+      </p>
+
+    </section>
+
+<section
+  id="revisionGuia"
+  style="display:none;"
+>
+
+  <a href="instrumentos.html">
+    ← Volver a Instrumentos de Evaluación
+  </a>
+
+  <h2>
+    XII. Revisión integral de la Guía Docente
+  </h2>
+
+  <div id="resumenGuia"></div>
+
+  <h3>
+    Estado de la Guía Docente
+  </h3>
+
+  <div id="resultadoRevision"></div>
+
+  <div
+    id="accionesFinalizacion"
+    style="
+      display:none;
+      margin-top:25px;
+    "
+  >
+
+    <button
+      type="button"
+      id="btnFinalizarGuia"
+    >
+      Finalizar Guía Docente
+    </button>
+
+  </div>
+
+</section>
+
+<section
+  id="errorRevision"
+  style="display:none;"
+>
+
+  <h2>
+    No se puede revisar la Guía Docente
+  </h2>
+
+  <p id="mensajeErrorRevision"></p>
+
+  <a href="index.html">
+    Volver al inicio
+  </a>
+
+</section>
+
+  </main>
+
+<script>
+
+let datosGuia = null;
+let respaldoGuia = null;
+
+
+function cargarDatosRevision(){
+
+  const respaldo =
+    localStorage.getItem(
+      "respaldoGuiaDocente"
+    );
+
+  if(!respaldo){
+
+    mostrarErrorRevision(
+      "No se encontró una Guía Docente previamente elaborada."
+    );
+
+    return;
+  }
+
+
+  try{
+
+    respaldoGuia =
+      JSON.parse(respaldo);
+
+    datosGuia =
+      respaldoGuia.datosGuia;
+
+
+    if(!datosGuia){
+
+      mostrarErrorRevision(
+        "El respaldo de la Guía Docente no contiene información válida."
+      );
+
+      return;
+    }
+
+
+    console.log(
+      "Datos recuperados para revisión:",
+      datosGuia
+    );
+
+    mostrarResumenRevision();
+
+  }
+  catch(error){
+
+    console.error(
+      "Error al recuperar la Guía Docente:",
+      error
+    );
+
+    mostrarErrorRevision(
+      "No fue posible recuperar correctamente la información de la Guía Docente."
+    );
+
+  }
+
+}
+
+function validarCronogramaRevision(){
+
+  const fuente =
+    datosGuia
+      ?.instrumentosEvaluacion
+      ?.fuente;
+
+
+  const cronograma =
+    fuente?.cronograma;
+
+
+  if(
+    !Array.isArray(cronograma) ||
+    cronograma.length === 0
+  ){
+
+    return {
+      estado: "error",
+      titulo: "Cronograma",
+      mensaje:
+        "No se encontró un cronograma académico válido."
+    };
+
+  }
+
+
+  return {
+    estado: "correcto",
+    titulo: "Cronograma",
+    mensaje:
+      `Cronograma disponible con ${cronograma.length} semana(s).`
+  };
+
+}
+
+function mostrarResumenRevision(){
+
+  document
+    .getElementById("cargando")
+    .style.display = "none";
+
+  document
+    .getElementById("errorRevision")
+    .style.display = "none";
+
+  document
+    .getElementById("revisionGuia")
+    .style.display = "block";
+
+
+  const resumen =
+    document.getElementById(
+      "resumenGuia"
+    );
+
+
+  const fuente =
+    datosGuia
+      ?.instrumentosEvaluacion
+      ?.fuente;
+
+
+  const asignatura =
+    fuente?.asignatura || {};
+
+
+  resumen.innerHTML = `
+
+    <p>
+      <strong>Asignatura:</strong>
+      ${asignatura.nombre || ""}
+    </p>
+
+    <p>
+      <strong>Código:</strong>
+      ${asignatura.codigo || ""}
+    </p>
+
+  `;
+
+const resultadoCronograma =
+  validarCronogramaRevision();
+
+
+const resultado =
+  document.getElementById(
+    "resultadoRevision"
+  );
+
+
+const simbolo =
+  resultadoCronograma.estado === "correcto"
+    ? "✅"
+    : "❌";
+
+
+resultado.innerHTML = `
+
+  <div
+    style="
+      border:1px solid #cccccc;
+      padding:15px;
+      margin-top:12px;
+    "
+  >
+
+    <strong>
+      ${simbolo}
+      ${resultadoCronograma.titulo}
+    </strong>
+
+    <p>
+      ${resultadoCronograma.mensaje}
+    </p>
+
+  </div>
+
+`;
+
+}
+
+function mostrarErrorRevision(mensaje){
+
+  document
+    .getElementById("cargando")
+    .style.display = "none";
+
+  document
+    .getElementById("revisionGuia")
+    .style.display = "none";
+
+  document
+    .getElementById("errorRevision")
+    .style.display = "block";
+
+  document
+    .getElementById(
+      "mensajeErrorRevision"
+    )
+    .textContent = mensaje;
+
+}
+
+
+document.addEventListener(
+  "DOMContentLoaded",
+  cargarDatosRevision
+);
+
+</script>
+
+</body>
+
+</html>
