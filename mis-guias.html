@@ -629,11 +629,12 @@ function abrirGuiaFinalizada(idGuia){
 
 
   const rubros =
-    datos
-      ?.instrumentosEvaluacion
-      ?.fuente
-      ?.rubrosAceptados ||
-    [];
+  datos
+    ?.instrumentosEvaluacion
+    ?.fuente
+    ?.sistemaEvaluacion
+    ?.rubrosAceptados ||
+  [];
 
 
   const instrumentos =
