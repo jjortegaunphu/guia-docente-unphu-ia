@@ -668,6 +668,25 @@ const resultadoInstrumentos =
 const resultadoCoherencia =
   validarCoherenciaTransversalRevision();
 
+ const resultadosRevision = [
+  resultadoCronograma,
+  resultadoREA,
+  resultadoSistemaEvaluacion,
+  resultadoInstrumentos,
+  resultadoCoherencia
+];
+
+
+const existenErrores =
+  resultadosRevision.some(
+    item => item.estado === "error"
+  );
+
+
+const existenAdvertencias =
+  resultadosRevision.some(
+    item => item.estado === "advertencia"
+  ); 
 
 const resultado =
   document.getElementById(
@@ -790,6 +809,68 @@ const obtenerSimboloEstado =
   </div>
 
 `;
+
+const accionesFinalizacion =
+  document.getElementById(
+    "accionesFinalizacion"
+  );
+
+
+if(!existenErrores){
+
+  const estadoFinal =
+    document.createElement("div");
+
+  estadoFinal.style.marginTop = "25px";
+  estadoFinal.style.padding = "15px";
+  estadoFinal.style.border = "1px solid #cccccc";
+
+
+  if(existenAdvertencias){
+
+    estadoFinal.innerHTML = `
+      <strong>
+        ⚠️ Guía lista para finalizar con advertencias
+      </strong>
+
+      <p>
+        La Guía Docente no presenta errores que impidan
+        su finalización, pero contiene aspectos que conviene
+        revisar.
+      </p>
+    `;
+
+  }
+  else{
+
+    estadoFinal.innerHTML = `
+      <strong>
+        ✅ Guía lista para finalizar
+      </strong>
+
+      <p>
+        La revisión integral se completó correctamente.
+        La Guía Docente puede ser finalizada.
+      </p>
+    `;
+
+  }
+
+
+  resultado.appendChild(
+    estadoFinal
+  );
+
+  accionesFinalizacion.style.display =
+    "block";
+
+}
+else{
+
+  accionesFinalizacion.style.display =
+    "none";
+
+}  
 
 }
 
