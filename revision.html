@@ -173,7 +173,17 @@ function cargarDatosRevision(){
     parametros.get(
       "guia"
     );
+  
+if(idGuiaFinalizada){
 
+  document
+    .getElementById(
+      "btnNuevaGuia"
+    )
+    .style.display =
+      "none";
+
+}
 
   if(idGuiaFinalizada){
 
