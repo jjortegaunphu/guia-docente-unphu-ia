@@ -561,77 +561,21 @@
 
 function abrirGuiaFinalizada(idGuia){
 
-  const guias =
-    obtenerGuiasFinalizadas();
-
-
-  const guiaSeleccionada =
-    guias.find(
-      guia =>
-        guia.id === idGuia
-    );
-
-
-  if(!guiaSeleccionada){
+  if(!idGuia){
 
     alert(
-      "No fue posible localizar la Guía Docente seleccionada."
+      "No fue posible identificar la Guía Docente seleccionada."
     );
 
     return;
   }
-
-
-  if(!guiaSeleccionada.datosGuia){
-
-    alert(
-      "La Guía Docente seleccionada no contiene información válida."
-    );
-
-    return;
-  }
-
-
-  /*
-    CREAR UN RESPALDO TEMPORAL
-    PARA QUE revision.html PUEDA
-    MOSTRAR LA GUÍA SELECCIONADA
-  */
-
-  const respaldoTemporal = {
-
-    datosGuia:
-      JSON.parse(
-        JSON.stringify(
-          guiaSeleccionada.datosGuia
-        )
-      ),
-
-    estadoGuia:
-      "finalizada",
-
-    fechaFinalizacion:
-      guiaSeleccionada.fechaFinalizacion,
-
-    origen:
-      "guiasFinalizadas",
-
-    idGuiaFinalizada:
-      guiaSeleccionada.id
-
-  };
-
-
-  localStorage.setItem(
-    "respaldoGuiaDocente",
-    JSON.stringify(
-      respaldoTemporal
-    )
-  );
 
 
   window.location.href =
-    "revision.html";
+    "revision.html?guia=" +
+    encodeURIComponent(
+      idGuia
+    );
 
 }
 
