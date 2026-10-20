@@ -157,10 +157,162 @@ let respaldoGuia = null;
 
 function cargarDatosRevision(){
 
+  /*
+    COMPROBAR SI SE ESTÁ ABRIENDO
+    UNA GUÍA FINALIZADA DESDE
+    "MIS GUÍAS"
+  */
+
+  const parametros =
+    new URLSearchParams(
+      window.location.search
+    );
+
+
+  const idGuiaFinalizada =
+    parametros.get(
+      "guia"
+    );
+
+
+  if(idGuiaFinalizada){
+
+    try{
+
+      const guiasGuardadas =
+        JSON.parse(
+          localStorage.getItem(
+            "guiasDocentesFinalizadas"
+          ) || "[]"
+        );
+
+
+      const guiaFinalizada =
+        Array.isArray(guiasGuardadas)
+          ? guiasGuardadas.find(
+              guia =>
+                guia?.id ===
+                idGuiaFinalizada
+            )
+          : null;
+
+
+      if(
+        !guiaFinalizada ||
+        !guiaFinalizada.datosGuia
+      ){
+
+        mostrarErrorRevision(
+          "No fue posible localizar la Guía Docente finalizada seleccionada."
+        );
+
+        return;
+      }
+
+
+      /*
+        IMPORTANTE:
+        SE CARGA DIRECTAMENTE DESDE
+        EL HISTORIAL.
+
+        NO SE MODIFICA
+        respaldoGuiaDocente.
+      */
+
+      datosGuia =
+        guiaFinalizada.datosGuia;
+
+
+      respaldoGuia = {
+        datosGuia:
+          datosGuia,
+
+        estadoGuia:
+          "finalizada",
+
+        fechaFinalizacion:
+          guiaFinalizada
+            .fechaFinalizacion,
+
+        origen:
+          "guiasFinalizadas",
+
+        idGuiaFinalizada:
+          guiaFinalizada.id
+      };
+
+
+      console.log(
+        "Guía finalizada recuperada desde Mis guías:",
+        datosGuia
+      );
+
+
+      document
+        .getElementById(
+          "cargando"
+        )
+        .style.display =
+          "none";
+
+
+      document
+        .getElementById(
+          "revisionGuia"
+        )
+        .style.display =
+          "none";
+
+
+      document
+        .getElementById(
+          "errorRevision"
+        )
+        .style.display =
+          "none";
+
+
+      document
+        .getElementById(
+          "guiaFinalizada"
+        )
+        .style.display =
+          "block";
+
+
+      return;
+
+    }
+    catch(error){
+
+      console.error(
+        "Error al recuperar la Guía Docente finalizada:",
+        error
+      );
+
+
+      mostrarErrorRevision(
+        "No fue posible recuperar correctamente la Guía Docente finalizada."
+      );
+
+
+      return;
+
+    }
+
+  }
+
+
+  /*
+    MODO NORMAL:
+    GUÍA ACTUAL EN ELABORACIÓN
+  */
+
   const respaldo =
     localStorage.getItem(
       "respaldoGuiaDocente"
     );
+
 
   if(!respaldo){
 
@@ -169,13 +321,17 @@ function cargarDatosRevision(){
     );
 
     return;
+
   }
 
 
   try{
 
     respaldoGuia =
-      JSON.parse(respaldo);
+      JSON.parse(
+        respaldo
+      );
+
 
     datosGuia =
       respaldoGuia.datosGuia;
@@ -188,38 +344,59 @@ function cargarDatosRevision(){
       );
 
       return;
+
     }
 
 
     console.log(
-  "Datos recuperados para revisión:",
-  datosGuia
-);
+      "Datos recuperados para revisión:",
+      datosGuia
+    );
 
 
-if(datosGuia.estadoGuia === "finalizada"){
+    if(
+      datosGuia.estadoGuia ===
+      "finalizada"
+    ){
 
-  document
-    .getElementById("cargando")
-    .style.display = "none";
-
-  document
-    .getElementById("revisionGuia")
-    .style.display = "none";
-
-  document
-    .getElementById("errorRevision")
-    .style.display = "none";
-
-  document
-    .getElementById("guiaFinalizada")
-    .style.display = "block";
-
-  return;
-}
+      document
+        .getElementById(
+          "cargando"
+        )
+        .style.display =
+          "none";
 
 
-mostrarResumenRevision();
+      document
+        .getElementById(
+          "revisionGuia"
+        )
+        .style.display =
+          "none";
+
+
+      document
+        .getElementById(
+          "errorRevision"
+        )
+        .style.display =
+          "none";
+
+
+      document
+        .getElementById(
+          "guiaFinalizada"
+        )
+        .style.display =
+          "block";
+
+
+      return;
+
+    }
+
+
+    mostrarResumenRevision();
 
   }
   catch(error){
@@ -228,6 +405,7 @@ mostrarResumenRevision();
       "Error al recuperar la Guía Docente:",
       error
     );
+
 
     mostrarErrorRevision(
       "No fue posible recuperar correctamente la información de la Guía Docente."
