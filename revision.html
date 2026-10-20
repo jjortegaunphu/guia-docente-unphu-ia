@@ -5871,6 +5871,70 @@ async function descargarGuiaDocenteWord(){
   }
 
 }
+
+function crearNuevaGuiaDocente(){
+
+  /*
+    CONFIRMACIÓN DE SEGURIDAD
+  */
+
+  const confirmar =
+    window.confirm(
+      "¿Desea crear una nueva Guía Docente?\n\n" +
+      "La guía finalizada permanecerá guardada. " +
+      "Se limpiarán únicamente los datos de trabajo de la guía actual."
+    );
+
+
+  if(!confirmar){
+    return;
+  }
+
+
+  /*
+    ELIMINAR ÚNICAMENTE
+    EL ESTADO DE TRABAJO ACTUAL
+  */
+
+  localStorage.removeItem(
+    "respaldoGuiaDocente"
+  );
+
+
+  /*
+    ELIMINAR BORRADOR TEMPORAL
+    DE PRUEBA OBJETIVA
+  */
+
+  localStorage.removeItem(
+    "borradorPruebaObjetivaGuiaDocente"
+  );
+
+  localStorage.removeItem(
+  "volverCronogramaCompleto"
+);
+
+
+  /*
+    IMPORTANTE:
+
+    NO eliminar:
+    guiasDocentesFinalizadas
+
+    Ahí permanece almacenada
+    la guía que acabamos de cerrar.
+  */
+
+
+  /*
+    REGRESAR AL INICIO
+    PARA CREAR UNA NUEVA GUÍA
+  */
+
+  window.location.href =
+    "index.html";
+
+}
   
 function mostrarErrorRevision(mensaje){
 
@@ -5911,6 +5975,13 @@ document
         "instrumentos.html";
 
     }
+  );
+
+  document
+  .getElementById("btnNuevaGuia")
+  .addEventListener(
+    "click",
+    crearNuevaGuiaDocente
   );
   
 document
