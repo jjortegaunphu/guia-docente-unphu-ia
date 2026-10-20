@@ -4,6 +4,8 @@
 <head>
   <meta charset="UTF-8">
 
+  <script src="https://unpkg.com/docx@9.5.1/dist/index.iife.js"></script>
+
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0"
@@ -1050,6 +1052,4825 @@ function finalizarGuiaDocente(){
     .style.display = "block";
 
 }
+
+function construirCronogramaWordMaestro(){
+
+  if(
+    typeof docx === "undefined" ||
+    !datosGuia
+  ){
+    return [];
+  }
+
+  const {
+    Paragraph,
+    TextRun,
+    Table,
+    TableRow,
+    TableCell,
+    WidthType,
+    AlignmentType,
+    VerticalAlign,
+    TableLayoutType
+  } = docx;
+
+
+  const cronograma =
+    datosGuia
+      ?.instrumentosEvaluacion
+      ?.fuente
+      ?.cronograma;
+
+
+  if(
+    !Array.isArray(cronograma) ||
+    cronograma.length === 0
+  ){
+    return [];
+  }
+
+
+  const semanasOrdenadas =
+    [...cronograma].sort(
+      (a, b) =>
+        Number(a.semana) -
+        Number(b.semana)
+    );
+
+
+  const filasCronograma = [];
+
+
+  /*
+    ENCABEZADOS
+  */
+
+  filasCronograma.push(
+
+    new TableRow({
+
+      children: [
+
+        {
+          texto: "Contenido",
+          ancho: 24
+        },
+
+        {
+          texto: "Metodologías de Enseñanza",
+          ancho: 27
+        },
+
+        {
+          texto: "Actividades Formativas y REA(s)",
+          ancho: 27
+        },
+
+        {
+          texto: "Recursos y Bibliografías",
+          ancho: 22
+        }
+
+      ].map(
+
+        columna =>
+
+          new TableCell({
+
+            width: {
+              size: columna.ancho,
+              type: WidthType.PERCENTAGE
+            },
+
+            shading: {
+              fill: "006B54"
+            },
+
+            verticalAlign:
+              VerticalAlign.CENTER,
+
+            children: [
+
+              new Paragraph({
+
+                alignment:
+                  AlignmentType.CENTER,
+
+                children: [
+
+                  new TextRun({
+                    text: columna.texto,
+                    bold: true,
+                    color: "FFFFFF",
+                    font: "Book Antiqua",
+                    size: 20
+                  })
+
+                ]
+
+              })
+
+            ]
+
+          })
+
+      )
+
+    })
+
+  );
+
+
+  /*
+    SEMANAS Y CLASES
+  */
+
+  semanasOrdenadas.forEach(
+    datosSemana => {
+
+
+      filasCronograma.push(
+
+        new TableRow({
+
+          children: [
+
+            new TableCell({
+
+              columnSpan: 4,
+
+              shading: {
+                fill: "E9F4F1"
+              },
+
+              verticalAlign:
+                VerticalAlign.CENTER,
+
+              children: [
+
+                new Paragraph({
+
+                  alignment:
+                    AlignmentType.CENTER,
+
+                  children: [
+
+                    new TextRun({
+                      text:
+                        "Semana " +
+                        datosSemana.semana,
+                      bold: true,
+                      font: "Book Antiqua",
+                      size: 20
+                    })
+
+                  ]
+
+                })
+
+              ]
+
+            })
+
+          ]
+
+        })
+
+      );
+
+
+      const propuesta =
+        datosSemana.propuesta;
+
+
+      if(
+        !propuesta ||
+        !Array.isArray(propuesta.clases)
+      ){
+        return;
+      }
+
+
+      propuesta.clases.forEach(
+        clase => {
+
+
+          /*
+            CONTENIDO
+          */
+
+          const celdaContenido =
+            new TableCell({
+
+              width: {
+                size: 24,
+                type: WidthType.PERCENTAGE
+              },
+
+              children: [
+
+                new Paragraph({
+
+                  children: [
+
+                    new TextRun({
+                      text:
+                        "Clase " +
+                        clase.clase,
+                      bold: true,
+                      font: "Book Antiqua",
+                      size: 20
+                    })
+
+                  ]
+
+                }),
+
+                new Paragraph({
+
+                  children: [
+
+                    new TextRun({
+                      text:
+                        clase.contenido || "",
+                      font: "Book Antiqua",
+                      size: 20
+                    })
+
+                  ]
+
+                })
+
+              ]
+
+            });
+
+
+          /*
+            METODOLOGÍAS
+          */
+
+          const parrafosMetodologias = [];
+
+
+          if(
+            Array.isArray(
+              clase.metodologiasActividades
+            )
+          ){
+
+            clase
+              .metodologiasActividades
+              .forEach(
+                (item, index) => {
+
+
+                  parrafosMetodologias.push(
+
+                    new Paragraph({
+
+                      children: [
+
+                        new TextRun({
+                          text:
+                            "Metodología " +
+                            (index + 1) +
+                            ":",
+                          bold: true,
+                          font: "Book Antiqua",
+                          size: 20
+                        })
+
+                      ]
+
+                    }),
+
+                    new Paragraph({
+
+                      children: [
+
+                        new TextRun({
+                          text:
+                            item.metodologia ||
+                            "",
+                          font: "Book Antiqua",
+                          size: 20
+                        })
+
+                      ]
+
+                    }),
+
+                    new Paragraph({
+
+                      children: [
+
+                        new TextRun({
+                          text:
+                            "Mediación docente:",
+                          bold: true,
+                          font: "Book Antiqua",
+                          size: 20
+                        })
+
+                      ]
+
+                    }),
+
+                    new Paragraph({
+
+                      children: [
+
+                        new TextRun({
+                          text:
+                            item
+                              .explicacionMetodologia ||
+                            "",
+                          font: "Book Antiqua",
+                          size: 20
+                        })
+
+                      ]
+
+                    })
+
+                  );
+
+                }
+
+              );
+
+          }
+
+
+          const celdaMetodologias =
+            new TableCell({
+
+              width: {
+                size: 27,
+                type: WidthType.PERCENTAGE
+              },
+
+              children:
+                parrafosMetodologias
+
+            });
+
+
+          /*
+            ACTIVIDADES FORMATIVAS
+          */
+
+          const parrafosActividades = [];
+
+
+          if(
+            Array.isArray(
+              clase.metodologiasActividades
+            )
+          ){
+
+            clase
+              .metodologiasActividades
+              .forEach(
+                (item, index) => {
+
+
+                  parrafosActividades.push(
+
+                    new Paragraph({
+
+                      children: [
+
+                        new TextRun({
+                          text:
+                            "Actividad formativa " +
+                            (index + 1) +
+                            ":",
+                          bold: true,
+                          font: "Book Antiqua",
+                          size: 20
+                        })
+
+                      ]
+
+                    }),
+
+                    new Paragraph({
+
+                      children: [
+
+                        new TextRun({
+                          text:
+                            item
+                              .actividadFormativa ||
+                            "",
+                          font: "Book Antiqua",
+                          size: 20
+                        })
+
+                      ]
+
+                    })
+
+                  );
+
+                }
+
+              );
+
+          }
+
+
+          const celdaActividades =
+            new TableCell({
+
+              width: {
+                size: 27,
+                type: WidthType.PERCENTAGE
+              },
+
+              children:
+                parrafosActividades
+
+            });
+
+
+          /*
+            RECURSOS Y BIBLIOGRAFÍA
+          */
+
+          const parrafosRecursos = [];
+
+
+          parrafosRecursos.push(
+
+            new Paragraph({
+
+              children: [
+
+                new TextRun({
+                  text:
+                    "Recursos materiales:",
+                  bold: true,
+                  font: "Book Antiqua",
+                  size: 20
+                })
+
+              ]
+
+            })
+
+          );
+
+
+          if(
+            Array.isArray(
+              clase.recursosMateriales
+            )
+          ){
+
+            clase.recursosMateriales
+              .forEach(
+                recurso => {
+
+                  parrafosRecursos.push(
+
+                    new Paragraph({
+
+                      children: [
+
+                        new TextRun({
+                          text: recurso || "",
+                          font: "Book Antiqua",
+                          size: 20
+                        })
+
+                      ]
+
+                    })
+
+                  );
+
+                }
+
+              );
+
+          }
+
+
+          parrafosRecursos.push(
+
+            new Paragraph({
+
+              children: [
+
+                new TextRun({
+                  text:
+                    "Recursos virtuales:",
+                  bold: true,
+                  font: "Book Antiqua",
+                  size: 20
+                })
+
+              ]
+
+            })
+
+          );
+
+
+          if(
+            Array.isArray(
+              clase.recursosVirtuales
+            )
+          ){
+
+            clase.recursosVirtuales
+              .forEach(
+                recurso => {
+
+                  parrafosRecursos.push(
+
+                    new Paragraph({
+
+                      children: [
+
+                        new TextRun({
+                          text: recurso || "",
+                          font: "Book Antiqua",
+                          size: 20
+                        })
+
+                      ]
+
+                    })
+
+                  );
+
+                }
+
+              );
+
+          }
+
+
+          parrafosRecursos.push(
+
+            new Paragraph({
+
+              children: [
+
+                new TextRun({
+                  text: "Bibliografía:",
+                  bold: true,
+                  font: "Book Antiqua",
+                  size: 20
+                })
+
+              ]
+
+            })
+
+          );
+
+
+          if(
+            Array.isArray(
+              clase.bibliografia
+            )
+          ){
+
+            clase.bibliografia
+              .forEach(
+                referencia => {
+
+                  parrafosRecursos.push(
+
+                    new Paragraph({
+
+                      children: [
+
+                        new TextRun({
+                          text:
+                            referencia || "",
+                          font: "Book Antiqua",
+                          size: 20
+                        })
+
+                      ]
+
+                    })
+
+                  );
+
+                }
+
+              );
+
+          }
+
+
+          const celdaRecursos =
+            new TableCell({
+
+              width: {
+                size: 22,
+                type: WidthType.PERCENTAGE
+              },
+
+              children:
+                parrafosRecursos
+
+            });
+
+
+          filasCronograma.push(
+
+            new TableRow({
+
+              children: [
+                celdaContenido,
+                celdaMetodologias,
+                celdaActividades,
+                celdaRecursos
+              ]
+
+            })
+
+          );
+
+
+        }
+
+      );
+
+    }
+
+  );
+
+
+  const tablaWord =
+    new Table({
+
+      width: {
+        size: 100,
+        type: WidthType.PERCENTAGE
+      },
+
+      layout:
+        TableLayoutType.FIXED,
+
+      margins: {
+        top: 80,
+        bottom: 80,
+        left: 100,
+        right: 100
+      },
+
+      rows:
+        filasCronograma
+
+    });
+
+
+  return [
+
+    new Paragraph({
+
+      alignment:
+        AlignmentType.CENTER,
+
+      children: [
+
+        new TextRun({
+          text:
+            "Cronograma de la asignatura",
+          bold: true,
+          font: "Book Antiqua",
+          size: 20
+        })
+
+      ]
+
+    }),
+
+    new Paragraph({
+      text: ""
+    }),
+
+    tablaWord
+
+  ];
+
+}
+
+  function construirSistemaEvaluacionWordMaestro(){
+
+  if(
+    typeof docx === "undefined" ||
+    !datosGuia
+  ){
+    return [];
+  }
+
+  const {
+    Paragraph,
+    TextRun,
+    Table,
+    TableRow,
+    TableCell,
+    WidthType,
+    AlignmentType,
+    VerticalAlign,
+    TableLayoutType
+  } = docx;
+
+
+  const rubros =
+    datosGuia
+      ?.instrumentosEvaluacion
+      ?.fuente
+      ?.sistemaEvaluacion
+      ?.rubrosAceptados;
+
+
+  if(
+    !Array.isArray(rubros) ||
+    rubros.length === 0
+  ){
+    return [];
+  }
+
+
+  const filas = [];
+
+
+  /*
+    TÍTULO DEL SISTEMA DE EVALUACIÓN
+  */
+
+  filas.push(
+
+    new TableRow({
+
+      children: [
+
+        new TableCell({
+
+          columnSpan: 6,
+
+          shading: {
+            fill: "70AD47"
+          },
+
+          verticalAlign:
+            VerticalAlign.CENTER,
+
+          children: [
+
+            new Paragraph({
+
+              children: [
+
+                new TextRun({
+                  text:
+                    "X. Sistema de Evaluación",
+                  bold: true,
+                  font: "Book Antiqua",
+                  size: 20
+                })
+
+              ]
+
+            })
+
+          ]
+
+        })
+
+      ]
+
+    })
+
+  );
+
+
+  /*
+    ENCABEZADOS
+  */
+
+  const encabezados = [
+
+    {
+      texto: "Semana",
+      ancho: 8
+    },
+
+    {
+      texto: "Técnica",
+      ancho: 31
+    },
+
+    {
+      texto: "REA(s)",
+      ancho: 14
+    },
+
+    {
+      texto: "Tipo (D, F, S)",
+      ancho: 17
+    },
+
+    {
+      texto: "Instrumento(s)",
+      ancho: 20
+    },
+
+    {
+      texto: "Valor",
+      ancho: 10
+    }
+
+  ];
+
+
+  filas.push(
+
+    new TableRow({
+
+      children:
+
+        encabezados.map(
+
+          columna =>
+
+            new TableCell({
+
+              width: {
+                size: columna.ancho,
+                type: WidthType.PERCENTAGE
+              },
+
+              shading: {
+                fill: "70AD47"
+              },
+
+              verticalAlign:
+                VerticalAlign.CENTER,
+
+              children: [
+
+                new Paragraph({
+
+                  alignment:
+                    AlignmentType.CENTER,
+
+                  children: [
+
+                    new TextRun({
+                      text: columna.texto,
+                      bold: true,
+                      font: "Book Antiqua",
+                      size: 20
+                    })
+
+                  ]
+
+                })
+
+              ]
+
+            })
+
+        )
+
+    })
+
+  );
+
+
+  let totalGeneral = 0;
+
+
+  /*
+    RUBROS Y ACTIVIDADES
+  */
+
+  rubros.forEach(
+    rubro => {
+
+
+      const actividades =
+        Array.isArray(rubro?.actividades)
+          ? rubro.actividades
+          : [];
+
+
+      actividades.forEach(
+        actividad => {
+
+
+          const rea =
+            Array.isArray(
+              actividad?.codigosREA
+            )
+              ? actividad.codigosREA.join(", ")
+              : "";
+
+
+          const instrumentos =
+            Array.isArray(
+              actividad?.instrumentos
+            )
+              ? actividad.instrumentos.join(", ")
+              : "";
+
+
+          const crearCelda =
+            (
+              texto,
+              ancho,
+              centrado = false
+            ) =>
+
+              new TableCell({
+
+                width: {
+                  size: ancho,
+                  type: WidthType.PERCENTAGE
+                },
+
+                verticalAlign:
+                  VerticalAlign.CENTER,
+
+                children: [
+
+                  new Paragraph({
+
+                    alignment:
+                      centrado
+                        ? AlignmentType.CENTER
+                        : AlignmentType.LEFT,
+
+                    children: [
+
+                      new TextRun({
+                        text:
+                          String(
+                            texto ?? ""
+                          ),
+                        font: "Book Antiqua",
+                        size: 20
+                      })
+
+                    ]
+
+                  })
+
+                ]
+
+              });
+
+
+          filas.push(
+
+            new TableRow({
+
+              children: [
+
+                crearCelda(
+                  actividad?.semana,
+                  8,
+                  true
+                ),
+
+                crearCelda(
+                  actividad?.tecnica || "",
+                  31
+                ),
+
+                crearCelda(
+                  rea,
+                  14,
+                  true
+                ),
+
+                crearCelda(
+                  actividad?.tipo || "",
+                  17,
+                  true
+                ),
+
+                crearCelda(
+                  instrumentos,
+                  20
+                ),
+
+                crearCelda(
+                  Number(
+                    actividad?.valor || 0
+                  ),
+                  10,
+                  true
+                )
+
+              ]
+
+            })
+
+          );
+
+
+        }
+
+      );
+
+
+      const pesoRubro =
+        Number(
+          rubro?.pesoTotal || 0
+        );
+
+
+      totalGeneral +=
+        pesoRubro;
+
+
+      const esRubroUnico =
+        rubros.length === 1 &&
+        String(rubro?.rubro || "")
+          .trim()
+          .toLowerCase() ===
+            "rubro único";
+
+
+      if(!esRubroUnico){
+
+        filas.push(
+
+          new TableRow({
+
+            children: [
+
+              new TableCell({
+
+                columnSpan: 5,
+
+                shading: {
+                  fill: "E2EFDA"
+                },
+
+                verticalAlign:
+                  VerticalAlign.CENTER,
+
+                children: [
+
+                  new Paragraph({
+
+                    children: [
+
+                      new TextRun({
+                        text:
+                          rubro?.rubro || "",
+                        bold: true,
+                        font: "Book Antiqua",
+                        size: 20
+                      })
+
+                    ]
+
+                  })
+
+                ]
+
+              }),
+
+              new TableCell({
+
+                width: {
+                  size: 10,
+                  type:
+                    WidthType.PERCENTAGE
+                },
+
+                shading: {
+                  fill: "E2EFDA"
+                },
+
+                verticalAlign:
+                  VerticalAlign.CENTER,
+
+                children: [
+
+                  new Paragraph({
+
+                    alignment:
+                      AlignmentType.CENTER,
+
+                    children: [
+
+                      new TextRun({
+                        text:
+                          String(pesoRubro),
+                        bold: true,
+                        font: "Book Antiqua",
+                        size: 20
+                      })
+
+                    ]
+
+                  })
+
+                ]
+
+              })
+
+            ]
+
+          })
+
+        );
+
+      }
+
+
+    }
+
+  );
+
+
+  /*
+    TOTAL GENERAL
+  */
+
+  filas.push(
+
+    new TableRow({
+
+      children: [
+
+        new TableCell({
+
+          columnSpan: 5,
+
+          verticalAlign:
+            VerticalAlign.CENTER,
+
+          children: [
+
+            new Paragraph({
+
+              alignment:
+                AlignmentType.RIGHT,
+
+              children: [
+
+                new TextRun({
+                  text: "Total:",
+                  bold: true,
+                  font: "Book Antiqua",
+                  size: 20
+                })
+
+              ]
+
+            })
+
+          ]
+
+        }),
+
+        new TableCell({
+
+          width: {
+            size: 10,
+            type:
+              WidthType.PERCENTAGE
+          },
+
+          verticalAlign:
+            VerticalAlign.CENTER,
+
+          children: [
+
+            new Paragraph({
+
+              alignment:
+                AlignmentType.CENTER,
+
+              children: [
+
+                new TextRun({
+                  text:
+                    String(totalGeneral),
+                  bold: true,
+                  font: "Book Antiqua",
+                  size: 20
+                })
+
+              ]
+
+            })
+
+          ]
+
+        })
+
+      ]
+
+    })
+
+  );
+
+
+  const tabla =
+    new Table({
+
+      width: {
+        size: 100,
+        type: WidthType.PERCENTAGE
+      },
+
+      layout:
+        TableLayoutType.FIXED,
+
+      rows: filas
+
+    });
+
+
+  return [
+    tabla
+  ];
+
+}
+
+function construirEscalaEstimacionWordMaestro(
+  instrumento
+){
+
+  if(
+    typeof docx === "undefined" ||
+    !instrumento
+  ){
+    return [];
+  }
+
+
+  const {
+    Paragraph,
+    TextRun,
+    Table,
+    TableRow,
+    TableCell,
+    WidthType,
+    AlignmentType,
+    VerticalAlign,
+    TableLayoutType
+  } = docx;
+
+
+  const contenido =
+    instrumento.contenido || {};
+
+
+  const indicadores =
+    Array.isArray(contenido.indicadores)
+      ? contenido.indicadores
+      : [];
+
+
+  if(indicadores.length === 0){
+    return [];
+  }
+
+
+  /*
+    NIVELES DE LA ESCALA
+
+    Los nombres se recuperan del primer
+    indicador porque fueron guardados
+    dentro de cada indicador aceptado.
+  */
+
+  const niveles =
+    Array.isArray(
+      indicadores[0]?.niveles
+    )
+      ? indicadores[0].niveles
+      : [];
+
+
+  const filas = [];
+
+
+  /*
+    ENCABEZADO DE LA TABLA
+  */
+
+  const celdasEncabezado = [
+
+    new TableCell({
+
+      width: {
+        size: 5,
+        type: WidthType.PERCENTAGE
+      },
+
+      verticalAlign:
+        VerticalAlign.CENTER,
+
+      children: [
+
+        new Paragraph({
+
+          alignment:
+            AlignmentType.CENTER,
+
+          children: [
+
+            new TextRun({
+              text: "N.º",
+              bold: true,
+              font: "Book Antiqua",
+              size: 20
+            })
+
+          ]
+
+        })
+
+      ]
+
+    }),
+
+
+    new TableCell({
+
+      width: {
+        size: 30,
+        type: WidthType.PERCENTAGE
+      },
+
+      verticalAlign:
+        VerticalAlign.CENTER,
+
+      children: [
+
+        new Paragraph({
+
+          alignment:
+            AlignmentType.CENTER,
+
+          children: [
+
+            new TextRun({
+              text: "Indicador",
+              bold: true,
+              font: "Book Antiqua",
+              size: 20
+            })
+
+          ]
+
+        })
+
+      ]
+
+    })
+
+  ];
+
+
+  niveles.forEach(
+    nivel => {
+
+      celdasEncabezado.push(
+
+        new TableCell({
+
+          verticalAlign:
+            VerticalAlign.CENTER,
+
+          children: [
+
+            new Paragraph({
+
+              alignment:
+                AlignmentType.CENTER,
+
+              children: [
+
+                new TextRun({
+                  text:
+                    nivel?.nivel || "",
+                  bold: true,
+                  font: "Book Antiqua",
+                  size: 20
+                })
+
+              ]
+
+            })
+
+          ]
+
+        })
+
+      );
+
+    }
+  );
+
+
+  celdasEncabezado.push(
+
+    new TableCell({
+
+      width: {
+        size: 10,
+        type: WidthType.PERCENTAGE
+      },
+
+      verticalAlign:
+        VerticalAlign.CENTER,
+
+      children: [
+
+        new Paragraph({
+
+          alignment:
+            AlignmentType.CENTER,
+
+          children: [
+
+            new TextRun({
+              text: "Valor máximo",
+              bold: true,
+              font: "Book Antiqua",
+              size: 20
+            })
+
+          ]
+
+        })
+
+      ]
+
+    })
+
+  );
+
+
+  filas.push(
+
+    new TableRow({
+      children:
+        celdasEncabezado
+    })
+
+  );
+
+
+  /*
+    INDICADORES
+  */
+
+  let total = 0;
+
+
+  indicadores.forEach(
+    (item, indice) => {
+
+
+      const celdas = [
+
+        new TableCell({
+
+          width: {
+            size: 5,
+            type: WidthType.PERCENTAGE
+          },
+
+          verticalAlign:
+            VerticalAlign.CENTER,
+
+          children: [
+
+            new Paragraph({
+
+              alignment:
+                AlignmentType.CENTER,
+
+              children: [
+
+                new TextRun({
+                  text:
+                    String(indice + 1),
+                  font: "Book Antiqua",
+                  size: 20
+                })
+
+              ]
+
+            })
+
+          ]
+
+        }),
+
+
+        new TableCell({
+
+          width: {
+            size: 30,
+            type: WidthType.PERCENTAGE
+          },
+
+          verticalAlign:
+            VerticalAlign.CENTER,
+
+          children: [
+
+            new Paragraph({
+
+              children: [
+
+                new TextRun({
+                  text:
+                    item?.indicador || "",
+                  font: "Book Antiqua",
+                  size: 20
+                })
+
+              ]
+
+            })
+
+          ]
+
+        })
+
+      ];
+
+
+      const nivelesIndicador =
+        Array.isArray(item?.niveles)
+          ? item.niveles
+          : [];
+
+
+      nivelesIndicador.forEach(
+        nivel => {
+
+          celdas.push(
+
+            new TableCell({
+
+              verticalAlign:
+                VerticalAlign.CENTER,
+
+              children: [
+
+                new Paragraph({
+
+                  alignment:
+                    AlignmentType.CENTER,
+
+                  children: [
+
+                    new TextRun({
+                      text:
+                        Number(
+                          nivel?.valor || 0
+                        ).toFixed(2),
+                      font: "Book Antiqua",
+                      size: 20
+                    })
+
+                  ]
+
+                })
+
+              ]
+
+            })
+
+          );
+
+        }
+      );
+
+
+      const valorMaximo =
+        Number(
+          item?.valorMaximo || 0
+        );
+
+
+      total += valorMaximo;
+
+
+      celdas.push(
+
+        new TableCell({
+
+          width: {
+            size: 10,
+            type: WidthType.PERCENTAGE
+          },
+
+          verticalAlign:
+            VerticalAlign.CENTER,
+
+          children: [
+
+            new Paragraph({
+
+              alignment:
+                AlignmentType.CENTER,
+
+              children: [
+
+                new TextRun({
+                  text:
+                    valorMaximo.toFixed(2),
+                  font: "Book Antiqua",
+                  size: 20
+                })
+
+              ]
+
+            })
+
+          ]
+
+        })
+
+      );
+
+
+      filas.push(
+
+        new TableRow({
+          children: celdas
+        })
+
+      );
+
+
+    }
+  );
+
+
+  /*
+    FILA TOTAL
+  */
+
+  filas.push(
+
+    new TableRow({
+
+      children: [
+
+        new TableCell({
+
+          columnSpan:
+            niveles.length + 2,
+
+          verticalAlign:
+            VerticalAlign.CENTER,
+
+          children: [
+
+            new Paragraph({
+
+              alignment:
+                AlignmentType.RIGHT,
+
+              children: [
+
+                new TextRun({
+                  text: "Total",
+                  bold: true,
+                  font: "Book Antiqua",
+                  size: 20
+                })
+
+              ]
+
+            })
+
+          ]
+
+        }),
+
+
+        new TableCell({
+
+          verticalAlign:
+            VerticalAlign.CENTER,
+
+          children: [
+
+            new Paragraph({
+
+              alignment:
+                AlignmentType.CENTER,
+
+              children: [
+
+                new TextRun({
+                  text:
+                    total.toFixed(2),
+                  bold: true,
+                  font: "Book Antiqua",
+                  size: 20
+                })
+
+              ]
+
+            })
+
+          ]
+
+        })
+
+      ]
+
+    })
+
+  );
+
+
+  const tabla =
+    new Table({
+
+      width: {
+        size: 100,
+        type: WidthType.PERCENTAGE
+      },
+
+      layout:
+        TableLayoutType.FIXED,
+
+      rows: filas
+
+    });
+
+
+  /*
+    DATOS DEL INSTRUMENTO
+  */
+
+  const crearDato =
+    (etiqueta, valor) =>
+
+      new Paragraph({
+
+        children: [
+
+          new TextRun({
+            text:
+              etiqueta + ": ",
+            bold: true,
+            font: "Book Antiqua",
+            size: 20
+          }),
+
+          new TextRun({
+            text:
+              String(valor ?? ""),
+            font: "Book Antiqua",
+            size: 20
+          })
+
+        ]
+
+      });
+
+
+  const fuente =
+    datosGuia
+      ?.instrumentosEvaluacion
+      ?.fuente;
+
+
+  const asignatura =
+    fuente?.asignatura || {};
+
+
+  return [
+
+    new Paragraph({
+
+      alignment:
+        AlignmentType.CENTER,
+
+      children: [
+
+        new TextRun({
+          text:
+            "Escala de estimación",
+          bold: true,
+          font: "Book Antiqua",
+          size: 20
+        })
+
+      ]
+
+    }),
+
+
+    crearDato(
+      "Asignatura",
+      asignatura.nombre || ""
+    ),
+
+    crearDato(
+      "Código",
+      asignatura.codigo || ""
+    ),
+
+    crearDato(
+      "Semana",
+      instrumento.semana || ""
+    ),
+
+    crearDato(
+      "Técnica / evidencia",
+      instrumento.tecnica || ""
+    ),
+
+    crearDato(
+      "REA(s)",
+      Array.isArray(
+        instrumento.codigosREA
+      )
+        ? instrumento.codigosREA.join(", ")
+        : ""
+    ),
+
+    crearDato(
+      "Tipo",
+      instrumento.tipo || ""
+    ),
+
+    crearDato(
+      "Modalidad",
+      contenido.modalidadEscala || ""
+    ),
+
+    crearDato(
+      "Valor",
+      Number(
+        instrumento.valor || 0
+      ).toFixed(2) +
+      " punto(s)"
+    ),
+
+
+    new Paragraph({
+      text: ""
+    }),
+
+
+    tabla
+
+  ];
+
+}
+
+  function construirListaCotejoWordMaestro(
+  instrumento
+){
+
+  if(
+    typeof docx === "undefined" ||
+    !instrumento
+  ){
+    return [];
+  }
+
+
+  const {
+    Paragraph,
+    TextRun,
+    Table,
+    TableRow,
+    TableCell,
+    WidthType,
+    AlignmentType,
+    VerticalAlign,
+    TableLayoutType
+  } = docx;
+
+
+  const contenido =
+    instrumento.contenido || {};
+
+
+  const items =
+    Array.isArray(contenido.items)
+      ? contenido.items
+      : [];
+
+
+  if(items.length === 0){
+    return [];
+  }
+
+
+  const fuente =
+    datosGuia
+      ?.instrumentosEvaluacion
+      ?.fuente;
+
+
+  const asignatura =
+    fuente?.asignatura || {};
+
+
+  const crearDato =
+    (etiqueta, valor) =>
+
+      new Paragraph({
+
+        children: [
+
+          new TextRun({
+            text: etiqueta + ": ",
+            bold: true,
+            font: "Book Antiqua",
+            size: 20
+          }),
+
+          new TextRun({
+            text: String(valor ?? ""),
+            font: "Book Antiqua",
+            size: 20
+          })
+
+        ]
+
+      });
+
+
+  const filas = [];
+
+
+  /*
+    ENCABEZADOS
+  */
+
+  const encabezados = [
+
+    {
+      texto: "N.º",
+      ancho: 7
+    },
+
+    {
+      texto: "Indicador / descriptor",
+      ancho: 57
+    },
+
+    {
+      texto: "Sí",
+      ancho: 8
+    },
+
+    {
+      texto: "No",
+      ancho: 8
+    },
+
+    {
+      texto: "Valor",
+      ancho: 20
+    }
+
+  ];
+
+
+  filas.push(
+
+    new TableRow({
+
+      children:
+
+        encabezados.map(
+          columna =>
+
+            new TableCell({
+
+              width: {
+                size: columna.ancho,
+                type: WidthType.PERCENTAGE
+              },
+
+              verticalAlign:
+                VerticalAlign.CENTER,
+
+              children: [
+
+                new Paragraph({
+
+                  alignment:
+                    AlignmentType.CENTER,
+
+                  children: [
+
+                    new TextRun({
+                      text: columna.texto,
+                      bold: true,
+                      font: "Book Antiqua",
+                      size: 20
+                    })
+
+                  ]
+
+                })
+
+              ]
+
+            })
+
+        )
+
+    })
+
+  );
+
+
+  /*
+    ÍTEMS
+  */
+
+  let total = 0;
+
+
+  items.forEach(
+    (item, indice) => {
+
+
+      const valor =
+        Number(
+          item?.valor || 0
+        );
+
+
+      total += valor;
+
+
+      filas.push(
+
+        new TableRow({
+
+          children: [
+
+            new TableCell({
+
+              width: {
+                size: 7,
+                type: WidthType.PERCENTAGE
+              },
+
+              verticalAlign:
+                VerticalAlign.CENTER,
+
+              children: [
+
+                new Paragraph({
+
+                  alignment:
+                    AlignmentType.CENTER,
+
+                  children: [
+
+                    new TextRun({
+                      text:
+                        String(indice + 1),
+                      font: "Book Antiqua",
+                      size: 20
+                    })
+
+                  ]
+
+                })
+
+              ]
+
+            }),
+
+
+            new TableCell({
+
+              width: {
+                size: 57,
+                type: WidthType.PERCENTAGE
+              },
+
+              verticalAlign:
+                VerticalAlign.CENTER,
+
+              children: [
+
+                new Paragraph({
+
+                  children: [
+
+                    new TextRun({
+                      text:
+                        item?.indicador || "",
+                      font: "Book Antiqua",
+                      size: 20
+                    })
+
+                  ]
+
+                })
+
+              ]
+
+            }),
+
+
+            new TableCell({
+
+              width: {
+                size: 8,
+                type: WidthType.PERCENTAGE
+              },
+
+              verticalAlign:
+                VerticalAlign.CENTER,
+
+              children: [
+
+                new Paragraph({
+
+                  alignment:
+                    AlignmentType.CENTER,
+
+                  children: [
+
+                    new TextRun({
+                      text: "☐",
+                      font: "Book Antiqua",
+                      size: 20
+                    })
+
+                  ]
+
+                })
+
+              ]
+
+            }),
+
+
+            new TableCell({
+
+              width: {
+                size: 8,
+                type: WidthType.PERCENTAGE
+              },
+
+              verticalAlign:
+                VerticalAlign.CENTER,
+
+              children: [
+
+                new Paragraph({
+
+                  alignment:
+                    AlignmentType.CENTER,
+
+                  children: [
+
+                    new TextRun({
+                      text: "☐",
+                      font: "Book Antiqua",
+                      size: 20
+                    })
+
+                  ]
+
+                })
+
+              ]
+
+            }),
+
+
+            new TableCell({
+
+              width: {
+                size: 20,
+                type: WidthType.PERCENTAGE
+              },
+
+              verticalAlign:
+                VerticalAlign.CENTER,
+
+              children: [
+
+                new Paragraph({
+
+                  alignment:
+                    AlignmentType.CENTER,
+
+                  children: [
+
+                    new TextRun({
+                      text:
+                        valor.toFixed(2),
+                      font: "Book Antiqua",
+                      size: 20
+                    })
+
+                  ]
+
+                })
+
+              ]
+
+            })
+
+          ]
+
+        })
+
+      );
+
+
+    }
+  );
+
+
+  /*
+    TOTAL
+  */
+
+  filas.push(
+
+    new TableRow({
+
+      children: [
+
+        new TableCell({
+
+          columnSpan: 4,
+
+          verticalAlign:
+            VerticalAlign.CENTER,
+
+          children: [
+
+            new Paragraph({
+
+              alignment:
+                AlignmentType.RIGHT,
+
+              children: [
+
+                new TextRun({
+                  text: "Total",
+                  bold: true,
+                  font: "Book Antiqua",
+                  size: 20
+                })
+
+              ]
+
+            })
+
+          ]
+
+        }),
+
+
+        new TableCell({
+
+          width: {
+            size: 20,
+            type: WidthType.PERCENTAGE
+          },
+
+          verticalAlign:
+            VerticalAlign.CENTER,
+
+          children: [
+
+            new Paragraph({
+
+              alignment:
+                AlignmentType.CENTER,
+
+              children: [
+
+                new TextRun({
+                  text:
+                    total.toFixed(2),
+                  bold: true,
+                  font: "Book Antiqua",
+                  size: 20
+                })
+
+              ]
+
+            })
+
+          ]
+
+        })
+
+      ]
+
+    })
+
+  );
+
+
+  const tabla =
+    new Table({
+
+      width: {
+        size: 100,
+        type: WidthType.PERCENTAGE
+      },
+
+      layout:
+        TableLayoutType.FIXED,
+
+      rows: filas
+
+    });
+
+
+  return [
+
+    new Paragraph({
+
+      alignment:
+        AlignmentType.CENTER,
+
+      children: [
+
+        new TextRun({
+          text: "Lista de cotejo",
+          bold: true,
+          font: "Book Antiqua",
+          size: 20
+        })
+
+      ]
+
+    }),
+
+
+    crearDato(
+      "Asignatura",
+      asignatura.nombre || ""
+    ),
+
+    crearDato(
+      "Código",
+      asignatura.codigo || ""
+    ),
+
+    crearDato(
+      "Semana",
+      instrumento.semana || ""
+    ),
+
+    crearDato(
+      "Técnica / evidencia",
+      instrumento.tecnica || ""
+    ),
+
+    crearDato(
+      "REA(s)",
+      Array.isArray(
+        instrumento.codigosREA
+      )
+        ? instrumento.codigosREA.join(", ")
+        : ""
+    ),
+
+    crearDato(
+      "Tipo",
+      instrumento.tipo || ""
+    ),
+
+    crearDato(
+      "Valor",
+      Number(
+        instrumento.valor || 0
+      ).toFixed(2) +
+      " punto(s)"
+    ),
+
+
+    new Paragraph({
+      text: ""
+    }),
+
+
+    tabla
+
+  ];
+
+}
+
+ function construirRubricaWordMaestro(
+  instrumento
+){
+
+  if(
+    typeof docx === "undefined" ||
+    !instrumento
+  ){
+    return [];
+  }
+
+
+  const {
+    Paragraph,
+    TextRun,
+    Table,
+    TableRow,
+    TableCell,
+    WidthType,
+    AlignmentType,
+    VerticalAlign,
+    TableLayoutType
+  } = docx;
+
+
+  const contenido =
+    instrumento.contenido || {};
+
+
+  const fuente =
+    datosGuia
+      ?.instrumentosEvaluacion
+      ?.fuente;
+
+
+  const asignatura =
+    fuente?.asignatura || {};
+
+
+  const crearDato =
+    (etiqueta, valor) =>
+
+      new Paragraph({
+
+        children: [
+
+          new TextRun({
+            text: etiqueta + ": ",
+            bold: true,
+            font: "Book Antiqua",
+            size: 20
+          }),
+
+          new TextRun({
+            text: String(valor ?? ""),
+            font: "Book Antiqua",
+            size: 20
+          })
+
+        ]
+
+      });
+
+
+  const datosInstrumento = [
+
+    crearDato(
+      "Asignatura",
+      asignatura.nombre || ""
+    ),
+
+    crearDato(
+      "Código",
+      asignatura.codigo || ""
+    ),
+
+    crearDato(
+      "Semana",
+      instrumento.semana || ""
+    ),
+
+    crearDato(
+      "Técnica / evidencia",
+      instrumento.tecnica || ""
+    ),
+
+    crearDato(
+      "REA(s)",
+      Array.isArray(
+        instrumento.codigosREA
+      )
+        ? instrumento.codigosREA.join(", ")
+        : ""
+    ),
+
+    crearDato(
+      "Tipo",
+      instrumento.tipo || ""
+    ),
+
+    crearDato(
+      contenido.tipoRubrica === "Holística"
+        ? "Valor máximo"
+        : "Valor",
+      Number(
+        instrumento.valor || 0
+      ).toFixed(2) +
+      " punto(s)"
+    ),
+
+    new Paragraph({
+      text: ""
+    })
+
+  ];
+
+
+  /*
+    RÚBRICA HOLÍSTICA
+  */
+
+  if(
+    contenido.tipoRubrica ===
+    "Holística"
+  ){
+
+    const niveles =
+      Array.isArray(
+        contenido.nivelesHolisticos
+      )
+        ? contenido.nivelesHolisticos
+        : [];
+
+
+    if(niveles.length === 0){
+      return [];
+    }
+
+
+    const filas = [];
+
+
+    const encabezados = [
+
+      {
+        texto: "Nivel de desempeño",
+        ancho: 18
+      },
+
+      {
+        texto: "Descripción del desempeño",
+        ancho: 67
+      },
+
+      {
+        texto: "Valor",
+        ancho: 15
+      }
+
+    ];
+
+
+    filas.push(
+
+      new TableRow({
+
+        children:
+
+          encabezados.map(
+            columna =>
+
+              new TableCell({
+
+                width: {
+                  size: columna.ancho,
+                  type: WidthType.PERCENTAGE
+                },
+
+                verticalAlign:
+                  VerticalAlign.CENTER,
+
+                children: [
+
+                  new Paragraph({
+
+                    alignment:
+                      AlignmentType.CENTER,
+
+                    children: [
+
+                      new TextRun({
+                        text: columna.texto,
+                        bold: true,
+                        font: "Book Antiqua",
+                        size: 20
+                      })
+
+                    ]
+
+                  })
+
+                ]
+
+              })
+
+          )
+
+      })
+
+    );
+
+
+    niveles.forEach(
+      nivel => {
+
+        filas.push(
+
+          new TableRow({
+
+            children: [
+
+              new TableCell({
+
+                width: {
+                  size: 18,
+                  type:
+                    WidthType.PERCENTAGE
+                },
+
+                verticalAlign:
+                  VerticalAlign.CENTER,
+
+                children: [
+
+                  new Paragraph({
+
+                    alignment:
+                      AlignmentType.CENTER,
+
+                    children: [
+
+                      new TextRun({
+                        text:
+                          nivel?.nivel || "",
+                        font: "Book Antiqua",
+                        size: 20
+                      })
+
+                    ]
+
+                  })
+
+                ]
+
+              }),
+
+
+              new TableCell({
+
+                width: {
+                  size: 67,
+                  type:
+                    WidthType.PERCENTAGE
+                },
+
+                verticalAlign:
+                  VerticalAlign.CENTER,
+
+                children: [
+
+                  new Paragraph({
+
+                    children: [
+
+                      new TextRun({
+                        text:
+                          nivel?.descriptor || "",
+                        font: "Book Antiqua",
+                        size: 20
+                      })
+
+                    ]
+
+                  })
+
+                ]
+
+              }),
+
+
+              new TableCell({
+
+                width: {
+                  size: 15,
+                  type:
+                    WidthType.PERCENTAGE
+                },
+
+                verticalAlign:
+                  VerticalAlign.CENTER,
+
+                children: [
+
+                  new Paragraph({
+
+                    alignment:
+                      AlignmentType.CENTER,
+
+                    children: [
+
+                      new TextRun({
+                        text:
+                          Number(
+                            nivel?.valor || 0
+                          ).toFixed(2),
+                        font: "Book Antiqua",
+                        size: 20
+                      })
+
+                    ]
+
+                  })
+
+                ]
+
+              })
+
+            ]
+
+          })
+
+        );
+
+      }
+    );
+
+
+    const tabla =
+      new Table({
+
+        width: {
+          size: 100,
+          type: WidthType.PERCENTAGE
+        },
+
+        layout:
+          TableLayoutType.FIXED,
+
+        rows: filas
+
+      });
+
+
+    return [
+
+      new Paragraph({
+
+        alignment:
+          AlignmentType.CENTER,
+
+        children: [
+
+          new TextRun({
+            text: "Rúbrica Holística",
+            bold: true,
+            font: "Book Antiqua",
+            size: 20
+          })
+
+        ]
+
+      }),
+
+      ...datosInstrumento,
+
+      tabla
+
+    ];
+
+  }
+
+
+  /*
+    RÚBRICA ANALÍTICA
+  */
+
+  const criterios =
+    Array.isArray(
+      contenido.criterios
+    )
+      ? contenido.criterios
+      : [];
+
+
+  if(criterios.length === 0){
+    return [];
+  }
+
+
+  const filas = [];
+
+
+  const encabezados = [
+
+    {
+      texto: "N.º",
+      ancho: 4
+    },
+
+    {
+      texto: "Criterio",
+      ancho: 15
+    },
+
+    {
+      texto: "Destacado",
+      ancho: 14
+    },
+
+    {
+      texto: "Competente",
+      ancho: 14
+    },
+
+    {
+      texto: "Suficiente",
+      ancho: 14
+    },
+
+    {
+      texto: "En desarrollo",
+      ancho: 14
+    },
+
+    {
+      texto: "Insuficiente",
+      ancho: 14
+    },
+
+    {
+      texto: "Valor máximo",
+      ancho: 11
+    }
+
+  ];
+
+
+  filas.push(
+
+    new TableRow({
+
+      children:
+
+        encabezados.map(
+          columna =>
+
+            new TableCell({
+
+              width: {
+                size: columna.ancho,
+                type: WidthType.PERCENTAGE
+              },
+
+              verticalAlign:
+                VerticalAlign.CENTER,
+
+              children: [
+
+                new Paragraph({
+
+                  alignment:
+                    AlignmentType.CENTER,
+
+                  children: [
+
+                    new TextRun({
+                      text: columna.texto,
+                      bold: true,
+                      font: "Book Antiqua",
+                      size: 20
+                    })
+
+                  ]
+
+                })
+
+              ]
+
+            })
+
+        )
+
+    })
+
+  );
+
+
+  let total = 0;
+
+
+  criterios.forEach(
+    (criterio, indice) => {
+
+
+      const mapaNiveles = {};
+
+
+      if(
+        Array.isArray(
+          criterio?.niveles
+        )
+      ){
+
+        criterio.niveles.forEach(
+          nivel => {
+
+            mapaNiveles[
+              nivel?.nivel || ""
+            ] =
+              nivel?.descriptor || "";
+
+          }
+        );
+
+      }
+
+
+      const valorMaximo =
+        Number(
+          criterio?.valorMaximo || 0
+        );
+
+
+      total += valorMaximo;
+
+
+      const valoresFila = [
+
+        String(indice + 1),
+
+        criterio?.criterio || "",
+
+        mapaNiveles["Destacado"] || "",
+
+        mapaNiveles["Competente"] || "",
+
+        mapaNiveles["Suficiente"] || "",
+
+        mapaNiveles["En desarrollo"] || "",
+
+        mapaNiveles["Insuficiente"] || "",
+
+        valorMaximo.toFixed(2)
+
+      ];
+
+
+      filas.push(
+
+        new TableRow({
+
+          children:
+
+            valoresFila.map(
+              (valor, indiceColumna) =>
+
+                new TableCell({
+
+                  width: {
+                    size:
+                      encabezados[
+                        indiceColumna
+                      ].ancho,
+                    type:
+                      WidthType.PERCENTAGE
+                  },
+
+                  verticalAlign:
+                    VerticalAlign.CENTER,
+
+                  children: [
+
+                    new Paragraph({
+
+                      alignment:
+                        (
+                          indiceColumna === 0 ||
+                          indiceColumna === 7
+                        )
+                          ? AlignmentType.CENTER
+                          : AlignmentType.LEFT,
+
+                      children: [
+
+                        new TextRun({
+                          text:
+                            String(valor ?? ""),
+                          font: "Book Antiqua",
+                          size: 20
+                        })
+
+                      ]
+
+                    })
+
+                  ]
+
+                })
+
+            )
+
+        })
+
+      );
+
+
+    }
+  );
+
+
+  /*
+    TOTAL DE LA RÚBRICA ANALÍTICA
+  */
+
+  filas.push(
+
+    new TableRow({
+
+      children: [
+
+        new TableCell({
+
+          columnSpan: 7,
+
+          verticalAlign:
+            VerticalAlign.CENTER,
+
+          children: [
+
+            new Paragraph({
+
+              alignment:
+                AlignmentType.RIGHT,
+
+              children: [
+
+                new TextRun({
+                  text: "Total",
+                  bold: true,
+                  font: "Book Antiqua",
+                  size: 20
+                })
+
+              ]
+
+            })
+
+          ]
+
+        }),
+
+
+        new TableCell({
+
+          width: {
+            size: 11,
+            type: WidthType.PERCENTAGE
+          },
+
+          verticalAlign:
+            VerticalAlign.CENTER,
+
+          children: [
+
+            new Paragraph({
+
+              alignment:
+                AlignmentType.CENTER,
+
+              children: [
+
+                new TextRun({
+                  text:
+                    total.toFixed(2),
+                  bold: true,
+                  font: "Book Antiqua",
+                  size: 20
+                })
+
+              ]
+
+            })
+
+          ]
+
+        })
+
+      ]
+
+    })
+
+  );
+
+
+  const tabla =
+    new Table({
+
+      width: {
+        size: 100,
+        type: WidthType.PERCENTAGE
+      },
+
+      layout:
+        TableLayoutType.FIXED,
+
+      rows: filas
+
+    });
+
+
+  return [
+
+    new Paragraph({
+
+      alignment:
+        AlignmentType.CENTER,
+
+      children: [
+
+        new TextRun({
+          text: "Rúbrica Analítica",
+          bold: true,
+          font: "Book Antiqua",
+          size: 20
+        })
+
+      ]
+
+    }),
+
+    ...datosInstrumento,
+
+    tabla
+
+  ];
+
+} 
+
+function construirPruebaObjetivaWordMaestro(
+  instrumento
+){
+
+  if(
+    typeof docx === "undefined" ||
+    !instrumento
+  ){
+    return [];
+  }
+
+
+  const {
+    Paragraph,
+    TextRun,
+    AlignmentType,
+    PageBreak
+  } = docx;
+
+
+  const prueba =
+    instrumento.contenido || {};
+
+
+  const items =
+    Array.isArray(prueba.items)
+      ? prueba.items
+      : [];
+
+
+  if(items.length === 0){
+    return [];
+  }
+
+
+  const cantidadItems =
+    items.length;
+
+
+  const valorTotal =
+    Number(
+      prueba.valorTotal ??
+      instrumento.valor ??
+      0
+    );
+
+
+  const fuente =
+    datosGuia
+      ?.instrumentosEvaluacion
+      ?.fuente;
+
+
+  const asignatura =
+    fuente?.asignatura || {};
+
+
+  const instrucciones =
+    String(
+      prueba.instruccionesGenerales || ""
+    ).replace(
+      /Responda\s+los\s+\d+\s+ítems/i,
+      `Responda los ${cantidadItems} ítems`
+    );
+
+
+  const contenido = [];
+
+
+  /*
+    TÍTULO
+  */
+
+  contenido.push(
+
+    new Paragraph({
+
+      alignment:
+        AlignmentType.CENTER,
+
+      spacing: {
+        after: 120
+      },
+
+      children: [
+
+        new TextRun({
+          text:
+            prueba.titulo ||
+            "Prueba objetiva",
+          bold: true,
+          font: "Book Antiqua",
+          size: 20
+        })
+
+      ]
+
+    })
+
+  );
+
+
+  /*
+    ASIGNATURA Y CÓDIGO
+  */
+
+  contenido.push(
+
+    new Paragraph({
+
+      alignment:
+        AlignmentType.CENTER,
+
+      spacing: {
+        after: 240
+      },
+
+      children: [
+
+        new TextRun({
+          text: "Asignatura: ",
+          bold: true,
+          font: "Book Antiqua",
+          size: 20
+        }),
+
+        new TextRun({
+          text:
+            asignatura.nombre || "",
+          font: "Book Antiqua",
+          size: 20
+        }),
+
+        new TextRun({
+          text: "     Código: ",
+          bold: true,
+          font: "Book Antiqua",
+          size: 20
+        }),
+
+        new TextRun({
+          text:
+            asignatura.codigo || "",
+          font: "Book Antiqua",
+          size: 20
+        })
+
+      ]
+
+    })
+
+  );
+
+
+  /*
+    DATOS DEL ESTUDIANTE
+  */
+
+  contenido.push(
+
+    new Paragraph({
+
+      spacing: {
+        after: 100
+      },
+
+      children: [
+
+        new TextRun({
+          text: "Nombre: ",
+          bold: true,
+          font: "Book Antiqua",
+          size: 20
+        }),
+
+        new TextRun({
+          text:
+            "________________________________________",
+          font: "Book Antiqua",
+          size: 20
+        })
+
+      ]
+
+    })
+
+  );
+
+
+  contenido.push(
+
+    new Paragraph({
+
+      spacing: {
+        after: 100
+      },
+
+      children: [
+
+        new TextRun({
+          text: "Matrícula: ",
+          bold: true,
+          font: "Book Antiqua",
+          size: 20
+        }),
+
+        new TextRun({
+          text: "________________",
+          font: "Book Antiqua",
+          size: 20
+        }),
+
+        new TextRun({
+          text: "     Sección: ",
+          bold: true,
+          font: "Book Antiqua",
+          size: 20
+        }),
+
+        new TextRun({
+          text: "__________",
+          font: "Book Antiqua",
+          size: 20
+        }),
+
+        new TextRun({
+          text: "     Fecha: ",
+          bold: true,
+          font: "Book Antiqua",
+          size: 20
+        }),
+
+        new TextRun({
+          text: "________________",
+          font: "Book Antiqua",
+          size: 20
+        })
+
+      ]
+
+    })
+
+  );
+
+
+  contenido.push(
+
+    new Paragraph({
+
+      spacing: {
+        after: 220
+      },
+
+      children: [
+
+        new TextRun({
+          text: "Valor: ",
+          bold: true,
+          font: "Book Antiqua",
+          size: 20
+        }),
+
+        new TextRun({
+          text:
+            `${valorTotal} ${
+              valorTotal === 1
+                ? "punto"
+                : "puntos"
+            }`,
+          font: "Book Antiqua",
+          size: 20
+        })
+
+      ]
+
+    })
+
+  );
+
+
+  /*
+    INSTRUCCIONES
+  */
+
+  contenido.push(
+
+    new Paragraph({
+
+      spacing: {
+        after: 80
+      },
+
+      children: [
+
+        new TextRun({
+          text: "Instrucciones:",
+          bold: true,
+          font: "Book Antiqua",
+          size: 20
+        })
+
+      ]
+
+    }),
+
+    new Paragraph({
+
+      spacing: {
+        after: 260
+      },
+
+      children: [
+
+        new TextRun({
+          text: instrucciones,
+          font: "Book Antiqua",
+          size: 20
+        })
+
+      ]
+
+    })
+
+  );
+
+
+  /*
+    CUERPO DE LA PRUEBA
+  */
+
+  items.forEach(
+    item => {
+
+
+      contenido.push(
+
+        new Paragraph({
+
+          keepNext: true,
+
+          spacing: {
+            before: 180,
+            after: 100
+          },
+
+          children: [
+
+            new TextRun({
+              text:
+                `${Number(
+                  item.numero || 0
+                )}. `,
+              bold: true,
+              font: "Book Antiqua",
+              size: 20
+            }),
+
+            new TextRun({
+              text:
+                String(
+                  item.tipo ===
+                    "completacion"
+                    ? (
+                        item.enunciado || ""
+                      ).replace(
+                        /_{3,}/g,
+                        "______________________________"
+                      )
+                    : (
+                        item.enunciado || ""
+                      )
+                ),
+              font: "Book Antiqua",
+              size: 20
+            })
+
+          ]
+
+        })
+
+      );
+
+
+      /*
+        SELECCIÓN ÚNICA Y MÚLTIPLE
+      */
+
+      if(
+        (
+          item.tipo ===
+            "seleccion_unica" ||
+          item.tipo ===
+            "seleccion_multiple"
+        ) &&
+        Array.isArray(
+          item.alternativas
+        )
+      ){
+
+        item.alternativas.forEach(
+          alternativa => {
+
+            contenido.push(
+
+              new Paragraph({
+
+                indent: {
+                  left: 360
+                },
+
+                spacing: {
+                  after: 70
+                },
+
+                children: [
+
+                  new TextRun({
+                    text:
+                      `${alternativa.letra || ""}. `,
+                    bold: true,
+                    font: "Book Antiqua",
+                    size: 20
+                  }),
+
+                  new TextRun({
+                    text:
+                      String(
+                        alternativa.texto || ""
+                      ),
+                    font: "Book Antiqua",
+                    size: 20
+                  })
+
+                ]
+
+              })
+
+            );
+
+          }
+        );
+
+      }
+
+
+      /*
+        VERDADERO / FALSO
+      */
+
+      else if(
+        item.tipo ===
+          "verdadero_falso"
+      ){
+
+        contenido.push(
+
+          new Paragraph({
+
+            indent: {
+              left: 360
+            },
+
+            children: [
+
+              new TextRun({
+                text: "☐ Verdadero",
+                font: "Book Antiqua",
+                size: 20
+              })
+
+            ]
+
+          }),
+
+          new Paragraph({
+
+            indent: {
+              left: 360
+            },
+
+            spacing: {
+              after: 80
+            },
+
+            children: [
+
+              new TextRun({
+                text: "☐ Falso",
+                font: "Book Antiqua",
+                size: 20
+              })
+
+            ]
+
+          })
+
+        );
+
+      }
+
+
+      /*
+        PAREAMIENTO
+      */
+
+      else if(
+        item.tipo ===
+          "pareamiento" &&
+        Array.isArray(
+          item.premisas
+        ) &&
+        Array.isArray(
+          item.opciones
+        )
+      ){
+
+        contenido.push(
+
+          new Paragraph({
+
+            keepNext: true,
+
+            spacing: {
+              before: 80,
+              after: 70
+            },
+
+            children: [
+
+              new TextRun({
+                text: "Premisas",
+                bold: true,
+                font: "Book Antiqua",
+                size: 20
+              })
+
+            ]
+
+          })
+
+        );
+
+
+        item.premisas.forEach(
+          premisa => {
+
+            contenido.push(
+
+              new Paragraph({
+
+                keepNext: true,
+
+                indent: {
+                  left: 360
+                },
+
+                spacing: {
+                  after: 60
+                },
+
+                children: [
+
+                  new TextRun({
+                    text:
+                      `_____ ${premisa.id || ""}. ${premisa.texto || ""}`,
+                    font: "Book Antiqua",
+                    size: 20
+                  })
+
+                ]
+
+              })
+
+            );
+
+          }
+        );
+
+
+        contenido.push(
+
+          new Paragraph({
+
+            keepNext: true,
+
+            spacing: {
+              before: 100,
+              after: 70
+            },
+
+            children: [
+
+              new TextRun({
+                text: "Opciones",
+                bold: true,
+                font: "Book Antiqua",
+                size: 20
+              })
+
+            ]
+
+          })
+
+        );
+
+
+        item.opciones.forEach(
+          opcion => {
+
+            contenido.push(
+
+              new Paragraph({
+
+                indent: {
+                  left: 540
+                },
+
+                spacing: {
+                  after: 60
+                },
+
+                children: [
+
+                  new TextRun({
+                    text:
+                      `${opcion.letra || ""}. `,
+                    bold: true,
+                    font: "Book Antiqua",
+                    size: 20
+                  }),
+
+                  new TextRun({
+                    text:
+                      String(
+                        opcion.texto || ""
+                      ),
+                    font: "Book Antiqua",
+                    size: 20
+                  })
+
+                ]
+
+              })
+
+            );
+
+          }
+        );
+
+      }
+
+
+      /*
+        RESPUESTA CORTA
+      */
+
+      else if(
+        item.tipo ===
+          "respuesta_corta"
+      ){
+
+        const cantidadLineas =
+          item.espacioRespuesta ===
+            "dos_lineas"
+            ? 2
+            : 1;
+
+
+        for(
+          let i = 0;
+          i < cantidadLineas;
+          i++
+        ){
+
+          contenido.push(
+
+            new Paragraph({
+
+              indent: {
+                left: 360
+              },
+
+              spacing: {
+                after: 100
+              },
+
+              children: [
+
+                new TextRun({
+                  text:
+                    "__________________________________________",
+                  font: "Book Antiqua",
+                  size: 20
+                })
+
+              ]
+
+            })
+
+          );
+
+        }
+
+      }
+
+
+      /*
+        ORDENAMIENTO
+      */
+
+      else if(
+        item.tipo ===
+          "ordenamiento" &&
+        Array.isArray(
+          item.elementos
+        )
+      ){
+
+        item.elementos.forEach(
+          elemento => {
+
+            contenido.push(
+
+              new Paragraph({
+
+                indent: {
+                  left: 360
+                },
+
+                spacing: {
+                  after: 70
+                },
+
+                children: [
+
+                  new TextRun({
+                    text:
+                      `_____ ${elemento.id || ""}. ${elemento.texto || ""}`,
+                    font: "Book Antiqua",
+                    size: 20
+                  })
+
+                ]
+
+              })
+
+            );
+
+          }
+        );
+
+      }
+
+
+      /*
+        COMPLETACIÓN
+
+        No se agrega una línea adicional
+        porque el espacio de respuesta
+        ya forma parte del enunciado.
+      */
+
+    }
+  );
+
+
+  /*
+    SALTO DE PÁGINA ANTES DE LA PAUTA
+  */
+
+  contenido.push(
+
+    new Paragraph({
+
+      children: [
+        new PageBreak()
+      ]
+
+    })
+
+  );
+
+
+  /*
+    PAUTA DE RESPUESTAS
+  */
+
+  contenido.push(
+
+    new Paragraph({
+
+      alignment:
+        AlignmentType.CENTER,
+
+      spacing: {
+        after: 220
+      },
+
+      children: [
+
+        new TextRun({
+          text:
+            "Pauta de respuestas — Uso docente",
+          bold: true,
+          font: "Book Antiqua",
+          size: 20
+        })
+
+      ]
+
+    })
+
+  );
+
+
+  items.forEach(
+    item => {
+
+      let respuesta = "";
+
+
+      if(
+        item.tipo ===
+          "seleccion_unica" &&
+        item.respuestaCorrecta
+      ){
+
+        if(
+          typeof item.respuestaCorrecta ===
+            "object"
+        ){
+
+          respuesta =
+            `${item.respuestaCorrecta.letra || ""}. ` +
+            `${item.respuestaCorrecta.texto || ""}`;
+
+        }
+        else{
+
+          respuesta =
+            String(
+              item.respuestaCorrecta
+            );
+
+        }
+
+      }
+
+
+      else if(
+        item.tipo ===
+          "seleccion_multiple" &&
+        Array.isArray(
+          item.respuestasCorrectas
+        )
+      ){
+
+        respuesta =
+          item.respuestasCorrectas
+            .map(
+              opcion => {
+
+                if(
+                  typeof opcion ===
+                    "object"
+                ){
+
+                  return (
+                    `${opcion.letra || ""}. ` +
+                    `${opcion.texto || ""}`
+                  );
+
+                }
+
+                return String(opcion);
+
+              }
+            )
+            .join(" | ");
+
+      }
+
+
+      else if(
+        item.tipo ===
+          "verdadero_falso"
+      ){
+
+        respuesta =
+          String(
+            item.respuestaCorrecta || ""
+          );
+
+      }
+
+
+      else if(
+        item.tipo ===
+          "pareamiento" &&
+        Array.isArray(
+          item.correspondenciasCorrectas
+        )
+      ){
+
+        respuesta =
+          item.correspondenciasCorrectas
+            .map(
+              correspondencia =>
+                `${correspondencia.premisaId || ""} → ` +
+                `${correspondencia.opcionLetra || ""}`
+            )
+            .join(" | ");
+
+      }
+
+
+      else if(
+        item.tipo ===
+          "completacion" ||
+        item.tipo ===
+          "respuesta_corta"
+      ){
+
+        respuesta =
+          String(
+            item.respuestaCorrecta || ""
+          );
+
+      }
+
+
+      else if(
+        item.tipo ===
+          "ordenamiento" &&
+        Array.isArray(
+          item.ordenCorrecto
+        )
+      ){
+
+        respuesta =
+          item.ordenCorrecto
+            .join(" → ");
+
+      }
+
+
+      contenido.push(
+
+        new Paragraph({
+
+          spacing: {
+            after: 100
+          },
+
+          children: [
+
+            new TextRun({
+              text:
+                `${Number(
+                  item.numero || 0
+                )}. `,
+              bold: true,
+              font: "Book Antiqua",
+              size: 20
+            }),
+
+            new TextRun({
+              text: respuesta,
+              font: "Book Antiqua",
+              size: 20
+            })
+
+          ]
+
+        })
+
+      );
+
+    }
+  );
+
+
+  /*
+    VALOR Y CRITERIO DE CALIFICACIÓN
+  */
+
+  contenido.push(
+
+    new Paragraph({
+
+      spacing: {
+        before: 240,
+        after: 100
+      },
+
+      children: [
+
+        new TextRun({
+          text: "Valor total: ",
+          bold: true,
+          font: "Book Antiqua",
+          size: 20
+        }),
+
+        new TextRun({
+          text:
+            `${valorTotal} ${
+              valorTotal === 1
+                ? "punto"
+                : "puntos"
+            }`,
+          font: "Book Antiqua",
+          size: 20
+        })
+
+      ]
+
+    }),
+
+
+    new Paragraph({
+
+      children: [
+
+        new TextRun({
+          text:
+            "Criterio de calificación: ",
+          bold: true,
+          font: "Book Antiqua",
+          size: 20
+        }),
+
+        new TextRun({
+          text:
+            `(Cantidad de aciertos ÷ ${cantidadItems}) × ${valorTotal}`,
+          font: "Book Antiqua",
+          size: 20
+        })
+
+      ]
+
+    })
+
+  );
+
+
+  return contenido;
+
+}  
+
+ function construirInstrumentosWordMaestro(){
+
+  if(
+    typeof docx === "undefined" ||
+    !datosGuia
+  ){
+    return [];
+  }
+
+
+  const {
+    Paragraph,
+    TextRun,
+    AlignmentType,
+    PageBreak
+  } = docx;
+
+
+  const fuente =
+    datosGuia
+      ?.instrumentosEvaluacion
+      ?.fuente;
+
+
+  const rubros =
+    fuente
+      ?.sistemaEvaluacion
+      ?.rubrosAceptados;
+
+
+  const elaborados =
+    datosGuia
+      ?.instrumentosEvaluacion
+      ?.elaborados;
+
+
+  if(
+    !Array.isArray(rubros) ||
+    !Array.isArray(elaborados)
+  ){
+    return [];
+  }
+
+
+  const contenido = [];
+
+
+  /*
+    TÍTULO GENERAL DE INSTRUMENTOS
+  */
+
+  contenido.push(
+
+    new Paragraph({
+
+      children: [
+        new PageBreak()
+      ]
+
+    }),
+
+
+    new Paragraph({
+
+      alignment:
+        AlignmentType.CENTER,
+
+      spacing: {
+        after: 240
+      },
+
+      children: [
+
+        new TextRun({
+          text:
+            "Instrumentos de Evaluación",
+          bold: true,
+          font: "Book Antiqua",
+          size: 20
+        })
+
+      ]
+
+    })
+
+  );
+
+
+  let cantidadAgregada = 0;
+
+
+  /*
+    RECORRER EN EL MISMO ORDEN
+    DEL SISTEMA DE EVALUACIÓN
+  */
+
+  rubros.forEach(
+    rubro => {
+
+
+      const actividades =
+        Array.isArray(
+          rubro?.actividades
+        )
+          ? rubro.actividades
+          : [];
+
+
+      actividades.forEach(
+        (
+          actividad,
+          indiceActividad
+        ) => {
+
+
+          const instrumentos =
+            Array.isArray(
+              actividad?.instrumentos
+            )
+              ? actividad.instrumentos
+              : [];
+
+
+          instrumentos.forEach(
+            (
+              nombreInstrumento,
+              indiceInstrumento
+            ) => {
+
+
+              /*
+                LOCALIZAR EL INSTRUMENTO
+                ACEPTADO MEDIANTE SU
+                IDENTIDAD REAL
+              */
+
+              const elaborado =
+                elaborados.find(
+                  item =>
+
+                    item?.rubro ===
+                      rubro?.rubro &&
+
+                    Number(
+                      item?.indiceActividad
+                    ) ===
+                      Number(
+                        indiceActividad
+                      ) &&
+
+                    Number(
+                      item?.indiceInstrumento
+                    ) ===
+                      Number(
+                        indiceInstrumento
+                      )
+
+                );
+
+
+              if(!elaborado){
+
+                console.warn(
+                  "Instrumento no encontrado:",
+                  {
+                    rubro:
+                      rubro?.rubro,
+                    indiceActividad,
+                    indiceInstrumento,
+                    nombreInstrumento
+                  }
+                );
+
+                return;
+
+              }
+
+
+              /*
+                CADA INSTRUMENTO COMIENZA
+                EN UNA PÁGINA NUEVA
+              */
+
+              if(cantidadAgregada > 0){
+
+                contenido.push(
+
+                  new Paragraph({
+
+                    children: [
+                      new PageBreak()
+                    ]
+
+                  })
+
+                );
+
+              }
+
+
+              let bloque = [];
+
+
+              /*
+                IDENTIFICAR EL TIPO
+                Y UTILIZAR SU
+                CONSTRUCTOR REAL
+              */
+
+              const tipoInstrumento =
+                String(
+                  elaborado.instrumento ||
+                  nombreInstrumento ||
+                  ""
+                )
+                  .trim()
+                  .toLowerCase();
+
+
+              if(
+                tipoInstrumento ===
+                "escala de estimación"
+              ){
+
+                bloque =
+                  construirEscalaEstimacionWordMaestro(
+                    elaborado
+                  );
+
+              }
+
+
+              else if(
+                tipoInstrumento ===
+                "lista de cotejo"
+              ){
+
+                bloque =
+                  construirListaCotejoWordMaestro(
+                    elaborado
+                  );
+
+              }
+
+
+              else if(
+                tipoInstrumento ===
+                "rúbrica" ||
+                tipoInstrumento ===
+                "rubrica"
+              ){
+
+                bloque =
+                  construirRubricaWordMaestro(
+                    elaborado
+                  );
+
+              }
+
+
+              else if(
+                tipoInstrumento ===
+                "prueba objetiva"
+              ){
+
+                bloque =
+                  construirPruebaObjetivaWordMaestro(
+                    elaborado
+                  );
+
+              }
+
+
+              else{
+
+                console.warn(
+                  "Tipo de instrumento no reconocido:",
+                  elaborado.instrumento
+                );
+
+              }
+
+
+              /*
+                INCORPORAR EL BLOQUE
+                AL DOCUMENTO MAESTRO
+              */
+
+              if(
+                Array.isArray(bloque) &&
+                bloque.length > 0
+              ){
+
+                contenido.push(
+                  ...bloque
+                );
+
+                cantidadAgregada++;
+
+              }
+
+
+            }
+          );
+
+
+        }
+      );
+
+
+    }
+  );
+
+
+  console.log(
+    "Instrumentos incorporados al Word maestro:",
+    cantidadAgregada
+  );
+
+
+  return contenido;
+
+} 
+
+async function descargarGuiaDocenteWord(){
+
+  if(
+    typeof docx === "undefined" ||
+    !datosGuia
+  ){
+
+    alert(
+      "No fue posible preparar la Guía Docente para descargar."
+    );
+
+    return;
+  }
+
+
+  const {
+    Document,
+    Packer,
+    Paragraph,
+    TextRun,
+    PageBreak
+  } = docx;
+
+
+  /*
+    CONSTRUIR LOS TRES BLOQUES
+    PRINCIPALES
+  */
+
+  const cronograma =
+    construirCronogramaWordMaestro();
+
+
+  const sistemaEvaluacion =
+    construirSistemaEvaluacionWordMaestro();
+
+
+  const instrumentos =
+    construirInstrumentosWordMaestro();
+
+
+  if(
+    !Array.isArray(cronograma) ||
+    cronograma.length === 0
+  ){
+
+    alert(
+      "No fue posible incorporar el Cronograma a la Guía Docente."
+    );
+
+    return;
+  }
+
+
+  if(
+    !Array.isArray(sistemaEvaluacion) ||
+    sistemaEvaluacion.length === 0
+  ){
+
+    alert(
+      "No fue posible incorporar el Sistema de Evaluación a la Guía Docente."
+    );
+
+    return;
+  }
+
+
+  if(
+    !Array.isArray(instrumentos) ||
+    instrumentos.length === 0
+  ){
+
+    alert(
+      "No fue posible incorporar los Instrumentos de Evaluación a la Guía Docente."
+    );
+
+    return;
+  }
+
+
+  /*
+    CONTENIDO DEL DOCUMENTO MAESTRO
+
+    Cronograma
+    ↓
+    Sistema de Evaluación
+    ↓
+    Instrumentos
+  */
+
+  const contenido = [
+
+    ...cronograma,
+
+
+    new Paragraph({
+
+      children: [
+        new PageBreak()
+      ]
+
+    }),
+
+
+    ...sistemaEvaluacion,
+
+
+    ...instrumentos
+
+  ];
+
+
+  /*
+    CREAR DOCUMENTO DOCX
+  */
+
+  const documento =
+    new Document({
+
+      styles: {
+
+        default: {
+
+          document: {
+
+            run: {
+              font: "Book Antiqua",
+              size: 20
+            },
+
+            paragraph: {
+              spacing: {
+                after: 0
+              }
+            }
+
+          }
+
+        }
+
+      },
+
+
+      sections: [
+
+        {
+
+          properties: {
+
+            page: {
+
+              margin: {
+                top: 720,
+                right: 720,
+                bottom: 720,
+                left: 720
+              }
+
+            }
+
+          },
+
+          children:
+            contenido
+
+        }
+
+      ]
+
+    });
+
+
+  /*
+    GENERAR EL ARCHIVO
+  */
+
+  try{
+
+    const blob =
+      await Packer.toBlob(
+        documento
+      );
+
+
+    const url =
+      URL.createObjectURL(
+        blob
+      );
+
+
+    const enlace =
+      document.createElement(
+        "a"
+      );
+
+
+    /*
+      NOMBRE DE LA ASIGNATURA
+    */
+
+    const nombreAsignatura =
+      datosGuia
+        ?.instrumentosEvaluacion
+        ?.fuente
+        ?.asignatura
+        ?.nombre
+        ?.trim()
+        ||
+        "Guia_Docente";
+
+
+    const nombreSeguro =
+      nombreAsignatura.replace(
+        /[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ_-]+/g,
+        "_"
+      );
+
+
+    enlace.href =
+      url;
+
+
+    enlace.download =
+      "Guia_Docente_" +
+      nombreSeguro +
+      ".docx";
+
+
+    document.body.appendChild(
+      enlace
+    );
+
+
+    enlace.click();
+
+
+    enlace.remove();
+
+
+    setTimeout(
+      () =>
+        URL.revokeObjectURL(
+          url
+        ),
+      1000
+    );
+
+
+  }
+  catch(error){
+
+    console.error(
+      "Error al generar la Guía Docente:",
+      error
+    );
+
+
+    alert(
+      "Ocurrió un error al generar el documento Word de la Guía Docente."
+    );
+
+  }
+
+}
   
 function mostrarErrorRevision(mensaje){
 
@@ -1072,6 +5893,13 @@ function mostrarErrorRevision(mensaje){
     .textContent = mensaje;
 
 }
+
+document
+  .getElementById("btnDescargarGuia")
+  .addEventListener(
+    "click",
+    descargarGuiaDocenteWord
+  );  
 
 document
   .getElementById("btnVolverGuia")
