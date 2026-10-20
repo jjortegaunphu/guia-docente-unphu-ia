@@ -403,6 +403,71 @@ if (btnSistemaEvaluacion) {
 
 } 
 
+  const btnInstrumentosEvaluacion =
+  document.getElementById(
+    "btnInstrumentosEvaluacion"
+  );
+
+let sistemaEvaluacionCompletado = false;
+
+if (respaldoGuia) {
+
+  try {
+
+    const datosGuardados =
+      JSON.parse(respaldoGuia);
+
+    if (
+      datosGuardados
+        ?.datosGuia
+        ?.instrumentosEvaluacion
+        ?.sistemaEvaluacionCompletado === true
+    ) {
+
+      sistemaEvaluacionCompletado = true;
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "No fue posible comprobar el Sistema de Evaluación:",
+      error
+    );
+
+  }
+
+}
+
+if (btnInstrumentosEvaluacion) {
+
+  if (sistemaEvaluacionCompletado) {
+
+    btnInstrumentosEvaluacion.href =
+      "instrumentos.html";
+
+  } else {
+
+    btnInstrumentosEvaluacion.href =
+      "#";
+
+    btnInstrumentosEvaluacion.addEventListener(
+      "click",
+      function(event) {
+
+        event.preventDefault();
+
+        alert(
+          "Para elaborar los instrumentos de evaluación, primero debe completar el Sistema de Evaluación de la asignatura."
+        );
+
+      }
+    );
+
+  }
+
+}
+
   
 </script>
 </body>
