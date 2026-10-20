@@ -458,6 +458,155 @@ function validarInstrumentosRevision(){
   };
 
 }
+
+  function validarCoherenciaTransversalRevision(){
+
+  const fuente =
+    datosGuia
+      ?.instrumentosEvaluacion
+      ?.fuente;
+
+
+  const cronograma =
+    fuente?.cronograma;
+
+
+  const reaOficiales =
+    fuente?.reaOficiales;
+
+
+  const rubros =
+    fuente
+      ?.sistemaEvaluacion
+      ?.rubrosAceptados;
+
+
+  if(
+    !Array.isArray(cronograma) ||
+    !Array.isArray(reaOficiales) ||
+    !Array.isArray(rubros)
+  ){
+
+    return {
+      estado: "error",
+      titulo: "Coherencia de la Guía Docente",
+      mensaje:
+        "No existen datos suficientes para comprobar la coherencia entre el cronograma, los REA y el sistema de evaluación."
+    };
+
+  }
+
+
+  const semanasCronograma =
+    cronograma.map(
+      item => Number(item?.semana)
+    );
+
+
+  let actividadesRevisadas = 0;
+  let actividadesSemanaInvalida = 0;
+  let referenciasREAInvalidas = 0;
+
+
+  rubros.forEach(
+    rubro => {
+
+      const actividades =
+        Array.isArray(rubro?.actividades)
+          ? rubro.actividades
+          : [];
+
+
+      actividades.forEach(
+        actividad => {
+
+          actividadesRevisadas++;
+
+
+          if(
+            !semanasCronograma.includes(
+              Number(actividad?.semana)
+            )
+          ){
+            actividadesSemanaInvalida++;
+          }
+
+
+          const codigosREA =
+            Array.isArray(actividad?.codigosREA)
+              ? actividad.codigosREA
+              : [];
+
+
+          codigosREA.forEach(
+            codigo => {
+
+              const existeREA =
+                reaOficiales.some(
+                  rea => {
+
+                    if(typeof rea === "string"){
+                      return rea.includes(codigo);
+                    }
+
+                    return (
+                      rea?.codigo === codigo ||
+                      rea?.id === codigo
+                    );
+
+                  }
+                );
+
+
+              if(!existeREA){
+                referenciasREAInvalidas++;
+              }
+
+            }
+          );
+
+        }
+      );
+
+    }
+  );
+
+
+  if(actividadesRevisadas === 0){
+
+    return {
+      estado: "error",
+      titulo: "Coherencia de la Guía Docente",
+      mensaje:
+        "No existen actividades evaluativas para comprobar la coherencia de la Guía Docente."
+    };
+
+  }
+
+
+  if(
+    actividadesSemanaInvalida > 0 ||
+    referenciasREAInvalidas > 0
+  ){
+
+    return {
+      estado: "error",
+      titulo: "Coherencia de la Guía Docente",
+      mensaje:
+        `Se detectaron ${actividadesSemanaInvalida} actividad(es) fuera del cronograma y ${referenciasREAInvalidas} referencia(s) a REA no válidas.`
+    };
+
+  }
+
+
+  return {
+    estado: "correcto",
+    titulo: "Coherencia de la Guía Docente",
+    mensaje:
+      `Las ${actividadesRevisadas} actividad(es) evaluativas mantienen correspondencia con las semanas del cronograma y los REA de la asignatura.`
+  };
+
+}
   
 function mostrarResumenRevision(){
 
@@ -516,11 +665,15 @@ const resultadoSistemaEvaluacion =
 const resultadoInstrumentos =
   validarInstrumentosRevision();
 
+const resultadoCoherencia =
+  validarCoherenciaTransversalRevision();
+
 
 const resultado =
   document.getElementById(
     "resultadoRevision"
   );
+
 
 
 const obtenerSimboloEstado =
@@ -613,6 +766,25 @@ const obtenerSimboloEstado =
 
     <p>
       ${resultadoInstrumentos.mensaje}
+    </p>
+
+  </div>
+
+    <div
+    style="
+      border:1px solid #cccccc;
+      padding:15px;
+      margin-top:12px;
+    "
+  >
+
+    <strong>
+      ${obtenerSimboloEstado(resultadoCoherencia.estado)}
+      ${resultadoCoherencia.titulo}
+    </strong>
+
+    <p>
+      ${resultadoCoherencia.mensaje}
     </p>
 
   </div>
