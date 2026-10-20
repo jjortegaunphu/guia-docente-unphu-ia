@@ -403,16 +403,14 @@ function validarInstrumentosRevision(){
 
               totalRequeridos++;
 
-
-              const encontrado =
-                Array.isArray(elaborados) &&
-                elaborados.some(
-                  elaborado =>
-                    elaborado?.rubro === indiceRubro &&
-                    elaborado?.indiceActividad === indiceActividad &&
-                    elaborado?.indiceInstrumento === indiceInstrumento
-                );
-
+          const encontrado =
+           Array.isArray(elaborados) &&
+           elaborados.some(
+            elaborado =>
+              elaborado?.rubro === rubro?.nombre &&
+              elaborado?.indiceActividad === indiceActividad &&
+              elaborado?.indiceInstrumento === indiceInstrumento
+            );
 
               if(encontrado){
                 totalElaborados++;
