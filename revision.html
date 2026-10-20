@@ -874,6 +874,98 @@ else{
 
 }
 
+function finalizarGuiaDocente(){
+
+  if(!datosGuia || !respaldoGuia){
+    return;
+  }
+
+    if(datosGuia.estadoGuia === "finalizada"){
+
+    alert(
+      "Esta Guía Docente ya fue finalizada anteriormente."
+    );
+
+    return;
+  }
+
+  const confirmar =
+    window.confirm(
+      "¿Desea finalizar esta Guía Docente?\n\n" +
+      "La guía quedará registrada como finalizada y " +
+      "se conservará toda la información elaborada."
+    );
+
+
+  if(!confirmar){
+    return;
+  }
+
+
+  const fechaFinalizacion =
+    new Date().toISOString();
+
+
+  datosGuia.estadoGuia =
+    "finalizada";
+
+  datosGuia.fechaFinalizacion =
+    fechaFinalizacion;
+
+
+  respaldoGuia.datosGuia =
+    datosGuia;
+
+  respaldoGuia.estadoGuia =
+    "finalizada";
+
+  respaldoGuia.fechaFinalizacion =
+    fechaFinalizacion;
+
+
+  localStorage.setItem(
+    "respaldoGuiaDocente",
+    JSON.stringify(respaldoGuia)
+  );
+
+
+  const registroFinalizado = {
+    id:
+      `guia-${Date.now()}`,
+
+    fechaFinalizacion:
+      fechaFinalizacion,
+
+    datosGuia:
+      datosGuia
+  };
+
+
+  const guiasGuardadas =
+    JSON.parse(
+      localStorage.getItem(
+        "guiasDocentesFinalizadas"
+      ) || "[]"
+    );
+
+
+  guiasGuardadas.push(
+    registroFinalizado
+  );
+
+
+  localStorage.setItem(
+    "guiasDocentesFinalizadas",
+    JSON.stringify(guiasGuardadas)
+  );
+
+
+  alert(
+    "La Guía Docente ha sido finalizada correctamente."
+  );
+
+}
+  
 function mostrarErrorRevision(mensaje){
 
   document
@@ -896,6 +988,13 @@ function mostrarErrorRevision(mensaje){
 
 }
 
+document
+  .getElementById("btnFinalizarGuia")
+  .addEventListener(
+    "click",
+    finalizarGuiaDocente
+  );
+  
 
 document.addEventListener(
   "DOMContentLoaded",
