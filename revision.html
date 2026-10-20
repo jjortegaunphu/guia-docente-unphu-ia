@@ -255,6 +255,92 @@ function validarCronogramaRevision(){
 
 }
 
+function validarSistemaEvaluacionRevision(){
+
+  const instrumentosEvaluacion =
+    datosGuia
+      ?.instrumentosEvaluacion;
+
+
+  if(!instrumentosEvaluacion){
+
+    return {
+      estado: "error",
+      titulo: "Sistema de Evaluación",
+      mensaje:
+        "No se encontró información del Sistema de Evaluación."
+    };
+
+  }
+
+
+  if(
+    instrumentosEvaluacion
+      .sistemaEvaluacionCompletado !== true
+  ){
+
+    return {
+      estado: "error",
+      titulo: "Sistema de Evaluación",
+      mensaje:
+        "El Sistema de Evaluación no ha sido completado."
+    };
+
+  }
+
+
+  const rubros =
+    instrumentosEvaluacion
+      ?.fuente
+      ?.sistemaEvaluacion
+      ?.rubrosAceptados;
+
+
+  if(
+    !Array.isArray(rubros) ||
+    rubros.length === 0
+  ){
+
+    return {
+      estado: "error",
+      titulo: "Sistema de Evaluación",
+      mensaje:
+        "No se encontraron rubros de evaluación aceptados."
+    };
+
+  }
+
+
+  const rubrosIncompletos =
+    rubros.filter(
+      rubro =>
+        !rubro ||
+        !Array.isArray(rubro.actividades) ||
+        rubro.actividades.length === 0
+    );
+
+
+  if(rubrosIncompletos.length > 0){
+
+    return {
+      estado: "advertencia",
+      titulo: "Sistema de Evaluación",
+      mensaje:
+        `El Sistema de Evaluación contiene ${rubrosIncompletos.length} rubro(s) sin actividades asociadas.`
+    };
+
+  }
+
+
+  return {
+    estado: "correcto",
+    titulo: "Sistema de Evaluación",
+    mensaje:
+      `Sistema de Evaluación completado con ${rubros.length} rubro(s) aceptado(s).`
+  };
+
+}  
+
 function mostrarResumenRevision(){
 
   document
@@ -305,6 +391,9 @@ const resultadoCronograma =
 
 const resultadoREA =
   validarREARevision();
+
+const resultadoSistemaEvaluacion =
+  validarSistemaEvaluacionRevision();
 
 
 const resultado =
@@ -365,6 +454,25 @@ const obtenerSimboloEstado =
 
     <p>
       ${resultadoREA.mensaje}
+    </p>
+
+  </div>
+
+  <div
+    style="
+      border:1px solid #cccccc;
+      padding:15px;
+      margin-top:12px;
+    "
+  >
+
+    <strong>
+      ${obtenerSimboloEstado(resultadoSistemaEvaluacion.estado)}
+      ${resultadoSistemaEvaluacion.titulo}
+    </strong>
+
+    <p>
+      ${resultadoSistemaEvaluacion.mensaje}
     </p>
 
   </div>
