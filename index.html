@@ -319,6 +319,15 @@
   "
 >
 
+<a
+  id="btnNuevaGuia"
+  class="button"
+  href="#"
+  style="margin-right: 12px;"
+>
+  Elaborar nueva Guía Docente
+</a>
+      
   <a
     id="btnMisGuias"
     class="button"
@@ -402,6 +411,60 @@ if (btnSistemaEvaluacion) {
   }
 
 } 
+
+const btnNuevaGuia =
+  document.getElementById(
+    "btnNuevaGuia"
+  );
+
+
+if (btnNuevaGuia) {
+
+  btnNuevaGuia.addEventListener(
+    "click",
+    function(event) {
+
+      event.preventDefault();
+
+
+      if (existeGuiaEnProgreso) {
+
+        const confirmar =
+          window.confirm(
+            "¿Desea elaborar una nueva Guía Docente?\n\n" +
+            "Se eliminarán únicamente los datos de la guía que está actualmente en progreso. " +
+            "Las guías finalizadas permanecerán guardadas."
+          );
+
+
+        if (!confirmar) {
+          return;
+        }
+
+      }
+
+
+      localStorage.removeItem(
+        "respaldoGuiaDocente"
+      );
+
+      localStorage.removeItem(
+        "borradorPruebaObjetivaGuiaDocente"
+      );
+
+      localStorage.removeItem(
+        "volverCronogramaCompleto"
+      );
+
+
+      window.location.href =
+        "elaborar.html?modo=nueva";
+
+    }
+  );
+
+}
+  
 </script>
 </body>
 </html>
