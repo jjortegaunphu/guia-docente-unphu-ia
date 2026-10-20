@@ -561,20 +561,200 @@
 
 function abrirGuiaFinalizada(idGuia){
 
-  if(!idGuia){
+  const guias =
+    obtenerGuiasFinalizadas();
+
+
+  const guiaSeleccionada =
+    guias.find(
+      guia =>
+        guia?.id === idGuia
+    );
+
+
+  if(
+    !guiaSeleccionada ||
+    !guiaSeleccionada.datosGuia
+  ){
 
     alert(
-      "No fue posible identificar la Guía Docente seleccionada."
+      "No fue posible localizar la Guía Docente seleccionada."
     );
 
     return;
+
   }
 
 
-  window.location.href =
-    "revision.html?guia=" +
-    encodeURIComponent(
-      idGuia
+  const datos =
+    guiaSeleccionada.datosGuia;
+
+
+  const asignatura =
+    datos
+      ?.instrumentosEvaluacion
+      ?.fuente
+      ?.asignatura;
+
+
+  const nombreAsignatura =
+    asignatura?.nombre ||
+    datos
+      ?.configuracion
+      ?.nombreAsignatura ||
+    "Guía Docente";
+
+
+  const codigoAsignatura =
+    asignatura?.codigo ||
+    datos
+      ?.configuracion
+      ?.codigoAsignatura ||
+    "No disponible";
+
+
+  const cronograma =
+    Array.isArray(
+      datos?.cronograma
+    )
+      ? datos.cronograma
+      : [];
+
+
+  const rubros =
+    datos
+      ?.instrumentosEvaluacion
+      ?.fuente
+      ?.rubrosAceptados ||
+    [];
+
+
+  const instrumentos =
+    datos
+      ?.instrumentosEvaluacion
+      ?.elaborados ||
+    [];
+
+
+  const detalle =
+    document.getElementById(
+      "detalleGuia"
+    );
+
+
+  const lista =
+    document.getElementById(
+      "listaGuias"
+    );
+
+
+  lista.style.display =
+    "none";
+
+
+  detalle.style.display =
+    "block";
+
+
+  detalle.innerHTML = `
+
+    <article class="guia-card">
+
+      <button
+        type="button"
+        id="btnVolverListado"
+        style="
+          background: transparent;
+          color: #006b54;
+          border: none;
+          padding: 0;
+          margin-bottom: 24px;
+          font-weight: 700;
+          cursor: pointer;
+        "
+      >
+        ← Volver a Mis guías
+      </button>
+
+
+      <h2
+        style="
+          color: #004c3f;
+          margin-bottom: 12px;
+        "
+      >
+        ${nombreAsignatura}
+      </h2>
+
+
+      <p>
+        <strong>Código:</strong>
+        ${codigoAsignatura}
+      </p>
+
+
+      <p>
+        <strong>Finalizada:</strong>
+        ${formatearFecha(
+          guiaSeleccionada.fechaFinalizacion
+        )}
+      </p>
+
+
+      <hr
+        style="
+          margin: 24px 0;
+          border: 0;
+          border-top: 1px solid #e1e7e5;
+        "
+      >
+
+
+      <h3>
+        Resumen de la Guía Docente
+      </h3>
+
+
+      <p>
+        <strong>Semanas del cronograma:</strong>
+        ${cronograma.length}
+      </p>
+
+
+      <p>
+        <strong>Rubros de evaluación:</strong>
+        ${rubros.length}
+      </p>
+
+
+      <p>
+        <strong>Instrumentos elaborados:</strong>
+        ${instrumentos.length}
+      </p>
+
+    </article>
+
+  `;
+
+
+  document
+    .getElementById(
+      "btnVolverListado"
+    )
+    .addEventListener(
+      "click",
+      function(){
+
+        detalle.style.display =
+          "none";
+
+        detalle.innerHTML =
+          "";
+
+        lista.style.display =
+          "grid";
+
+      }
     );
 
 }
