@@ -341,6 +341,126 @@ function validarSistemaEvaluacionRevision(){
 
 }  
 
+function validarInstrumentosRevision(){
+
+  const fuente =
+    datosGuia
+      ?.instrumentosEvaluacion
+      ?.fuente;
+
+
+  const rubros =
+    fuente
+      ?.sistemaEvaluacion
+      ?.rubrosAceptados;
+
+
+  const elaborados =
+    datosGuia
+      ?.instrumentosEvaluacion
+      ?.elaborados;
+
+
+  if(
+    !Array.isArray(rubros) ||
+    rubros.length === 0
+  ){
+
+    return {
+      estado: "error",
+      titulo: "Instrumentos de Evaluación",
+      mensaje:
+        "No fue posible determinar los instrumentos requeridos porque no existen rubros de evaluación válidos."
+    };
+
+  }
+
+
+  let totalRequeridos = 0;
+  let totalElaborados = 0;
+
+
+  rubros.forEach(
+    (rubro, indiceRubro) => {
+
+      const actividades =
+        Array.isArray(rubro?.actividades)
+          ? rubro.actividades
+          : [];
+
+
+      actividades.forEach(
+        (actividad, indiceActividad) => {
+
+          const instrumentos =
+            Array.isArray(actividad?.instrumentos)
+              ? actividad.instrumentos
+              : [];
+
+
+          instrumentos.forEach(
+            (instrumento, indiceInstrumento) => {
+
+              totalRequeridos++;
+
+
+              const encontrado =
+                Array.isArray(elaborados) &&
+                elaborados.some(
+                  elaborado =>
+                    elaborado?.rubro === indiceRubro &&
+                    elaborado?.indiceActividad === indiceActividad &&
+                    elaborado?.indiceInstrumento === indiceInstrumento
+                );
+
+
+              if(encontrado){
+                totalElaborados++;
+              }
+
+            }
+          );
+
+        }
+      );
+
+    }
+  );
+
+
+  if(totalRequeridos === 0){
+
+    return {
+      estado: "error",
+      titulo: "Instrumentos de Evaluación",
+      mensaje:
+        "El Sistema de Evaluación no contiene instrumentos requeridos."
+    };
+
+  }
+
+
+  if(totalElaborados < totalRequeridos){
+
+    return {
+      estado: "error",
+      titulo: "Instrumentos de Evaluación",
+      mensaje:
+        `Se han elaborado ${totalElaborados} de ${totalRequeridos} instrumento(s) requeridos. Faltan ${totalRequeridos - totalElaborados}.`
+    };
+
+  }
+
+
+  return {
+    estado: "correcto",
+    titulo: "Instrumentos de Evaluación",
+    mensaje:
+      `Los ${totalRequeridos} instrumento(s) requeridos han sido elaborados.`
+  };
+
+}
+  
 function mostrarResumenRevision(){
 
   document
@@ -394,6 +514,9 @@ const resultadoREA =
 
 const resultadoSistemaEvaluacion =
   validarSistemaEvaluacionRevision();
+
+const resultadoInstrumentos =
+  validarInstrumentosRevision();
 
 
 const resultado =
@@ -473,6 +596,25 @@ const obtenerSimboloEstado =
 
     <p>
       ${resultadoSistemaEvaluacion.mensaje}
+    </p>
+
+  </div>
+
+    <div
+    style="
+      border:1px solid #cccccc;
+      padding:15px;
+      margin-top:12px;
+    "
+  >
+
+    <strong>
+      ${obtenerSimboloEstado(resultadoInstrumentos.estado)}
+      ${resultadoInstrumentos.titulo}
+    </strong>
+
+    <p>
+      ${resultadoInstrumentos.mensaje}
     </p>
 
   </div>
