@@ -34,6 +34,27 @@
     padding: 24px 8%;
   }
 
+    .header-contenido {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.logo-unphu {
+  width: 190px;
+  height: auto;
+  display: block;
+  background: #ffffff;
+  border-radius: 6px;
+}
+
+.header-texto {
+  padding-left: 24px;
+  border-left: 1px solid rgba(255, 255, 255, 0.45);
+}
+
   header h1 {
     margin: 0;
     font-size: 30px;
@@ -119,6 +140,21 @@
       padding: 22px 4%;
     }
 
+    .header-contenido {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.logo-unphu {
+  width: 170px;
+}
+
+.header-texto {
+  padding-left: 0;
+  border-left: none;
+}
+
     header h1 {
       font-size: 24px;
     }
@@ -139,10 +175,31 @@
 
 <body>
 
-  <header>
-    <h1>Guía Docente UNPHU IA</h1>
-    <p>Revisión y Finalización de la Guía Docente</p>
-  </header>
+ <header>
+
+  <div class="header-contenido">
+
+    <img
+      src="logo-unphu.png"
+      alt="Universidad Nacional Pedro Henríquez Ureña"
+      class="logo-unphu"
+    >
+
+    <div class="header-texto">
+
+      <h1>
+        Guía Docente UNPHU IA
+      </h1>
+
+      <p>
+        Revisión y Finalización de la Guía Docente
+      </p>
+
+    </div>
+
+  </div>
+
+</header>
 
   <main>
 
