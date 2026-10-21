@@ -733,6 +733,52 @@ const cronogramaHTML =
                         .metodologiasActividades
                     : [];
 
+                const diagnostico =
+  clase?.evaluacionDiagnostica;
+
+const diagnosticoHTML =
+  diagnostico
+    ? `
+      <div
+        style="
+          margin-bottom: 18px;
+          padding: 16px;
+          border: 1px solid #006b54;
+          border-radius: 8px;
+          background: #e9f4f1;
+        "
+      >
+        <p>
+          <strong>
+            Prueba Diagnóstica
+          </strong><br>
+          Tipo: D · Valor: 0 · Instrumento: Prueba objetiva
+        </p>
+
+        <p>
+          <strong>Metodología:</strong><br>
+          ${escaparHTML(
+            diagnostico?.metodologia
+          )}
+        </p>
+
+        <p>
+          <strong>Mediación docente:</strong><br>
+          ${escaparHTML(
+            diagnostico?.mediacionDocente
+          )}
+        </p>
+
+        <p>
+          <strong>Actividad diagnóstica:</strong><br>
+          ${escaparHTML(
+            diagnostico?.actividadDiagnostica
+          )}
+        </p>
+      </div>
+    `
+    : "";
+
                 const metodologiasHTML =
                   metodologias
                     .map(
@@ -817,13 +863,20 @@ const cronogramaHTML =
                       </strong>
 
                       ${
-                        metodologiasHTML ||
-                        `
-                          <p style="color:#6b7280;">
-                            No registradas.
-                          </p>
-                        `
-                      }
+                         diagnosticoHTML +
+                            (
+                               metodologiasHTML ||
+                                (
+                                  diagnosticoHTML
+                                    ? ""
+                                    : `
+                                      <p style="color:#6b7280;">
+                                         No registradas.
+                                      </p>
+                                    `
+                                 )
+                               )
+                          }
                     </div>
 
                     <div
