@@ -6788,6 +6788,53 @@ if (Array.isArray(clase.metodologiasActividades)) {
 
 }
 
+/* METODOLOGÍAS DE ACTIVIDADES FORMATIVAS ADICIONALES */
+
+if (Array.isArray(clase.actividadesAdicionales)) {
+
+  clase.actividadesAdicionales.forEach(
+    (actividad, index) => {
+
+      parrafosMetodologias.push(
+        new Paragraph({
+          children: [
+            new TextRun({
+              text:
+                "Metodología adicional " +
+                (index + 1) +
+                ":",
+              bold: true
+            })
+          ]
+        }),
+
+        new Paragraph({
+          text:
+            actividad.metodologiaVinculada ||
+            ""
+        }),
+
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: "Mediación docente:",
+              bold: true
+            })
+          ]
+        }),
+
+        new Paragraph({
+          text:
+            actividad.explicacionVinculacion ||
+            ""
+        })
+      );
+
+    }
+  );
+
+}
+    
 const celdaMetodologias =
   new TableCell({
     width: {
@@ -6796,12 +6843,37 @@ const celdaMetodologias =
     },
     children: parrafosMetodologias
   });
-   const parrafosActividades = [];
+  const parrafosActividades = [];
 
 if (Array.isArray(clase.metodologiasActividades)) {
 
   clase.metodologiasActividades.forEach(
     (item, index) => {
+
+      const codigosREA =
+        Array.isArray(item.codigosREA)
+          ? item.codigosREA.join(", ")
+          : "";
+
+      const actividadLimpia =
+        (item.actividadFormativa || "")
+          .replace(
+            /\s*\(REA\s*\d+(?:\s*,\s*REA\s*\d+)*\)\s*$/i,
+            ""
+          )
+          .replace(
+            /\s*\(REA\d+(?:\s*,\s*REA\d+)*\)\s*$/i,
+            ""
+          )
+          .trim();
+
+      const textoActividad =
+        actividadLimpia +
+        (
+          codigosREA
+            ? ` (${codigosREA})`
+            : ""
+        );
 
       parrafosActividades.push(
         new Paragraph({
@@ -6817,7 +6889,7 @@ if (Array.isArray(clase.metodologiasActividades)) {
         }),
 
         new Paragraph({
-          text: item.actividadFormativa || ""
+          text: textoActividad
         })
       );
 
@@ -6826,6 +6898,60 @@ if (Array.isArray(clase.metodologiasActividades)) {
 
 }
 
+/* ACTIVIDADES FORMATIVAS ADICIONALES */
+
+if (Array.isArray(clase.actividadesAdicionales)) {
+
+  clase.actividadesAdicionales.forEach(
+    (actividad, index) => {
+
+      const codigosREA =
+        Array.isArray(actividad.codigosREA)
+          ? actividad.codigosREA.join(", ")
+          : "";
+
+      const actividadLimpia =
+        (actividad.actividadFormativa || "")
+          .replace(
+            /\s*\(REA\s*\d+(?:\s*,\s*REA\s*\d+)*\)\s*$/i,
+            ""
+          )
+          .replace(
+            /\s*\(REA\d+(?:\s*,\s*REA\d+)*\)\s*$/i,
+            ""
+          )
+          .trim();
+
+      const textoActividad =
+        actividadLimpia +
+        (
+          codigosREA
+            ? ` (${codigosREA})`
+            : ""
+        );
+
+      parrafosActividades.push(
+        new Paragraph({
+          children: [
+            new TextRun({
+              text:
+                "Actividad formativa adicional " +
+                (index + 1) +
+                ":",
+              bold: true
+            })
+          ]
+        }),
+
+        new Paragraph({
+          text: textoActividad
+        })
+      );
+
+    }
+  );
+
+} 
 const celdaActividades =
   new TableCell({
     width: {
