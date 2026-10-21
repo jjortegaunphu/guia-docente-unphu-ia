@@ -4190,6 +4190,26 @@ cuerpoCronograma.appendChild(filaSemana);
 
       propuesta.clases.forEach(clase => {
 
+const diagnostico =
+  clase.evaluacionDiagnostica;
+
+const diagnosticoMetodologiaHTML =
+  diagnostico
+    ? "<strong>Prueba Diagnóstica:</strong><br>" +
+      (diagnostico.metodologia || "") +
+      "<br><br>" +
+      "<strong>Mediación docente:</strong><br>" +
+      (diagnostico.mediacionDocente || "") +
+      "<br><br>"
+    : "";
+
+const diagnosticoActividadHTML =
+  diagnostico
+    ? "<strong>Prueba Diagnóstica · D · Valor 0 · Prueba objetiva</strong><br>" +
+      (diagnostico.actividadDiagnostica || "") +
+      "<br><br>"
+    : "";
+        
 const metodologiasInstitucionales =
   Array.isArray(clase.metodologiasActividades)
     ? clase.metodologiasActividades
@@ -4203,7 +4223,11 @@ const metodologiasInstitucionales =
           (item.explicacionMetodologia || "")
         )
         .join("<br><br>")
-    : "";
+       : "";
+
+const metodologiasInstitucionalesCompletas =
+  diagnosticoMetodologiaHTML +
+  metodologiasInstitucionales;
 
 const actividadesInstitucionales =
   Array.isArray(clase.metodologiasActividades)
@@ -4216,6 +4240,10 @@ const actividadesInstitucionales =
         )
         .join("<br><br>")
     : "";
+
+      const actividadesInstitucionalesCompletas =
+  diagnosticoActividadHTML +
+  actividadesInstitucionales;  
 
         const recursosInstitucionales =
   "<strong>Recursos materiales:</strong><br>" +
@@ -4254,11 +4282,11 @@ filaClaseInstitucional.innerHTML =
   "</td>" +
   
   "<td>" +
-    metodologiasInstitucionales +
+    metodologiasInstitucionalesCompletas +
   "</td>" +
   
   "<td>" +
-     actividadesInstitucionales +
+     actividadesInstitucionalesCompletas +
   "</td>" +
   
   "<td>" +
@@ -5042,6 +5070,45 @@ MOSTRAR ERROR DEL CRONOGRAMA
     : [];
 
 let metodologiasHTML = "";
+
+    const diagnostico =
+  clase.evaluacionDiagnostica;
+
+if (diagnostico) {
+
+  metodologiasHTML += `
+    <div
+      style="
+        margin-bottom:18px;
+        padding:16px;
+        border:1px solid #006b54;
+        border-radius:8px;
+        background:#e9f4f1;
+      "
+    >
+      <p>
+        <strong>Prueba Diagnóstica</strong><br>
+        Tipo: D · Valor: 0 · Instrumento: Prueba objetiva
+      </p>
+
+      <p>
+        <strong>Metodología:</strong><br>
+        ${diagnostico.metodologia || ""}
+      </p>
+
+      <p>
+        <strong>Mediación docente:</strong><br>
+        ${diagnostico.mediacionDocente || ""}
+      </p>
+
+      <p>
+        <strong>Actividad diagnóstica:</strong><br>
+        ${diagnostico.actividadDiagnostica || ""}
+      </p>
+    </div>
+  `;
+
+}
 
 metodologiasActividades.forEach((item, index) => {
 
@@ -6763,6 +6830,43 @@ if (
   });
 const parrafosMetodologias = [];
 
+    if (clase.evaluacionDiagnostica) {
+
+  const diagnostico =
+    clase.evaluacionDiagnostica;
+
+  parrafosMetodologias.push(
+    new Paragraph({
+      children: [
+        new TextRun({
+          text: "Prueba Diagnóstica:",
+          bold: true
+        })
+      ]
+    }),
+
+    new Paragraph({
+      text:
+        diagnostico.metodologia || ""
+    }),
+
+    new Paragraph({
+      children: [
+        new TextRun({
+          text: "Mediación docente:",
+          bold: true
+        })
+      ]
+    }),
+
+    new Paragraph({
+      text:
+        diagnostico.mediacionDocente || ""
+    })
+  );
+
+}
+
 if (Array.isArray(clase.metodologiasActividades)) {
 
   clase.metodologiasActividades.forEach(
@@ -6861,6 +6965,30 @@ const celdaMetodologias =
     children: parrafosMetodologias
   });
   const parrafosActividades = [];
+
+    if (clase.evaluacionDiagnostica) {
+
+  const diagnostico =
+    clase.evaluacionDiagnostica;
+
+  parrafosActividades.push(
+    new Paragraph({
+      children: [
+        new TextRun({
+          text:
+            "Prueba Diagnóstica · D · Valor 0 · Prueba objetiva:",
+          bold: true
+        })
+      ]
+    }),
+
+    new Paragraph({
+      text:
+        diagnostico.actividadDiagnostica || ""
+    })
+  );
+
+}
 
 if (Array.isArray(clase.metodologiasActividades)) {
 
@@ -7207,6 +7335,21 @@ propuesta.clases.forEach(clase => {
 
   let metodologias = "";
 
+  if (clase.evaluacionDiagnostica) {
+
+  const diagnostico =
+    clase.evaluacionDiagnostica;
+
+  metodologias +=
+    "Prueba Diagnóstica:\n" +
+    (diagnostico.metodologia || "") +
+    "\n" +
+    "Mediación docente:\n" +
+    (diagnostico.mediacionDocente || "") +
+    "\n\n";
+
+}
+
 if (Array.isArray(clase.metodologiasActividades)) {
 
   clase.metodologiasActividades.forEach(
@@ -7223,6 +7366,18 @@ if (Array.isArray(clase.metodologiasActividades)) {
 
 }
 let actividades = "";
+
+  if (clase.evaluacionDiagnostica) {
+
+  const diagnostico =
+    clase.evaluacionDiagnostica;
+
+  actividades +=
+    "Prueba Diagnóstica · D · Valor 0 · Prueba objetiva:\n" +
+    (diagnostico.actividadDiagnostica || "") +
+    "\n\n";
+
+}
 
 if (Array.isArray(clase.metodologiasActividades)) {
 
