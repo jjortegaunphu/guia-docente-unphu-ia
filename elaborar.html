@@ -7,6 +7,9 @@
 <title>Elaborar Guía Docente | UNPHU IA</title>
 
 <script src="https://unpkg.com/docx@9.5.1/dist/index.iife.js"></script>
+
+  <script src="https://unpkg.com/mammoth@1.8.0/mammoth.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs" type="module"></script>
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -322,7 +325,7 @@ footer{
   width:28%;
 }
 </style>
-</head>
+</head> 
 
 <body>
 
@@ -1277,6 +1280,167 @@ Guía Docente UNPHU IA · Herramienta de apoyo académico
 <script>
 
 let semanas = null;
+
+  /* ==================================================
+LECTURA DEL PROGRAMA DE LA ASIGNATURA
+================================================== */
+
+async function extraerTextoPrograma(archivo) {
+
+  const nombre =
+    archivo.name.toLowerCase();
+
+  /* =========================
+  ARCHIVO DOCX
+  ========================= */
+
+  if (nombre.endsWith(".docx")) {
+
+    const arrayBuffer =
+      await archivo.arrayBuffer();
+
+    const resultado =
+      await mammoth.extractRawText({
+        arrayBuffer: arrayBuffer
+      });
+
+    return resultado.value.trim();
+  }
+
+
+  /* =========================
+  ARCHIVO PDF
+  ========================= */
+
+  if (nombre.endsWith(".pdf")) {
+
+    const arrayBuffer =
+      await archivo.arrayBuffer();
+
+    const pdfjsLib =
+      await import(
+        "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs"
+      );
+
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs";
+
+    const pdf =
+      await pdfjsLib.getDocument({
+        data: arrayBuffer
+      }).promise;
+
+    let texto = "";
+
+    for (
+      let numeroPagina = 1;
+      numeroPagina <= pdf.numPages;
+      numeroPagina++
+    ) {
+
+      const pagina =
+        await pdf.getPage(numeroPagina);
+
+      const contenido =
+        await pagina.getTextContent();
+
+      const textoPagina =
+        contenido.items
+          .map(item => item.str)
+          .join(" ");
+
+      texto += textoPagina + "\n";
+    }
+
+    return texto.trim();
+  }
+
+
+  /* =========================
+  ARCHIVO DOC ANTIGUO
+  ========================= */
+
+  if (nombre.endsWith(".doc")) {
+
+    throw new Error(
+      "Los archivos .doc antiguos no pueden procesarse directamente. Guarde el programa como .docx o PDF y vuelva a adjuntarlo."
+    );
+  }
+
+
+  throw new Error(
+    "Formato de archivo no compatible."
+  );
+}
+
+  /* ==================================================
+ENVIAR PROGRAMA AL WORKER PARA EXTRAER REA Y BIBLIOGRAFÍA
+================================================== */
+
+async function extraerDatosProgramaConIA(textoPrograma) {
+
+  const respuesta =
+    await fetch(
+     "https://guia-docente-unphu-api.jortega-cc4.workers.dev/extraer-programa",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+          textoPrograma: textoPrograma
+        })
+      }
+    );
+
+  let resultado;
+
+  try {
+
+    resultado =
+      await respuesta.json();
+
+  } catch {
+
+    throw new Error(
+      "El servidor no devolvió una respuesta válida."
+    );
+  }
+
+
+  if (
+    !respuesta.ok ||
+    !resultado.correcto
+  ) {
+
+    throw new Error(
+      resultado.error ||
+      "No fue posible extraer los REA y la bibliografía del Programa de la Asignatura."
+    );
+  }
+
+
+  if (
+    !resultado.programa ||
+    !Array.isArray(
+      resultado.programa.reaOficiales
+    ) ||
+    !Array.isArray(
+      resultado.programa.bibliografia
+    )
+  ) {
+
+    throw new Error(
+      "La información extraída del programa no tiene la estructura esperada."
+    );
+  }
+
+
+  return resultado.programa;
+}
+  
 /* ==================================================
 DATOS GENERALES DE LA GUÍA DOCENTE
 ================================================== */
@@ -2710,7 +2874,7 @@ function volverEtapa2(){
 VALIDAR ETAPA 3
 ================================================== */
 
-function continuarSemana1(){
+async function continuarSemana1(){
 
   const seleccion =
     document.querySelector(
@@ -2838,13 +3002,54 @@ if (!existeREA) {
 
   if(seleccion.value==="archivo"){
 
-    const archivo =
-      document.getElementById("archivoPrograma");
+  const inputArchivo =
+    document.getElementById("archivoPrograma");
+
+  const archivo =
+    inputArchivo.files[0];
+
+  try {
+
+    const textoPrograma =
+      await extraerTextoPrograma(archivo);
+
+    if(!textoPrograma){
+
+      mostrarError3(
+        "No fue posible obtener texto del Programa de la Asignatura."
+      );
+
+      return;
+    }
+
+    const programaExtraido =
+      await extraerDatosProgramaConIA(textoPrograma);
+
+    datosGuia.programa.reaOficiales =
+      programaExtraido.reaOficiales;
+
+    datosGuia.programa.bibliografia =
+      programaExtraido.bibliografia;
 
     datosGuia.programa.archivoNombre =
-      archivo.files[0].name;
+      archivo.name;
 
+  } catch(errorPrograma) {
+
+    console.error(
+      "Error al procesar el Programa de la Asignatura:",
+      errorPrograma
+    );
+
+    mostrarError3(
+      errorPrograma.message ||
+      "No fue posible procesar el Programa de la Asignatura."
+    );
+
+    return;
   }
+
+}
 
 
   if(seleccion.value==="manual"){
