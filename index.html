@@ -104,7 +104,7 @@
     /* TARJETAS */
     .options {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
        gap: 24px;
     }
 
@@ -310,6 +310,27 @@
     </a>
   </article>
 
+       <!-- PASO 4 -->
+  <article class="card">
+    <div class="card-number">4</div>
+
+    <h3>Revisión y finalización</h3>
+
+    <p>
+      Revisa la coherencia integral de la Guía Docente,
+      verifica el cronograma, el sistema y los instrumentos
+      de evaluación antes de finalizarla.
+    </p>
+
+    <a
+      id="btnRevisionFinalizacion"
+      class="button"
+      href="#"
+    >
+      Revisar guía docente
+    </a>
+  </article>
+
 </section>
 
     <section
@@ -468,6 +489,117 @@ if (btnInstrumentosEvaluacion) {
 
 }
 
+const btnRevisionFinalizacion =
+  document.getElementById(
+    "btnRevisionFinalizacion"
+  );
+
+let instrumentosCompletados = false;
+
+if (respaldoGuia) {
+
+  try {
+
+    const datosGuardados =
+      JSON.parse(respaldoGuia);
+
+    const datosGuia =
+      datosGuardados?.datosGuia;
+
+    const rubros =
+      datosGuia
+        ?.instrumentosEvaluacion
+        ?.fuente
+        ?.sistemaEvaluacion
+        ?.rubrosAceptados;
+
+    const elaborados =
+      datosGuia
+        ?.instrumentosEvaluacion
+        ?.elaborados;
+
+    let totalRequeridos = 0;
+
+    if (Array.isArray(rubros)) {
+
+      rubros.forEach(
+        rubro => {
+
+          const actividades =
+            Array.isArray(rubro?.actividades)
+              ? rubro.actividades
+              : [];
+
+          actividades.forEach(
+            actividad => {
+
+              const instrumentos =
+                Array.isArray(
+                  actividad?.instrumentos
+                )
+                  ? actividad.instrumentos
+                  : [];
+
+              totalRequeridos +=
+                instrumentos.length;
+
+            }
+          );
+
+        }
+      );
+
+    }
+
+    if (
+      totalRequeridos > 0 &&
+      Array.isArray(elaborados) &&
+      elaborados.length === totalRequeridos
+    ) {
+
+      instrumentosCompletados = true;
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "No fue posible comprobar los instrumentos de evaluación:",
+      error
+    );
+
+  }
+
+}
+
+if (btnRevisionFinalizacion) {
+
+  if (instrumentosCompletados) {
+
+    btnRevisionFinalizacion.href =
+      "revision.html";
+
+  } else {
+
+    btnRevisionFinalizacion.href =
+      "#";
+
+    btnRevisionFinalizacion.addEventListener(
+      "click",
+      function(event) {
+
+        event.preventDefault();
+
+        alert(
+          "Para revisar y finalizar la Guía Docente, primero debe completar todos los instrumentos de evaluación requeridos."
+        );
+
+      }
+    );
+
+  }
+
+}
   
 </script>
 </body>
