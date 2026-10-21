@@ -168,6 +168,48 @@ function prepararActividadesCronograma(){
 
       });
 
+/* ==================================================
+INCORPORAR PRUEBA DIAGNÓSTICA DEL CRONOGRAMA
+================================================== */
+
+if (
+  clase.evaluacionDiagnostica &&
+  Number(semana.semana) === 1 &&
+  Number(clase.clase) === 1
+) {
+
+  const diagnostico =
+    clase.evaluacionDiagnostica;
+
+  actividades.push({
+    semana: 1,
+    clase: 1,
+    contenido:
+      clase.contenido || "",
+    metodologia:
+      diagnostico.metodologia || "",
+    actividadFormativa:
+      diagnostico.actividadDiagnostica || "",
+    rea: [],
+    evaluacionDiagnostica: {
+      nombre:
+        diagnostico.nombre ||
+        "Prueba Diagnóstica",
+      tipo: "D",
+      valor: 0,
+      instrumento:
+        "Prueba objetiva",
+      metodologia:
+        diagnostico.metodologia || "",
+      mediacionDocente:
+        diagnostico.mediacionDocente || "",
+      actividadDiagnostica:
+        diagnostico.actividadDiagnostica || ""
+    }
+  });
+
+}
+      
     });
 
   });
