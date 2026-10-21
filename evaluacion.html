@@ -1098,6 +1098,14 @@ function mostrarVistaFinalSistemaEvaluacion(){
     </div>
 
     <div style="margin-top:20px;">
+    
+<button
+  type="button"
+  onclick="volverAModificarSistemaEvaluacion()"
+>
+  ← Volver y modificar
+</button>
+    
   <button
     type="button"
     onclick="descargarSistemaEvaluacionWord()"
@@ -1129,6 +1137,56 @@ function mostrarVistaFinalSistemaEvaluacion(){
   `;
 
 }
+
+   function volverAModificarSistemaEvaluacion(){
+
+  const rubrosAceptados =
+    datosPaso1.sistemaEvaluacion?.rubrosAceptados || [];
+
+  if(rubrosAceptados.length === 0){
+
+    alert(
+      "No hay actividades evaluativas aceptadas para modificar."
+    );
+
+    return;
+  }
+
+  const ultimoRubro =
+    rubrosAceptados.pop();
+
+  propuestaEvaluacionActual =
+    JSON.parse(
+      JSON.stringify(ultimoRubro)
+    );
+
+  datosPaso1.sistemaEvaluacion.propuestaActual =
+    propuestaEvaluacionActual;
+
+  datosPaso1.instrumentosEvaluacion =
+    datosPaso1.instrumentosEvaluacion || {};
+
+  datosPaso1.instrumentosEvaluacion.sistemaEvaluacionCompletado =
+    false;
+
+  const respaldo =
+    JSON.parse(
+      localStorage.getItem("respaldoGuiaDocente")
+    );
+
+  respaldo.datosGuia =
+    datosPaso1;
+
+  localStorage.setItem(
+    "respaldoGuiaDocente",
+    JSON.stringify(respaldo)
+  );
+
+  mostrarTablaEvaluacion(
+    propuestaEvaluacionActual
+  );
+
+} 
 
   function descargarSistemaEvaluacionWord(){
 
