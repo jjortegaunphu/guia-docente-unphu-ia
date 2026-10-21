@@ -7355,6 +7355,21 @@ if (Array.isArray(clase.metodologiasActividades)) {
   clase.metodologiasActividades.forEach(
     (item, index) => {
 
+      const codigosREA =
+  Array.isArray(item.codigosREA)
+    ? item.codigosREA.join(", ")
+    : "";
+
+const actividadBase =
+  String(item.actividadFormativa || "")
+    .replace(/\s*\(REA[^)]*\)\s*$/i, "")
+    .trim();
+
+const actividadConREA =
+  codigosREA
+    ? `${actividadBase} (${codigosREA})`
+    : actividadBase;
+
       metodologias +=
         "Metodología " + (index + 1) + ":\n" +
         (item.metodologia || "") + "\n" +
@@ -7365,6 +7380,27 @@ if (Array.isArray(clase.metodologiasActividades)) {
   );
 
 }
+  
+if (Array.isArray(clase.actividadesAdicionales)) {
+
+  clase.actividadesAdicionales.forEach(
+    (actividad, index) => {
+
+      metodologias +=
+        "Metodología adicional " +
+        (index + 1) +
+        ":\n" +
+        (actividad.metodologiaVinculada || "") +
+        "\n" +
+        "Mediación docente:\n" +
+        (actividad.explicacionVinculacion || "") +
+        "\n\n";
+
+    }
+  );
+
+}
+  
 let actividades = "";
 
   if (clase.evaluacionDiagnostica) {
@@ -7386,12 +7422,50 @@ if (Array.isArray(clase.metodologiasActividades)) {
 
       actividades +=
         "Actividad formativa " + (index + 1) + ":\n" +
-        (item.actividadFormativa || "") + "\n\n";
+         actividadConREA + "\n\n";
 
     }
   );
 
 }
+
+ if (Array.isArray(clase.actividadesAdicionales)) {
+
+  clase.actividadesAdicionales.forEach(
+    (actividad, index) => {
+
+      const codigosREA =
+        Array.isArray(actividad.codigosREA)
+          ? actividad.codigosREA.join(", ")
+          : "";
+
+      const actividadBase =
+        String(
+          actividad.actividadFormativa || ""
+        )
+          .replace(
+            /\s*\(REA[^)]*\)\s*$/i,
+            ""
+          )
+          .trim();
+
+      const actividadConREA =
+        codigosREA
+          ? `${actividadBase} (${codigosREA})`
+          : actividadBase;
+
+      actividades +=
+        "Actividad formativa adicional " +
+        (index + 1) +
+        ":\n" +
+        actividadConREA +
+        "\n\n";
+
+    }
+  );
+
+} 
+  
   let recursos = "";
 
 recursos +=
