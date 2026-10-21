@@ -4897,6 +4897,23 @@ const historialMetodologias = datosGuia.cronograma
       },
       body: JSON.stringify({
         semana: semanaActual,
+        
+diagnosticoObligatorio:
+  semanaActual === 1
+    ? {
+        requerido: true,
+        clase: 1,
+        tipo: "D",
+        valor: 0,
+        instrumento: "Prueba objetiva",
+        nombre: "Prueba Diagnóstica",
+        instruccion:
+          "Incluir obligatoriamente en la Clase 1 de la Semana 1 una evaluación diagnóstica de conocimientos previos. La evaluación debe adaptarse a la naturaleza y contenidos de la asignatura. Debe proponer metodología de enseñanza, mediación docente y actividad diagnóstica. Tiene valor 0 y no sustituye los contenidos ni las actividades formativas ordinarias de la Clase 1."
+      }
+    : {
+        requerido: false
+      },
+        
         clases: clasesSemana,
         reaOficiales: datosGuia.programa.reaOficiales,
         bibliografia: datosGuia.programa.bibliografia,
