@@ -4410,7 +4410,8 @@ const diagnosticoMetodologiaHTML =
 
 const diagnosticoActividadHTML =
   diagnostico
-    ? "<strong>Prueba Diagnóstica · D · Valor 0 · Prueba objetiva</strong><br>" +
+    ? "<strong>Prueba Diagnóstica (valor: 0 puntos)</strong><br>" +
+      "Tipo: D · Instrumento: Prueba objetiva<br>" +
       (diagnostico.actividadDiagnostica || "") +
       "<br><br>"
     : "";
@@ -5292,8 +5293,8 @@ if (diagnostico) {
       "
     >
       <p>
-        <strong>Prueba Diagnóstica</strong><br>
-        Tipo: D · Valor: 0 · Instrumento: Prueba objetiva
+        <strong>Prueba Diagnóstica (valor: 0 puntos)</strong><br>
+        Tipo: D · Instrumento: Prueba objetiva
       </p>
 
       <p>
@@ -7181,12 +7182,17 @@ const celdaMetodologias =
       children: [
         new TextRun({
           text:
-            "Prueba Diagnóstica · D · Valor 0 · Prueba objetiva:",
+             "Prueba Diagnóstica (valor: 0 puntos)",
           bold: true
         })
       ]
     }),
 
+new Paragraph({
+  text:
+    "Tipo: D · Instrumento: Prueba objetiva"
+}),
+    
     new Paragraph({
       text:
         diagnostico.actividadDiagnostica || ""
@@ -7614,7 +7620,8 @@ let actividades = "";
     clase.evaluacionDiagnostica;
 
   actividades +=
-    "Prueba Diagnóstica · D · Valor 0 · Prueba objetiva:\n" +
+    "Prueba Diagnóstica (valor: 0 puntos)\n" +
+    "Tipo: D · Instrumento: Prueba objetiva\n" +
     (diagnostico.actividadDiagnostica || "") +
     "\n\n";
 
