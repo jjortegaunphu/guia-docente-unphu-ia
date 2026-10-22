@@ -820,13 +820,20 @@ function aceptarRubroEvaluacion(){
 datosPaso1.sistemaEvaluacion.rubrosAceptados =
   datosPaso1.sistemaEvaluacion.rubrosAceptados || [];
 
-  const rubroYaAceptado =
-  datosPaso1.sistemaEvaluacion.rubrosAceptados.some(
-    rubro =>
-      rubro.rubro === propuestaEvaluacionActual.rubro
+  const editandoRubroAceptado =
+  datosPaso1.sistemaEvaluacion.editandoRubroAceptado === true;
+
+const indiceRubroEnEdicion =
+  Number(
+    datosPaso1.sistemaEvaluacion.indiceRubroEnEdicion
   );
 
-if(rubroYaAceptado){
+const rubroYaAceptado =
+  datosPaso1.sistemaEvaluacion.rubrosAceptados.some(
+    rubro => rubro.rubro === propuestaEvaluacionActual.rubro
+  );
+
+if(rubroYaAceptado && !editandoRubroAceptado){
 
   alert(
     propuestaEvaluacionActual.rubro +
@@ -839,10 +846,71 @@ if(rubroYaAceptado){
 const indiceRubroAceptado =
   datosPaso1.sistemaEvaluacion.rubrosAceptados.length;
 
-datosPaso1.sistemaEvaluacion.rubrosAceptados[indiceRubroAceptado] =
+if(
+  editandoRubroAceptado &&
+  Number.isInteger(indiceRubroEnEdicion) &&
+  indiceRubroEnEdicion >= 0 &&
+  indiceRubroEnEdicion <
+    datosPaso1.sistemaEvaluacion.rubrosAceptados.length
+){
+
+  // Reemplazar exactamente el rubro que se está modificando
+  datosPaso1.sistemaEvaluacion.rubrosAceptados[
+    indiceRubroEnEdicion
+  ] =
+    JSON.parse(
+      JSON.stringify(
+        propuestaEvaluacionActual
+      )
+    );
+
+  // Finalizar el modo de edición
+  datosPaso1.sistemaEvaluacion.editandoRubroAceptado =
+    false;
+
+  datosPaso1.sistemaEvaluacion.indiceRubroEnEdicion =
+    -1;
+
+  datosPaso1.sistemaEvaluacion.propuestaActual = null;
+
+datosPaso1.instrumentosEvaluacion =
+  datosPaso1.instrumentosEvaluacion || {};
+
+datosPaso1.instrumentosEvaluacion.fuente =
+  prepararDatosInstrumentosEvaluacion();
+
+datosPaso1.instrumentosEvaluacion.sistemaEvaluacionCompletado =
+  true;
+
+const respaldo =
   JSON.parse(
-    JSON.stringify(propuestaEvaluacionActual)
+    localStorage.getItem("respaldoGuiaDocente")
   );
+
+respaldo.datosGuia =
+  datosPaso1;
+
+localStorage.setItem(
+  "respaldoGuiaDocente",
+  JSON.stringify(respaldo)
+);
+
+mostrarVistaFinalSistemaEvaluacion();
+
+return;
+
+}else{
+
+  // Flujo normal: aceptar un rubro por primera vez
+  datosPaso1.sistemaEvaluacion.rubrosAceptados.push(
+    JSON.parse(
+      JSON.stringify(
+        propuestaEvaluacionActual
+      )
+    )
+  );
+
+}
 
 const respaldo =
   JSON.parse(
@@ -1140,54 +1208,210 @@ function mostrarVistaFinalSistemaEvaluacion(){
 
    function volverAModificarSistemaEvaluacion(){
 
+  const rubrosConfigurados =
+    datosPaso1.evaluacion?.rubros || [];
+
   const rubrosAceptados =
     datosPaso1.sistemaEvaluacion?.rubrosAceptados || [];
 
   if(rubrosAceptados.length === 0){
 
     alert(
-      "No hay actividades evaluativas aceptadas para modificar."
+      "No hay rubros aceptados para modificar."
     );
 
     return;
   }
 
-  const ultimoRubro =
-    rubrosAceptados.pop();
+  // Si solamente existe un rubro,
+  // abrirlo directamente.
+  if(rubrosConfigurados.length === 1){
+
+    abrirRubroParaModificar(
+      rubrosConfigurados[0].nombre
+    );
+
+    return;
+  }
+
+  mostrarSelectorRubrosModificar();
+
+}
+
+   function mostrarSelectorRubrosModificar(){
+
+  const contenedor =
+    document.getElementById(
+      "contenidoSistemaEvaluacion"
+    );
+
+  const rubrosConfigurados =
+    datosPaso1.evaluacion?.rubros || [];
+
+  const rubrosAceptados =
+    datosPaso1.sistemaEvaluacion?.rubrosAceptados || [];
+
+  let opciones = "";
+
+  rubrosConfigurados.forEach(
+    (rubro, index) => {
+
+      const rubroAceptado =
+        rubrosAceptados.find(
+          item =>
+            item.rubro === rubro.nombre
+        );
+
+      if(!rubroAceptado){
+        return;
+      }
+
+      const peso =
+        Number(
+          rubroAceptado.pesoTotal ??
+          rubro.peso ??
+          0
+        );
+
+      opciones += `
+        <div
+          style="
+            margin-bottom:10px;
+            padding:10px;
+            border:1px solid #ccc;
+          "
+        >
+          <label>
+            <input
+              type="radio"
+              name="rubroModificar"
+              value="${index}"
+            >
+
+            <strong>
+              ${rubro.nombre}
+            </strong>
+
+            — ${peso} puntos
+          </label>
+        </div>
+      `;
+
+    }
+  );
+
+  contenedor.innerHTML = `
+
+    <h3>
+      Modificar Sistema de Evaluación
+    </h3>
+
+    <p>
+      Seleccione el rubro que desea modificar:
+    </p>
+
+    ${opciones}
+
+    <div style="margin-top:15px;">
+
+      <button
+        type="button"
+        onclick="confirmarRubroModificar()"
+      >
+        Modificar seleccionado
+      </button>
+
+      <button
+        type="button"
+        onclick="mostrarVistaFinalSistemaEvaluacion()"
+        style="margin-left:10px;"
+      >
+        Cancelar
+      </button>
+
+    </div>
+  `;
+
+} 
+
+    function confirmarRubroModificar(){
+
+  const seleccionado =
+    document.querySelector(
+      'input[name="rubroModificar"]:checked'
+    );
+
+  if(!seleccionado){
+
+    alert(
+      "Seleccione el rubro que desea modificar."
+    );
+
+    return;
+  }
+
+  const indice =
+    Number(seleccionado.value);
+
+  const rubrosConfigurados =
+    datosPaso1.evaluacion?.rubros || [];
+
+  const rubro =
+    rubrosConfigurados[indice];
+
+  if(!rubro){
+    alert("No fue posible identificar el rubro seleccionado.");
+    return;
+  }
+
+  abrirRubroParaModificar(
+    rubro.nombre
+  );
+
+}
+
+   function abrirRubroParaModificar(nombreRubro){
+
+  const rubrosAceptados =
+    datosPaso1.sistemaEvaluacion?.rubrosAceptados || [];
+
+  const indice =
+    rubrosAceptados.findIndex(
+      item =>
+        item.rubro === nombreRubro
+    );
+
+  if(indice === -1){
+
+    alert(
+      "No se encontró el rubro aceptado que desea modificar."
+    );
+
+    return;
+  }
 
   propuestaEvaluacionActual =
     JSON.parse(
-      JSON.stringify(ultimoRubro)
+      JSON.stringify(
+        rubrosAceptados[indice]
+      )
     );
 
   datosPaso1.sistemaEvaluacion.propuestaActual =
     propuestaEvaluacionActual;
 
-  datosPaso1.instrumentosEvaluacion =
-    datosPaso1.instrumentosEvaluacion || {};
+  datosPaso1.sistemaEvaluacion.indiceRubroEnEdicion =
+    indice;
 
-  datosPaso1.instrumentosEvaluacion.sistemaEvaluacionCompletado =
-    false;
-
-  const respaldo =
-    JSON.parse(
-      localStorage.getItem("respaldoGuiaDocente")
-    );
-
-  respaldo.datosGuia =
-    datosPaso1;
-
-  localStorage.setItem(
-    "respaldoGuiaDocente",
-    JSON.stringify(respaldo)
-  );
+  datosPaso1.sistemaEvaluacion.editandoRubroAceptado =
+    true;
 
   mostrarTablaEvaluacion(
     propuestaEvaluacionActual
   );
 
 } 
-
+    
   function descargarSistemaEvaluacionWord(){
 
   const rubrosConfigurados =
