@@ -90,6 +90,44 @@
 
       <div id="listaInstrumentos"></div>
 
+      
+<div
+  id="esperaGeneracionInstrumento"
+  role="status"
+  aria-live="polite"
+  style="
+    display:none;
+    margin-top:18px;
+    padding:18px;
+    border:1px solid #dddddd;
+    border-radius:8px;
+    text-align:center;
+  "
+>
+  <div
+    id="relojGeneracionInstrumento"
+    style="
+      font-size:36px;
+      margin-bottom:10px;
+      display:inline-block;
+      animation:girarRelojPruebaObjetiva 2s linear infinite;
+    "
+  >
+    🕒
+  </div>
+
+  <strong id="mensajeGeneracionInstrumento">
+    Generando instrumento de evaluación con IA...
+  </strong>
+
+  <p>
+    Por favor, espere mientras la inteligencia
+    artificial elabora el instrumento.
+    Este proceso puede tardar unos momentos.
+  </p>
+</div>
+
+
       <div
         id="instrumentoGenerado"
         style="
@@ -128,6 +166,8 @@ let datosGuia = null;
 let fuenteInstrumentos = null;
 
 let instrumentoSeleccionadoActual = null;
+  
+let generandoInstrumentoEvaluacion = false;
 
 let pruebaObjetivaGeneradaActual = null;
   
@@ -19048,8 +19088,14 @@ function obtenerEstructuraPareamientoPruebaObjetiva(){
   
 async function seleccionarInstrumento(index){
 
+  
+  if (generandoInstrumentoEvaluacion) {
+    return;
+  }
+
   const instrumentos =
     obtenerInstrumentosPendientes();
+
 
   const seleccionado =
     instrumentos[index];
@@ -19099,24 +19145,19 @@ async function seleccionarInstrumento(index){
         )
       );
 
-
     pruebaObjetivaGeneradaActual.valorTotal =
       Number(
         seleccionado.valor || 0
       );
 
-
     pruebaObjetivaGeneradaActual.cantidadItems =
       pruebaObjetivaGeneradaActual.items.length;
-
 
     solicitudGeneracionPruebaObjetivaActual =
       null;
 
-
     numeroItemPruebaObjetivaEnEdicion =
       null;
-
 
     mostrarRevisionPruebaObjetiva(
       pruebaObjetivaGeneradaActual
@@ -19202,12 +19243,39 @@ if(
     return;
   }
 
+  
+console.log(
+  "Contexto enviado para elaborar el instrumento:",
+  contexto
+);
 
-  console.log(
-    "Contexto enviado para elaborar el instrumento:",
-    contexto
+const esperaInstrumento =
+  document.getElementById(
+    "esperaGeneracionInstrumento"
   );
 
+  const mensajeInstrumento =
+  document.getElementById(
+    "mensajeGeneracionInstrumento"
+  );
+
+if (mensajeInstrumento) {
+  mensajeInstrumento.textContent =
+    "Generando " +
+    seleccionado.instrumento +
+    " con IA...";
+}
+
+if (esperaInstrumento) {
+  esperaInstrumento.style.display = "block";
+
+  esperaInstrumento.scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+  });
+}
+
+generandoInstrumentoEvaluacion = true;
 
   try{
 
@@ -19226,16 +19294,13 @@ if(
         }
       );
 
-
     const resultado =
       await respuesta.json();
-
 
     console.log(
       "Respuesta del Worker:",
       resultado
     );
-
 
     if(
       !respuesta.ok ||
@@ -19299,14 +19364,29 @@ if(
       "Error al generar el instrumento:",
       error
     );
-
+ 
     alert(
       "Ocurrió un error al comunicarse con el servicio de elaboración de instrumentos."
     );
 
+  } finally {
+
+    const esperaInstrumento =
+      document.getElementById(
+        "esperaGeneracionInstrumento"
+      );
+
+    
+    if (esperaInstrumento) {
+      esperaInstrumento.style.display = "none";
+    }
+
+    generandoInstrumentoEvaluacion = false;
+
   }
 
-} 
+}
+
 function mostrarErrorInstrumentos(mensaje){
 
   document
