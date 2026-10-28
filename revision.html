@@ -1475,6 +1475,32 @@ function construirCronogramaWordMaestro(){
   const filasCronograma = [];
 
 
+filasCronograma.push(
+  new TableRow({
+    children: [
+      new TableCell({
+        columnSpan: 4,
+        shading: {
+          fill: "70AD47"
+        },
+        children: [
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: "X. Cronograma",
+                bold: true,
+                color: "000000",
+                font: "Book Antiqua",
+                size: 20
+              })
+            ]
+          })
+        ]
+      })
+    ]
+  })
+);
+
   /*
     ENCABEZADOS
   */
@@ -1516,8 +1542,8 @@ function construirCronogramaWordMaestro(){
               type: WidthType.PERCENTAGE
             },
 
-            shading: {
-              fill: "006B54"
+           shading: {
+               fill: "D9EAD3"
             },
 
             verticalAlign:
@@ -1535,7 +1561,7 @@ function construirCronogramaWordMaestro(){
                   new TextRun({
                     text: columna.texto,
                     bold: true,
-                    color: "FFFFFF",
+                    color: "000000",
                     font: "Book Antiqua",
                     size: 20
                   })
@@ -1574,7 +1600,7 @@ function construirCronogramaWordMaestro(){
               columnSpan: 4,
 
               shading: {
-                fill: "E9F4F1"
+                fill: "D9EAD3"
               },
 
               verticalAlign:
@@ -2340,34 +2366,10 @@ if (Array.isArray(clase.actividadesAdicionales)) {
 
 
   return [
-
-    new Paragraph({
-
-      alignment:
-        AlignmentType.CENTER,
-
-      children: [
-
-        new TextRun({
-          text:
-            "Cronograma de la asignatura",
-          bold: true,
-          font: "Book Antiqua",
-          size: 20
-        })
-
-      ]
-
-    }),
-
-    new Paragraph({
-      text: ""
-    }),
-
     tablaWord
-
   ];
 
+ 
 }
 
   function construirSistemaEvaluacionWordMaestro(){
