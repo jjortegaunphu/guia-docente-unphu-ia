@@ -10,6 +10,31 @@
   >
 
   <title>Sistema de Evaluación · Guía Docente UNPHU IA</title>
+  
+<style>
+@keyframes giroEvaluacion {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.reloj-evaluacion {
+  display: inline-block;
+  font-size: 28px;
+  animation: giroEvaluacion 2s linear infinite;
+  margin-bottom: 8px;
+}
+
+.espera-evaluacion {
+  margin: 20px 0;
+  padding: 20px;
+  text-align: center;
+  background: #e9f4f1;
+  color: #004f3f;
+  border: 1px solid #b9d8cd;
+  border-radius: 8px;
+}
+</style>
+
 </head>
 
 <body>
@@ -74,6 +99,30 @@
 
 
   <script>
+
+    
+let generacionEvaluacionEnCurso = false;
+
+function mostrarEsperaEvaluacion(nombreRubro) {
+  const contenedor =
+    document.getElementById("contenidoSistemaEvaluacion");
+
+  if (!contenedor) return;
+
+  contenedor.innerHTML = `
+    <div class="espera-evaluacion" role="status" aria-live="polite">
+      <span class="reloj-evaluacion">◷</span>
+      <div id="mensajeEsperaEvaluacion"></div>
+      <p>Por favor, espere mientras se prepara la propuesta académica.</p>
+    </div>
+  `;
+
+  document.getElementById(
+    "mensajeEsperaEvaluacion"
+  ).textContent =
+    "La IA está elaborando " + nombreRubro + ".";
+}
+
 
     let datosPaso1 = null;
 
@@ -2599,18 +2648,20 @@ async function generarPrimerRubroEvaluacion(){
     return;
   }
 
-  const contexto =
-    prepararContextoIAEvaluacion(primerRubro);
+    
+  if (generacionEvaluacionEnCurso) return;
+  generacionEvaluacionEnCurso = true;
 
   const contenedor =
     document.getElementById("contenidoSistemaEvaluacion");
 
-  contenedor.innerHTML =
-    "<p>Generando propuesta del " +
-    primerRubro.nombre +
-    "...</p>";
+  try {
 
-  try{
+    const contexto =
+      prepararContextoIAEvaluacion(primerRubro);
+
+    mostrarEsperaEvaluacion(primerRubro.nombre);
+
 
     const respuesta = await fetch(
       "https://guia-docente-unphu-api.jortega-cc4.workers.dev/generar-sistema-evaluacion",
@@ -2623,14 +2674,50 @@ async function generarPrimerRubroEvaluacion(){
       }
     );
 
-    const resultado = await respuesta.json();
+    
+let resultado;
 
-    if(!respuesta.ok || !resultado.correcto){
-      throw new Error(
-        resultado.error ||
-        "No fue posible generar la propuesta de evaluación."
-      );
+try {
+  resultado = await respuesta.json();
+} catch (errorJSON) {
+  console.error(
+    "Respuesta no válida del servidor:",
+    respuesta.status,
+    errorJSON
+  );
+
+  throw new Error(
+    "El servidor devolvió una respuesta no válida. " +
+    "Código HTTP: " + respuesta.status +
+    ". Puede intentar nuevamente."
+  );
+}
+
+if (!respuesta.ok || !resultado?.correcto) {
+
+  console.error(
+    "Error del servidor al generar evaluación:",
+    {
+      codigoHTTP: respuesta.status,
+      rubro: primerRubro.nombre,
+      detalle: resultado?.error || "Sin detalle"
     }
+  );
+
+  if (respuesta.status === 500) {
+    throw new Error(
+      "El servidor presentó un error temporal (HTTP 500). " +
+      "Puede intentar generar nuevamente este acumulado."
+    );
+  }
+
+  throw new Error(
+    resultado?.error ||
+    "No fue posible generar la propuesta de evaluación. " +
+    "Código HTTP: " + respuesta.status
+  );
+}
+
 
     console.log(
       "Propuesta generada para " + primerRubro.nombre + ":",
@@ -2661,15 +2748,55 @@ localStorage.setItem(
     );
 
   }
+ 
   catch(error){
 
     console.error(
-      "Error al generar el sistema de evaluación:",
+      "Error al generar el primer rubro:",
       error
     );
 
-    contenedor.innerHTML =
-      "<p>No fue posible generar la propuesta del sistema de evaluación.</p>";
+    contenedor.innerHTML = `
+      <div class="espera-evaluacion">
+        <h3>Generación temporalmente interrumpida</h3>
+        
+    <p id="mensajeErrorPrimerRubro">
+      No fue posible generar el primer acumulado.
+      Puede intentarlo nuevamente.
+    </p>
+
+        <button
+          type="button"
+          id="btnReintentarPrimerRubro"
+        >
+          Reintentar generación
+        </button>
+      </div>
+    `;
+
+    
+const mensajeErrorPrimerRubro =
+  document.getElementById("mensajeErrorPrimerRubro");
+
+if (mensajeErrorPrimerRubro) {
+  mensajeErrorPrimerRubro.textContent =
+    "No fue posible generar el primer acumulado. " +
+    (error.message ||
+      "Puede intentarlo nuevamente.");
+}
+
+
+    const btnReintentar =
+      document.getElementById("btnReintentarPrimerRubro");
+
+    btnReintentar.onclick = function(){
+      btnReintentar.disabled = true;
+      generarPrimerRubroEvaluacion();
+    };
+
+  }
+  finally {
+    generacionEvaluacionEnCurso = false;
   }
 }
 
@@ -2682,31 +2809,32 @@ async function generarRubroEvaluacion(rubro){
     return;
   }
 
-  const indiceRubro =
-  datosPaso1.evaluacion.rubros.findIndex(
-    item => item.nombre === rubro.nombre
-  );
-
-const rubroAnterior =
-  indiceRubro > 0
-    ? datosPaso1.evaluacion.rubros[indiceRubro - 1]
-    : null;
-
-const contexto =
-  prepararContextoIAEvaluacion(
-    rubro,
-    rubroAnterior
-  );
+  
+  if (generacionEvaluacionEnCurso) return;
+  generacionEvaluacionEnCurso = true;
 
   const contenedor =
     document.getElementById("contenidoSistemaEvaluacion");
 
-  contenedor.innerHTML =
-    "<p>Generando propuesta del " +
-    rubro.nombre +
-    "...</p>";
+  try {
 
-  try{
+    const indiceRubro =
+      datosPaso1.evaluacion.rubros.findIndex(
+        item => item.nombre === rubro.nombre
+      );
+
+    const rubroAnterior =
+      indiceRubro > 0
+        ? datosPaso1.evaluacion.rubros[indiceRubro - 1]
+        : null;
+
+    const contexto =
+      prepararContextoIAEvaluacion(
+        rubro,
+        rubroAnterior
+      );
+
+    mostrarEsperaEvaluacion(rubro.nombre);
 
     const respuesta = await fetch(
       "https://guia-docente-unphu-api.jortega-cc4.workers.dev/generar-sistema-evaluacion",
@@ -2719,14 +2847,53 @@ const contexto =
       }
     );
 
-    const resultado = await respuesta.json();
+    
+let resultado;
 
-    if(!respuesta.ok || !resultado.correcto){
-      throw new Error(
-        resultado.error ||
-        "No fue posible generar la propuesta de evaluación."
-      );
+try {
+  resultado = await respuesta.json();
+} catch (errorJSON) {
+  console.error(
+    "Respuesta no válida del servidor:",
+    respuesta.status,
+    errorJSON
+  );
+
+  throw new Error(
+    "El servidor devolvió una respuesta no válida. " +
+    "Código HTTP: " + respuesta.status +
+    ". Puede intentar nuevamente."
+  );
+}
+
+
+  
+
+if (!respuesta.ok || !resultado?.correcto) {
+
+  console.error(
+    "Error del servidor al generar evaluación:",
+    {
+      codigoHTTP: respuesta.status,
+      rubro: rubro.nombre,
+      detalle: resultado.error || "Sin detalle"
     }
+  );
+
+  if (respuesta.status === 500) {
+    throw new Error(
+      "El servidor presentó un error temporal (HTTP 500). " +
+      "Puede intentar generar nuevamente este acumulado."
+    );
+  }
+
+  throw new Error(
+    resultado.error ||
+    "No fue posible generar la propuesta de evaluación. " +
+    "Código HTTP: " + respuesta.status
+  );
+}
+
 
     console.log(
       "Propuesta generada para " + rubro.nombre + ":",
@@ -2757,17 +2924,77 @@ const contexto =
     );
 
   }
+  
   catch(error){
 
     console.error(
-      "Error al generar el sistema de evaluación:",
+      "Error al generar el rubro " + rubro.nombre + ":",
       error
     );
 
-    contenedor.innerHTML =
-      "<p>No fue posible generar la propuesta del sistema de evaluación.</p>";
+    contenedor.innerHTML = `
+      <div style="
+        padding:20px;
+        border:1px solid #b9d8cd;
+        border-left:4px solid #006b54;
+        border-radius:8px;
+        background:#e9f4f1;
+        color:#004f3f;
+      ">
+        <h3>Generación temporalmente interrumpida</h3>
+
+        <p id="mensajeRubroInterrumpido"></p>
+
+        <p>
+          Los acumulados previamente aceptados
+          se mantienen guardados.
+          No es necesario comenzar nuevamente.
+        </p>
+
+        <button
+          type="button"
+          id="btnReintentarRubro"
+          style="
+            padding:12px 20px;
+            background:#006b54;
+            color:white;
+            border:none;
+            border-radius:6px;
+            font-weight:bold;
+            cursor:pointer;
+          "
+        >
+          Reintentar generación
+        </button>
+      </div>
+    `;
+
+document.getElementById(
+  "mensajeRubroInterrumpido"
+).textContent =
+  "No fue posible completar la propuesta de " +
+  rubro.nombre + ". " +
+  (error.message ||
+    "Puede intentar nuevamente sin perder los avances guardados.");
+
+    const btnReintentar =
+      document.getElementById("btnReintentarRubro");
+
+    
+    btnReintentar.onclick = function(){
+
+      btnReintentar.disabled = true;
+
+      generarRubroEvaluacion(rubro);
+
+    };
   }
+  finally {
+    generacionEvaluacionEnCurso = false;
+  }
+
 }
+
     
     function mostrarSistemaEvaluacion(){
 
