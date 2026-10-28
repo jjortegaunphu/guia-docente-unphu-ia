@@ -324,6 +324,17 @@ footer{
 #tablaCronogramaInstitucional td:nth-child(4){
   width:28%;
 }
+  
+@keyframes giroReloj {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+#btnGenerarSemana:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
 </style>
 </head> 
 
@@ -5002,7 +5013,63 @@ function validarEvaluacionPropuesta(
     mensaje: ""
   };
 }
+
+let generacionSemanaEnCurso = false;
+
 async function generarPropuestaSemana(){
+
+  if (generacionSemanaEnCurso) return;
+
+  generacionSemanaEnCurso = true;
+
+  const botonGenerar = document.getElementById("btnGenerarSemana");
+
+  if (botonGenerar) {
+    botonGenerar.disabled = true;
+    botonGenerar.innerHTML =
+      '<span style="display:inline-block;animation:giroReloj 2s linear infinite;">◷</span> Generando propuesta...';
+  }
+
+  let indicador = document.getElementById("indicadorGeneracionSemana");
+
+  if (!indicador) {
+    indicador = document.createElement("div");
+    indicador.id = "indicadorGeneracionSemana";
+    indicador.setAttribute("role", "status");
+    indicador.setAttribute("aria-live", "polite");
+    indicador.style.cssText =
+      "margin-top:14px;padding:16px;border:1px solid #b9d8cd;" +
+      "border-radius:8px;background:#e9f4f1;color:#004f3f;" +
+      "font-weight:600;text-align:center;";
+
+    botonGenerar?.insertAdjacentElement("afterend", indicador);
+  }
+
+  indicador.innerHTML =
+    '<span style="font-size:25px;display:inline-block;animation:giroReloj 2s linear infinite;">◷</span>' +
+    '<div>La IA está generando la propuesta académica de la Semana ' +
+    semanaActual +
+    '. Por favor, espere...</div>';
+  indicador.style.display = "block";
+
+  try {
+    await ejecutarGeneracionSemana();
+  } finally {
+    generacionSemanaEnCurso = false;
+    indicador.style.display = "none";
+
+    if (botonGenerar) {
+      botonGenerar.disabled = false;
+      if (botonGenerar.textContent.includes("Generando propuesta")) {
+        botonGenerar.textContent =
+          "Generar propuesta de Semana " + semanaActual;
+      }
+    }
+  }
+}
+
+async function ejecutarGeneracionSemana(){
+
 const historialMetodologias = datosGuia.cronograma
   .filter(item => item.semana < semanaActual && item.propuesta)
   .flatMap(item =>
