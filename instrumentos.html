@@ -15,6 +15,32 @@
   </title>
 
   <script src="https://unpkg.com/docx@9.5.1/dist/index.umd.cjs"></script>
+
+  
+<style>
+  @keyframes girarRelojPruebaObjetiva {
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  #relojGeneracionPruebaObjetiva {
+    display: inline-block;
+    animation: girarRelojPruebaObjetiva 2s linear infinite;
+    transform-origin: center;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #relojGeneracionPruebaObjetiva {
+      animation: none;
+    }
+  }
+</style>
+
   
 </head>
 
@@ -7245,12 +7271,49 @@ cobertura.forEach(
     la Prueba objetiva para su revisión docente.
   </p>
 
-  <button
-    type="button"
-    onclick="generarPruebaObjetiva()"
+
+<button
+  type="button"
+  id="btnGenerarPruebaObjetiva"
+  onclick="generarPruebaObjetiva()"
+>
+  Generar Prueba objetiva
+</button>
+
+<div
+  id="esperaGeneracionPruebaObjetiva"
+  role="status"
+  aria-live="polite"
+  style="
+    display:none;
+    margin-top:18px;
+    padding:18px;
+    border:1px solid #dddddd;
+    border-radius:8px;
+    text-align:center;
+  "
+>
+  <div
+    id="relojGeneracionPruebaObjetiva"
+    style="
+      font-size:36px;
+      margin-bottom:10px;
+    "
   >
-    Generar Prueba objetiva
-  </button>
+    🕒
+  </div>
+
+  <strong>
+    Generando prueba objetiva con IA...
+  </strong>
+
+  <p>
+    Por favor, espere mientras se elabora
+    la prueba. Este proceso puede tardar
+    unos momentos.
+  </p>
+</div>
+
 
 </div>
   
@@ -11575,15 +11638,38 @@ function construirSolicitudGeneracionPruebaObjetiva(){
   return solicitud;
 }
 
- async function generarPruebaObjetiva(){
+ 
+async function generarPruebaObjetiva(){
+
+  const botonGenerar =
+    document.getElementById("btnGenerarPruebaObjetiva");
+
+  const esperaGeneracion =
+    document.getElementById("esperaGeneracionPruebaObjetiva");
+
+  if (botonGenerar?.disabled) {
+    return;
+  }
 
   const solicitud =
     construirSolicitudGeneracionPruebaObjetiva();
+
 
   if(!solicitud){
     return;
   }
 
+
+if (botonGenerar) {
+  botonGenerar.disabled = true;
+  botonGenerar.textContent = "Generando prueba...";
+}
+
+if (esperaGeneracion) {
+  esperaGeneracion.style.display = "block";
+}
+
+  
   solicitudGeneracionPruebaObjetivaActual =
     solicitud;
 
@@ -11591,6 +11677,8 @@ function construirSolicitudGeneracionPruebaObjetiva(){
     "Solicitud que se enviará al Worker:",
     solicitud
   );
+
+try {
 
    const respuesta =
   await fetch(
@@ -11653,15 +11741,42 @@ console.log(
 
    guardarBorradorPruebaObjetiva();
 
-   mostrarRevisionPruebaObjetiva(
-      pruebaObjetivaGeneradaActual
+   
+mostrarRevisionPruebaObjetiva(
+  pruebaObjetivaGeneradaActual
 );
 
-} 
+} catch (error) {
+
+  console.error(
+    "Error al generar la Prueba objetiva:",
+    error
+  );
+
+  alert(
+    "No fue posible completar la generación de la Prueba objetiva. " +
+    "Puede intentarlo nuevamente."
+  );
+
+} finally {
+
+  if (botonGenerar) {
+    botonGenerar.disabled = false;
+    botonGenerar.textContent = "Generar Prueba objetiva";
+  }
+
+  if (esperaGeneracion) {
+    esperaGeneracion.style.display = "none";
+  }
+
+}
+
+}
 
 function mostrarRevisionPruebaObjetiva(
   prueba
 ){
+
 
   console.log(
     "Prueba objetiva recibida para mostrar:",
