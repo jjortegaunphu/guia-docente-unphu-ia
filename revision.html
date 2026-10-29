@@ -3063,6 +3063,138 @@ if (Array.isArray(clase.actividadesAdicionales)) {
 
 }
 
+ 
+function construirBibliografiaWordMaestro(){
+
+  if(typeof docx === "undefined" || !datosGuia){
+    return [];
+  }
+
+  const { Paragraph, TextRun, AlignmentType } = docx;
+
+  const cronograma =
+    datosGuia?.instrumentosEvaluacion?.fuente?.cronograma;
+
+  const referencias = [];
+  const referenciasRegistradas = new Set();
+
+  if(Array.isArray(cronograma)){
+
+    const semanasOrdenadas = [...cronograma].sort(
+      (a, b) => Number(a?.semana || 0) - Number(b?.semana || 0)
+    );
+
+    semanasOrdenadas.forEach(semana => {
+
+      const clases = semana?.propuesta?.clases;
+
+      if(!Array.isArray(clases)){
+        return;
+      }
+
+      clases.forEach(clase => {
+
+        const bibliografia = Array.isArray(clase?.bibliografia)
+          ? clase.bibliografia
+          : [];
+
+        bibliografia.forEach(referencia => {
+
+          const texto = typeof referencia === "string"
+            ? referencia.trim()
+            : "";
+
+          if(!texto){
+            return;
+          }
+
+          const clave = texto
+            .normalize("NFKC")
+            .replace(/\s+/g, " ")
+            .toLocaleLowerCase("es");
+
+          if(!referenciasRegistradas.has(clave)){
+            referenciasRegistradas.add(clave);
+            referencias.push(texto);
+          }
+
+        });
+
+      });
+
+    });
+
+  }
+
+  const contenido = [
+
+    new Paragraph({
+      spacing: {
+        before: 240,
+        after: 160
+      },
+      alignment: AlignmentType.LEFT,
+      children: [
+        new TextRun({
+          text: "XII. Recursos bibliográficos actualizados:",
+          bold: true,
+          font: "Book Antiqua",
+          size: 20,
+          color: "000000"
+        })
+      ]
+    })
+
+  ];
+
+  if(referencias.length === 0){
+
+    contenido.push(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: "No se registraron referencias bibliográficas en el cronograma.",
+            font: "Book Antiqua",
+            size: 20
+          })
+        ]
+      })
+    );
+
+  } else {
+
+    referencias.forEach(referencia => {
+
+      contenido.push(
+        new Paragraph({
+          alignment: AlignmentType.LEFT,
+          spacing: {
+            after: 120
+          },
+          indent: {
+            hanging: 360,
+            left: 360
+          },
+          children: [
+            new TextRun({
+              text: referencia,
+              font: "Book Antiqua",
+              size: 20,
+              color: "000000"
+            })
+          ]
+        })
+      );
+
+    });
+
+  }
+
+  return contenido;
+
+}
+ 
+
 function construirEscalaEstimacionWordMaestro(
   instrumento
 ){
@@ -6403,10 +6535,29 @@ async function descargarGuiaDocenteWord(){
   const sistemaEvaluacion =
     construirSistemaEvaluacionWordMaestro();
 
+  const bibliografia =
+    construirBibliografiaWordMaestro();
 
   const instrumentos =
     construirInstrumentosWordMaestro();
 
+  const anexos = [
+  new docx.Paragraph({
+    spacing: {
+      before: 240,
+      after: 160
+    },
+    children: [
+      new docx.TextRun({
+        text: "XIII. Anexos:",
+        bold: true,
+        font: "Book Antiqua",
+        size: 20,
+        color: "000000"
+      })
+    ]
+  })
+];
 
   if(
     !Array.isArray(cronograma) ||
@@ -6446,18 +6597,21 @@ async function descargarGuiaDocenteWord(){
     return;
   }
 
-
   /*
-    CONTENIDO DEL DOCUMENTO MAESTRO
+  CONTENIDO DEL DOCUMENTO MAESTRO
 
-    Cronograma
-    ↓
-    Sistema de Evaluación
-    ↓
-    Instrumentos
-  */
+  IX. Datos Generales
+  ↓
+  X. Cronograma
+  ↓
+  XI. Sistema de Evaluación
+  ↓
+  XII. Recursos bibliográficos actualizados
+  ↓
+  XIII. Anexos
+      Instrumentos de Evaluación
+*/
 
-  
 const contenido = [
 
     ...datosGenerales,
@@ -6480,12 +6634,14 @@ const contenido = [
 
     }),
 
+...sistemaEvaluacion,
 
-    ...sistemaEvaluacion,
+...bibliografia,
 
+...anexos,
 
-    ...instrumentos
-
+...instrumentos
+      
   ];
 
 
