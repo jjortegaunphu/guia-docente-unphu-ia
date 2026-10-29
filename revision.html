@@ -6894,11 +6894,19 @@ const contenido = [
 ...sistemaEvaluacion,
 
 ...bibliografia,
-
 ...anexos,
-
 ...instrumentos,
-  tablaFirmas
+
+// Espacio antes del cajetín final
+new docx.Paragraph({
+  spacing: {
+    before: 0,
+    after: 160
+  },
+  children: []
+}),
+
+tablaFirmas
       
   ];
 
