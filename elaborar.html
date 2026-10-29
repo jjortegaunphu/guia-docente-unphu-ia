@@ -4446,17 +4446,61 @@ const metodologiasInstitucionalesCompletas =
   diagnosticoMetodologiaHTML +
   metodologiasInstitucionales;
 
+
 const actividadesInstitucionales =
   Array.isArray(clase.metodologiasActividades)
     ? clase.metodologiasActividades
-        .map((item, index) =>
-          "<strong>Actividad formativa " +
-          (index + 1) +
-          ":</strong><br>" +
-          (item.actividadFormativa || "")
-        )
+        .map((item, index) => {
+
+          const codigosREA =
+            Array.isArray(item.codigosREA)
+              ? item.codigosREA.join(", ")
+              : "";
+
+          const actividadPrincipal =
+            "<strong>Actividad formativa " +
+            (index + 1) +
+            ":</strong><br>" +
+            (item.actividadFormativa || "") +
+            (codigosREA ? " (" + codigosREA + ")" : "");
+
+          const adicionales =
+            Array.isArray(item.actividadesAdicionales)
+              ? item.actividadesAdicionales
+              : [];
+
+          const actividadesExtras = adicionales
+            .map((actividad, indice) => {
+
+              const codigosAdicionales =
+                Array.isArray(actividad.codigosREA)
+                  ? actividad.codigosREA.join(", ")
+                  : "";
+
+              return (
+                "<strong>Actividad formativa adicional " +
+                (indice + 1) +
+                " de la metodología " +
+                (index + 1) +
+                ":</strong><br>" +
+                (actividad.actividadFormativa || "") +
+                (codigosAdicionales
+                  ? " (" + codigosAdicionales + ")"
+                  : " (REA pendiente de validación)")
+              );
+
+            })
+            .join("<br><br>");
+
+          return actividadPrincipal +
+            (actividadesExtras
+              ? "<br><br>" + actividadesExtras
+              : "");
+
+        })
         .join("<br><br>")
     : "";
+
 
       const actividadesInstitucionalesCompletas =
   diagnosticoActividadHTML +
@@ -5385,6 +5429,49 @@ if (diagnostico) {
 
 metodologiasActividades.forEach((item, index) => {
 
+  
+  // Actividades adicionales de esta metodología
+  const actividadesMetodologia =
+    Array.isArray(item.actividadesAdicionales)
+      ? item.actividadesAdicionales
+      : [];
+
+  const actividadesMetodologiaHTML =
+    actividadesMetodologia.map((actividad, indice) => {
+
+      const textoActividad =
+        String(actividad.actividadFormativa || "");
+
+      const textoSeguro = textoActividad
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+
+      const codigos =
+        Array.isArray(actividad.codigosREA)
+          ? actividad.codigosREA.join(", ")
+          : "";
+
+      return `
+        <p>
+          <strong>Actividad formativa adicional ${indice + 1}:</strong><br>
+          ${textoSeguro}
+          ${codigos ? ` (${codigos})` : ""}
+        </p>
+
+        ${
+          actividad.pendienteValidacionREA
+            ? `<p class="nota">
+                 Vinculación con los REA pendiente de validación.
+               </p>`
+            : ""
+        }
+      `;
+
+    }).join("");
+
+
   const codigosREA =
   Array.isArray(item.codigosREA)
     ? item.codigosREA.join(", ")
@@ -5434,6 +5521,16 @@ metodologiasActividades.forEach((item, index) => {
         ${actividadLimpia}${codigosREA ? ` (${codigosREA})` : ""}
     </p>
 
+    
+<button
+  type="button"
+  class="boton boton-secundario"
+  onclick="agregarActividadFormativaMetodologia(${clase.clase}, ${index})"
+>
+  + Agregar actividad formativa
+</button>
+
+
 <button
   type="button"
   class="boton boton-secundario"
@@ -5447,10 +5544,14 @@ metodologiasActividades.forEach((item, index) => {
   class="boton boton-secundario"
   onclick="modificarActividadConIA(${clase.clase}, ${index})"
 >
+  
   Modificar con IA
 </button>
-    
+
+${actividadesMetodologiaHTML}
+
 </div>
+
   `;
 }); 
 const recursosMaterialesTexto =
@@ -5930,6 +6031,173 @@ mostrarPropuestaAcademica(
   return;
 }
 }
+
+ 
+/* ==================================================
+AGREGAR ACTIVIDAD FORMATIVA A UNA METODOLOGÍA
+CON VINCULACIÓN AUTOMÁTICA A LOS REA OFICIALES
+================================================== */
+
+async function agregarActividadFormativaMetodologia(
+  numeroClase,
+  indiceMetodologia
+) {
+
+  const semana = datosGuia.cronograma.find(
+    item => Number(item.semana) === Number(semanaActual)
+  );
+
+  if (!semana || !semana.propuesta) {
+    alert("No se encontró la propuesta de la semana.");
+    return;
+  }
+
+  const clase = semana.propuesta.clases.find(
+    item => Number(item.clase) === Number(numeroClase)
+  );
+
+  if (!clase) {
+    alert("No se encontró la clase seleccionada.");
+    return;
+  }
+
+  const metodologia =
+    clase.metodologiasActividades?.[indiceMetodologia];
+
+  if (!metodologia) {
+    alert("No se encontró la metodología seleccionada.");
+    return;
+  }
+
+  const nuevaActividad = prompt(
+    "Introduzca una actividad formativa adicional para la metodología " +
+    (indiceMetodologia + 1) + ":"
+  );
+
+  if (nuevaActividad === null) {
+    return;
+  }
+
+  const textoActividad = nuevaActividad.trim();
+
+  if (!textoActividad) {
+    alert("Debe escribir una actividad formativa.");
+    return;
+  }
+
+  const reaOficiales =
+    datosGuia.programa.reaOficiales || [];
+
+  if (!reaOficiales.length) {
+    alert(
+      "No hay REA oficiales disponibles. " +
+      "Revise los REA registrados en la Etapa 3."
+    );
+    return;
+  }
+
+  try {
+
+    const respuesta = await fetch(
+      "https://guia-docente-unphu-api.jortega-cc4.workers.dev/revisar-rea-actividad",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          actividad: textoActividad,
+          reaOficiales: reaOficiales.map(rea => ({
+            codigo: rea.codigo,
+            texto: rea.texto
+          }))
+        })
+      }
+    );
+
+    if (!respuesta.ok) {
+      throw new Error(
+        "No fue posible analizar la vinculación con los REA."
+      );
+    }
+
+    const resultado = await respuesta.json();
+
+    if (
+      !resultado.correcto ||
+      !Array.isArray(resultado.codigosREA)
+    ) {
+      throw new Error(
+        resultado.error ||
+        "La respuesta de la IA no es válida."
+      );
+    }
+
+    const reaPertinentes = reaOficiales.filter(
+      rea => resultado.codigosREA.includes(rea.codigo)
+    );
+
+    if (!reaPertinentes.length) {
+      alert(
+        "La IA no identificó una vinculación pertinente " +
+        "entre esta actividad y los REA oficiales.\n\n" +
+        "La actividad no se agregará. " +
+        "Puede reformularla e intentarlo nuevamente."
+      );
+      return;
+    }
+
+    const detalleREA = reaPertinentes.map(
+      rea => rea.codigo + ": " + rea.texto
+    ).join("\n\n");
+
+    const confirmar = confirm(
+      "ACTIVIDAD FORMATIVA ADICIONAL:\n\n" +
+      textoActividad +
+      "\n\nREA IDENTIFICADOS POR LA IA:\n\n" +
+      detalleREA +
+      "\n\n¿Desea agregar esta actividad con los REA indicados?"
+    );
+
+    if (!confirmar) {
+      return;
+    }
+
+    if (!Array.isArray(metodologia.actividadesAdicionales)) {
+      metodologia.actividadesAdicionales = [];
+    }
+
+    metodologia.actividadesAdicionales.push({
+      actividadFormativa: textoActividad,
+      codigosREA: reaPertinentes.map(rea => rea.codigo),
+      pendienteValidacionREA: false
+    });
+
+    guardarProgreso();
+
+    mostrarPropuestaAcademica(semana.propuesta);
+
+    alert(
+      "La actividad formativa adicional se registró " +
+      "con su vinculación a los REA oficiales."
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Error al vincular la actividad con los REA:",
+      error
+    );
+
+    alert(
+      "No fue posible validar los REA de la actividad.\n\n" +
+      "No se guardó ningún cambio. Inténtelo nuevamente."
+    );
+
+  }
+}
+ 
+
 async function editarActividadFormativa(numeroClase, indiceMetodologia) {
 
   const semana = datosGuia.cronograma.find(
