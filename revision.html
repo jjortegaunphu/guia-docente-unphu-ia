@@ -2269,6 +2269,66 @@ const actividadConREA =
 
                   );
 
+                  // ACTIVIDADES ADICIONALES VINCULADAS A ESTA METODOLOGÍA
+
+const actividadesDeMetodologia =
+  Array.isArray(item.actividadesAdicionales)
+    ? item.actividadesAdicionales
+    : [];
+
+actividadesDeMetodologia.forEach((actividad, indice) => {
+
+  const codigosREAAdicionales =
+    Array.isArray(actividad.codigosREA)
+      ? [...new Set(
+          actividad.codigosREA
+            .map(codigo => String(codigo).trim())
+            .filter(Boolean)
+        )].join(", ")
+      : "";
+
+  const textoLimpio =
+    String(actividad.actividadFormativa || "")
+      .replace(/\s*\(REA[^)]*\)\s*$/i, "")
+      .trim();
+
+  const textoConREA =
+    codigosREAAdicionales
+      ? `${textoLimpio} (${codigosREAAdicionales})`
+      : textoLimpio;
+
+  parrafosActividades.push(
+
+    new Paragraph({
+      children: [
+        new TextRun({
+          text:
+            "Actividad formativa adicional " +
+            (indice + 1) +
+            " de la metodología " +
+            (index + 1) +
+            ":",
+          bold: true,
+          font: "Book Antiqua",
+          size: 20
+        })
+      ]
+    }),
+
+    new Paragraph({
+      children: [
+        new TextRun({
+          text: textoConREA,
+          font: "Book Antiqua",
+          size: 20
+        })
+      ]
+    })
+
+  );
+
+});
+
                 }
 
               );
