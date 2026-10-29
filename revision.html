@@ -6935,13 +6935,13 @@ const logoUnphu = await respuestaLogo.arrayBuffer();
   ENCABEZADO INSTITUCIONAL DE LA GUÍA DOCENTE
 */
 
-const textoEncabezado = (texto, negrita = false) =>
+const textoEncabezado = (texto, negrita = true) =>
   new docx.TextRun({
     text: texto,
-    bold: negrita,
+    bold: tue,
     font: "Book Antiqua",
-    size: 18,
-    color: "777777"
+    size: 24,
+    color: "000000"
   });
 
 const parrafoEncabezado = (
