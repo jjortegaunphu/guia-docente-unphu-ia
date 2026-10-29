@@ -4447,22 +4447,65 @@ const metodologiasInstitucionalesCompletas =
   metodologiasInstitucionales;
 
 
+
 const actividadesInstitucionales =
   Array.isArray(clase.metodologiasActividades)
     ? clase.metodologiasActividades
         .map((item, index) => {
 
-          const codigosREA =
-            Array.isArray(item.codigosREA)
-              ? item.codigosREA.join(", ")
-              : "";
+          // Evitar repetir los REA cuando ya están
+          // incluidos al final de la actividad.
+          const agregarREAUnaVez = (texto, codigos) => {
+
+            const descripcion = String(texto || "").trim();
+
+            const listaCodigos = Array.isArray(codigos)
+              ? [...new Set(codigos.map(c => String(c).trim()).filter(Boolean))]
+              : [];
+
+            if (!listaCodigos.length) {
+              return descripcion;
+            }
+
+            const codigosTexto = listaCodigos.join(", ");
+
+            // Identificar los REA ya escritos al final.
+            const coincidencia = descripcion.match(
+              /\(\s*(REA\s*[\w.-]+(?:\s*,\s*REA\s*[\w.-]+)*)\s*\)\s*$/i
+            );
+
+            if (coincidencia) {
+              const codigosExistentes = coincidencia[1]
+                .split(",")
+                .map(c => c.replace(/\s+/g, "").toUpperCase());
+
+              const codigosOficiales = listaCodigos
+                .map(c => c.replace(/\s+/g, "").toUpperCase());
+
+              if (
+                codigosExistentes.length === codigosOficiales.length &&
+                codigosOficiales.every(c => codigosExistentes.includes(c))
+              ) {
+                return descripcion;
+              }
+
+              // Sustituir únicamente la referencia final,
+              // conservando la descripción de la actividad.
+              return descripcion.slice(0, coincidencia.index).trim() +
+                " (" + codigosTexto + ")";
+            }
+
+            return descripcion + " (" + codigosTexto + ")";
+          };
 
           const actividadPrincipal =
             "<strong>Actividad formativa " +
             (index + 1) +
             ":</strong><br>" +
-            (item.actividadFormativa || "") +
-            (codigosREA ? " (" + codigosREA + ")" : "");
+            agregarREAUnaVez(
+              item.actividadFormativa,
+              item.codigosREA
+            );
 
           const adicionales =
             Array.isArray(item.actividadesAdicionales)
@@ -4474,7 +4517,19 @@ const actividadesInstitucionales =
 
               const codigosAdicionales =
                 Array.isArray(actividad.codigosREA)
-                  ? actividad.codigosREA.join(", ")
+                  ? actividad.codigosREA
+                  : [];
+
+              const descripcionAdicional =
+                agregarREAUnaVez(
+                  actividad.actividadFormativa,
+                  codigosAdicionales
+                );
+
+              const avisoPendiente =
+                !codigosAdicionales.length &&
+                actividad.pendienteValidacionREA
+                  ? " (REA pendiente de validación)"
                   : "";
 
               return (
@@ -4483,10 +4538,8 @@ const actividadesInstitucionales =
                 " de la metodología " +
                 (index + 1) +
                 ":</strong><br>" +
-                (actividad.actividadFormativa || "") +
-                (codigosAdicionales
-                  ? " (" + codigosAdicionales + ")"
-                  : " (REA pendiente de validación)")
+                descripcionAdicional +
+                avisoPendiente
               );
 
             })
@@ -4500,6 +4553,7 @@ const actividadesInstitucionales =
         })
         .join("<br><br>")
     : "";
+
 
 
       const actividadesInstitucionalesCompletas =
