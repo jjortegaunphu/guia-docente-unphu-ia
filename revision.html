@@ -1627,16 +1627,18 @@ function construirDatosGeneralesWordMaestro(){
         celda("", { columnSpan: 2 })
       ),
 
-      fila(
-        celda("Actividades de Investigación", {
-          columnSpan: 2
-        }),
-        celda("☐", { centrar: true }),
-        celda("Actividades de Vinculación", {
-          columnSpan: 2
-        }),
-        celda("☐", { centrar: true })
-      ),
+     fila(
+  celda("Actividades de Investigación"),
+  celda("☐", {
+    columnSpan: 2,
+    centrar: true
+  }),
+  celda("Actividades de Vinculación"),
+  celda("☐", {
+    columnSpan: 2,
+    centrar: true
+  })
+),
 
       fila(
         celda("Nombre del docente:"),
