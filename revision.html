@@ -3261,10 +3261,14 @@ function crearTextoReferenciaAPA(referencia){
             return;
           }
 
-          const clave = texto
-            .normalize("NFKC")
-            .replace(/\s+/g, " ")
-            .toLocaleLowerCase("es");
+          
+const clave = texto
+  .normalize("NFKC")
+  .replace(/\s+/g, " ")
+  .trim()
+  .replace(/[.!?;,:\s]+$/g, "")
+  .toLocaleLowerCase("es");
+
 
           if(!referenciasRegistradas.has(clave)){
             referenciasRegistradas.add(clave);
