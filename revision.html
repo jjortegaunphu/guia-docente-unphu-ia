@@ -1427,6 +1427,130 @@ function finalizarGuiaDocente(){
 
 }
 
+
+function construirDatosGeneralesWordMaestro(){
+
+  const {
+    Table, TableRow, TableCell,
+    Paragraph, TextRun, WidthType,
+    AlignmentType, VerticalAlign,
+    BorderStyle
+  } = docx;
+
+  const bordes = {
+    top: { style: BorderStyle.SINGLE, size: 6, color: "000000" },
+    bottom: { style: BorderStyle.SINGLE, size: 6, color: "000000" },
+    left: { style: BorderStyle.SINGLE, size: 6, color: "000000" },
+    right: { style: BorderStyle.SINGLE, size: 6, color: "000000" }
+  };
+
+  function celda(texto = "", opciones = {}) {
+    return new TableCell({
+      columnSpan: opciones.columnSpan || 1,
+      borders: bordes,
+      shading: opciones.encabezado
+        ? { fill: "70AD47" }
+        : undefined,
+      verticalAlign: VerticalAlign.CENTER,
+      children: [
+        new Paragraph({
+          alignment: opciones.centrar
+            ? AlignmentType.CENTER
+            : AlignmentType.LEFT,
+          children: [
+            new TextRun({
+              text: texto,
+              font: "Book Antiqua",
+              size: 20,
+              bold: !!opciones.encabezado,
+              color: "000000"
+            })
+          ]
+        })
+      ]
+    });
+  }
+
+  function fila(...celdas) {
+    return new TableRow({
+      children: celdas
+    });
+  }
+
+  const tabla = new Table({
+    width: {
+      size: 100,
+      type: WidthType.PERCENTAGE
+    },
+    columnWidths: [2500, 2500, 2000, 3000],
+    rows: [
+      fila(
+        celda("IX.    Datos Generales", {
+          columnSpan: 4,
+          encabezado: true,
+          centrar: true
+        })
+      ),
+
+      fila(
+        celda("Nombre de Asignatura:"),
+        celda("", { columnSpan: 3 })
+      ),
+
+      fila(
+        celda("Código:"),
+        celda(""),
+        celda("Módulo:"),
+        celda("")
+      ),
+
+      fila(
+        celda("Período Académico:"),
+        celda(""),
+        celda("Horario:"),
+        celda("")
+      ),
+
+      fila(
+        celda("Recinto:"),
+        celda(""),
+        celda("Aula:"),
+        celda("")
+      ),
+
+      fila(
+        celda("Fecha de Inicio:"),
+        celda(""),
+        celda("Fecha de Término:"),
+        celda("")
+      ),
+
+      fila(
+        celda("Actividades de Investigación"),
+        celda("☐", { centrar: true }),
+        celda("Actividades de Vinculación"),
+        celda("☐", { centrar: true })
+      ),
+
+      fila(
+        celda("Nombre del docente:"),
+        celda(""),
+        celda("", { columnSpan: 2 })
+      ),
+
+      fila(
+        celda("Teléfono (opcional)"),
+        celda(""),
+        celda("Correo Electrónico:"),
+        celda("")
+      )
+    ]
+  });
+
+  return [tabla];
+}
+
+  
 function construirCronogramaWordMaestro(){
 
   if(
@@ -2442,7 +2566,7 @@ if (Array.isArray(clase.actividadesAdicionales)) {
 
                 new TextRun({
                   text:
-                    "X. Sistema de Evaluación",
+                    "XI. Sistema de Evaluación",
                   bold: true,
                   font: "Book Antiqua",
                   size: 20
@@ -6243,6 +6367,9 @@ async function descargarGuiaDocenteWord(){
     PRINCIPALES
   */
 
+  const datosGenerales =
+    construirDatosGeneralesWordMaestro();
+  
   const cronograma =
     construirCronogramaWordMaestro();
 
@@ -6304,9 +6431,19 @@ async function descargarGuiaDocenteWord(){
     Instrumentos
   */
 
-  const contenido = [
+  
+const contenido = [
 
-    ...cronograma,
+    ...datosGenerales,
+
+  new Paragraph({
+    spacing: {
+      after: 160
+    }
+  }),
+
+  ...cronograma,
+
 
 
     new Paragraph({
