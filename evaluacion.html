@@ -67,7 +67,7 @@
   ← Volver al cronograma completo
 </a>
       
-      <h2>X. Sistema de Evaluación</h2>
+      <h2>XI. Sistema de Evaluación</h2>
 
       <p>
         El sistema de evaluación será generado tomando como
@@ -1624,11 +1624,16 @@ function mostrarVistaFinalSistemaEvaluacion(){
             font-size: 10pt;
           }
 
-          th {
-            background: #70ad47;
-            text-align: center;
-            font-weight: bold;
-          }
+         th {
+          background-color: #D9EAD3;
+          text-align: center;
+          font-weight: bold;
+         }
+
+        thead tr:first-child th {
+          background-color: #70AD47;
+          text-align: left;
+         }
 
           th:nth-child(1),
           td:nth-child(1) {
@@ -1688,7 +1693,7 @@ function mostrarVistaFinalSistemaEvaluacion(){
                 colspan="6"
                 style="text-align:left;"
               >
-                X. Sistema de Evaluación
+                XI. Sistema de Evaluación
               </th>
             </tr>
 
@@ -1915,7 +1920,7 @@ function descargarSistemaEvaluacionPDF(){
           * {
             box-sizing: border-box;
            -webkit-print-color-adjust: exact !important;
-           print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
              }
 
           body {
@@ -1944,16 +1949,21 @@ function descargarSistemaEvaluacionPDF(){
           }
 
           th {
-             background: #70ad47 !important;
-             text-align: center;
-             font-weight: bold;
+            background-color: #D9EAD3 !important;
+            text-align: center;
+            font-weight: bold;
           }
 
+         thead tr:first-child th {
+         background-color: #70AD47 !important;
+         text-align: left;
+        }
+
          th:nth-child(1),
-td:nth-child(1) {
-  width: 9%;
-  text-align: center;
-}
+         td:nth-child(1) {
+         width: 9%;
+        text-align: center;
+        }
 
 th:nth-child(2),
 td:nth-child(2) {
@@ -2011,7 +2021,7 @@ td:nth-child(6) {
                 colspan="6"
                 style="text-align:left;"
               >
-                X. Sistema de Evaluación
+                XI. Sistema de Evaluación
               </th>
             </tr>
 
