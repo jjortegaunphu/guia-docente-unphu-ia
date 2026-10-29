@@ -7590,42 +7590,64 @@ new Paragraph({
 
 }
 
+
 if (Array.isArray(clase.metodologiasActividades)) {
 
-  clase.metodologiasActividades.forEach(
-    (item, index) => {
+  const prepararTextoActividadWord = (texto, codigos) => {
+    const descripcion = String(texto || "").trim();
 
-      const codigosREA =
-        Array.isArray(item.codigosREA)
-          ? item.codigosREA.join(", ")
-          : "";
+    const listaREA = Array.isArray(codigos)
+      ? [...new Set(codigos.map(c => String(c).trim()).filter(Boolean))]
+      : [];
 
-      const actividadLimpia =
-        (item.actividadFormativa || "")
-          .replace(
-            /\s*\(REA\s*\d+(?:\s*,\s*REA\s*\d+)*\)\s*$/i,
-            ""
-          )
-          .replace(
-            /\s*\(REA\d+(?:\s*,\s*REA\d+)*\)\s*$/i,
-            ""
-          )
-          .trim();
+    if (!listaREA.length) {
+      return descripcion;
+    }
 
-      const textoActividad =
-        actividadLimpia +
-        (
-          codigosREA
-            ? ` (${codigosREA})`
-            : ""
-        );
+    const textoLimpio = descripcion.replace(
+      /\s*\(\s*REA\s*[\w.-]+(?:\s*,\s*REA\s*[\w.-]+)*\s*\)\s*$/i,
+      ""
+    ).trim();
+
+    return textoLimpio + " (" + listaREA.join(", ") + ")";
+  };
+
+  clase.metodologiasActividades.forEach((item, index) => {
+
+    // Actividad principal de esta metodología
+    parrafosActividades.push(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: "Actividad formativa " + (index + 1) + ":",
+            bold: true
+          })
+        ]
+      }),
+
+      new Paragraph({
+        text: prepararTextoActividadWord(
+          item.actividadFormativa,
+          item.codigosREA
+        )
+      })
+    );
+
+    // Actividades adicionales de esta misma metodología
+    const adicionales = Array.isArray(item.actividadesAdicionales)
+      ? item.actividadesAdicionales
+      : [];
+
+    adicionales.forEach((actividad, indice) => {
 
       parrafosActividades.push(
         new Paragraph({
           children: [
             new TextRun({
               text:
-                "Actividad formativa " +
+                "Actividad formativa adicional " +
+                (indice + 1) +
+                " de la metodología " +
                 (index + 1) +
                 ":",
               bold: true
@@ -7634,14 +7656,19 @@ if (Array.isArray(clase.metodologiasActividades)) {
         }),
 
         new Paragraph({
-          text: textoActividad
+          text: prepararTextoActividadWord(
+            actividad.actividadFormativa,
+            actividad.codigosREA
+          )
         })
       );
 
-    }
-  );
+    });
+
+  });
 
 }
+
 
 /* ACTIVIDADES FORMATIVAS ADICIONALES */
 
