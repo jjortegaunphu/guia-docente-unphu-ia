@@ -3188,7 +3188,7 @@ function crearTextoReferenciaAPA(referencia){
   */
 
   const coincidencia = texto.match(
-    /^([\s\S]*?\(\d{4}[a-z]?\)\.\s+)([^.!?]+)(\.)([\s\S]*)$/i
+    /^([\s\S]*?\(\d{4}[a-z]?\)\.?\s+)([^.!?]+)(\.)([\s\S]*)$/i
   );
 
   if(!coincidencia){
