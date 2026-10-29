@@ -6733,6 +6733,72 @@ async function descargarGuiaDocenteWord(){
   const instrumentos =
     construirInstrumentosWordMaestro();
 
+  
+/*
+  TABLA DE ELABORACIÓN, REVISIÓN Y APROBACIÓN
+  AL FINAL DE LOS INSTRUMENTOS
+*/
+
+const celdaFirma = (texto) =>
+  new docx.TableCell({
+    width: {
+      size: 33.33,
+      type: docx.WidthType.PERCENTAGE
+    },
+    verticalAlign: docx.VerticalAlign.TOP,
+    margins: {
+      top: 80,
+      bottom: 80,
+      left: 120,
+      right: 120
+    },
+    children: [
+      new docx.Paragraph({
+        children: [
+          new docx.TextRun({
+            text: texto,
+            bold: true,
+            font: "Book Antiqua",
+            size: 20,
+            color: "000000"
+          })
+        ]
+      })
+    ]
+  });
+
+const tablaFirmas = new docx.Table({
+  width: {
+    size: 100,
+    type: docx.WidthType.PERCENTAGE
+  },
+  columnWidths: [3120, 3120, 3120],
+  rows: [
+    new docx.TableRow({
+      children: [
+        celdaFirma("Elaborado por:"),
+        celdaFirma("Revisado por:"),
+        celdaFirma("Aprobado por:")
+      ]
+    }),
+    new docx.TableRow({
+      children: [
+        celdaFirma("Cargo:"),
+        celdaFirma("Cargo:"),
+        celdaFirma("Cargo:")
+      ]
+    }),
+    new docx.TableRow({
+      children: [
+        celdaFirma("Fecha:"),
+        celdaFirma("Fecha:"),
+        celdaFirma("Fecha:")
+      ]
+    })
+  ]
+});
+
+
   const anexos = [
   new docx.Paragraph({
     spacing: {
@@ -6832,7 +6898,8 @@ const contenido = [
 
 ...anexos,
 
-...instrumentos
+...instrumentos,
+  tablaFirmas
       
   ];
 
