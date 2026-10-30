@@ -5843,23 +5843,147 @@ const estadoREA =
     return;
   }
 
-  const nuevoContenido = prompt(
-    "Edite el contenido de la Clase " + numeroClase + ":",
-    clase.contenido || ""
-  );
+  // Crear ventana de edición
+  const fondo = document.createElement("div");
 
-  if (nuevoContenido === null) {
-    return;
+  Object.assign(fondo.style, {
+    position: "fixed",
+    top: "0",
+    left: "0",
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.55)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: "99999",
+    padding: "20px",
+    boxSizing: "border-box"
+  });
+
+  const ventana = document.createElement("div");
+
+  Object.assign(ventana.style, {
+    backgroundColor: "#ffffff",
+    width: "100%",
+    maxWidth: "900px",
+    maxHeight: "90vh",
+    padding: "25px",
+    borderRadius: "12px",
+    boxShadow: "0 8px 30px rgba(0,0,0,0.25)",
+    display: "flex",
+    flexDirection: "column",
+    gap: "15px",
+    boxSizing: "border-box"
+  });
+
+  const titulo = document.createElement("h3");
+  titulo.textContent = "Editar contenido de la Clase " + numeroClase;
+
+  Object.assign(titulo.style, {
+    margin: "0",
+    color: "#006b57",
+    fontSize: "21px"
+  });
+
+  const areaTexto = document.createElement("textarea");
+
+  areaTexto.value = clase.contenido || "";
+
+  Object.assign(areaTexto.style, {
+    width: "100%",
+    minHeight: "180px",
+    height: "300px",
+    maxHeight: "55vh",
+    padding: "15px",
+    fontSize: "16px",
+    lineHeight: "1.6",
+    border: "1px solid #cccccc",
+    borderRadius: "8px",
+    resize: "vertical",
+    boxSizing: "border-box",
+    fontFamily: "Arial, sans-serif",
+    overflowY: "auto"
+  });
+
+  const botones = document.createElement("div");
+
+  Object.assign(botones.style, {
+    display: "flex",
+    justifyContent: "flex-end",
+    gap: "12px",
+    flexWrap: "wrap"
+  });
+
+  const cancelar = document.createElement("button");
+  cancelar.textContent = "Cancelar";
+
+  const guardar = document.createElement("button");
+  guardar.textContent = "Guardar cambios";
+
+  [cancelar, guardar].forEach(boton => {
+    Object.assign(boton.style, {
+      padding: "11px 20px",
+      border: "none",
+      borderRadius: "7px",
+      cursor: "pointer",
+      fontSize: "15px",
+      fontWeight: "bold"
+    });
+  });
+
+  Object.assign(cancelar.style, {
+    backgroundColor: "#e5e7eb",
+    color: "#333333"
+  });
+
+  Object.assign(guardar.style, {
+    backgroundColor: "#006b57",
+    color: "#ffffff"
+  });
+
+  function cerrarVentana() {
+    document.removeEventListener("keydown", manejarEscape);
+    fondo.remove();
   }
-  
-  clase.contenido = nuevoContenido.trim();
 
-  guardarProgreso();
-
-  mostrarPropuestaAcademica(
-  semana.propuesta
-);
+  function manejarEscape(evento) {
+    if (evento.key === "Escape") {
+      cerrarVentana();
+    }
   }
+
+  cancelar.addEventListener("click", cerrarVentana);
+
+  guardar.addEventListener("click", function() {
+
+    clase.contenido = areaTexto.value.trim();
+
+    guardarProgreso();
+
+    cerrarVentana();
+
+    mostrarPropuestaAcademica(
+      semana.propuesta
+    );
+
+  });
+
+  document.addEventListener("keydown", manejarEscape);
+
+  botones.appendChild(cancelar);
+  botones.appendChild(guardar);
+
+  ventana.appendChild(titulo);
+  ventana.appendChild(areaTexto);
+  ventana.appendChild(botones);
+
+  fondo.appendChild(ventana);
+  document.body.appendChild(fondo);
+
+  areaTexto.focus();
+
+}
 
 function editarMetodologiaClase(numeroClase, indiceMetodologia) {
 
