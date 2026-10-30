@@ -6931,15 +6931,26 @@ const tablaFirmas = new docx.Table({
 
 const contenido = [
 
+  
   ...datosGenerales,
 
   new Paragraph({
     spacing: {
-      after: 160
-    }
+      before: 0,
+      after: 0,
+      line: 20,
+      lineRule: "exact"
+    },
+    children: [
+      new TextRun({
+        text: "",
+        size: 2
+      })
+    ]
   }),
 
   ...cronograma,
+
 
 
 
