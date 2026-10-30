@@ -7257,21 +7257,51 @@ sections: [
         "Guia_Docente";
 
 
-    const nombreSeguro =
-      nombreAsignatura.replace(
-        /[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ_-]+/g,
-        "_"
-      );
+   
+    const fuente =
+      datosGuia?.instrumentosEvaluacion?.fuente;
 
+    const codigoAsignatura =
+      String(
+        fuente?.asignatura?.codigo ||
+        datosGuia?.configuracion?.codigoAsignatura ||
+        "SIN-CODIGO"
+      ).trim();
 
-    enlace.href =
-      url;
+    const limpiarNombre = texto =>
+      String(texto || "")
+        .replace(/[\\/:*?"<>|]/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
 
+    const fechaRegistrada =
+      datosGuia.fechaFinalizacion ||
+      respaldoGuia?.fechaFinalizacion;
 
-    enlace.download =
-      "Guia_Docente_" +
-      nombreSeguro +
+    let fechaNombre = "SIN-FECHA";
+
+    if (fechaRegistrada) {
+      const fecha = new Date(fechaRegistrada);
+
+      if (!Number.isNaN(fecha.getTime())) {
+        const dia = String(fecha.getUTCDate()).padStart(2, "0");
+        const mes = String(fecha.getUTCMonth() + 1).padStart(2, "0");
+        const anio = fecha.getUTCFullYear();
+
+        fechaNombre = `${dia}-${mes}-${anio}`;
+      }
+    }
+
+    const nombreArchivo =
+      "Guía Docente-" +
+      limpiarNombre(codigoAsignatura) + "-" +
+      limpiarNombre(nombreAsignatura) + "-" +
+      fechaNombre +
       ".docx";
+
+    enlace.href = url;
+    enlace.download = nombreArchivo;
+
 
 
     document.body.appendChild(
