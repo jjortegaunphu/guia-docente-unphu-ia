@@ -6060,7 +6060,112 @@ mostrarPropuestaAcademica(
   
 }
 
-  function editarMediacionClase(numeroClase, indiceMetodologia) {
+  
+function abrirEditorTexto(titulo, textoActual) {
+  return new Promise(resolve => {
+    const fondo = document.createElement("div");
+
+    Object.assign(fondo.style, {
+      position: "fixed",
+      inset: "0",
+      background: "rgba(0,0,0,0.55)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "20px",
+      zIndex: "99999"
+    });
+
+    const ventana = document.createElement("div");
+
+    Object.assign(ventana.style, {
+      background: "#ffffff",
+      width: "100%",
+      maxWidth: "900px",
+      maxHeight: "90vh",
+      padding: "25px",
+      borderRadius: "12px",
+      boxSizing: "border-box"
+    });
+
+    const encabezado = document.createElement("h3");
+    encabezado.textContent = titulo;
+    encabezado.style.color = "#006b57";
+
+    const area = document.createElement("textarea");
+    area.value = textoActual || "";
+
+    Object.assign(area.style, {
+      width: "100%",
+      height: "300px",
+      maxHeight: "55vh",
+      padding: "15px",
+      fontSize: "16px",
+      lineHeight: "1.6",
+      border: "1px solid #cccccc",
+      borderRadius: "8px",
+      resize: "vertical",
+      boxSizing: "border-box",
+      fontFamily: "Arial, sans-serif"
+    });
+
+    const botones = document.createElement("div");
+
+    Object.assign(botones.style, {
+      display: "flex",
+      justifyContent: "flex-end",
+      gap: "12px",
+      marginTop: "15px"
+    });
+
+    const cancelar = document.createElement("button");
+    cancelar.textContent = "Cancelar";
+
+    const guardar = document.createElement("button");
+    guardar.textContent = "Guardar cambios";
+
+    [cancelar, guardar].forEach(boton => {
+      Object.assign(boton.style, {
+        padding: "11px 20px",
+        border: "none",
+        borderRadius: "7px",
+        cursor: "pointer",
+        fontWeight: "bold"
+      });
+    });
+
+    cancelar.style.background = "#e5e7eb";
+    guardar.style.background = "#006b57";
+    guardar.style.color = "#ffffff";
+
+    function cerrar(resultado) {
+      document.removeEventListener("keydown", teclaEscape);
+      fondo.remove();
+      resolve(resultado);
+    }
+
+    function teclaEscape(evento) {
+      if (evento.key === "Escape") {
+        cerrar(null);
+      }
+    }
+
+    cancelar.onclick = () => cerrar(null);
+    guardar.onclick = () => cerrar(area.value);
+
+    document.addEventListener("keydown", teclaEscape);
+
+    botones.append(cancelar, guardar);
+    ventana.append(encabezado, area, botones);
+    fondo.appendChild(ventana);
+    document.body.appendChild(fondo);
+
+    area.focus();
+  });
+}
+
+
+async function editarMediacionClase(numeroClase, indiceMetodologia) {
 
   const semana = datosGuia.cronograma.find(
     item => item.semana === semanaActual
@@ -6085,24 +6190,25 @@ mostrarPropuestaAcademica(
     return;
   }
 
-  const nuevaMediacion = prompt(
-  "Edite la mediación docente:",
-  metodologia.explicacionMetodologia || ""
-);
+  const nuevaMediacion = await abrirEditorTexto(
+    "Editar mediación docente - Clase " + numeroClase,
+    metodologia.explicacionMetodologia || ""
+  );
 
-if (nuevaMediacion === null) {
-  return;
+  if (nuevaMediacion === null) {
+    return;
+  }
+
+  metodologia.explicacionMetodologia =
+    nuevaMediacion.trim();
+
+  guardarProgreso();
+
+  mostrarPropuestaAcademica(
+    semana.propuesta
+  );
 }
 
-metodologia.explicacionMetodologia =
-  nuevaMediacion.trim();
-
-guardarProgreso();
-
-mostrarPropuestaAcademica(
-  semana.propuesta
-);
-}
 async function modificarMediacionConIA(numeroClase, indiceMetodologia) {
 
   const semana = datosGuia.cronograma.find(
@@ -6375,7 +6481,6 @@ async function agregarActividadFormativaMetodologia(
   }
 }
  
-
 async function editarActividadFormativa(numeroClase, indiceMetodologia) {
 
   const semana = datosGuia.cronograma.find(
@@ -6409,10 +6514,12 @@ const actividadSinREA =
     .replace(/\s*\(REA[^)]*\)\s*$/i, "")
     .trim();
 
-const nuevaActividad = prompt(
-  "Edite la actividad formativa:",
+
+const nuevaActividad = await abrirEditorTexto(
+  "Editar actividad formativa - Clase " + numeroClase,
   actividadSinREA
 );
+
 
 if (nuevaActividad === null) {
   return;
