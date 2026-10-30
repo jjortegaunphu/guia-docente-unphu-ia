@@ -704,6 +704,7 @@ let filas = "";
     <td>${actividad.tipo || ""}</td>
     <td>${instrumentos}</td>
     <td>${actividad.valor ?? 0}</td>
+    
     <td>
       <button
         type="button"
@@ -711,7 +712,23 @@ let filas = "";
       >
         Editar
       </button>
+
+      <button
+        type="button"
+        onclick="eliminarActividadEvaluacion(${index})"
+        style="
+          margin-left:5px;
+          color:#b42318;
+          border:1px solid #b42318;
+          border-radius:4px;
+          padding:3px 8px;
+          cursor:pointer;
+        "
+      >
+        Eliminar
+      </button>
     </td>
+
   </tr>
 `;
 
@@ -2076,7 +2093,61 @@ td:nth-child(6) {
   );
 
 }
-    
+ 
+function eliminarActividadEvaluacion(index) {
+
+  if (
+    !propuestaEvaluacionActual ||
+    !Array.isArray(propuestaEvaluacionActual.actividades)
+  ) {
+    return;
+  }
+
+  const actividades = propuestaEvaluacionActual.actividades;
+  const actividad = actividades[index];
+
+  if (!actividad) {
+    return;
+  }
+
+  // Proteger la prueba diagnóstica
+  const esDiagnostica =
+    String(actividad.tipo || "").trim().toUpperCase() === "D" ||
+    String(actividad.tecnica || "")
+      .trim()
+      .toLowerCase() === "prueba diagnóstica";
+
+  if (esDiagnostica) {
+    alert(
+      "La prueba diagnóstica no puede eliminarse del sistema de evaluación."
+    );
+    return;
+  }
+
+  // Solicitar confirmación
+  const confirmar = confirm(
+    "¿Desea eliminar esta técnica de evaluación?\n\n" +
+    "Técnica: " + (actividad.tecnica || "Sin nombre") + "\n" +
+    "Semana: " + actividad.semana + "\n" +
+    "Valor: " + Number(actividad.valor || 0) + " puntos.\n\n" +
+    "Esta acción no eliminará ninguna actividad del cronograma."
+  );
+
+  if (!confirmar) {
+    return;
+  }
+
+  // Eliminar únicamente la técnica seleccionada
+  actividades.splice(index, 1);
+
+  // Actualizar la propuesta actual
+  propuestaEvaluacionActual.actividades = actividades;
+
+  // Mostrar la tabla con los puntos recalculados
+  mostrarTablaEvaluacion(propuestaEvaluacionActual);
+
+}
+   
 function agregarActividadEvaluacion(){
 
   if(
