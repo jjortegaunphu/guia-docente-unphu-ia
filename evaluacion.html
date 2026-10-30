@@ -726,20 +726,33 @@ let filas = "";
           Editar
         </button>
 
-        <button
-          type="button"
-          onclick="eliminarActividadEvaluacion(${index})"
-          style="
-            width:80px;
-            padding:5px 8px;
-            color:#b42318;
-            border:1px solid #b42318;
-            border-radius:4px;
-            cursor:pointer;
-          "
-        >
-          Eliminar
-        </button>
+        
+${(
+  String(actividad.tipo || "").trim().toUpperCase() === "D" ||
+  String(actividad.tecnica || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .includes("prueba diagnostica")
+) ? "" : `
+  <button
+    type="button"
+    onclick="eliminarActividadEvaluacion(${index})"
+    style="
+      margin:5px auto 0;
+      display:block;
+      color:#b42318;
+      border:1px solid #b42318;
+      border-radius:4px;
+      padding:3px 8px;
+      cursor:pointer;
+    "
+  >
+    Eliminar
+  </button>
+`}
+
       </div>
     </td>
 
