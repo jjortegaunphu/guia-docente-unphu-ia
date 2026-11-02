@@ -510,6 +510,7 @@ function obtenerInstrumentosPendientes(){
 
 }
 
+
 function buscarInstrumentoElaborado(item){
 
   const elaborados =
@@ -517,29 +518,47 @@ function buscarInstrumentoElaborado(item){
       ?.instrumentosEvaluacion
       ?.elaborados || [];
 
-  return elaborados.find(
-    elaborado =>
+  const normalizarTexto = texto =>
+    String(texto ?? "")
+      .trim()
+      .replace(/\s+/g, " ")
+      .toLowerCase();
 
-      elaborado.rubro ===
-        item.rubro &&
+  const normalizarREA = codigos =>
+    (Array.isArray(codigos) ? codigos : [])
+      .map(normalizarTexto)
+      .sort()
+      .join("|");
 
-      Number(
-        elaborado.indiceActividad
-      ) ===
-        Number(
-          item.indiceActividad
-        ) &&
+  return elaborados.find(elaborado =>
 
-      Number(
-        elaborado.indiceInstrumento
-      ) ===
-        Number(
-          item.indiceInstrumento
-        )
+    elaborado.rubro === item.rubro &&
+
+    Number(elaborado.indiceInstrumento) ===
+      Number(item.indiceInstrumento) &&
+
+    Number(elaborado.semana) ===
+      Number(item.semana) &&
+
+    normalizarTexto(elaborado.tecnica) ===
+      normalizarTexto(item.tecnica) &&
+
+    normalizarREA(elaborado.codigosREA) ===
+      normalizarREA(item.codigosREA) &&
+
+    normalizarTexto(elaborado.tipo) ===
+      normalizarTexto(item.tipo) &&
+
+    normalizarTexto(elaborado.instrumento) ===
+      normalizarTexto(item.instrumento) &&
+
+    Number(elaborado.valor) ===
+      Number(item.valor)
 
   ) || null;
 
 }
+
   
 function mostrarInstrumentosPendientes(){
 
