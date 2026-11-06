@@ -3307,6 +3307,14 @@ async function generarRubroEvaluacion(rubro){
   }
 
   
+  // TP es un componente externo.
+  // Nunca debe enviarse al servicio de IA.
+  if (esComponenteTP(rubro)) {
+    mostrarAvisoTP(rubro);
+    return;
+  }
+
+  
   if (generacionEvaluacionEnCurso) return;
   generacionEvaluacionEnCurso = true;
 
