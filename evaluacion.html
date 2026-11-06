@@ -3186,6 +3186,99 @@ if (mensajeErrorPrimerRubro) {
   }
 }
 
+
+/* ==================================================
+MOSTRAR AVISO DEL COMPONENTE TP
+================================================== */
+
+function mostrarAvisoTP(rubro) {
+
+  if (!esComponenteTP(rubro)) return;
+
+  const contenedor = document.getElementById(
+    "contenidoSistemaEvaluacion"
+  );
+
+  const peso = Number(rubro.peso);
+
+  contenedor.innerHTML = `
+    <div style="
+      background:#e9f4f1;
+      border:1px solid #b9d8cd;
+      border-radius:8px;
+      padding:20px;
+      margin:20px 0;
+      color:#004f3f;
+    ">
+      <h3>Información sobre el componente TP</h3>
+
+      <p>
+        El Trabajo Práctico (TP) corresponde a la
+        calificación del laboratorio o práctica
+        asociada a esta asignatura.
+      </p>
+
+      <p>
+        <strong>Ponderación del TP:
+        ${peso} puntos.</strong>
+      </p>
+
+      <p>
+        La guía docente del laboratorio o práctica
+        se elabora de manera independiente mediante
+        la modalidad Rubro Único, sobre 100 puntos.
+      </p>
+
+      <p>
+        El docente registrará posteriormente la
+        calificación ponderada del TP en el
+        sistema institucional.
+      </p>
+
+      <p>
+        Este componente no requiere generar
+        actividades ni instrumentos de evaluación
+        en la presente guía.
+      </p>
+
+      <button
+        type="button"
+        onclick="continuarDespuesTP()"
+        style="
+          background:#006b50;
+          color:white;
+          border:0;
+          padding:12px 20px;
+          border-radius:8px;
+          cursor:pointer;
+          font-weight:600;
+        "
+      >
+        Continuar a Evaluación Final →
+      </button>
+    </div>
+  `;
+}
+
+function continuarDespuesTP() {
+
+  const rubro = obtenerSiguienteRubroEvaluacion();
+
+  if (!esComponenteTP(rubro)) return;
+
+  if (!registrarTPExterno(rubro)) return;
+
+  const siguienteRubro =
+    obtenerSiguienteRubroEvaluacion();
+
+  if (siguienteRubro) {
+    generarRubroEvaluacion(siguienteRubro);
+  } else {
+    mostrarVistaFinalSistemaEvaluacion();
+  }
+}
+
+    
 async function generarRubroEvaluacion(rubro){
 
   if(!rubro){
