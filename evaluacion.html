@@ -554,17 +554,39 @@ if(esRubroUnico){
       0
     );
 
+
 } else {
 
-  semanaInicio =
-    rubroAnterior
-      ? Number(rubroAnterior.semana) + 1
-      : 1;
+  const rubrosConfigurados =
+    datosPaso1.evaluacion?.rubros || [];
 
-  semanaFin =
-    Number(rubro.semana);
+  const indiceActual =
+    rubrosConfigurados.findIndex(
+      item => item.nombre === rubro.nombre
+    );
+
+  let rubroReferencia = null;
+
+  for (let i = indiceActual - 1; i >= 0; i--) {
+
+    const candidato = rubrosConfigurados[i];
+
+    if (esComponenteTP(candidato)) {
+      continue;
+    }
+
+    rubroReferencia = candidato;
+    break;
+  }
+
+  semanaInicio = rubroReferencia
+    ? Number(rubroReferencia.semana) + 1
+    : 1;
+
+  semanaFin = Number(rubro.semana);
 
 }
+
 
 const actividades =
   todasLasActividades.filter(
