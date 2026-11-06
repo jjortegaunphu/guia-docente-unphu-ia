@@ -3328,10 +3328,24 @@ async function generarRubroEvaluacion(rubro){
         item => item.nombre === rubro.nombre
       );
 
-    const rubroAnterior =
-      indiceRubro > 0
-        ? datosPaso1.evaluacion.rubros[indiceRubro - 1]
-        : null;
+    
+const rubrosConfigurados =
+  datosPaso1.evaluacion.rubros;
+
+let rubroAnterior = null;
+
+for (let i = indiceRubro - 1; i >= 0; i--) {
+
+  const candidato = rubrosConfigurados[i];
+
+  if (esComponenteTP(candidato)) {
+    continue;
+  }
+
+  rubroAnterior = candidato;
+  break;
+}
+
 
     const contexto =
       prepararContextoIAEvaluacion(
