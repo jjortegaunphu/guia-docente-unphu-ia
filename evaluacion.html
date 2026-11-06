@@ -382,6 +382,22 @@ reaEncontrados.forEach(codigoREA => {
   return clasesUnicas;
 
 }
+
+
+/* ==================================================
+IDENTIFICAR COMPONENTE EXTERNO TP
+================================================== */
+
+function esComponenteTP(rubro) {
+
+  if (!rubro) return false;
+
+  return String(rubro.nombre || "")
+    .trim()
+    .toUpperCase() === "TP";
+
+}
+
     
 function obtenerPrimerRubroEvaluacion(){
 
