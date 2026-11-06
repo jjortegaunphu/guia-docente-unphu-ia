@@ -1102,13 +1102,23 @@ if(siguientePeriodo){
   const siguienteRubro =
     obtenerSiguienteRubroEvaluacion();
 
-  if(siguienteRubro){
+  
+if (siguienteRubro) {
+
+  if (esComponenteTP(siguienteRubro)) {
+
+    mostrarAvisoTP(siguienteRubro);
+
+  } else {
 
     generarRubroEvaluacion(
       siguienteRubro
     );
 
   }
+
+}
+
 
 } else {
 
@@ -3595,7 +3605,19 @@ if(
   const siguienteRubro =
     obtenerSiguienteRubroEvaluacion();
 
-  if(siguienteRubro){
+  
+if (siguienteRubro) {
+
+  if (esComponenteTP(siguienteRubro)) {
+
+    console.log(
+      "Mostrando aviso del componente TP:",
+      siguienteRubro.nombre
+    );
+
+    mostrarAvisoTP(siguienteRubro);
+
+  } else {
 
     console.log(
       "Generando siguiente rubro:",
@@ -3606,7 +3628,10 @@ if(
       siguienteRubro
     );
 
+  }
+
 } else {
+
 
   console.log(
     "Todos los rubros de evaluación han sido completados."
