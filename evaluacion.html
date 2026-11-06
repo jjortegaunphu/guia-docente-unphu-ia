@@ -1434,6 +1434,14 @@ function mostrarVistaFinalSistemaEvaluacion(){
   rubrosConfigurados.forEach(
     (rubro, index) => {
 
+      
+    // El TP es un componente externo.
+    // No permite modificar actividades evaluativas.
+    if (esComponenteTP(rubro)) {
+      return;
+    }
+
+
       const rubroAceptado =
         rubrosAceptados.find(
           item =>
