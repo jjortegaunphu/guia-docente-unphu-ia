@@ -411,6 +411,30 @@ function identificarEvaluacionesParaSincronizar() {
 
       const semana = Number(actividad.semana);
 
+      
+  // La evaluación diagnóstica ya está integrada
+  // en el cronograma y no debe duplicarse.
+  if (
+    String(actividad.tipo || "")
+      .trim()
+      .toUpperCase() === "D"
+  ) {
+    return;
+  }
+
+
+  // Solo sincronizar evaluaciones cuya clase
+  // haya sido seleccionada por el docente.
+  const claseAplicacion =
+    Number(actividad.claseAplicacion);
+
+  if (
+    !Number.isInteger(claseAplicacion) ||
+    claseAplicacion < 1
+  ) {
+    return;
+  }
+
       if (
         !Number.isInteger(semana) ||
         semana < 1 ||
@@ -428,15 +452,36 @@ function identificarEvaluacionesParaSincronizar() {
         return;
       }
 
-      evaluaciones.push({
-        rubro: rubro.rubro,
-        semana: semana,
-        tecnica: actividad.tecnica,
-        tipo: actividad.tipo || "",
-        instrumentos: actividad.instrumentos || [],
-        codigosREA: actividad.codigosREA || [],
-        valor: Number(actividad.valor || 0)
-      });
+      
+  // Verificar que la clase seleccionada
+  // exista realmente en la semana indicada.
+  const clasesSemana =
+    obtenerClasesDisponiblesEvaluacion(semana);
+
+  const claseExiste =
+    clasesSemana.some(
+      item => item.clase === claseAplicacion
+    );
+
+  if (!claseExiste) {
+    return;
+  }
+
+     
+evaluaciones.push({
+  rubro: rubro.rubro,
+  semana: semana,
+  claseAplicacion:
+    Number(actividad.claseAplicacion) > 0
+      ? Number(actividad.claseAplicacion)
+      : null,
+  tecnica: actividad.tecnica,
+  tipo: actividad.tipo || "",
+  instrumentos: actividad.instrumentos || [],
+  codigosREA: actividad.codigosREA || [],
+  valor: Number(actividad.valor || 0)
+});
+
 
     });
 
