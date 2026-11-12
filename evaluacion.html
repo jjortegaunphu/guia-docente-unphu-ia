@@ -490,6 +490,146 @@ evaluaciones.push({
   return evaluaciones;
 }
 
+
+/* ==================================================
+PREPARAR RESUMEN DE EVALUACIONES PARA SINCRONIZAR
+SIN MODIFICAR EL CRONOGRAMA
+================================================== */
+
+function prepararResumenSincronizacionEvaluaciones() {
+
+  const evaluaciones =
+    identificarEvaluacionesParaSincronizar();
+
+  return evaluaciones.map(evaluacion => ({
+
+    rubro: evaluacion.rubro,
+
+    semana: evaluacion.semana,
+
+    claseAplicacion: evaluacion.claseAplicacion,
+
+    tecnica: evaluacion.tecnica,
+
+    tipo: evaluacion.tipo,
+
+    instrumentos: [...evaluacion.instrumentos],
+
+    codigosREA: [...evaluacion.codigosREA],
+
+    valor: evaluacion.valor,
+
+    estado: "Pendiente de revisión docente"
+
+  }));
+
+}
+
+    
+/* ==================================================
+CONSTRUIR VISTA PREVIA DE SINCRONIZACIÓN
+SIN MODIFICAR EL CRONOGRAMA
+================================================== */
+
+function construirVistaPreviaSincronizacionEvaluaciones() {
+
+  const evaluaciones =
+    prepararResumenSincronizacionEvaluaciones();
+
+  if (evaluaciones.length === 0) {
+    return `
+      <p>
+        No hay evaluaciones con una clase de
+        aplicación seleccionada pendientes
+        de revisión.
+      </p>
+    `;
+  }
+
+  const filas = evaluaciones.map(evaluacion => `
+    <tr>
+      <td>${evaluacion.rubro}</td>
+      <td>${evaluacion.semana}</td>
+      <td>${evaluacion.claseAplicacion}</td>
+      <td>${evaluacion.tecnica}</td>
+      <td>${evaluacion.tipo}</td>
+      <td>${evaluacion.instrumentos.join(", ")}</td>
+      <td>${evaluacion.codigosREA.join(", ")}</td>
+      <td>${evaluacion.valor}</td>
+      <td>${evaluacion.estado}</td>
+    </tr>
+  `).join("");
+
+  return `
+    <h3>Vista previa de sincronización</h3>
+
+    <p>
+      Las siguientes evaluaciones tienen una clase
+      de aplicación identificada. Su inclusión en
+      esta lista no modifica el cronograma.
+    </p>
+
+    <div style="overflow-x:auto;">
+      <table
+        border="1"
+        cellspacing="0"
+        cellpadding="8"
+        style="width:100%; border-collapse:collapse;"
+      >
+        <thead>
+          <tr>
+            <th>Rubro</th>
+            <th>Semana</th>
+            <th>Clase</th>
+            <th>Técnica</th>
+            <th>Tipo</th>
+            <th>Instrumentos</th>
+            <th>REA</th>
+            <th>Valor</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${filas}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+
+/* ==================================================
+MOSTRAR VISTA PREVIA DE SINCRONIZACIÓN
+SIN MODIFICAR EL CRONOGRAMA
+================================================== */
+
+function mostrarVistaPreviaSincronizacionEvaluaciones() {
+
+  const contenedor =
+    document.getElementById(
+      "contenidoSistemaEvaluacion"
+    );
+
+  if (!contenedor) return;
+
+  const vistaPrevia =
+    construirVistaPreviaSincronizacionEvaluaciones();
+
+  contenedor.innerHTML = `
+    ${vistaPrevia}
+
+    <div style="margin-top:20px;">
+      <button
+        type="button"
+        onclick="mostrarVistaFinalSistemaEvaluacion()"
+      >
+        ← Volver al Sistema de Evaluación
+      </button>
+    </div>
+  `;
+
+}
+
     
 /* ==================================================
 OBTENER CLASES DISPONIBLES PARA UNA EVALUACIÓN
@@ -1569,6 +1709,16 @@ function mostrarVistaFinalSistemaEvaluacion(){
 >
   ← Volver y modificar
 </button>
+
+
+<button
+  type="button"
+  onclick="mostrarVistaPreviaSincronizacionEvaluaciones()"
+  style="margin-left:10px;"
+>
+  Revisar sincronización con el cronograma
+</button>
+
     
   <button
     type="button"
