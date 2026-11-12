@@ -3163,23 +3163,39 @@ function guardarEdicionActividad(index){
   }
 
   
+  const selectorClase =
+    fila.querySelector(`#claseAplicacion-${index}`);
+
+  const claseSeleccionada =
+    selectorClase && selectorClase.value !== ""
+      ? Number(selectorClase.value)
+      : null;
+
+  const clasesDisponibles =
+    obtenerClasesDisponiblesEvaluacion(semana);
+
+  const claseAplicacion =
+    clasesDisponibles.some(
+      item => item.clase === claseSeleccionada
+    )
+      ? claseSeleccionada
+      : null;
+  
 const actividadAnterior =
   propuestaEvaluacionActual.actividades[index];
+
 
 propuestaEvaluacionActual.actividades[index] = {
   ...actividadAnterior,
   semana: semana,
-  claseAplicacion:
-    Number(actividadAnterior.claseAplicacion) > 0 &&
-    Number(actividadAnterior.semana) === semana
-      ? Number(actividadAnterior.claseAplicacion)
-      : null,
+  claseAplicacion: claseAplicacion,
   tecnica: tecnica,
   codigosREA: codigosREA,
   tipo: tipo,
   instrumentos: [instrumento],
   valor: valor
 };
+
 
 
   propuestaEvaluacionActual.actividades.sort(
