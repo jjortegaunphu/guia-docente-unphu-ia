@@ -477,6 +477,63 @@ function obtenerClasesDisponiblesEvaluacion(semanaEvaluacion) {
   }));
 }
 
+  
+/* ==================================================
+ACTUALIZAR CLASES AL CAMBIAR LA SEMANA
+DE UNA ACTIVIDAD EVALUATIVA
+================================================== */
+
+function actualizarClasesAplicacionEvaluacion(index) {
+
+  const fila =
+    document.getElementById(
+      `filaEvaluacion-${index}`
+    );
+
+  if (!fila) return;
+
+  const campoSemana =
+    fila.querySelector('input[type="number"]');
+
+  const selectorClase =
+    fila.querySelector(
+      `#claseAplicacion-${index}`
+    );
+
+  if (!campoSemana || !selectorClase) return;
+
+  const semana =
+    Number(campoSemana.value);
+
+  const clases =
+    obtenerClasesDisponiblesEvaluacion(semana);
+
+  selectorClase.innerHTML = "";
+
+  const opcionInicial =
+    document.createElement("option");
+
+  opcionInicial.value = "";
+  opcionInicial.textContent = "Seleccione una clase";
+
+  selectorClase.appendChild(opcionInicial);
+
+  clases.forEach(item => {
+
+    const opcion =
+      document.createElement("option");
+
+    opcion.value = String(item.clase);
+    opcion.textContent = `Clase ${item.clase}`;
+
+    selectorClase.appendChild(opcion);
+
+  });
+
+  selectorClase.value = "";
+
+}
+  
     
 /* ==================================================
 IDENTIFICAR COMPONENTE EXTERNO TP
@@ -2530,14 +2587,18 @@ const opcionesActividadesCronograma =
     `).join("");
 
 
+  fila.id = `filaEvaluacion-${index}`;
+
   fila.innerHTML = `
+   
    
     <td>
       <input
         type="number"
-        value="${actividad.valor ?? 0}"
-        min="0"
+        value="${actividad.semana}"
+        min="1"
         style="width:55px;"
+        onchange="actualizarClasesAplicacionEvaluacion(${index})"
       >
 
       <div style="margin-top:10px;">
@@ -2560,6 +2621,7 @@ const opcionesActividadesCronograma =
         </select>
       </div>
     </td>
+
 
 
     <td>
@@ -3137,26 +3199,28 @@ function guardarEdicionActividad(index){
       "input, textarea, select"
     );
 
-  const semana =
-    Number(campos[0].value);
+  
+const semana =
+  Number(campos[0].value);
 
-  const tecnica =
-    campos[2].value.trim();
+const tecnica =
+  campos[3].value.trim();
 
-  const codigosREA =
-    campos[3].value
-      .split(",")
-      .map(codigo => codigo.trim())
-      .filter(codigo => codigo !== "");
+const codigosREA =
+  campos[4].value
+    .split(",")
+    .map(codigo => codigo.trim())
+    .filter(codigo => codigo !== "");
 
-  const tipo =
-    campos[4].value;
+const tipo =
+  campos[5].value;
 
-  const instrumento =
-    campos[5].value;
+const instrumento =
+  campos[6].value;
 
-  let valor =
-    Number(campos[6].value);
+let valor =
+  Number(campos[7].value);
+
 
   if(tipo === "D"){
     valor = 0;
