@@ -2512,15 +2512,55 @@ const opcionesActividadesCronograma =
       ? actividad.instrumentos[0] || ""
       : "";
 
+    const clasesAplicacion =
+    obtenerClasesDisponiblesEvaluacion(actividad.semana);
+
+  const opcionesClasesAplicacion =
+    clasesAplicacion.map(item => `
+      <option
+        value="${item.clase}"
+        ${
+          Number(actividad.claseAplicacion) === item.clase
+            ? "selected"
+            : ""
+        }
+      >
+        Clase ${item.clase}
+      </option>
+    `).join("");
+
+
   fila.innerHTML = `
+   
     <td>
       <input
         type="number"
-        value="${actividad.semana}"
-        min="1"
+        value="${actividad.valor ?? 0}"
+        min="0"
         style="width:55px;"
       >
+
+      <div style="margin-top:10px;">
+        <label
+          for="claseAplicacion-${index}"
+          style="display:block; margin-bottom:5px;"
+        >
+          Clase de aplicación
+        </label>
+
+        <select
+          id="claseAplicacion-${index}"
+          style="width:100%;"
+        >
+          <option value="">
+            Seleccione una clase
+          </option>
+
+          ${opcionesClasesAplicacion}
+        </select>
+      </div>
     </td>
+
 
     <td>
 
