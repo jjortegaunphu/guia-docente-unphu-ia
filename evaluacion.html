@@ -3122,14 +3122,25 @@ function guardarEdicionActividad(index){
     valor = 0;
   }
 
-  propuestaEvaluacionActual.actividades[index] = {
-    semana: semana,
-    tecnica: tecnica,
-    codigosREA: codigosREA,
-    tipo: tipo,
-    instrumentos: [instrumento],
-    valor: valor
-  };
+  
+const actividadAnterior =
+  propuestaEvaluacionActual.actividades[index];
+
+propuestaEvaluacionActual.actividades[index] = {
+  ...actividadAnterior,
+  semana: semana,
+  claseAplicacion:
+    Number(actividadAnterior.claseAplicacion) > 0 &&
+    Number(actividadAnterior.semana) === semana
+      ? Number(actividadAnterior.claseAplicacion)
+      : null,
+  tecnica: tecnica,
+  codigosREA: codigosREA,
+  tipo: tipo,
+  instrumentos: [instrumento],
+  valor: valor
+};
+
 
   propuestaEvaluacionActual.actividades.sort(
     (a, b) => Number(a.semana) - Number(b.semana)
