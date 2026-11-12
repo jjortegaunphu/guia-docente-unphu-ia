@@ -447,6 +447,38 @@ function identificarEvaluacionesParaSincronizar() {
 
     
 /* ==================================================
+OBTENER CLASES DISPONIBLES PARA UNA EVALUACIÓN
+================================================== */
+
+function obtenerClasesDisponiblesEvaluacion(semanaEvaluacion) {
+
+  const semana = datosPaso1.cronograma?.find(
+    item =>
+      Number(item.semana) === Number(semanaEvaluacion)
+  );
+
+  if (!semana) {
+    return [];
+  }
+
+  const clases =
+    Array.isArray(semana.propuesta?.clases)
+      ? semana.propuesta.clases
+      : [];
+
+  return clases.map(clase => ({
+    semana: Number(semana.semana),
+    clase: Number(clase.clase),
+    contenido: clase.contenido || "",
+    metodologiasActuales:
+      Array.isArray(clase.metodologiasActividades)
+        ? clase.metodologiasActividades
+        : []
+  }));
+}
+
+    
+/* ==================================================
 IDENTIFICAR COMPONENTE EXTERNO TP
 ================================================== */
 
@@ -2366,16 +2398,19 @@ function agregarActividadEvaluacion(){
     return;
   }
 
-  const nuevaActividad = {
-    semana: 1,
-    tecnica: "",
-    codigosREA: [],
-    tipo: "F",
-    instrumentos: [
-      "Lista de cotejo"
-    ],
-    valor: 0
-  };
+  
+const nuevaActividad = {
+  semana: 1,
+  claseAplicacion: null,
+  tecnica: "",
+  codigosREA: [],
+  tipo: "F",
+  instrumentos: [
+    "Lista de cotejo"
+  ],
+  valor: 0
+};
+
 
   nuevaActividad.esNueva = true;
 
