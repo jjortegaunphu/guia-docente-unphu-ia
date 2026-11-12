@@ -385,6 +385,68 @@ reaEncontrados.forEach(codigoREA => {
 
 
 /* ==================================================
+IDENTIFICAR EVALUACIONES PARA SINCRONIZAR
+CON EL CRONOGRAMA
+================================================== */
+
+function identificarEvaluacionesParaSincronizar() {
+
+  const rubrosAceptados =
+    datosPaso1.sistemaEvaluacion?.rubrosAceptados || [];
+
+  const evaluaciones = [];
+
+  rubrosAceptados.forEach(rubro => {
+
+    if (esComponenteTP(rubro)) {
+      return;
+    }
+
+    const actividades =
+      Array.isArray(rubro.actividades)
+        ? rubro.actividades
+        : [];
+
+    actividades.forEach(actividad => {
+
+      const semana = Number(actividad.semana);
+
+      if (
+        !Number.isInteger(semana) ||
+        semana < 1 ||
+        !String(actividad.tecnica || "").trim()
+      ) {
+        return;
+      }
+
+      const semanaCronograma =
+        datosPaso1.cronograma?.find(
+          item => Number(item.semana) === semana
+        );
+
+      if (!semanaCronograma) {
+        return;
+      }
+
+      evaluaciones.push({
+        rubro: rubro.rubro,
+        semana: semana,
+        tecnica: actividad.tecnica,
+        tipo: actividad.tipo || "",
+        instrumentos: actividad.instrumentos || [],
+        codigosREA: actividad.codigosREA || [],
+        valor: Number(actividad.valor || 0)
+      });
+
+    });
+
+  });
+
+  return evaluaciones;
+}
+
+    
+/* ==================================================
 IDENTIFICAR COMPONENTE EXTERNO TP
 ================================================== */
 
