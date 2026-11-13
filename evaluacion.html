@@ -501,6 +501,43 @@ function prepararResumenSincronizacionEvaluaciones() {
   const evaluaciones =
     identificarEvaluacionesParaSincronizar();
 
+  
+const obtenerEstadoAprobacion = evaluacion => {
+
+  const identificador =
+    obtenerIdentificadorAdaptacion({ evaluacion });
+
+  if (!identificador) {
+    return "Pendiente de revisión docente";
+  }
+
+  const registroGuardado = localStorage.getItem(
+    "adaptacionEvaluativaAprobada:" + identificador
+  );
+
+  if (!registroGuardado) {
+    return "Pendiente de revisión docente";
+  }
+
+  try {
+    const aprobacion = JSON.parse(registroGuardado);
+
+    return aprobacion?.decisionDocente === "Aceptar"
+      ? "Aprobada por el docente"
+      : "Pendiente de revisión docente";
+
+  } catch (error) {
+
+    console.error(
+      "Error al recuperar la aprobación docente:",
+      error
+    );
+
+    return "Pendiente de revisión docente";
+  }
+};
+
+
   return evaluaciones.map(evaluacion => ({
 
     rubro: evaluacion.rubro,
@@ -518,8 +555,9 @@ function prepararResumenSincronizacionEvaluaciones() {
     codigosREA: [...evaluacion.codigosREA],
 
     valor: evaluacion.valor,
+    
+    estado: obtenerEstadoAprobacion(evaluacion)
 
-    estado: "Pendiente de revisión docente"
 
   }));
 
