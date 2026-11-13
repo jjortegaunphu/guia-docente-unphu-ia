@@ -1479,6 +1479,36 @@ contenedorEdicion.appendChild(
   campoEdicionJustificacion
 );
 
+    /* CAMPO EDITABLE: METODOLOGÍA */
+
+const tituloEdicionMetodologia =
+  document.createElement("h4");
+
+tituloEdicionMetodologia.textContent =
+  "Editar metodología propuesta";
+
+const campoEdicionMetodologia =
+  document.createElement("textarea");
+
+campoEdicionMetodologia.id =
+  "campoEdicionMetodologiaAdaptacion";
+
+campoEdicionMetodologia.value =
+  propuestaEditable.metodologia || "";
+
+campoEdicionMetodologia.rows = 5;
+
+campoEdicionMetodologia.style.width = "100%";
+campoEdicionMetodologia.style.marginTop = "10px";
+
+contenedorEdicion.appendChild(
+  tituloEdicionMetodologia
+);
+
+contenedorEdicion.appendChild(
+  campoEdicionMetodologia
+);
+
 const contenedorAnterior =
   panel.querySelector("#contenedorEdicionDocente");
 
