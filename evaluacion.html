@@ -1070,6 +1070,43 @@ async function solicitarPropuestaIAAdaptacionEvaluacion(
 
 }
 
+/* ==================================================
+PREPARAR SOLICITUD DE ADAPTACION EVALUATIVA
+SIN MODIFICAR EL CRONOGRAMA
+================================================== */
+
+async function generarPropuestaAdaptacionEvaluacion(indiceEvaluacion) {
+
+  const datos =
+    prepararDatosAdaptacionEvaluaciones();
+
+  const indice = Number(indiceEvaluacion);
+
+  if (
+    !Number.isInteger(indice) ||
+    indice < 0 ||
+    indice >= datos.length
+  ) {
+    throw new Error(
+      "No se encontró la evaluación seleccionada."
+    );
+  }
+
+  const datosSeleccionados = datos[indice];
+
+  const resultado =
+    await solicitarPropuestaIAAdaptacionEvaluacion(
+      datosSeleccionados
+    );
+
+  return {
+    ...datosSeleccionados,
+    propuestaAdaptacion: resultado.propuesta,
+    decisionDocente: "Pendiente",
+    aplicadaAlCronograma: false
+  };
+
+}
     
 /* ==================================================
 MOSTRAR CLASE ORIGINAL ANTES DE SU ADAPTACION
