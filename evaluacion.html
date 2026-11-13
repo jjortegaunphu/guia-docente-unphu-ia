@@ -1374,9 +1374,36 @@ if (avisoAprobacion) {
 
       botonAceptar.disabled = true;
 
-      const botonRechazar = document.getElementById(
-  "btnRechazarAdaptacionEvaluacion"
+      /* ==================================================
+INICIAR EDICIÓN DOCENTE DE LA PROPUESTA
+SIN MODIFICAR EL CRONOGRAMA
+================================================== */
+
+const botonEditar = document.getElementById(
+  "btnEditarAdaptacionEvaluacion"
 );
+
+if (botonEditar) {
+
+  botonEditar.onclick = function() {
+
+    alert(
+      "Se iniciará la edición docente de la propuesta. " +
+      "El cronograma original permanecerá sin modificaciones."
+    );
+
+    console.log(
+      "Edición docente solicitada:",
+      registro
+    );
+
+  };
+
+}
+
+      const botonRechazar = document.getElementById(
+        "btnRechazarAdaptacionEvaluacion"
+      );
 
 if (botonRechazar) {
   botonRechazar.disabled = true;
