@@ -699,7 +699,48 @@ function obtenerCopiaClaseParaSincronizacion(
   return JSON.parse(JSON.stringify(clase));
 
 }
-  
+
+    
+/* ==================================================
+PREPARAR DATOS PARA PROPUESTA DE ADAPTACION
+SIN MODIFICAR EL CRONOGRAMA
+================================================== */
+
+function prepararDatosAdaptacionEvaluaciones() {
+
+  const evaluaciones =
+    identificarEvaluacionesParaSincronizar();
+
+  return evaluaciones.map(evaluacion => {
+
+    const claseOriginal =
+      obtenerCopiaClaseParaSincronizacion(
+        evaluacion.semana,
+        evaluacion.claseAplicacion
+      );
+
+    if (!claseOriginal) {
+      return null;
+    }
+
+    return {
+      evaluacion: JSON.parse(
+        JSON.stringify(evaluacion)
+      ),
+
+      claseOriginal: claseOriginal,
+
+      clasePropuesta: JSON.parse(
+        JSON.stringify(claseOriginal)
+      ),
+
+      estado: "Pendiente de propuesta"
+    };
+
+  }).filter(item => item !== null);
+
+}
+
   
 /* ==================================================
 ACTUALIZAR CLASES AL CAMBIAR LA SEMANA
