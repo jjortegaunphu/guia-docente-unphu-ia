@@ -1430,14 +1430,20 @@ console.log(
           "Aceptar"
         );
 
+      
+if (registroActualizado && registro.propuestaEditadaDocente) {
+  registroActualizado.propuestaAdaptacion =
+    JSON.parse(
+      JSON.stringify(registro.propuestaEditadaDocente)
+    );
+}
+
+
       if (!registroActualizado) {
         alert("No fue posible registrar la decisión docente.");
         return;
       }
-      
-registro.decisionDocente = registroActualizado.decisionDocente;
-
-      
+           
 const identificadorAdaptacion =
   obtenerIdentificadorAdaptacion(registro);
 
@@ -1447,6 +1453,32 @@ console.log(
 );
 
 
+if (!identificadorAdaptacion) {
+  alert("No fue posible identificar la adaptación.");
+  return;
+}
+
+try {
+  localStorage.setItem(
+    "adaptacionEvaluativaAprobada:" + identificadorAdaptacion,
+    JSON.stringify(registroActualizado)
+  );
+
+  console.log(
+    "Aprobación docente guardada en localStorage:",
+    identificadorAdaptacion
+  );
+} catch (error) {
+  console.error(
+    "Error al guardar la aprobación docente:",
+    error
+  );
+  alert("No fue posible guardar la aprobación docente.");
+  return;
+}
+      
+registro.decisionDocente = registroActualizado.decisionDocente;
+   
 const avisoAprobacion = panel.querySelector(
   "#avisoEstadoAdaptacion"
 );
