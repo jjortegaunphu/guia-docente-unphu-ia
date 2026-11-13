@@ -1374,33 +1374,7 @@ if (avisoAprobacion) {
 
       botonAceptar.disabled = true;
 
-      /* ==================================================
-INICIAR EDICIÓN DOCENTE DE LA PROPUESTA
-SIN MODIFICAR EL CRONOGRAMA
-================================================== */
-
-const botonEditarPropuesta = document.getElementById(
-  "btnEditarAdaptacionEvaluacion"
-);
-
-if (botonEditarPropuesta) {
-
-  botonEditarPropuesta.onclick = function() {
-
-    alert(
-      "Se iniciará la edición docente de la propuesta. " +
-      "El cronograma original permanecerá sin modificaciones."
-    );
-
-    console.log(
-      "Edición docente solicitada:",
-      registro
-    );
-
-  };
-
-}
-
+     
       const botonRechazar = document.getElementById(
         "btnRechazarAdaptacionEvaluacion"
       );
@@ -1430,6 +1404,33 @@ if (botonEditar) {
     };
 
   }
+
+   /* ==================================================
+INICIAR EDICIÓN DOCENTE DE LA PROPUESTA
+SIN MODIFICAR EL CRONOGRAMA
+================================================== */
+
+const botonEditarPropuesta = document.getElementById(
+  "btnEditarAdaptacionEvaluacion"
+);
+
+if (botonEditarPropuesta) {
+
+  botonEditarPropuesta.onclick = function() {
+
+    alert(
+      "Se iniciará la edición docente de la propuesta. " +
+      "El cronograma original permanecerá sin modificaciones."
+    );
+
+    console.log(
+      "Edición docente solicitada:",
+      registro
+    );
+
+  };
+
+}
 
     const botonRechazar = document.getElementById(
     "btnRechazarAdaptacionEvaluacion"
