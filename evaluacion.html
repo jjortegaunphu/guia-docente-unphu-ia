@@ -1040,6 +1040,36 @@ function registrarDecisionDocenteAdaptacion(
 }
 
     
+/* IDENTIFICADOR DE EVALUACIÓN PARA REGISTRO DOCENTE */
+
+function obtenerIdentificadorAdaptacion(registro) {
+
+  const evaluacion = registro?.evaluacion;
+
+  if (!evaluacion) {
+    return null;
+  }
+
+  const rubro = String(evaluacion.rubro || "").trim();
+  const semana = String(evaluacion.semana ?? "").trim();
+  const clase = String(evaluacion.claseAplicacion ?? "").trim();
+  const tecnica = String(evaluacion.tecnica || "").trim();
+
+  if (!rubro || !semana || !clase || !tecnica) {
+    return null;
+  }
+
+  return JSON.stringify([
+    rubro,
+    semana,
+    clase,
+    tecnica
+  ]);
+
+}
+
+
+    
 /* ==================================================
 PREPARAR CONTEXTO PARA ADAPTACION ACADEMICA CON IA
 SIN MODIFICAR EL CRONOGRAMA
