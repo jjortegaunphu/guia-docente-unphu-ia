@@ -546,7 +546,7 @@ function construirVistaPreviaSincronizacionEvaluaciones() {
     `;
   }
 
-  const filas = evaluaciones.map(evaluacion => `
+  const filas = evaluaciones.map((evaluacion, indice) => `
     <tr>
       <td>${evaluacion.rubro}</td>
       <td>${evaluacion.semana}</td>
@@ -557,6 +557,14 @@ function construirVistaPreviaSincronizacionEvaluaciones() {
       <td>${evaluacion.codigosREA.join(", ")}</td>
       <td>${evaluacion.valor}</td>
       <td>${evaluacion.estado}</td>
+      <td style="text-align:center;">
+       <input
+         type="radio"
+         name="evaluacionAdaptar"
+         value="${indice}"
+          aria-label="Seleccionar evaluación de la semana ${evaluacion.semana}, clase ${evaluacion.claseAplicacion}"
+       >
+     </td>
     </tr>
   `).join("");
 
@@ -587,6 +595,7 @@ function construirVistaPreviaSincronizacionEvaluaciones() {
             <th>REA</th>
             <th>Valor</th>
             <th>Estado</th>
+            <th>Seleccionar</th>
           </tr>
         </thead>
         <tbody>
