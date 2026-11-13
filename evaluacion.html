@@ -1433,6 +1433,16 @@ console.log(
       
 registro.decisionDocente = registroActualizado.decisionDocente;
 
+      
+const identificadorAdaptacion =
+  obtenerIdentificadorAdaptacion(registro);
+
+console.log(
+  "Identificador de adaptación aprobada:",
+  identificadorAdaptacion
+);
+
+
 const avisoAprobacion = panel.querySelector(
   "#avisoEstadoAdaptacion"
 );
