@@ -897,11 +897,35 @@ function construirVistaClasesOriginalesEvaluacion() {
           ${escaparHTML(clase.contenido)}
         </p>
 
+        
         <strong>Metodologías y actividades originales:</strong>
         <ul>${actividades || "<li>No registradas</li>"}</ul>
 
+        <h4>Posibles actividades relacionadas con la evaluación</h4>
+
+        ${
+          item.actividadesRelacionadas.length > 0
+            ? `
+              <ul>
+                ${item.actividadesRelacionadas.map(relacion => `
+                  <li>
+                    <strong>Actividad ${relacion.indice + 1}:</strong>
+                    ${escaparHTML(relacion.actividadFormativa)}
+
+                    <p>
+                      <strong>Palabras coincidentes:</strong>
+                      ${escaparHTML(relacion.coincidencias.join(", "))}
+                    </p>
+                  </li>
+                `).join("")}
+              </ul>
+            `
+            : "<p>No se identificaron coincidencias textuales. Se requiere revisión académica.</p>"
+        }
+
         <p>
           <strong>Estado:</strong>
+
           ${escaparHTML(item.estado)}
         </p>
       </section>
