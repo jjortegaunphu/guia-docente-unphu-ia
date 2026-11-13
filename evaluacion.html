@@ -1461,9 +1461,14 @@ if (botonEditarPropuesta) {
 
   botonEditarPropuesta.onclick = function() {
 
-  const propuestaEditable = JSON.parse(
-    JSON.stringify(registro.propuestaAdaptacion)
-  );
+  c
+const propuestaEditable = JSON.parse(
+  JSON.stringify(
+    registro.propuestaEditadaDocente ||
+    registro.propuestaAdaptacion
+  )
+);
+
 
   console.log(
     "Copia de propuesta preparada para edición docente:",
