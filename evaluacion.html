@@ -919,7 +919,73 @@ function registrarDecisionDocenteAdaptacion(
   return registroActualizado;
 
 }
-  
+
+    
+/* ==================================================
+PREPARAR CONTEXTO PARA ADAPTACION ACADEMICA CON IA
+SIN MODIFICAR EL CRONOGRAMA
+================================================== */
+
+function prepararContextoIAAdaptacionEvaluacion(
+  datosAdaptacion
+) {
+
+  if (
+    !datosAdaptacion ||
+    !datosAdaptacion.evaluacion ||
+    !datosAdaptacion.claseOriginal
+  ) {
+    return null;
+  }
+
+  const copiar = valor =>
+    JSON.parse(JSON.stringify(valor));
+
+  return {
+    asignatura: copiar(
+      datosPaso1.configuracion || {}
+    ),
+
+    reaOficiales: copiar(
+      datosPaso1.programa?.reaOficiales || []
+    ),
+
+    bibliografiaOficial: copiar(
+      datosPaso1.programa?.bibliografia || []
+    ),
+
+    evaluacion: copiar(
+      datosAdaptacion.evaluacion
+    ),
+
+    claseOriginal: copiar(
+      datosAdaptacion.claseOriginal
+    ),
+
+    actividadesRelacionadas: copiar(
+      datosAdaptacion.actividadesRelacionadas || []
+    ),
+
+    instrucciones: {
+      conservarActividadesPreparatorias: true,
+      evitarDuplicaciones: true,
+      respetarREAOficiales: true,
+      conservarContenidoClase: true,
+      revisarMediacionDocente: true,
+      revisarRecursosMateriales: true,
+      revisarRecursosVirtuales: true,
+      revisarBibliografia: true,
+      requiereAprobacionDocente: true,
+      decisionesPermitidas: [
+        "Aceptar",
+        "Rechazar",
+        "Editar"
+      ]
+    }
+  };
+
+}
+
     
 /* ==================================================
 MOSTRAR CLASE ORIGINAL ANTES DE SU ADAPTACION
