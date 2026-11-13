@@ -1187,6 +1187,72 @@ async function generarPropuestaAdaptacionEvaluacion(indiceEvaluacion) {
   };
 
 }
+
+    /* ==================================================
+MOSTRAR PROPUESTA PARA REVISION DOCENTE
+SIN MODIFICAR EL CRONOGRAMA
+================================================== */
+
+function mostrarPropuestaRevisionDocente(registro) {
+
+  const panel = document.getElementById(
+    "panelRevisionAdaptacionEvaluacion"
+  );
+
+  if (!panel || !registro?.propuestaAdaptacion) {
+    return;
+  }
+
+  const propuesta = registro.propuestaAdaptacion;
+
+  const escaparHTML = valor =>
+    String(valor ?? "").replace(/[&<>"']/g, caracter => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    }[caracter]));
+
+  panel.innerHTML = `
+    <section style="border:1px solid #ccc; padding:16px;">
+
+      <h3>Revisión docente de la adaptación evaluativa</h3>
+
+      <p>
+        <strong>Estado:</strong>
+        Pendiente de aprobación docente
+      </p>
+
+      <h4>Actividad original</h4>
+      <p>${escaparHTML(propuesta.actividadOriginal)}</p>
+
+      <h4>Actividad adaptada propuesta por la IA</h4>
+      <p>${escaparHTML(propuesta.actividadAdaptada)}</p>
+
+      <h4>Justificación de la selección</h4>
+      <p>${escaparHTML(propuesta.justificacionSeleccion)}</p>
+
+      <p>
+        <strong>Metodología:</strong>
+        ${escaparHTML(propuesta.metodologia)}
+      </p>
+
+      <p>
+        <strong>REA:</strong>
+        ${escaparHTML((propuesta.codigosREA || []).join(", "))}
+      </p>
+
+      <p>
+        <strong>Importante:</strong>
+        Esta propuesta no ha sido aprobada ni aplicada
+        al cronograma.
+      </p>
+
+    </section>
+  `;
+
+}
     
 /* ==================================================
 MOSTRAR CLASE ORIGINAL ANTES DE SU ADAPTACION
