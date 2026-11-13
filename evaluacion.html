@@ -1582,6 +1582,22 @@ contenedorEdicion.appendChild(
 );
 
     
+/* BOTÓN PARA GUARDAR CAMBIOS DEL DOCENTE */
+
+const botonGuardarCambios = document.createElement("button");
+
+botonGuardarCambios.id = "btnGuardarCambiosAdaptacion";
+botonGuardarCambios.type = "button";
+botonGuardarCambios.textContent = "Guardar cambios";
+
+botonGuardarCambios.style.marginTop = "20px";
+botonGuardarCambios.style.marginRight = "10px";
+botonGuardarCambios.style.padding = "10px 18px";
+botonGuardarCambios.style.cursor = "pointer";
+
+contenedorEdicion.appendChild(botonGuardarCambios);
+
+    
 const contenedorAnterior =
   panel.querySelector("#contenedorEdicionDocente");
 
