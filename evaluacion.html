@@ -664,6 +664,44 @@ function obtenerClasesDisponiblesEvaluacion(semanaEvaluacion) {
 
   
 /* ==================================================
+OBTENER COPIA DE LA CLASE PARA PROPONER ADAPTACIONES
+SIN MODIFICAR EL CRONOGRAMA ORIGINAL
+================================================== */
+
+function obtenerCopiaClaseParaSincronizacion(
+  semanaEvaluacion,
+  claseAplicacion
+) {
+
+  const semana = datosPaso1.cronograma?.find(
+    item =>
+      Number(item.semana) === Number(semanaEvaluacion)
+  );
+
+  if (!semana) {
+    return null;
+  }
+
+  const clases =
+    Array.isArray(semana.propuesta?.clases)
+      ? semana.propuesta.clases
+      : [];
+
+  const clase = clases.find(
+    item =>
+      Number(item.clase) === Number(claseAplicacion)
+  );
+
+  if (!clase) {
+    return null;
+  }
+
+  return JSON.parse(JSON.stringify(clase));
+
+}
+  
+  
+/* ==================================================
 ACTUALIZAR CLASES AL CAMBIAR LA SEMANA
 DE UNA ACTIVIDAD EVALUATIVA
 ================================================== */
