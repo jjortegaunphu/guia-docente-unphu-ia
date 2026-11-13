@@ -603,6 +603,7 @@ MOSTRAR VISTA PREVIA DE SINCRONIZACIÓN
 SIN MODIFICAR EL CRONOGRAMA
 ================================================== */
 
+
 function mostrarVistaPreviaSincronizacionEvaluaciones() {
 
   const contenedor =
@@ -615,8 +616,19 @@ function mostrarVistaPreviaSincronizacionEvaluaciones() {
   const vistaPrevia =
     construirVistaPreviaSincronizacionEvaluaciones();
 
+  const clasesOriginales =
+    construirVistaClasesOriginalesEvaluacion();
+
   contenedor.innerHTML = `
+    <h3>Resumen de evaluaciones para sincronización</h3>
+
     ${vistaPrevia}
+
+    <h3 style="margin-top:30px;">
+      Planificación original de las clases seleccionadas
+    </h3>
+
+    ${clasesOriginales}
 
     <div style="margin-top:20px;">
       <button
@@ -629,6 +641,7 @@ function mostrarVistaPreviaSincronizacionEvaluaciones() {
   `;
 
 }
+
 
     
 /* ==================================================
