@@ -743,6 +743,84 @@ function prepararDatosAdaptacionEvaluaciones() {
 
   
 /* ==================================================
+MOSTRAR CLASE ORIGINAL ANTES DE SU ADAPTACION
+SIN MODIFICAR EL CRONOGRAMA
+================================================== */
+
+function construirVistaClasesOriginalesEvaluacion() {
+
+  const datos =
+    prepararDatosAdaptacionEvaluaciones();
+
+  if (datos.length === 0) {
+    return "<p>No hay clases disponibles para revisar.</p>";
+  }
+
+  const escaparHTML = valor =>
+    String(valor ?? "").replace(
+      /[&<>"']/g,
+      caracter => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      })[caracter]
+    );
+
+  return datos.map(item => {
+
+    const clase = item.claseOriginal;
+
+    const metodologias =
+      Array.isArray(clase.metodologiasActividades)
+        ? clase.metodologiasActividades
+        : [];
+
+    const actividades = metodologias.map(m => `
+      <li>
+        <strong>Metodología:</strong>
+        ${escaparHTML(m.metodologia)}
+        <p>
+          <strong>Actividad formativa:</strong>
+          ${escaparHTML(m.actividadFormativa)}
+        </p>
+      </li>
+    `).join("");
+
+    return `
+      <section style="margin:20px 0; padding:15px; border:1px solid #ccc;">
+        <h4>
+          Semana ${item.evaluacion.semana} -
+          Clase ${item.evaluacion.claseAplicacion}
+        </h4>
+
+        <p>
+          <strong>Evaluación:</strong>
+          ${escaparHTML(item.evaluacion.tecnica)}
+        </p>
+
+        <p>
+          <strong>Contenido original:</strong>
+          ${escaparHTML(clase.contenido)}
+        </p>
+
+        <strong>Metodologías y actividades originales:</strong>
+        <ul>${actividades || "<li>No registradas</li>"}</ul>
+
+        <p>
+          <strong>Estado:</strong>
+          ${escaparHTML(item.estado)}
+        </p>
+      </section>
+    `;
+
+  }).join("");
+
+}
+  
+  
+/* ==================================================
 ACTUALIZAR CLASES AL CAMBIAR LA SEMANA
 DE UNA ACTIVIDAD EVALUATIVA
 ================================================== */
