@@ -1388,6 +1388,72 @@ if (avisoAprobacion) {
 
   }
 
+    const botonRechazar = document.getElementById(
+    "btnRechazarAdaptacionEvaluacion"
+  );
+
+  if (botonRechazar) {
+
+    botonRechazar.onclick = function() {
+
+      const confirmar = confirm(
+        "¿Confirma que desea rechazar esta propuesta " +
+        "de adaptación evaluativa?\n\n" +
+        "El cronograma no será modificado."
+      );
+
+      if (!confirmar) {
+        return;
+      }
+
+      const registroActualizado =
+        registrarDecisionDocenteAdaptacion(
+          registro,
+          "Rechazar"
+        );
+
+      if (!registroActualizado) {
+        alert("No fue posible registrar el rechazo.");
+        return;
+      }
+
+      panel.querySelector("p").innerHTML =
+        "<strong>Estado:</strong> Propuesta rechazada por el docente";
+
+      const aviso = panel.querySelector(
+        "#avisoEstadoAdaptacion"
+      );
+
+      if (aviso) {
+        aviso.innerHTML =
+          "<strong>Importante:</strong> " +
+          "Propuesta rechazada. No se ha aplicado al cronograma.";
+      }
+
+      botonRechazar.disabled = true;
+
+      const botonAceptar = document.getElementById(
+        "btnAceptarAdaptacionEvaluacion"
+      );
+
+      if (botonAceptar) {
+        botonAceptar.disabled = true;
+      }
+
+      console.log(
+        "Propuesta rechazada por el docente:",
+        registroActualizado
+      );
+
+      alert(
+        "Propuesta rechazada correctamente. " +
+        "El cronograma no ha sido modificado."
+      );
+
+    };
+
+  }
+
 }
     
 /* ==================================================
