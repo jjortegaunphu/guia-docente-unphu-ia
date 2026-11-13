@@ -1449,6 +1449,36 @@ contenedorEdicion.style.marginTop = "20px";
 contenedorEdicion.appendChild(tituloEdicionActividad);
 contenedorEdicion.appendChild(campoEdicionActividad);
 
+    /* CAMPO EDITABLE: JUSTIFICACIÓN DE LA SELECCIÓN */
+
+const tituloEdicionJustificacion =
+  document.createElement("h4");
+
+tituloEdicionJustificacion.textContent =
+  "Editar justificación de la selección";
+
+const campoEdicionJustificacion =
+  document.createElement("textarea");
+
+campoEdicionJustificacion.id =
+  "campoEdicionJustificacionAdaptacion";
+
+campoEdicionJustificacion.value =
+  propuestaEditable.justificacionSeleccion || "";
+
+campoEdicionJustificacion.rows = 5;
+
+campoEdicionJustificacion.style.width = "100%";
+campoEdicionJustificacion.style.marginTop = "10px";
+
+contenedorEdicion.appendChild(
+  tituloEdicionJustificacion
+);
+
+contenedorEdicion.appendChild(
+  campoEdicionJustificacion
+);
+
 const contenedorAnterior =
   panel.querySelector("#contenedorEdicionDocente");
 
