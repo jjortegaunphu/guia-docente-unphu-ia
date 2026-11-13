@@ -1400,6 +1400,8 @@ console.log(
         alert("No fue posible registrar la decisión docente.");
         return;
       }
+      
+registro.decisionDocente = registroActualizado.decisionDocente;
 
 const avisoAprobacion = panel.querySelector(
   "#avisoEstadoAdaptacion"
