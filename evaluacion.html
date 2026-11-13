@@ -1242,6 +1242,37 @@ console.log(
 );
 
 
+/* VALIDAR REA PROPUESTOS CONTRA EL PROGRAMA OFICIAL */
+
+const codigosREAOficiales = new Set(
+  reaOficialesAdaptacion.map(rea =>
+    String(rea.codigo || "").trim().toUpperCase()
+  )
+);
+
+const codigosREAPropuestos =
+  Array.isArray(propuesta.codigosREA)
+    ? propuesta.codigosREA
+    : [];
+
+const reaNoReconocidos = codigosREAPropuestos.filter(
+  codigo =>
+    !codigosREAOficiales.has(
+      String(codigo).trim().toUpperCase()
+    )
+);
+
+console.log(
+  "REA propuestos por la IA:",
+  codigosREAPropuestos
+);
+
+console.log(
+  "REA no reconocidos en el programa oficial:",
+  reaNoReconocidos
+);
+
+  
   const escaparHTML = valor =>
     String(valor ?? "").replace(/[&<>"']/g, caracter => ({
       "&": "&amp;",
