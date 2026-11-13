@@ -833,7 +833,58 @@ function identificarActividadesRelacionadasEvaluacion(
 
 }
 
-  
+
+/* ==================================================
+PREPARAR DECISION DOCENTE SOBRE ADAPTACION
+SIN MODIFICAR EL CRONOGRAMA
+================================================== */
+
+function prepararDecisionDocenteAdaptacion(
+  datosAdaptacion,
+  indiceActividadPropuesta
+) {
+
+  if (!datosAdaptacion) {
+    return null;
+  }
+
+  const claseOriginal = datosAdaptacion.claseOriginal;
+
+  const actividades =
+    Array.isArray(claseOriginal?.metodologiasActividades)
+      ? claseOriginal.metodologiasActividades
+      : [];
+
+  const indice = Number(indiceActividadPropuesta);
+
+  const indiceValido =
+    Number.isInteger(indice) &&
+    indice >= 0 &&
+    indice < actividades.length;
+
+  return {
+    evaluacion: JSON.parse(
+      JSON.stringify(datosAdaptacion.evaluacion)
+    ),
+
+    indiceActividadPropuesta:
+      indiceValido ? indice : null,
+
+    actividadOriginal:
+      indiceValido
+        ? JSON.parse(JSON.stringify(actividades[indice]))
+        : null,
+
+    propuestaAdaptacion: null,
+
+    decisionDocente: "Pendiente",
+
+    aplicadaAlCronograma: false
+  };
+
+}
+
+    
 /* ==================================================
 MOSTRAR CLASE ORIGINAL ANTES DE SU ADAPTACION
 SIN MODIFICAR EL CRONOGRAMA
