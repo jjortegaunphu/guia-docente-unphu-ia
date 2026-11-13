@@ -1598,6 +1598,51 @@ botonGuardarCambios.style.cursor = "pointer";
 contenedorEdicion.appendChild(botonGuardarCambios);
 
     
+/* GUARDAR COPIA EDITADA POR EL DOCENTE */
+
+botonGuardarCambios.onclick = function() {
+
+  const actividadEditada =
+    campoEdicionActividad.value.trim();
+
+  const justificacionEditada =
+    campoEdicionJustificacion.value.trim();
+
+  const metodologiaEditada =
+    campoEdicionMetodologia.value;
+
+  if (
+    !actividadEditada ||
+    !justificacionEditada ||
+    !metodologiaEditada
+  ) {
+    alert("Complete los tres campos antes de guardar.");
+    return;
+  }
+
+  const propuestaEditada = {
+    ...propuestaEditable,
+    actividadAdaptada: actividadEditada,
+    justificacionSeleccion: justificacionEditada,
+    metodologia: metodologiaEditada
+  };
+
+  registro.propuestaEditadaDocente = propuestaEditada;
+
+  console.log(
+    "Propuesta editada por el docente:",
+    registro.propuestaEditadaDocente
+  );
+
+  alert(
+    "Cambios registrados en la sesión. " +
+    "La propuesta original y el cronograma no han sido modificados."
+  );
+
+};
+
+
+    
 const contenedorAnterior =
   panel.querySelector("#contenedorEdicionDocente");
 
