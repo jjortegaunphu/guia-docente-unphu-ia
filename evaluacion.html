@@ -1427,6 +1427,37 @@ if (botonEditarPropuesta) {
     propuestaEditable
   );
 
+    const campoEdicionActividad = document.createElement("textarea");
+
+campoEdicionActividad.id = "campoEdicionActividadAdaptada";
+campoEdicionActividad.value =
+  propuestaEditable.actividadAdaptada || "";
+
+campoEdicionActividad.rows = 6;
+
+campoEdicionActividad.style.width = "100%";
+campoEdicionActividad.style.marginTop = "10px";
+
+const tituloEdicionActividad = document.createElement("h4");
+tituloEdicionActividad.textContent =
+  "Editar actividad adaptada propuesta por la IA";
+
+const contenedorEdicion = document.createElement("div");
+contenedorEdicion.id = "contenedorEdicionDocente";
+contenedorEdicion.style.marginTop = "20px";
+
+contenedorEdicion.appendChild(tituloEdicionActividad);
+contenedorEdicion.appendChild(campoEdicionActividad);
+
+const contenedorAnterior =
+  panel.querySelector("#contenedorEdicionDocente");
+
+if (contenedorAnterior) {
+  contenedorAnterior.remove();
+}
+
+panel.appendChild(contenedorEdicion);
+
   alert(
     "La propuesta está preparada para edición docente. " +
     "El cronograma original permanece sin modificaciones."
