@@ -1295,7 +1295,7 @@ function mostrarPropuestaRevisionDocente(registro) {
 <h4>Explicación de los cambios</h4>
 <p>${escaparHTML(propuesta.explicacionCambios)}</p>
 
-      <p>
+      <p id="avisoEstadoAdaptacion">
         <strong>Importante:</strong>
         Esta propuesta no ha sido aprobada ni aplicada
         al cronograma.
@@ -1358,6 +1358,17 @@ function mostrarPropuestaRevisionDocente(registro) {
         return;
       }
 
+const avisoAprobacion = panel.querySelector(
+  "#avisoEstadoAdaptacion"
+);
+
+if (avisoAprobacion) {
+  avisoAprobacion.innerHTML =
+    "<strong>Importante:</strong> " +
+    "Propuesta aprobada por el docente. " +
+    "Todavía no se ha aplicado al cronograma.";
+}
+      
       panel.querySelector("p").innerHTML =
         "<strong>Estado:</strong> Propuesta aceptada por el docente";
 
