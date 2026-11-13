@@ -644,8 +644,6 @@ function mostrarVistaPreviaSincronizacionEvaluaciones() {
   <button
     type="button"
     id="btnGenerarAdaptacionEvaluacion"
-    disabled
-    title="La generación con IA se habilitará después de conectar la revisión docente."
     style="margin-right:10px;"
   >
     Generar propuesta de adaptación con IA
@@ -660,8 +658,76 @@ function mostrarVistaPreviaSincronizacionEvaluaciones() {
       >
         ← Volver al Sistema de Evaluación
       </button>
-    </div>
-  `;
+     </div>
+`;
+
+  const botonAdaptacion =
+    document.getElementById(
+      "btnGenerarAdaptacionEvaluacion"
+    );
+
+  if (botonAdaptacion) {
+
+    botonAdaptacion.onclick = async function() {
+
+      const seleccion =
+        contenedor.querySelector(
+          'input[name="evaluacionAdaptar"]:checked'
+        );
+
+      if (!seleccion) {
+        alert(
+          "Primero debes seleccionar una evaluación de la tabla."
+        );
+        return;
+      }
+
+      const indice = Number(seleccion.value);
+
+      botonAdaptacion.disabled = true;
+      botonAdaptacion.textContent =
+        "Generando propuesta con IA...";
+
+      try {
+
+        const resultado =
+          await generarPropuestaAdaptacionEvaluacion(
+            indice
+          );
+
+        console.log(
+          "Propuesta pendiente de revisión docente:",
+          resultado
+        );
+
+        alert(
+          "La IA generó una propuesta. " +
+          "Todavía no se ha aplicado al cronograma."
+        );
+
+      } catch (error) {
+
+        console.error(
+          "Error al generar la adaptación:",
+          error
+        );
+
+        alert(
+          error.message ||
+          "No fue posible generar la propuesta."
+        );
+
+      } finally {
+
+        botonAdaptacion.disabled = false;
+        botonAdaptacion.textContent =
+          "Generar propuesta de adaptación con IA";
+
+      }
+
+    };
+
+  }
 
 }
 
