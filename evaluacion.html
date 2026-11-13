@@ -1301,8 +1301,81 @@ function mostrarPropuestaRevisionDocente(registro) {
         al cronograma.
       </p>
 
+      <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
+
+  <button
+    type="button"
+    id="btnAceptarAdaptacionEvaluacion"
+  >
+    Aceptar propuesta
+  </button>
+
+  <button
+    type="button"
+    id="btnEditarAdaptacionEvaluacion"
+  >
+    Editar propuesta
+  </button>
+
+  <button
+    type="button"
+    id="btnRechazarAdaptacionEvaluacion"
+  >
+    Rechazar propuesta
+  </button>
+
+</div>
+
     </section>
   `;
+
+    const botonAceptar = document.getElementById(
+    "btnAceptarAdaptacionEvaluacion"
+  );
+
+  if (botonAceptar) {
+
+    botonAceptar.onclick = function() {
+
+      const confirmar = confirm(
+        "¿Confirma que desea aceptar esta propuesta " +
+        "de adaptación evaluativa?\n\n" +
+        "Esta decisión todavía no modificará el cronograma."
+      );
+
+      if (!confirmar) {
+        return;
+      }
+
+      const registroActualizado =
+        registrarDecisionDocenteAdaptacion(
+          registro,
+          "Aceptar"
+        );
+
+      if (!registroActualizado) {
+        alert("No fue posible registrar la decisión docente.");
+        return;
+      }
+
+      panel.querySelector("p").innerHTML =
+        "<strong>Estado:</strong> Propuesta aceptada por el docente";
+
+      botonAceptar.disabled = true;
+
+      console.log(
+        "Propuesta aceptada por el docente:",
+        registroActualizado
+      );
+
+      alert(
+        "Propuesta aceptada correctamente. " +
+        "El cronograma todavía no ha sido modificado."
+      );
+
+    };
+
+  }
 
 }
     
