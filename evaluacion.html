@@ -1059,12 +1059,16 @@ function obtenerIdentificadorAdaptacion(registro) {
     return null;
   }
 
-  return JSON.stringify([
-    rubro,
-    semana,
-    clase,
-    tecnica
-  ]);
+  
+return JSON.stringify([
+  String(datosPaso1?.configuracion?.codigoAsignatura || "").trim(),
+  String(datosPaso1?.fechaFinalizacion || "").trim(),
+  rubro,
+  semana,
+  clase,
+  tecnica
+]);
+
 
 }
 
