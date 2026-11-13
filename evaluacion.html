@@ -1374,6 +1374,22 @@ if (avisoAprobacion) {
 
       botonAceptar.disabled = true;
 
+      const botonRechazar = document.getElementById(
+  "btnRechazarAdaptacionEvaluacion"
+);
+
+if (botonRechazar) {
+  botonRechazar.disabled = true;
+}
+
+const botonEditar = document.getElementById(
+  "btnEditarAdaptacionEvaluacion"
+);
+
+if (botonEditar) {
+  botonEditar.disabled = true;
+}
+
       console.log(
         "Propuesta aceptada por el docente:",
         registroActualizado
@@ -1431,6 +1447,14 @@ if (avisoAprobacion) {
       }
 
       botonRechazar.disabled = true;
+
+      const botonEditar = document.getElementById(
+        "btnEditarAdaptacionEvaluacion"
+      );
+
+      if (botonEditar) {
+        botonEditar.disabled = true;
+      }
 
       const botonAceptar = document.getElementById(
         "btnAceptarAdaptacionEvaluacion"
