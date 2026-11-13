@@ -1418,17 +1418,21 @@ if (botonEditarPropuesta) {
 
   botonEditarPropuesta.onclick = function() {
 
-    alert(
-      "Se iniciará la edición docente de la propuesta. " +
-      "El cronograma original permanecerá sin modificaciones."
-    );
+  const propuestaEditable = JSON.parse(
+    JSON.stringify(registro.propuestaAdaptacion)
+  );
 
-    console.log(
-      "Edición docente solicitada:",
-      registro
-    );
+  console.log(
+    "Copia de propuesta preparada para edición docente:",
+    propuestaEditable
+  );
 
-  };
+  alert(
+    "La propuesta está preparada para edición docente. " +
+    "El cronograma original permanece sin modificaciones."
+  );
+
+};
 
 }
 
