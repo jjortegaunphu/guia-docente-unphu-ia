@@ -988,6 +988,76 @@ function prepararContextoIAAdaptacionEvaluacion(
 
     
 /* ==================================================
+SOLICITAR PROPUESTA DE ADAPTACION EVALUATIVA
+SIN MODIFICAR EL CRONOGRAMA
+================================================== */
+
+async function solicitarPropuestaIAAdaptacionEvaluacion(
+  datosAdaptacion
+) {
+
+  const contexto =
+    prepararContextoIAAdaptacionEvaluacion(
+      datosAdaptacion
+    );
+
+  if (!contexto) {
+    throw new Error(
+      "No se pudo preparar el contexto de adaptación."
+    );
+  }
+
+  const respuesta = await fetch(
+    "https://guia-docente-unphu-api.jortega-cc4.workers.dev/generar-adaptacion-evaluacion",
+    {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify(contexto)
+    }
+  );
+
+  let resultado;
+
+  try {
+
+    resultado = await respuesta.json();
+
+  } catch {
+
+    throw new Error(
+      "El servidor devolvió una respuesta no válida. " +
+      "Código HTTP: " + respuesta.status
+    );
+
+  }
+
+  if (
+    !respuesta.ok ||
+    resultado?.correcto !== true ||
+    !resultado.propuesta
+  ) {
+
+    throw new Error(
+      resultado?.error ||
+      "No fue posible generar la propuesta de adaptación."
+    );
+
+  }
+
+  return {
+    propuesta: resultado.propuesta,
+    decisionDocente: "Pendiente",
+    aplicadaAlCronograma: false
+  };
+
+}
+
+    
+/* ==================================================
 MOSTRAR CLASE ORIGINAL ANTES DE SU ADAPTACION
 SIN MODIFICAR EL CRONOGRAMA
 ================================================== */
@@ -4256,10 +4326,7 @@ try {
   );
 }
 
-
-  
-
-if (!respuesta.ok || !resultado?.correcto) {
+ if (!respuesta.ok || !resultado?.correcto) {
 
   console.error(
     "Error del servidor al generar evaluación:",
