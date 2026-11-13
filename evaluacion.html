@@ -884,6 +884,42 @@ function prepararDecisionDocenteAdaptacion(
 
 }
 
+  
+/* ==================================================
+REGISTRAR DECISION DOCENTE SOBRE ADAPTACION
+SIN MODIFICAR EL CRONOGRAMA
+================================================== */
+
+function registrarDecisionDocenteAdaptacion(
+  registro,
+  decision
+) {
+
+  if (!registro) {
+    return null;
+  }
+
+  const decisionesPermitidas = [
+    "Aceptar",
+    "Rechazar",
+    "Editar"
+  ];
+
+  if (!decisionesPermitidas.includes(decision)) {
+    return null;
+  }
+
+  const registroActualizado =
+    JSON.parse(JSON.stringify(registro));
+
+  registroActualizado.decisionDocente = decision;
+
+  registroActualizado.aplicadaAlCronograma = false;
+
+  return registroActualizado;
+
+}
+  
     
 /* ==================================================
 MOSTRAR CLASE ORIGINAL ANTES DE SU ADAPTACION
