@@ -727,6 +727,67 @@ function mostrarVistaPreviaSincronizacionEvaluaciones() {
 
       const indice = Number(seleccion.value);
 
+      const evaluacionesDisponibles =
+       identificarEvaluacionesParaSincronizar();
+
+      const evaluacionSeleccionada =
+       evaluacionesDisponibles[indice];
+
+      
+const identificadorSeleccionado =
+  obtenerIdentificadorAdaptacion({
+    evaluacion: evaluacionSeleccionada
+  });
+
+const claveAprobacionSeleccionada =
+  identificadorSeleccionado
+    ? "adaptacionEvaluativaAprobada:" + identificadorSeleccionado
+    : null;
+
+const aprobacionGuardadaTexto =
+  claveAprobacionSeleccionada
+    ? localStorage.getItem(claveAprobacionSeleccionada)
+    : null;
+      
+
+let aprobacionExistente = null;
+
+if (aprobacionGuardadaTexto) {
+  try {
+    const registroRecuperado =
+      JSON.parse(aprobacionGuardadaTexto);
+
+    if (
+      registroRecuperado?.decisionDocente === "Aceptar" &&
+      registroRecuperado?.propuestaAdaptacion
+    ) {
+      aprobacionExistente = registroRecuperado;
+    }
+
+  } catch (error) {
+    console.error(
+      "Error al recuperar la propuesta aprobada:",
+      error
+    );
+  }
+}
+
+      
+if (aprobacionExistente) {
+
+  mostrarPropuestaRevisionDocente(
+    aprobacionExistente
+  );
+
+  alert(
+    "Esta evaluación ya tiene una propuesta aprobada. " +
+    "Se recuperó la versión guardada sin generar otra con IA."
+  );
+
+  return;
+}
+
+      
       botonAdaptacion.disabled = true;
       botonAdaptacion.textContent =
         "Generando propuesta con IA...";
@@ -1303,6 +1364,11 @@ function mostrarPropuestaRevisionDocente(registro) {
   const propuesta = registro.propuestaAdaptacion;
 
   
+const propuestaYaAprobada =
+  registro.decisionDocente === "Aceptar";
+
+
+  
 /* REA OFICIALES DISPONIBLES PARA LA ADAPTACIÓN */
 
 const reaOficialesAdaptacion =
@@ -1359,10 +1425,14 @@ console.log(
 
       <h3>Revisión docente de la adaptación evaluativa</h3>
 
-      <p>
-        <strong>Estado:</strong>
-        Pendiente de aprobación docente
-      </p>
+      
+<p>
+  <strong>Estado:</strong>
+  ${propuestaYaAprobada
+    ? "Propuesta aprobada por el docente"
+    : "Pendiente de aprobación docente"}
+</p>
+
 
       <h4>Actividad original</h4>
       <p>${escaparHTML(propuesta.actividadOriginal)}</p>
@@ -1410,11 +1480,14 @@ console.log(
 <h4>Explicación de los cambios</h4>
 <p>${escaparHTML(propuesta.explicacionCambios)}</p>
 
-      <p id="avisoEstadoAdaptacion">
-        <strong>Importante:</strong>
-        Esta propuesta no ha sido aprobada ni aplicada
-        al cronograma.
-      </p>
+      
+<p id="avisoEstadoAdaptacion">
+  <strong>Importante:</strong>
+  ${propuestaYaAprobada
+    ? "Propuesta aprobada por el docente. Todavía no se ha aplicado al cronograma."
+    : "Esta propuesta no ha sido aprobada ni aplicada al cronograma."}
+</p>
+
 
       <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
 
@@ -1444,7 +1517,25 @@ console.log(
     </section>
   `;
 
-    const botonAceptar = document.getElementById(
+  
+    </section>
+  `;
+
+  if (propuestaYaAprobada) {
+    [
+      "btnAceptarAdaptacionEvaluacion",
+      "btnEditarAdaptacionEvaluacion",
+      "btnRechazarAdaptacionEvaluacion"
+    ].forEach(function(idBoton) {
+      const boton = panel.querySelector("#" + idBoton);
+
+      if (boton) {
+        boton.disabled = true;
+      }
+    });
+  }
+
+  const botonAceptar = document.getElementById(
     "btnAceptarAdaptacionEvaluacion"
   );
 
