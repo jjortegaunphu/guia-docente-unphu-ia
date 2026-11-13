@@ -1351,6 +1351,36 @@ MOSTRAR PROPUESTA PARA REVISION DOCENTE
 SIN MODIFICAR EL CRONOGRAMA
 ================================================== */
 
+
+function prepararComparacionAdaptacionAprobada(registro) {
+
+  if (
+    !registro ||
+    registro.decisionDocente !== "Aceptar" ||
+    !registro.propuestaAdaptacion ||
+    !registro.claseOriginal
+  ) {
+    return null;
+  }
+
+  return {
+    evaluacion: JSON.parse(
+      JSON.stringify(registro.evaluacion)
+    ),
+
+    claseOriginal: JSON.parse(
+      JSON.stringify(registro.claseOriginal)
+    ),
+
+    propuestaAprobada: JSON.parse(
+      JSON.stringify(registro.propuestaAdaptacion)
+    ),
+
+    aplicadaAlCronograma: false
+  };
+}
+
+    
 function mostrarPropuestaRevisionDocente(registro) {
 
   const panel = document.getElementById(
@@ -1366,6 +1396,19 @@ function mostrarPropuestaRevisionDocente(registro) {
   
 const propuestaYaAprobada =
   registro.decisionDocente === "Aceptar";
+
+
+const comparacionAprobada =
+  propuestaYaAprobada
+    ? prepararComparacionAdaptacionAprobada(registro)
+    : null;
+
+  if (comparacionAprobada) {
+  console.log(
+    "Comparación de adaptación aprobada:",
+    comparacionAprobada
+  );
+}
 
 
   
