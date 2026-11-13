@@ -732,18 +732,30 @@ function prepararDatosAdaptacionEvaluaciones() {
         evaluacion.claseAplicacion
       );
 
+    
     if (!claseOriginal) {
       return null;
     }
 
+    const actividadesRelacionadas =
+      identificarActividadesRelacionadasEvaluacion(
+        evaluacion,
+        claseOriginal
+      );
+
     return {
+
       evaluacion: JSON.parse(
         JSON.stringify(evaluacion)
       ),
 
+      
       claseOriginal: claseOriginal,
 
+      actividadesRelacionadas: actividadesRelacionadas,
+
       clasePropuesta: JSON.parse(
+
         JSON.stringify(claseOriginal)
       ),
 
