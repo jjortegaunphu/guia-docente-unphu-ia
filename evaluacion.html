@@ -1479,27 +1479,56 @@ contenedorEdicion.appendChild(
   campoEdicionJustificacion
 );
 
-    /* CAMPO EDITABLE: METODOLOGÍA */
+
+/* SELECTOR DE METODOLOGÍAS DEL MODELO EDUCATIVO UNPHU */
 
 const tituloEdicionMetodologia =
   document.createElement("h4");
 
 tituloEdicionMetodologia.textContent =
-  "Editar metodología propuesta";
+  "Seleccionar metodología de enseñanza";
+
+const metodologiasPermitidas = [
+  "Trabajo colaborativo",
+  "Intercambios orales",
+  "Diálogo socrático",
+  "Estudio de casos",
+  "Aprendizaje basado en problemas (ABP)",
+  "Aprendizaje basado en proyectos (ABProyectos)",
+  "Simulaciones",
+  "Dramatizaciones",
+  "Prácticas",
+  "Pasantías"
+];
 
 const campoEdicionMetodologia =
-  document.createElement("textarea");
+  document.createElement("select");
 
 campoEdicionMetodologia.id =
   "campoEdicionMetodologiaAdaptacion";
 
-campoEdicionMetodologia.value =
-  propuestaEditable.metodologia || "";
-
-campoEdicionMetodologia.rows = 5;
-
 campoEdicionMetodologia.style.width = "100%";
+campoEdicionMetodologia.style.padding = "10px";
 campoEdicionMetodologia.style.marginTop = "10px";
+
+const opcionInicial = document.createElement("option");
+opcionInicial.value = "";
+opcionInicial.textContent = "Seleccione una metodología";
+campoEdicionMetodologia.appendChild(opcionInicial);
+
+metodologiasPermitidas.forEach(nombre => {
+  const opcion = document.createElement("option");
+  opcion.value = nombre;
+  opcion.textContent = nombre;
+  campoEdicionMetodologia.appendChild(opcion);
+});
+
+const metodologiaActual =
+  String(propuestaEditable.metodologia || "").trim();
+
+if (metodologiasPermitidas.includes(metodologiaActual)) {
+  campoEdicionMetodologia.value = metodologiaActual;
+}
 
 contenedorEdicion.appendChild(
   tituloEdicionMetodologia
@@ -1509,6 +1538,7 @@ contenedorEdicion.appendChild(
   campoEdicionMetodologia
 );
 
+    
 const contenedorAnterior =
   panel.querySelector("#contenedorEdicionDocente");
 
