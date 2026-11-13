@@ -692,7 +692,26 @@ function mostrarVistaPreviaSincronizacionEvaluaciones() {
       botonAdaptacion.disabled = true;
       botonAdaptacion.textContent =
         "Generando propuesta con IA...";
+      const panelEsperaAdaptacion =
+        document.getElementById(
+          "panelRevisionAdaptacionEvaluacion"
+        );
 
+if (panelEsperaAdaptacion) {
+  panelEsperaAdaptacion.innerHTML = `
+    <div
+      class="espera-evaluacion"
+      role="status"
+      aria-live="polite"
+    >
+      <span class="reloj-evaluacion">◷</span>
+      <div>
+        Espere mientras la IA genera la propuesta
+        de adaptación evaluativa...
+      </div>
+    </div>
+  `;
+}
       try {
 
         const resultado =
@@ -713,6 +732,10 @@ function mostrarVistaPreviaSincronizacionEvaluaciones() {
         );
 
       } catch (error) {
+
+        if (panelEsperaAdaptacion) {
+            panelEsperaAdaptacion.innerHTML = "";
+         }
 
         console.error(
           "Error al generar la adaptación:",
