@@ -754,6 +754,73 @@ function prepararDatosAdaptacionEvaluaciones() {
 
 }
 
+    
+/* ==================================================
+IDENTIFICAR ACTIVIDADES RELACIONADAS CON LA EVALUACION
+SIN MODIFICAR EL CRONOGRAMA
+================================================== */
+
+function identificarActividadesRelacionadasEvaluacion(
+  evaluacion,
+  clase
+) {
+
+  const actividades =
+    Array.isArray(clase?.metodologiasActividades)
+      ? clase.metodologiasActividades
+      : [];
+
+  const normalizar = texto =>
+    String(texto || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^\p{L}\p{N}\s]/gu, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+  const palabrasEvaluacion =
+    new Set(
+      normalizar(evaluacion?.tecnica)
+        .split(" ")
+        .filter(palabra => palabra.length >= 5)
+    );
+
+  return actividades
+    .map((actividad, indice) => {
+
+      const descripcion = normalizar(
+        [
+          actividad.metodologia,
+          actividad.actividadFormativa
+        ].join(" ")
+      );
+
+      const coincidencias =
+        [...palabrasEvaluacion].filter(
+          palabra =>
+            descripcion.split(" ").includes(palabra)
+        );
+
+      return {
+        indice,
+        metodologia: actividad.metodologia || "",
+        actividadFormativa:
+          actividad.actividadFormativa || "",
+        coincidencias,
+        cantidadCoincidencias: coincidencias.length
+      };
+
+    })
+    .filter(item => item.cantidadCoincidencias > 0)
+    .sort(
+      (a, b) =>
+        b.cantidadCoincidencias -
+        a.cantidadCoincidencias
+    );
+
+}
+
   
 /* ==================================================
 MOSTRAR CLASE ORIGINAL ANTES DE SU ADAPTACION
