@@ -1230,6 +1230,18 @@ function mostrarPropuestaRevisionDocente(registro) {
 
   const propuesta = registro.propuestaAdaptacion;
 
+  
+/* REA OFICIALES DISPONIBLES PARA LA ADAPTACIÓN */
+
+const reaOficialesAdaptacion =
+  datosPaso1?.programa?.reaOficiales || [];
+
+console.log(
+  "REA oficiales disponibles para validar la adaptación:",
+  reaOficialesAdaptacion
+);
+
+
   const escaparHTML = valor =>
     String(valor ?? "").replace(/[&<>"']/g, caracter => ({
       "&": "&amp;",
