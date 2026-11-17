@@ -1127,10 +1127,20 @@ function prepararSincronizacionAdaptacionAprobada(registro) {
     JSON.stringify(datosPaso1.cronograma)
   );
 
-  const semanaDestino = cronogramaCopia.find(
+  
+  const semanasCoincidentes = cronogramaCopia.filter(
     semana => Number(semana.semana) ===
       preparacion.semana
   );
+
+  if (semanasCoincidentes.length !== 1) {
+    console.warn(
+      "No se encontró una semana única para la sincronización."
+    );
+    return null;
+  }
+
+  const semanaDestino = semanasCoincidentes[0];
 
   if (
     !semanaDestino ||
@@ -1139,15 +1149,25 @@ function prepararSincronizacionAdaptacionAprobada(registro) {
     return null;
   }
 
-  const indiceClase =
-    semanaDestino.propuesta.clases.findIndex(
-      clase => Number(clase.clase) ===
-        preparacion.clase
-    );
+ 
+  const indicesClasesCoincidentes =
+    semanaDestino.propuesta.clases
+      .map((clase, indice) =>
+        Number(clase.clase) === preparacion.clase
+          ? indice
+          : -1
+      )
+      .filter(indice => indice !== -1);
 
-  if (indiceClase === -1) {
+  if (indicesClasesCoincidentes.length !== 1) {
+    console.warn(
+      "No se encontró una clase única para la sincronización."
+    );
     return null;
   }
+
+  const indiceClase = indicesClasesCoincidentes[0];
+
 
   const claseDestino =
     semanaDestino.propuesta.clases[indiceClase];
