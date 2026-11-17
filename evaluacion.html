@@ -543,9 +543,15 @@ const obtenerEstadoAprobacion = evaluacion => {
   try {
     const aprobacion = JSON.parse(registroGuardado);
 
-    return aprobacion?.decisionDocente === "Aceptar"
-      ? "Aprobada por el docente"
-      : "Pendiente de revisión docente";
+    
+if (aprobacion?.decisionDocente === "Aceptar") {
+  return aprobacion.aplicadaAlCronograma === true
+    ? "Aplicada al cronograma"
+    : "Aprobada por el docente. Pendiente de aplicación";
+}
+
+return "Pendiente de revisión docente";
+
 
   } catch (error) {
 
