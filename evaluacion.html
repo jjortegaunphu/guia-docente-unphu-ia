@@ -1320,7 +1320,7 @@ function validarRegistroRecuperacionSincronizacion(
   );
 }
 
-    
+   
 function prepararRegistroRecuperacionSincronizacion(
   registro
 ) {
@@ -1403,6 +1403,133 @@ function prepararRegistroRecuperacionSincronizacion(
   };
 }
 
+    
+function aplicarSincronizacionEvaluativaSegura(
+  registro,
+  confirmarAplicacion = false
+) {
+  if (confirmarAplicacion !== true) {
+    console.warn("Aplicación no autorizada.");
+    return false;
+  }
+
+  const operacion =
+    prepararRegistroRecuperacionSincronizacion(registro);
+
+  if (!operacion) return false;
+
+  const claveRecuperacion =
+    "recuperacionSincronizacionEvaluativa";
+
+  const claveRespaldo = operacion.claveRespaldo;
+  const claveRegistro = operacion.claveRegistro;
+
+  if (
+    localStorage.getItem(claveRespaldo) !==
+      operacion.respaldoOriginal ||
+    localStorage.getItem(claveRegistro) !==
+      operacion.registroOriginal ||
+    localStorage.getItem(claveRecuperacion) !== null
+  ) {
+    console.error("Los datos cambiaron. Operación cancelada.");
+    return false;
+  }
+
+  if (
+    !validarRegistroRecuperacionSincronizacion(
+      operacion,
+      {
+        claveRegistro,
+        respaldoOriginal: JSON.parse(
+          operacion.respaldoOriginal
+        ),
+        registroOriginal: JSON.parse(
+          operacion.registroOriginal
+        )
+      }
+    )
+  ) {
+    console.error("Registro de recuperación inválido.");
+    return false;
+  }
+
+  try {
+    const respaldoAdaptado = JSON.parse(
+      operacion.respaldoAdaptado
+    );
+
+    const registroAplicado = JSON.parse(
+      operacion.registroAplicado
+    );
+
+    if (
+      registroAplicado.aplicadaAlCronograma !== true ||
+      !Array.isArray(
+        respaldoAdaptado.datosGuia?.cronograma
+      )
+    ) {
+      return false;
+    }
+
+    localStorage.setItem(
+      claveRecuperacion,
+      JSON.stringify(operacion)
+    );
+
+    if (
+      localStorage.getItem(claveRecuperacion) !==
+      JSON.stringify(operacion)
+    ) {
+      throw new Error(
+        "No se pudo verificar el registro de recuperación."
+      );
+    }
+
+    localStorage.setItem(
+      claveRespaldo,
+      operacion.respaldoAdaptado
+    );
+
+    localStorage.setItem(
+      claveRegistro,
+      operacion.registroAplicado
+    );
+
+    if (
+      localStorage.getItem(claveRespaldo) !==
+        operacion.respaldoAdaptado ||
+      localStorage.getItem(claveRegistro) !==
+        operacion.registroAplicado
+    ) {
+      throw new Error(
+        "No se pudo verificar la sincronización."
+      );
+    }
+
+    datosPaso1.cronograma = JSON.parse(
+      JSON.stringify(
+        respaldoAdaptado.datosGuia.cronograma
+      )
+    );
+
+    localStorage.removeItem(claveRecuperacion);
+
+    console.log(
+      "Adaptación evaluativa aplicada correctamente."
+    );
+
+    return true;
+  } catch (error) {
+    console.error(
+      "Error durante la sincronización:",
+      error
+    );
+
+    // El registro de recuperación se conserva
+    // para permitir una revisión y restauración segura.
+    return false;
+  }
+}
    
 /* ==================================================
 PREPARAR DATOS PARA PROPUESTA DE ADAPTACION
