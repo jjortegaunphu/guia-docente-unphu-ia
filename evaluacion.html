@@ -1970,6 +1970,103 @@ if (
 }
 
     
+function cerrarSincronizacionEvaluativaCompletada(
+  confirmarCierre = false
+) {
+  if (confirmarCierre !== true) {
+    console.warn("Cierre no autorizado.");
+    return false;
+  }
+
+  if (!verificarFinalizacionSincronizacionEvaluativa()) {
+    console.error(
+      "La sincronización no está completamente validada."
+    );
+    return false;
+  }
+
+  const claveRecuperacion =
+    "recuperacionSincronizacionEvaluativa";
+
+  const contenidoOriginal =
+    localStorage.getItem(claveRecuperacion);
+
+  if (contenidoOriginal === null) {
+    return false;
+  }
+
+  try {
+    const operacion = JSON.parse(contenidoOriginal);
+
+    const respaldo = JSON.parse(
+      operacion.respaldoAdaptado
+    );
+
+    const cronogramaAdaptado =
+      respaldo.datosGuia.cronograma;
+
+    const cronogramaMemoria =
+      JSON.stringify(datosPaso1.cronograma);
+
+    const cronogramaOriginal = JSON.stringify(
+      JSON.parse(
+        operacion.respaldoOriginal
+      ).datosGuia.cronograma
+    );
+
+    const cronogramaNuevo =
+      JSON.stringify(cronogramaAdaptado);
+
+    if (
+      cronogramaMemoria !== cronogramaOriginal &&
+      cronogramaMemoria !== cronogramaNuevo
+    ) {
+      console.error(
+        "El cronograma en memoria contiene otros cambios."
+      );
+      return false;
+    }
+
+    if (
+      localStorage.getItem(claveRecuperacion) !==
+        contenidoOriginal ||
+      localStorage.getItem(operacion.claveRespaldo) !==
+        operacion.respaldoAdaptado ||
+      localStorage.getItem(operacion.claveRegistro) !==
+        operacion.registroAplicado
+    ) {
+      return false;
+    }
+
+    datosPaso1.cronograma = structuredClone(
+      cronogramaAdaptado
+    );
+
+    localStorage.removeItem(claveRecuperacion);
+
+    if (
+      localStorage.getItem(claveRecuperacion) !== null
+    ) {
+      throw new Error(
+        "No se pudo cerrar la recuperación."
+      );
+    }
+
+    console.log(
+      "Sincronización completada y recuperación cerrada."
+    );
+
+    return true;
+  } catch (error) {
+    console.error(
+      "Error al cerrar la sincronización:",
+      error
+    );
+    return false;
+  }
+}
+
+    
 function restaurarSincronizacionEvaluativaInterrumpida(
   confirmarRestauracion = false
 ) {
