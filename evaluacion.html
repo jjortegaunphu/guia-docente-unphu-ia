@@ -1636,15 +1636,6 @@ if (
     );
 
     
-localStorage.removeItem(claveRecuperacion);
-
-if (
-  localStorage.getItem(claveRecuperacion) !== null
-) {
-  throw new Error(
-    "No se pudo cerrar el registro de recuperación."
-  );
-}
 
 if (
   localStorage.getItem(claveRespaldo) !==
@@ -1660,6 +1651,17 @@ if (
     "La sincronización final no coincide con los datos preparados."
   );
 }
+
+localStorage.removeItem(claveRecuperacion);
+
+if (
+  localStorage.getItem(claveRecuperacion) !== null
+) {
+  throw new Error(
+    "No se pudo cerrar el registro de recuperación."
+  );
+}
+
 
 console.log(
   "Adaptación evaluativa aplicada correctamente."
