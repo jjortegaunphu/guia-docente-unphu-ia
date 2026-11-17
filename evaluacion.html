@@ -2081,15 +2081,18 @@ function restaurarSincronizacionEvaluativaInterrumpida(
   const diagnostico =
     diagnosticarRecuperacionEvaluativa();
 
-  if (
-    diagnostico.estado !== "respaldo_actualizado" &&
-    diagnostico.estado !== "registro_actualizado"
-  ) {
-    console.error(
-      "No existe una sincronización parcial recuperable."
-    );
-    return false;
-  }
+  
+if (
+  diagnostico.estado !== "pendiente" &&
+  diagnostico.estado !== "respaldo_actualizado" &&
+  diagnostico.estado !== "registro_actualizado"
+) {
+  console.error(
+    "No existe una sincronización pendiente o parcial recuperable."
+  );
+  return false;
+}
+
 
  
 let operacion;
