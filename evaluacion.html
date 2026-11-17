@@ -3303,6 +3303,17 @@ ${comparacionAprobada
   >
     Rechazar propuesta
   </button>
+  
+<button
+  type="button"
+  id="btnAplicarAdaptacionCronograma"
+  style="${propuestaYaAprobada && !propuestaYaAplicada
+    ? 'margin-left:10px;'
+    : 'display:none;'}"
+>
+  Aplicar adaptación al cronograma
+</button>
+
 
 </div>
    
@@ -3323,6 +3334,52 @@ ${comparacionAprobada
     });
   }
 
+
+const botonAplicar = panel.querySelector(
+  "#btnAplicarAdaptacionCronograma"
+);
+
+if (botonAplicar && propuestaYaAprobada && !propuestaYaAplicada) {
+  botonAplicar.onclick = function() {
+
+    const confirmar = confirm(
+      "¿Confirma que desea aplicar esta adaptación " +
+      "aprobada al cronograma?\n\n" +
+      "Se actualizará únicamente la actividad " +
+      "seleccionada y se conservarán las demás."
+    );
+
+    if (!confirmar) return;
+
+    botonAplicar.disabled = true;
+
+    const resultado =
+      aplicarSincronizacionEvaluativaSegura(
+        registro,
+        true
+      );
+
+    if (resultado === true) {
+      alert(
+        "La adaptación se aplicó correctamente al cronograma."
+      );
+
+      mostrarPropuestaRevisionDocente({
+        ...registro,
+        aplicadaAlCronograma: true
+      });
+
+    } else {
+      alert(
+        "No se pudo aplicar la adaptación. " +
+        "Revise los mensajes de la consola."
+      );
+      botonAplicar.disabled = false;
+    }
+  };
+}
+
+  
   const botonAceptar = document.getElementById(
     "btnAceptarAdaptacionEvaluacion"
   );
