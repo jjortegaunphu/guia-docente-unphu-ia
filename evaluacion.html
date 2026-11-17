@@ -2920,13 +2920,16 @@ function mostrarPropuestaRevisionDocente(registro) {
   }
 
   const propuesta = registro.propuestaAdaptacion;
-
   
 const propuestaYaAprobada =
   registro.decisionDocente === "Aceptar";
 
+const propuestaYaAplicada =
+  propuestaYaAprobada &&
+  registro.aplicadaAlCronograma === true;
 
 const comparacionAprobada =
+
   propuestaYaAprobada
     ? prepararComparacionAdaptacionAprobada(registro)
     : null;
@@ -3261,12 +3264,16 @@ ${comparacionAprobada
   `
   : ""}
       
+
 <p id="avisoEstadoAdaptacion">
   <strong>Importante:</strong>
-  ${propuestaYaAprobada
-    ? "Propuesta aprobada por el docente. Todavía no se ha aplicado al cronograma."
-    : "Esta propuesta no ha sido aprobada ni aplicada al cronograma."}
+  ${propuestaYaAplicada
+    ? "Adaptación aplicada correctamente al cronograma."
+    : propuestaYaAprobada
+      ? "Propuesta aprobada por el docente. Pendiente de aplicación al cronograma."
+      : "Esta propuesta no ha sido aprobada ni aplicada al cronograma."}
 </p>
+
 
       <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
 
