@@ -1635,11 +1635,36 @@ if (
       )
     );
 
-    localStorage.removeItem(claveRecuperacion);
+    
+localStorage.removeItem(claveRecuperacion);
 
-    console.log(
-      "Adaptación evaluativa aplicada correctamente."
-    );
+if (
+  localStorage.getItem(claveRecuperacion) !== null
+) {
+  throw new Error(
+    "No se pudo cerrar el registro de recuperación."
+  );
+}
+
+if (
+  localStorage.getItem(claveRespaldo) !==
+    operacion.respaldoAdaptado ||
+  localStorage.getItem(claveRegistro) !==
+    operacion.registroAplicado ||
+  JSON.stringify(datosPaso1.cronograma) !==
+    JSON.stringify(
+      respaldoAdaptado.datosGuia.cronograma
+    )
+) {
+  throw new Error(
+    "La sincronización final no coincide con los datos preparados."
+  );
+}
+
+console.log(
+  "Adaptación evaluativa aplicada correctamente."
+);
+
 
     return true;
  
@@ -1754,6 +1779,192 @@ function diagnosticarRecuperacionEvaluativa() {
     semana: operacion.semana,
     clase: operacion.clase
   };
+}
+
+
+function verificarFinalizacionSincronizacionEvaluativa() {
+  const diagnostico =
+    diagnosticarRecuperacionEvaluativa();
+
+  if (diagnostico.estado !== "completada") {
+    return false;
+  }
+
+  const clave =
+    "recuperacionSincronizacionEvaluativa";
+
+  try {
+    const operacion = JSON.parse(
+      localStorage.getItem(clave)
+    );
+
+    if (
+      !operacion ||
+      operacion.version !== 1 ||
+      operacion.tipo !==
+        "sincronizacionAdaptacionEvaluativa" ||
+      operacion.estado !== "preparada" ||
+      operacion.claveRespaldo !==
+        "respaldoGuiaDocente" ||
+      typeof operacion.claveRegistro !== "string" ||
+      !operacion.claveRegistro.startsWith(
+        "adaptacionEvaluativaAprobada:"
+      )
+    ) {
+      return false;
+    }
+
+    const respaldo = JSON.parse(
+      operacion.respaldoAdaptado
+    );
+
+    const registro = JSON.parse(
+      operacion.registroAplicado
+    );
+
+    
+const respaldoOriginal = JSON.parse(
+  operacion.respaldoOriginal
+);
+
+const registroOriginal = JSON.parse(
+  operacion.registroOriginal
+);
+
+const respaldoSinCambios = structuredClone(respaldo);
+
+respaldoSinCambios.datosGuia.cronograma =
+  structuredClone(
+    respaldoOriginal.datosGuia.cronograma
+  );
+
+const registroSinCambios = structuredClone(registro);
+
+registroSinCambios.aplicadaAlCronograma = false;
+
+if (
+  registroOriginal.decisionDocente !== "Aceptar" ||
+  registroOriginal.aplicadaAlCronograma !== false ||
+  JSON.stringify(respaldoSinCambios) !==
+    JSON.stringify(respaldoOriginal) ||
+  JSON.stringify(registroSinCambios) !==
+    JSON.stringify(registroOriginal)
+) {
+  console.error(
+    "La operación contiene modificaciones adicionales."
+  );
+  return false;
+}
+
+    
+const cronogramaOriginal174 =
+  respaldoOriginal.datosGuia?.cronograma;
+
+const cronogramaAdaptado174 =
+  respaldo.datosGuia?.cronograma;
+
+const propuesta174 =
+  registroOriginal.propuestaAdaptacion;
+
+const semana174 = Number(operacion.semana);
+const clase174 = Number(operacion.clase);
+const indice174 =
+  propuesta174?.indiceActividadSeleccionada;
+
+if (
+  !Array.isArray(cronogramaOriginal174) ||
+  !Array.isArray(cronogramaAdaptado174) ||
+  !Number.isInteger(indice174) ||
+  indice174 < 0 ||
+  !Number.isInteger(semana174) ||
+  !Number.isInteger(clase174) ||
+  semana174 !==
+    Number(registroOriginal.evaluacion?.semana) ||
+  clase174 !==
+    Number(registroOriginal.evaluacion?.claseAplicacion)
+) {
+  return false;
+}
+
+const copiaOriginal174 =
+  structuredClone(cronogramaOriginal174);
+
+const copiaAdaptada174 =
+  structuredClone(cronogramaAdaptado174);
+
+const buscarClase174 = cronograma => {
+  const semanas = cronograma.filter(
+    item => Number(item.semana) === semana174
+  );
+
+  if (semanas.length !== 1) return null;
+
+  const clases = semanas[0].propuesta?.clases?.filter(
+    item => Number(item.clase) === clase174
+  );
+
+  return clases?.length === 1 ? clases[0] : null;
+};
+
+const actividadOriginal174 =
+  buscarClase174(copiaOriginal174)
+    ?.metodologiasActividades?.[indice174];
+
+const actividadAdaptada174 =
+  buscarClase174(copiaAdaptada174)
+    ?.metodologiasActividades?.[indice174];
+
+if (!actividadOriginal174 || !actividadAdaptada174) {
+  return false;
+}
+
+const valoresEsperados174 = {
+  actividadFormativa: propuesta174.actividadAdaptada,
+  metodologia: propuesta174.metodologia,
+  explicacionMetodologia:
+    propuesta174.mediacionDocenteAdaptada,
+  codigosREA: propuesta174.codigosREA
+};
+
+for (const campo of Object.keys(valoresEsperados174)) {
+  if (
+    JSON.stringify(actividadAdaptada174[campo]) !==
+    JSON.stringify(valoresEsperados174[campo])
+  ) {
+    console.error(
+      "La actividad no coincide con la propuesta aprobada."
+    );
+    return false;
+  }
+
+  actividadAdaptada174[campo] =
+    structuredClone(actividadOriginal174[campo]);
+}
+
+if (
+  JSON.stringify(copiaOriginal174) !==
+  JSON.stringify(copiaAdaptada174)
+) {
+  console.error(
+    "Existen cambios fuera de la actividad autorizada."
+  );
+  return false;
+}
+
+
+    return (
+      Array.isArray(respaldo.datosGuia?.cronograma) &&
+      registro.aplicadaAlCronograma === true &&
+      localStorage.getItem(
+        operacion.claveRespaldo
+      ) === operacion.respaldoAdaptado &&
+      localStorage.getItem(
+        operacion.claveRegistro
+      ) === operacion.registroAplicado
+    );
+  } catch (error) {
+    return false;
+  }
 }
 
     
