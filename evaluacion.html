@@ -1578,6 +1578,16 @@ ${comparacionAprobada
 </p>
 
 
+<h4>REA originales del cronograma</h4>
+
+<p>
+  ${escaparHTML(
+    (actividadOriginalSeleccionada?.codigosREA || []).join(", ") ||
+    "No se encontraron REA originales."
+  )}
+</p>
+
+
 <h4>Actividad adaptada aprobada por el docente</h4>
 
 <p>
