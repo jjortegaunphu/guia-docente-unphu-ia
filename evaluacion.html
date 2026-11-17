@@ -1559,13 +1559,16 @@ ${comparacionAprobada
       </p>
 
 
+
 <h4>Actividad original del cronograma</h4>
 
 <p>
   ${escaparHTML(
-    comparacionAprobada.propuestaAprobada.actividadOriginal
+    actividadOriginalSeleccionada?.actividadFormativa ||
+    "No se encontró la actividad original seleccionada."
   )}
 </p>
+
 
 <h4>Actividad adaptada aprobada por el docente</h4>
 
