@@ -1000,6 +1000,70 @@ function prepararCopiaSeguraAdaptacionAprobada(registro) {
     aplicadaAlCronograma: false
   };
 }
+
+
+/* ==================================================
+PREPARAR CLASE ADAPTADA EN COPIA INDEPENDIENTE
+SIN MODIFICAR EL CRONOGRAMA ORIGINAL
+================================================== */
+
+function prepararClaseAdaptadaEnCopia(registro) {
+
+  const preparacion =
+    prepararCopiaSeguraAdaptacionAprobada(registro);
+
+  if (!preparacion) {
+    return null;
+  }
+
+  const claseAdaptada = JSON.parse(
+    JSON.stringify(preparacion.claseCopia)
+  );
+
+  const indice =
+    preparacion.indiceActividadSeleccionada;
+
+  const propuesta =
+    preparacion.propuestaAprobada;
+
+  const actividad =
+    claseAdaptada.metodologiasActividades[indice];
+
+  if (
+    typeof propuesta.actividadAdaptada !== "string" ||
+    !propuesta.actividadAdaptada.trim() ||
+    typeof propuesta.metodologia !== "string" ||
+    !propuesta.metodologia.trim() ||
+    typeof propuesta.mediacionDocenteAdaptada !== "string" ||
+    !propuesta.mediacionDocenteAdaptada.trim() ||
+    !Array.isArray(propuesta.codigosREA) ||
+    propuesta.codigosREA.length === 0
+  ) {
+    return null;
+  }
+
+  actividad.actividadFormativa =
+    propuesta.actividadAdaptada;
+
+  actividad.metodologia =
+    propuesta.metodologia;
+
+  actividad.explicacionMetodologia =
+    propuesta.mediacionDocenteAdaptada;
+
+  actividad.codigosREA =
+    [...propuesta.codigosREA];
+
+  return {
+    semana: preparacion.semana,
+    clase: preparacion.clase,
+    indiceActividadSeleccionada: indice,
+    claseOriginal: preparacion.claseCopia,
+    claseAdaptada: claseAdaptada,
+    aplicadaAlCronograma: false
+  };
+}
+
     
 /* ==================================================
 PREPARAR DATOS PARA PROPUESTA DE ADAPTACION
