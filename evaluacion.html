@@ -1403,7 +1403,20 @@ const comparacionAprobada =
     ? prepararComparacionAdaptacionAprobada(registro)
     : null;
 
+  
+const actividadOriginalSeleccionada =
+  comparacionAprobada?.claseOriginal?.metodologiasActividades?.[
+    comparacionAprobada.propuestaAprobada.indiceActividadSeleccionada
+  ] || null;
+
+
   if (comparacionAprobada) {
+
+   console.log(
+     "Actividad original seleccionada desde el cronograma:",
+       actividadOriginalSeleccionada
+    );
+    
   console.log(
     "Comparación de adaptación aprobada:",
     comparacionAprobada
