@@ -1644,6 +1644,28 @@ ${comparacionAprobada
     .join("") || "<li>No se registró bibliografía.</li>"}
 </ul>
 
+<h4>Actividades originales que se conservarán</h4>
+
+<ul>
+  ${comparacionAprobada.claseOriginal.metodologiasActividades
+    .filter(
+      (_, indice) =>
+        indice !== comparacionAprobada.propuestaAprobada.indiceActividadSeleccionada
+    )
+    .map(actividad => `
+      <li>
+        <strong>${escaparHTML(actividad.metodologia || "")}</strong>:
+        ${escaparHTML(actividad.actividadFormativa || "")}
+        
+       <p>
+         <strong>REA que se conservarán:</strong>
+         ${escaparHTML((actividad.codigosREA || []).join(", "))}
+       </p>
+
+      </li>
+    `)
+    .join("") || "<li>No existen otras actividades en esta clase.</li>"}
+</ul>
 
 <h4>Actividad adaptada aprobada por el docente</h4>
 
@@ -1652,7 +1674,6 @@ ${comparacionAprobada
     comparacionAprobada.propuestaAprobada.actividadAdaptada
   )}
 </p>
-
 
 <h4>Metodología de la adaptación aprobada</h4>
 
