@@ -1104,6 +1104,82 @@ function prepararClaseAdaptadaEnCopia(registro) {
   };
 }
 
+
+/* ==================================================
+PREPARAR SINCRONIZACION SEGURA DEL CRONOGRAMA
+SIN MODIFICAR LOS DATOS ORIGINALES
+================================================== */
+
+function prepararSincronizacionAdaptacionAprobada(registro) {
+
+  const preparacion =
+    prepararClaseAdaptadaEnCopia(registro);
+
+  if (!preparacion) {
+    return null;
+  }
+
+  if (!Array.isArray(datosPaso1?.cronograma)) {
+    return null;
+  }
+
+  const cronogramaCopia = JSON.parse(
+    JSON.stringify(datosPaso1.cronograma)
+  );
+
+  const semanaDestino = cronogramaCopia.find(
+    semana => Number(semana.semana) ===
+      preparacion.semana
+  );
+
+  if (
+    !semanaDestino ||
+    !Array.isArray(semanaDestino.propuesta?.clases)
+  ) {
+    return null;
+  }
+
+  const indiceClase =
+    semanaDestino.propuesta.clases.findIndex(
+      clase => Number(clase.clase) ===
+        preparacion.clase
+    );
+
+  if (indiceClase === -1) {
+    return null;
+  }
+
+  const claseDestino =
+    semanaDestino.propuesta.clases[indiceClase];
+
+  if (
+    JSON.stringify(claseDestino) !==
+    JSON.stringify(preparacion.claseOriginal)
+  ) {
+    console.warn(
+      "La clase de destino no coincide con la clase aprobada."
+    );
+    return null;
+  }
+
+  semanaDestino.propuesta.clases[indiceClase] =
+    JSON.parse(
+      JSON.stringify(preparacion.claseAdaptada)
+    );
+
+  return {
+    semana: preparacion.semana,
+    clase: preparacion.clase,
+    indiceActividadSeleccionada:
+      preparacion.indiceActividadSeleccionada,
+    cronogramaOriginal: JSON.parse(
+      JSON.stringify(datosPaso1.cronograma)
+    ),
+    cronogramaAdaptado: cronogramaCopia,
+    aplicadaAlCronograma: false
+  };
+}
+    
     
 /* ==================================================
 PREPARAR DATOS PARA PROPUESTA DE ADAPTACION
