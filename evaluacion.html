@@ -142,6 +142,27 @@ function mostrarEsperaEvaluacion(nombreRubro) {
 
     function cargarDatosPaso1(){
 
+      
+const diagnosticoRecuperacion =
+  diagnosticarRecuperacionEvaluativa();
+
+if (diagnosticoRecuperacion.requiereIntervencion) {
+  console.error(
+    "Sincronización evaluativa pendiente de recuperación:",
+    diagnosticoRecuperacion.estado
+  );
+
+  mostrarError(
+    "Se detectó una sincronización evaluativa " +
+    "que requiere revisión antes de continuar. " +
+    "No modifique la guía hasta completar " +
+    "la recuperación de los datos."
+  );
+
+  return;
+}
+
+
       const respaldo =
         localStorage.getItem("respaldoGuiaDocente");
 
