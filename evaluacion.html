@@ -1112,6 +1112,19 @@ SIN MODIFICAR LOS DATOS ORIGINALES
 
 function prepararSincronizacionAdaptacionAprobada(registro) {
 
+  
+  // Impedir preparar una adaptación ya aplicada
+  if (
+    !registro ||
+    registro.aplicadaAlCronograma !== false
+  ) {
+    console.warn(
+      "La adaptación no está pendiente de aplicación."
+    );
+    return null;
+  }
+
+
   const preparacion =
     prepararClaseAdaptadaEnCopia(registro);
 
