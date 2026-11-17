@@ -1559,13 +1559,21 @@ ${comparacionAprobada
       </p>
 
 
-
 <h4>Actividad original del cronograma</h4>
 
 <p>
   ${escaparHTML(
     actividadOriginalSeleccionada?.actividadFormativa ||
     "No se encontró la actividad original seleccionada."
+  )}
+</p>
+
+<h4>Metodología original del cronograma</h4>
+
+<p>
+  ${escaparHTML(
+    actividadOriginalSeleccionada?.metodologia ||
+    "No se encontró la metodología original."
   )}
 </p>
 
