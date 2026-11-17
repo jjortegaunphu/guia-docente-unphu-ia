@@ -1112,8 +1112,7 @@ SIN MODIFICAR LOS DATOS ORIGINALES
 
 function prepararSincronizacionAdaptacionAprobada(registro) {
 
-  
-  // Impedir preparar una adaptación ya aplicada
+    // Impedir preparar una adaptación ya aplicada
   if (
     !registro ||
     registro.aplicadaAlCronograma !== false
@@ -1123,7 +1122,6 @@ function prepararSincronizacionAdaptacionAprobada(registro) {
     );
     return null;
   }
-
 
   // Verificar que el registro recibido siga vigente
   const clavesAdaptaciones = Object.keys(localStorage)
@@ -1170,8 +1168,7 @@ function prepararSincronizacionAdaptacionAprobada(registro) {
     return null;
   }
 
-  
-  const preparacion =
+    const preparacion =
     prepararClaseAdaptadaEnCopia(registro);
 
   if (!preparacion) {
@@ -1182,8 +1179,7 @@ function prepararSincronizacionAdaptacionAprobada(registro) {
     return null;
   }
 
-  
-  // Verificar la consistencia con el respaldo guardado
+    // Verificar la consistencia con el respaldo guardado
   let respaldoSincronizacion;
 
   try {
@@ -1211,13 +1207,11 @@ function prepararSincronizacionAdaptacionAprobada(registro) {
     return null;
   }
 
-
   const cronogramaCopia = JSON.parse(
     JSON.stringify(datosPaso1.cronograma)
   );
 
-  
-  const semanasCoincidentes = cronogramaCopia.filter(
+    const semanasCoincidentes = cronogramaCopia.filter(
     semana => Number(semana.semana) ===
       preparacion.semana
   );
@@ -1238,8 +1232,7 @@ function prepararSincronizacionAdaptacionAprobada(registro) {
     return null;
   }
 
- 
-  const indicesClasesCoincidentes =
+   const indicesClasesCoincidentes =
     semanaDestino.propuesta.clases
       .map((clase, indice) =>
         Number(clase.clase) === preparacion.clase
@@ -1256,7 +1249,6 @@ function prepararSincronizacionAdaptacionAprobada(registro) {
   }
 
   const indiceClase = indicesClasesCoincidentes[0];
-
 
   const claseDestino =
     semanaDestino.propuesta.clases[indiceClase];
@@ -1288,8 +1280,47 @@ function prepararSincronizacionAdaptacionAprobada(registro) {
     aplicadaAlCronograma: false
   };
 }
-    
-    
+
+function validarRegistroRecuperacionSincronizacion(
+  registro,
+  operacion
+) {
+  if (!registro || !operacion) return false;
+
+  if (
+    registro.tipo !== "sincronizacionAdaptacionEvaluativa" ||
+    registro.estado !== "preparada" ||
+    registro.claveRespaldo !== "respaldoGuiaDocente" ||
+    registro.claveRegistro !== operacion.claveRegistro
+  ) {
+    return false;
+  }
+
+  let respaldoOriginal;
+  let adaptacionOriginal;
+
+  try {
+    respaldoOriginal = JSON.parse(registro.respaldoOriginal);
+    adaptacionOriginal = JSON.parse(registro.registroOriginal);
+  } catch (error) {
+    return false;
+  }
+
+  return (
+    JSON.stringify(respaldoOriginal) ===
+      JSON.stringify(operacion.respaldoOriginal) &&
+    JSON.stringify(adaptacionOriginal) ===
+      JSON.stringify(operacion.registroOriginal) &&
+    Number.isInteger(Number(registro.semana)) &&
+    Number.isInteger(Number(registro.clase)) &&
+    Number(registro.semana) ===
+      Number(adaptacionOriginal.evaluacion?.semana) &&
+    Number(registro.clase) ===
+      Number(adaptacionOriginal.evaluacion?.claseAplicacion)
+  );
+}
+   
+   
 /* ==================================================
 PREPARAR DATOS PARA PROPUESTA DE ADAPTACION
 SIN MODIFICAR EL CRONOGRAMA
