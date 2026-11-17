@@ -1123,6 +1123,36 @@ function prepararSincronizacionAdaptacionAprobada(registro) {
     return null;
   }
 
+  
+  // Verificar la consistencia con el respaldo guardado
+  let respaldoSincronizacion;
+
+  try {
+    respaldoSincronizacion = JSON.parse(
+      localStorage.getItem("respaldoGuiaDocente")
+    );
+  } catch (error) {
+    console.warn(
+      "No se pudo interpretar el respaldo de la guía."
+    );
+    return null;
+  }
+
+  const cronogramaRespaldado =
+    respaldoSincronizacion?.datosGuia?.cronograma;
+
+  if (
+    !Array.isArray(cronogramaRespaldado) ||
+    JSON.stringify(datosPaso1.cronograma) !==
+      JSON.stringify(cronogramaRespaldado)
+  ) {
+    console.warn(
+      "El cronograma en memoria no coincide con el respaldo guardado."
+    );
+    return null;
+  }
+
+
   const cronogramaCopia = JSON.parse(
     JSON.stringify(datosPaso1.cronograma)
   );
