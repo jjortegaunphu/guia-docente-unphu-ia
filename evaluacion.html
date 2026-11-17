@@ -1501,7 +1501,79 @@ if (
   );
   return false;
 }
+  
+const cronogramaOriginal = JSON.parse(
+  operacion.respaldoOriginal
+).datosGuia.cronograma;
 
+const cronogramaAdaptado =
+  respaldoAdaptado.datosGuia.cronograma;
+
+const propuesta =
+  registroOriginalValidado.propuestaAdaptacion;
+
+const semanaObjetivo = Number(operacion.semana);
+const claseObjetivo = Number(operacion.clase);
+const indiceActividad = Number(
+  propuesta?.indiceActividadSeleccionada
+);
+
+const buscarClase = cronograma => {
+  const semana = cronograma.find(
+    item => Number(item.semana) === semanaObjetivo
+  );
+
+  return semana?.propuesta?.clases?.find(
+    item => Number(item.clase) === claseObjetivo
+  );
+};
+
+const copiaOriginal = structuredClone(cronogramaOriginal);
+const copiaAdaptada = structuredClone(cronogramaAdaptado);
+
+const actividadOriginal = buscarClase(
+  copiaOriginal
+)?.metodologiasActividades?.[indiceActividad];
+
+const actividadAdaptada = buscarClase(
+  copiaAdaptada
+)?.metodologiasActividades?.[indiceActividad];
+
+if (!actividadOriginal || !actividadAdaptada) {
+  throw new Error("Actividad evaluativa no encontrada.");
+}
+
+const valoresEsperados = {
+  actividadFormativa: propuesta.actividadAdaptada,
+  metodologia: propuesta.metodologia,
+  explicacionMetodologia:
+    propuesta.mediacionDocenteAdaptada,
+  codigosREA: propuesta.codigosREA
+};
+
+for (const campo of Object.keys(valoresEsperados)) {
+  if (
+    JSON.stringify(actividadAdaptada[campo]) !==
+    JSON.stringify(valoresEsperados[campo])
+  ) {
+    throw new Error(
+      "La adaptación no coincide con la propuesta aprobada."
+    );
+  }
+
+  actividadAdaptada[campo] = structuredClone(
+    actividadOriginal[campo]
+  );
+}
+
+if (
+  JSON.stringify(copiaOriginal) !==
+  JSON.stringify(copiaAdaptada)
+) {
+  throw new Error(
+    "Se detectaron cambios fuera de la actividad autorizada."
+  );
+}
 
     localStorage.setItem(
       claveRecuperacion,
