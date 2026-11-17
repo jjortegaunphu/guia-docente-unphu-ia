@@ -1755,7 +1755,122 @@ function diagnosticarRecuperacionEvaluativa() {
     clase: operacion.clase
   };
 }
- 
+
+    
+function restaurarSincronizacionEvaluativaInterrumpida(
+  confirmarRestauracion = false
+) {
+  if (confirmarRestauracion !== true) {
+    console.warn("Restauración no autorizada.");
+    return false;
+  }
+
+  const claveRecuperacion =
+    "recuperacionSincronizacionEvaluativa";
+
+  const diagnostico =
+    diagnosticarRecuperacionEvaluativa();
+
+  if (
+    diagnostico.estado !== "respaldo_actualizado" &&
+    diagnostico.estado !== "registro_actualizado"
+  ) {
+    console.error(
+      "No existe una sincronización parcial recuperable."
+    );
+    return false;
+  }
+
+  let operacion;
+
+  try {
+    operacion = JSON.parse(
+      localStorage.getItem(claveRecuperacion)
+    );
+
+    if (
+      operacion.version !== 1 ||
+      operacion.tipo !==
+        "sincronizacionAdaptacionEvaluativa" ||
+      operacion.estado !== "preparada" ||
+      operacion.claveRespaldo !==
+        "respaldoGuiaDocente" ||
+      typeof operacion.claveRegistro !== "string" ||
+      !operacion.claveRegistro.startsWith(
+        "adaptacionEvaluativaAprobada:"
+      )
+    ) {
+      return false;
+    }
+
+    const claveRespaldo = operacion.claveRespaldo;
+    const claveRegistro = operacion.claveRegistro;
+
+    const respaldoActual = localStorage.getItem(
+      claveRespaldo
+    );
+
+    const registroActual = localStorage.getItem(
+      claveRegistro
+    );
+
+    const respaldoValido =
+      respaldoActual === operacion.respaldoOriginal ||
+      respaldoActual === operacion.respaldoAdaptado;
+
+    const registroValido =
+      registroActual === operacion.registroOriginal ||
+      registroActual === operacion.registroAplicado;
+
+    if (!respaldoValido || !registroValido) {
+      console.error(
+        "Los datos no coinciden con la recuperación."
+      );
+      return false;
+    }
+
+    if (respaldoActual === operacion.respaldoAdaptado) {
+      localStorage.setItem(
+        claveRespaldo,
+        operacion.respaldoOriginal
+      );
+    }
+
+    if (registroActual === operacion.registroAplicado) {
+      localStorage.setItem(
+        claveRegistro,
+        operacion.registroOriginal
+      );
+    }
+
+    if (
+      localStorage.getItem(claveRespaldo) !==
+        operacion.respaldoOriginal ||
+      localStorage.getItem(claveRegistro) !==
+        operacion.registroOriginal
+    ) {
+      throw new Error(
+        "No se pudo verificar la restauración."
+      );
+    }
+
+    localStorage.removeItem(claveRecuperacion);
+
+    console.log(
+      "Sincronización restaurada correctamente."
+    );
+
+    return true;
+  } catch (error) {
+    console.error(
+      "Error durante la restauración:",
+      error
+    );
+
+    return false;
+  }
+}
+
    
 /* ==================================================
 PREPARAR DATOS PARA PROPUESTA DE ADAPTACION
