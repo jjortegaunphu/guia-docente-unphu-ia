@@ -1042,6 +1042,46 @@ function prepararClaseAdaptadaEnCopia(registro) {
     return null;
   }
 
+  
+  // Validar los REA contra el programa oficial
+  const reaOficiales =
+    datosPaso1?.programa?.reaOficiales;
+
+  if (
+    !Array.isArray(reaOficiales) ||
+    reaOficiales.length === 0
+  ) {
+    console.warn(
+      "No hay resultados de aprendizaje oficiales disponibles."
+    );
+    return null;
+  }
+
+  const codigosOficiales = new Set(
+    reaOficiales.map(rea => rea.codigo)
+  );
+
+  const codigosPropuestos =
+    propuesta.codigosREA;
+
+  const codigosInvalidos =
+    codigosPropuestos.filter(
+      codigo => !codigosOficiales.has(codigo)
+    );
+
+  if (
+    codigosInvalidos.length > 0 ||
+    new Set(codigosPropuestos).size !==
+      codigosPropuestos.length
+  ) {
+    console.warn(
+      "La adaptación contiene REA inválidos o duplicados:",
+      codigosInvalidos
+    );
+    return null;
+  }
+
+
   actividad.actividadFormativa =
     propuesta.actividadAdaptada;
 
