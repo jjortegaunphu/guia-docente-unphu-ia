@@ -931,6 +931,75 @@ function obtenerCopiaClaseParaSincronizacion(
 
 }
 
+
+/* ==================================================
+PREPARAR COPIA SEGURA DE LA CLASE PARA ADAPTACIÓN
+SIN MODIFICAR EL CRONOGRAMA ORIGINAL
+================================================== */
+
+function prepararCopiaSeguraAdaptacionAprobada(registro) {
+
+  if (
+    !registro ||
+    registro.decisionDocente !== "Aceptar" ||
+    !registro.propuestaAdaptacion ||
+    !registro.evaluacion
+  ) {
+    return null;
+  }
+
+  console.log(
+  "Clase original disponible para sincronización:",
+  !!registro.claseOriginal
+);
+
+  const evaluacion = registro.evaluacion;
+  const propuesta = registro.propuestaAdaptacion;
+
+  const claseCopia = obtenerCopiaClaseParaSincronizacion(
+    evaluacion.semana,
+    evaluacion.claseAplicacion
+  );
+
+  if (
+    !claseCopia ||
+    !Array.isArray(claseCopia.metodologiasActividades)
+  ) {
+    return null;
+  }
+
+  const indice = propuesta.indiceActividadSeleccionada;
+
+  if (
+    !Number.isInteger(indice) ||
+    indice < 0 ||
+    indice >= claseCopia.metodologiasActividades.length
+  ) {
+    return null;
+  }
+    
+  if (
+    JSON.stringify(claseCopia) !==
+    JSON.stringify(registro.claseOriginal)
+  ) {
+    console.warn(
+      "La clase original presenta cambios desde la aprobación docente."
+    );
+    return null;
+  }
+
+  
+  return {
+    semana: Number(evaluacion.semana),
+    clase: Number(evaluacion.claseAplicacion),
+    indiceActividadSeleccionada: indice,
+    claseCopia: claseCopia,
+    propuestaAprobada: JSON.parse(
+      JSON.stringify(propuesta)
+    ),
+    aplicadaAlCronograma: false
+  };
+}
     
 /* ==================================================
 PREPARAR DATOS PARA PROPUESTA DE ADAPTACION
