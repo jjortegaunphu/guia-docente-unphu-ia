@@ -1417,6 +1417,11 @@ const actividadOriginalSeleccionada =
        actividadOriginalSeleccionada
     );
     
+console.log(
+  "Campos disponibles en la clase original:",
+  Object.keys(comparacionAprobada.claseOriginal)
+);
+    
   console.log(
     "Comparación de adaptación aprobada:",
     comparacionAprobada
@@ -1584,6 +1589,16 @@ ${comparacionAprobada
   ${escaparHTML(
     (actividadOriginalSeleccionada?.codigosREA || []).join(", ") ||
     "No se encontraron REA originales."
+  )}
+</p>
+
+
+<h4>Mediación docente original del cronograma</h4>
+
+<p>
+  ${escaparHTML(
+    actividadOriginalSeleccionada?.explicacionMetodologia ||
+    "No se encontró la mediación docente original."
   )}
 </p>
 
