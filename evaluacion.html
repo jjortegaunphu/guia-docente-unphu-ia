@@ -1781,12 +1781,25 @@ function restaurarSincronizacionEvaluativaInterrumpida(
     return false;
   }
 
-  let operacion;
+ 
+let operacion;
+let contenidoRecuperacionOriginal;
 
-  try {
-    operacion = JSON.parse(
-      localStorage.getItem(claveRecuperacion)
+try {
+  contenidoRecuperacionOriginal =
+    localStorage.getItem(claveRecuperacion);
+
+  if (contenidoRecuperacionOriginal === null) {
+    console.error(
+      "No existe un registro de recuperación."
     );
+    return false;
+  }
+
+  operacion = JSON.parse(
+    contenidoRecuperacionOriginal
+  );
+
 
     if (
       operacion.version !== 1 ||
@@ -1986,6 +1999,31 @@ if (
       claveRespaldo
     );
 
+    
+const cronogramaEnMemoria168 = JSON.stringify(
+  datosPaso1.cronograma
+);
+
+const cronogramaOriginal168 = JSON.stringify(
+  respaldoOriginalValidado.datosGuia.cronograma
+);
+
+const cronogramaAdaptado168 = JSON.stringify(
+  respaldoAdaptadoValidado.datosGuia.cronograma
+);
+
+if (
+  cronogramaEnMemoria168 !== cronogramaOriginal168 &&
+  cronogramaEnMemoria168 !== cronogramaAdaptado168
+) {
+  console.error(
+    "El cronograma en memoria contiene cambios " +
+    "ajenos a la sincronización. Restauración bloqueada."
+  );
+  return false;
+}
+
+
     const registroActual = localStorage.getItem(
       claveRegistro
     );
@@ -2004,6 +2042,19 @@ if (
       );
       return false;
     }
+
+  
+if (
+  localStorage.getItem(claveRecuperacion) !==
+    contenidoRecuperacionOriginal
+) {
+  console.error(
+    "El registro de recuperación cambió. " +
+    "Restauración cancelada."
+  );
+  return false;
+}
+
 
     if (respaldoActual === operacion.respaldoAdaptado) {
       localStorage.setItem(
