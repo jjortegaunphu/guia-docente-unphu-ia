@@ -1424,13 +1424,38 @@ function aplicarSincronizacionEvaluativaSegura(
   const claveRespaldo = operacion.claveRespaldo;
   const claveRegistro = operacion.claveRegistro;
 
-  if (
-    localStorage.getItem(claveRespaldo) !==
-      operacion.respaldoOriginal ||
-    localStorage.getItem(claveRegistro) !==
-      operacion.registroOriginal ||
-    localStorage.getItem(claveRecuperacion) !== null
-  ) {
+ 
+let cronogramaOriginalEnRespaldo;
+
+try {
+  const respaldo = JSON.parse(
+    operacion.respaldoOriginal
+  );
+
+  cronogramaOriginalEnRespaldo =
+    respaldo.datosGuia?.cronograma;
+} catch (error) {
+  console.error("Respaldo original inválido.");
+  return false;
+}
+
+if (
+  !Array.isArray(cronogramaOriginalEnRespaldo) ||
+  JSON.stringify(datosPaso1.cronograma) !==
+    JSON.stringify(cronogramaOriginalEnRespaldo) ||
+  localStorage.getItem(claveRespaldo) !==
+    operacion.respaldoOriginal ||
+  localStorage.getItem(claveRegistro) !==
+    operacion.registroOriginal ||
+  localStorage.getItem(claveRecuperacion) !== null
+) {
+  console.error(
+    "El cronograma o los datos guardados cambiaron. " +
+    "Sincronización cancelada."
+  );
+  return false;
+}
+
     console.error("Los datos cambiaron. Operación cancelada.");
     return false;
   }
@@ -1623,16 +1648,34 @@ if (
     );
 
     return true;
-  } catch (error) {
-    console.error(
-      "Error durante la sincronización:",
-      error
+ 
+} catch (error) {
+  console.error(
+    "Error durante la sincronización:",
+    error
+  );
+
+  const recuperacionPendiente =
+    localStorage.getItem(
+      "recuperacionSincronizacionEvaluativa"
     );
 
-    // El registro de recuperación se conserva
-    // para permitir una revisión y restauración segura.
-    return false;
+  if (recuperacionPendiente !== null) {
+    console.error(
+      "SINCRONIZACIÓN INTERRUMPIDA: " +
+      "se requiere recuperación antes de continuar."
+    );
+
+    alert(
+      "La sincronización evaluativa fue interrumpida. " +
+      "No continúes editando la guía hasta recuperar " +
+      "los datos de forma segura."
+    );
   }
+
+  return false;
+}
+
 }
    
 /* ==================================================
