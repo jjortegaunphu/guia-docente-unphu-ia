@@ -2030,11 +2030,38 @@ if (
       );
     }
 
-    localStorage.removeItem(claveRecuperacion);
+    
+const cronogramaRestaurado = structuredClone(
+  respaldoOriginalValidado.datosGuia.cronograma
+);
 
-    console.log(
-      "Sincronización restaurada correctamente."
-    );
+if (
+  localStorage.getItem(claveRespaldo) !==
+    operacion.respaldoOriginal ||
+  localStorage.getItem(claveRegistro) !==
+    operacion.registroOriginal
+) {
+  throw new Error(
+    "Los datos originales no quedaron restaurados."
+  );
+}
+
+datosPaso1.cronograma = cronogramaRestaurado;
+
+localStorage.removeItem(claveRecuperacion);
+
+if (
+  localStorage.getItem(claveRecuperacion) !== null
+) {
+  throw new Error(
+    "No se pudo cerrar el registro de recuperación."
+  );
+}
+
+console.log(
+  "Sincronización restaurada correctamente."
+);
+
 
     return true;
   } catch (error) {
