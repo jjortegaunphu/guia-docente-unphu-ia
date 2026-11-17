@@ -1319,7 +1319,90 @@ function validarRegistroRecuperacionSincronizacion(
       Number(adaptacionOriginal.evaluacion?.claseAplicacion)
   );
 }
-   
+
+    
+function prepararRegistroRecuperacionSincronizacion(
+  registro
+) {
+  const preparacion =
+    prepararSincronizacionAdaptacionAprobada(registro);
+
+  if (!preparacion) return null;
+
+  const claves = Object.keys(localStorage).filter(
+    clave => clave.startsWith(
+      "adaptacionEvaluativaAprobada:"
+    )
+  );
+
+  const coincidencias = claves.filter(clave =>
+    localStorage.getItem(clave) === JSON.stringify(registro)
+  );
+
+  if (coincidencias.length !== 1) {
+    console.warn(
+      "No se encontró un registro aprobado único y vigente."
+    );
+    return null;
+  }
+
+  if (
+    localStorage.getItem(
+      "recuperacionSincronizacionEvaluativa"
+    ) !== null
+  ) {
+    console.warn(
+      "Existe una recuperación pendiente de revisión."
+    );
+    return null;
+  }
+
+  const claveRegistro = coincidencias[0];
+
+  const respaldoOriginal = localStorage.getItem(
+    "respaldoGuiaDocente"
+  );
+
+  const registroOriginal = localStorage.getItem(
+    claveRegistro
+  );
+
+  if (!respaldoOriginal || !registroOriginal) {
+    return null;
+  }
+
+  let respaldoAdaptado;
+  let registroAplicado;
+
+  try {
+    respaldoAdaptado = JSON.parse(respaldoOriginal);
+    registroAplicado = JSON.parse(registroOriginal);
+
+    respaldoAdaptado.datosGuia.cronograma =
+      JSON.parse(
+        JSON.stringify(preparacion.cronogramaAdaptado)
+      );
+
+    registroAplicado.aplicadaAlCronograma = true;
+  } catch (error) {
+    return null;
+  }
+
+  return {
+    version: 1,
+    tipo: "sincronizacionAdaptacionEvaluativa",
+    estado: "preparada",
+    claveRespaldo: "respaldoGuiaDocente",
+    claveRegistro,
+    respaldoOriginal,
+    registroOriginal,
+    respaldoAdaptado: JSON.stringify(respaldoAdaptado),
+    registroAplicado: JSON.stringify(registroAplicado),
+    semana: preparacion.semana,
+    clase: preparacion.clase
+  };
+}
+
    
 /* ==================================================
 PREPARAR DATOS PARA PROPUESTA DE ADAPTACION
