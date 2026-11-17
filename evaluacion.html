@@ -1602,6 +1602,32 @@ ${comparacionAprobada
   )}
 </p>
 
+<h4>Recursos materiales originales del cronograma</h4>
+
+<ul>
+  ${(comparacionAprobada.claseOriginal.recursosMateriales || [])
+    .map(recurso => `<li>${escaparHTML(recurso)}</li>`)
+    .join("") || "<li>No se registraron recursos materiales.</li>"}
+</ul>
+
+
+<h4>Recursos virtuales originales del cronograma</h4>
+
+<ul>
+  ${(comparacionAprobada.claseOriginal.recursosVirtuales || [])
+    .map(recurso => `<li>${escaparHTML(recurso)}</li>`)
+    .join("") || "<li>No se registraron recursos virtuales.</li>"}
+</ul>
+
+
+<h4>Bibliografía original del cronograma</h4>
+
+<ul>
+  ${(comparacionAprobada.claseOriginal.bibliografia || [])
+    .map(referencia => `<li>${escaparHTML(referencia)}</li>`)
+    .join("") || "<li>No se registró bibliografía.</li>"}
+</ul>
+
 
 <h4>Actividad adaptada aprobada por el docente</h4>
 
