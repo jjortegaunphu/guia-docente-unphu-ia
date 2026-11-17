@@ -1462,14 +1462,46 @@ function aplicarSincronizacionEvaluativaSegura(
       operacion.registroAplicado
     );
 
-    if (
-      registroAplicado.aplicadaAlCronograma !== true ||
-      !Array.isArray(
-        respaldoAdaptado.datosGuia?.cronograma
-      )
-    ) {
-      return false;
-    }
+   
+const respaldoOriginalValidado = JSON.parse(
+  operacion.respaldoOriginal
+);
+
+const registroOriginalValidado = JSON.parse(
+  operacion.registroOriginal
+);
+
+const respaldoSinCambioCronograma = JSON.parse(
+  JSON.stringify(respaldoAdaptado)
+);
+
+respaldoSinCambioCronograma.datosGuia.cronograma =
+  respaldoOriginalValidado.datosGuia.cronograma;
+
+const registroSinCambioEstado = JSON.parse(
+  JSON.stringify(registroAplicado)
+);
+
+registroSinCambioEstado.aplicadaAlCronograma = false;
+
+if (
+  registroOriginalValidado.decisionDocente !== "Aceptar" ||
+  registroOriginalValidado.aplicadaAlCronograma !== false ||
+  registroAplicado.aplicadaAlCronograma !== true ||
+  !Array.isArray(
+    respaldoAdaptado.datosGuia?.cronograma
+  ) ||
+  JSON.stringify(respaldoSinCambioCronograma) !==
+    JSON.stringify(respaldoOriginalValidado) ||
+  JSON.stringify(registroSinCambioEstado) !==
+    JSON.stringify(registroOriginalValidado)
+) {
+  console.error(
+    "Se detectaron modificaciones no autorizadas."
+  );
+  return false;
+}
+
 
     localStorage.setItem(
       claveRecuperacion,
