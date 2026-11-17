@@ -1432,13 +1432,19 @@ console.log(
   comparacionAprobada.claseOriginal.metodologiasActividades
 );
  
-
 console.log(
   "Índice de la actividad seleccionada:",
   comparacionAprobada.propuestaAprobada.indiceActividadSeleccionada
 );
 
-   
+console.log(
+  "Actividades originales que deben conservarse:",
+  comparacionAprobada.claseOriginal.metodologiasActividades
+    .filter(
+      (_, indice) =>
+        indice !== comparacionAprobada.propuestaAprobada.indiceActividadSeleccionada
+    )
+);
 
 }
   
@@ -1533,10 +1539,12 @@ console.log(
 </ul>
 
 <h4>Recursos virtuales</h4>
+
 <ul>
   ${(propuesta.recursosVirtuales || [])
+    .filter(recurso => String(recurso || "").trim())
     .map(recurso => `<li>${escaparHTML(recurso)}</li>`)
-    .join("")}
+    .join("") || "<li>No se registraron recursos virtuales.</li>"}
 </ul>
 
 <h4>Bibliografía</h4>
