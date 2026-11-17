@@ -1860,6 +1860,125 @@ if (
   return false;
 }
 
+
+const respaldoSinCambio165 = structuredClone(
+  respaldoAdaptadoValidado
+);
+
+respaldoSinCambio165.datosGuia.cronograma =
+  structuredClone(
+    respaldoOriginalValidado.datosGuia.cronograma
+  );
+
+const registroSinCambio165 = structuredClone(
+  registroAplicadoValidado
+);
+
+registroSinCambio165.aplicadaAlCronograma = false;
+
+if (
+  JSON.stringify(respaldoSinCambio165) !==
+    JSON.stringify(respaldoOriginalValidado) ||
+  JSON.stringify(registroSinCambio165) !==
+    JSON.stringify(registroOriginalValidado)
+) {
+  console.error(
+    "Las versiones de recuperación contienen " +
+    "modificaciones adicionales no autorizadas."
+  );
+  return false;
+}
+
+    
+const cronogramaOriginal166 =
+  respaldoOriginalValidado.datosGuia.cronograma;
+
+const cronogramaAdaptado166 =
+  respaldoAdaptadoValidado.datosGuia.cronograma;
+
+const propuesta166 =
+  registroOriginalValidado.propuestaAdaptacion;
+
+const semana166 = Number(operacion.semana);
+const clase166 = Number(operacion.clase);
+const indice166 = propuesta166?.indiceActividadSeleccionada;
+
+const copiaOriginal166 = structuredClone(
+  cronogramaOriginal166
+);
+
+const copiaAdaptada166 = structuredClone(
+  cronogramaAdaptado166
+);
+
+const buscarClase166 = cronograma => {
+  const semanas = cronograma.filter(
+    item => Number(item.semana) === semana166
+  );
+
+  if (semanas.length !== 1) return null;
+
+  const clases = semanas[0].propuesta?.clases?.filter(
+    item => Number(item.clase) === clase166
+  );
+
+  return clases?.length === 1 ? clases[0] : null;
+};
+
+const actividadOriginal166 =
+  buscarClase166(copiaOriginal166)
+    ?.metodologiasActividades?.[indice166];
+
+const actividadAdaptada166 =
+  buscarClase166(copiaAdaptada166)
+    ?.metodologiasActividades?.[indice166];
+
+if (
+  !Number.isInteger(indice166) ||
+  !actividadOriginal166 ||
+  !actividadAdaptada166
+) {
+  console.error(
+    "No se encontró una actividad evaluativa válida."
+  );
+  return false;
+}
+
+const valoresEsperados166 = {
+  actividadFormativa: propuesta166.actividadAdaptada,
+  metodologia: propuesta166.metodologia,
+  explicacionMetodologia:
+    propuesta166.mediacionDocenteAdaptada,
+  codigosREA: propuesta166.codigosREA
+};
+
+for (const campo of Object.keys(valoresEsperados166)) {
+  if (
+    JSON.stringify(actividadAdaptada166[campo]) !==
+    JSON.stringify(valoresEsperados166[campo])
+  ) {
+    console.error(
+      "La actividad no coincide con la propuesta aprobada."
+    );
+    return false;
+  }
+
+  actividadAdaptada166[campo] = structuredClone(
+    actividadOriginal166[campo]
+  );
+}
+
+if (
+  JSON.stringify(copiaOriginal166) !==
+  JSON.stringify(copiaAdaptada166)
+) {
+  console.error(
+    "Se detectaron cambios fuera de la actividad autorizada."
+  );
+  return false;
+}
+
+    
     const claveRespaldo = operacion.claveRespaldo;
     const claveRegistro = operacion.claveRegistro;
 
