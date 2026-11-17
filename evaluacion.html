@@ -1402,8 +1402,7 @@ function prepararRegistroRecuperacionSincronizacion(
     clase: preparacion.clase
   };
 }
-
-    
+   
 function aplicarSincronizacionEvaluativaSegura(
   registro,
   confirmarAplicacion = false
@@ -1424,7 +1423,6 @@ function aplicarSincronizacionEvaluativaSegura(
   const claveRespaldo = operacion.claveRespaldo;
   const claveRegistro = operacion.claveRegistro;
 
- 
 let cronogramaOriginalEnRespaldo;
 
 try {
@@ -1487,7 +1485,6 @@ if (
       operacion.registroAplicado
     );
 
-   
 const respaldoOriginalValidado = JSON.parse(
   operacion.respaldoOriginal
 );
@@ -1677,6 +1674,91 @@ if (
 }
 
 }
+
+   
+function diagnosticarRecuperacionEvaluativa() {
+  const clave =
+    "recuperacionSincronizacionEvaluativa";
+
+  const contenido = localStorage.getItem(clave);
+
+  if (contenido === null) {
+    return {
+      estado: "sin_recuperacion",
+      requiereIntervencion: false
+    };
+  }
+
+  let operacion;
+
+  try {
+    operacion = JSON.parse(contenido);
+  } catch (error) {
+    return {
+      estado: "registro_invalido",
+      requiereIntervencion: true
+    };
+  }
+
+  if (
+    !operacion ||
+    operacion.version !== 1 ||
+    operacion.tipo !==
+      "sincronizacionAdaptacionEvaluativa" ||
+    operacion.estado !== "preparada" ||
+    operacion.claveRespaldo !==
+      "respaldoGuiaDocente" ||
+    typeof operacion.claveRegistro !== "string" ||
+    !operacion.claveRegistro.startsWith(
+      "adaptacionEvaluativaAprobada:"
+    )
+  ) {
+    return {
+      estado: "registro_invalido",
+      requiereIntervencion: true
+    };
+  }
+
+  const respaldoActual = localStorage.getItem(
+    operacion.claveRespaldo
+  );
+
+  const registroActual = localStorage.getItem(
+    operacion.claveRegistro
+  );
+
+  const respaldoOriginal =
+    respaldoActual === operacion.respaldoOriginal;
+
+  const respaldoAdaptado =
+    respaldoActual === operacion.respaldoAdaptado;
+
+  const registroOriginal =
+    registroActual === operacion.registroOriginal;
+
+  const registroAplicado =
+    registroActual === operacion.registroAplicado;
+
+  let estado = "inconsistente";
+
+  if (respaldoOriginal && registroOriginal) {
+    estado = "pendiente";
+  } else if (respaldoAdaptado && registroOriginal) {
+    estado = "respaldo_actualizado";
+  } else if (respaldoOriginal && registroAplicado) {
+    estado = "registro_actualizado";
+  } else if (respaldoAdaptado && registroAplicado) {
+    estado = "completada";
+  }
+
+  return {
+    estado,
+    requiereIntervencion: true,
+    semana: operacion.semana,
+    clase: operacion.clase
+  };
+}
+ 
    
 /* ==================================================
 PREPARAR DATOS PARA PROPUESTA DE ADAPTACION
