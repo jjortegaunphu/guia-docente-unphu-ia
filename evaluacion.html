@@ -1803,6 +1803,63 @@ function restaurarSincronizacionEvaluativaInterrumpida(
       return false;
     }
 
+const camposJSON = [
+  "respaldoOriginal",
+  "respaldoAdaptado",
+  "registroOriginal",
+  "registroAplicado"
+];
+
+if (
+  !camposJSON.every(
+    campo => typeof operacion[campo] === "string"
+  )
+) {
+  console.error(
+    "El registro de recuperación está incompleto."
+  );
+  return false;
+}
+
+const respaldoOriginalValidado = JSON.parse(
+  operacion.respaldoOriginal
+);
+
+const respaldoAdaptadoValidado = JSON.parse(
+  operacion.respaldoAdaptado
+);
+
+const registroOriginalValidado = JSON.parse(
+  operacion.registroOriginal
+);
+
+const registroAplicadoValidado = JSON.parse(
+  operacion.registroAplicado
+);
+
+if (
+  !Array.isArray(
+    respaldoOriginalValidado.datosGuia?.cronograma
+  ) ||
+  !Array.isArray(
+    respaldoAdaptadoValidado.datosGuia?.cronograma
+  ) ||
+  registroOriginalValidado.decisionDocente !== "Aceptar" ||
+  registroOriginalValidado.aplicadaAlCronograma !== false ||
+  registroAplicadoValidado.aplicadaAlCronograma !== true ||
+  Number(operacion.semana) !==
+    Number(registroOriginalValidado.evaluacion?.semana) ||
+  Number(operacion.clase) !==
+    Number(
+      registroOriginalValidado.evaluacion?.claseAplicacion
+    )
+) {
+  console.error(
+    "El registro de recuperación no supera la validación."
+  );
+  return false;
+}
+
     const claveRespaldo = operacion.claveRespaldo;
     const claveRegistro = operacion.claveRegistro;
 
