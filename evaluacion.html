@@ -1125,6 +1125,52 @@ function prepararSincronizacionAdaptacionAprobada(registro) {
   }
 
 
+  // Verificar que el registro recibido siga vigente
+  const clavesAdaptaciones = Object.keys(localStorage)
+    .filter(clave =>
+      clave.startsWith("adaptacionEvaluativaAprobada:")
+    );
+
+  const registrosCoincidentes = [];
+
+  for (const clave of clavesAdaptaciones) {
+    let registroGuardado;
+
+    try {
+      registroGuardado = JSON.parse(
+        localStorage.getItem(clave)
+      );
+    } catch (error) {
+      console.warn(
+        "No se pudo interpretar un registro de adaptación."
+      );
+      return null;
+    }
+
+    if (
+      Number(registroGuardado?.evaluacion?.semana) ===
+        Number(registro.evaluacion?.semana) &&
+      Number(registroGuardado?.evaluacion?.claseAplicacion) ===
+        Number(registro.evaluacion?.claseAplicacion)
+    ) {
+      registrosCoincidentes.push(registroGuardado);
+    }
+  }
+
+  if (
+    registrosCoincidentes.length !== 1 ||
+    registrosCoincidentes[0].decisionDocente !== "Aceptar" ||
+    registrosCoincidentes[0].aplicadaAlCronograma !== false ||
+    JSON.stringify(registrosCoincidentes[0]) !==
+      JSON.stringify(registro)
+  ) {
+    console.warn(
+      "El registro aprobado no coincide con su versión guardada."
+    );
+    return null;
+  }
+
+  
   const preparacion =
     prepararClaseAdaptadaEnCopia(registro);
 
