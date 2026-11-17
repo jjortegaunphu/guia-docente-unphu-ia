@@ -1547,8 +1547,16 @@ console.log(
 </ul>
 
 <h4>Explicación de los cambios</h4>
-<p>${escaparHTML(propuesta.explicacionCambios)}</p>
 
+<p>${escaparHTML(
+  propuestaYaAprobada
+    ? String(propuesta.explicacionCambios || "")
+        .replace(
+          /La propuesta no modifica el cronograma y queda pendiente de revisión y aprobación docente\./gi,
+          "La propuesta ha sido aprobada por el docente y todavía no se ha aplicado al cronograma."
+        )
+    : propuesta.explicacionCambios
+)}</p>
 
 ${comparacionAprobada
   ? `
@@ -1678,10 +1686,10 @@ ${comparacionAprobada
 
 <ul>
   ${(comparacionAprobada.propuestaAprobada.recursosVirtuales || [])
+    .filter(recurso => String(recurso || "").trim())
     .map(recurso => `<li>${escaparHTML(recurso)}</li>`)
-    .join("")}
+    .join("") || "<li>No se registraron recursos virtuales.</li>"}
 </ul>
-
 
 <h4>Bibliografía de la adaptación aprobada</h4>
 
