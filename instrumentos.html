@@ -198,6 +198,8 @@ let datosGuia = null;
 let fuenteInstrumentos = null;
 
 let instrumentoSeleccionadoActual = null;
+
+let instrumentoOriginalEnRegeneracion = null;
   
 let generandoInstrumentoEvaluacion = false;
 
@@ -222,14 +224,30 @@ function guardarBorradorPruebaObjetiva(){
   }
 
   const borrador = {
+    
+    asignatura: {
+      codigo: fuenteInstrumentos?.asignatura?.codigo || "",
+      nombre: fuenteInstrumentos?.asignatura?.nombre || ""
+    },
 
     prueba:
       pruebaObjetivaGeneradaActual,
 
     solicitudGeneracion:
       solicitudGeneracionPruebaObjetivaActual,
+    
+regeneracionCompleta:
+  instrumentoOriginalEnRegeneracion !== null,
 
-    instrumento: {
+instrumentoOriginal:
+  instrumentoOriginalEnRegeneracion
+    ? JSON.parse(
+        JSON.stringify(instrumentoOriginalEnRegeneracion)
+      )
+    : null,
+
+instrumento: {
+
 
       rubro:
         instrumentoSeleccionadoActual.rubro || "",
@@ -349,6 +367,24 @@ function borrarBorradorPruebaObjetiva(){
     return false;
   }
 
+    
+const asignaturaActual =
+  fuenteInstrumentos?.asignatura;
+
+if (
+  !borrador.asignatura ||
+  !asignaturaActual?.codigo ||
+  borrador.asignatura.codigo !== asignaturaActual.codigo ||
+  borrador.asignatura.nombre !==
+    (asignaturaActual.nombre || "")
+) {
+  console.warn(
+    "El borrador no corresponde a la asignatura actual."
+  );
+  return false;
+}
+
+
   const mismoInstrumento =
     borrador.instrumento.rubro ===
       (instrumentoSeleccionadoActual.rubro || "") &&
@@ -370,6 +406,45 @@ function borrarBorradorPruebaObjetiva(){
   if(!mismoInstrumento){
     return false;
   }
+
+    
+if (borrador.regeneracionCompleta === true) {
+
+  const original = borrador.instrumentoOriginal;
+
+  const elaborados =
+    datosGuia?.instrumentosEvaluacion?.elaborados;
+
+  if (
+    !original ||
+    !Array.isArray(elaborados)
+  ) {
+    alert(
+      "No se puede recuperar la regeneración porque " +
+      "falta la referencia al instrumento original."
+    );
+    return false;
+  }
+
+  const coincidencias = elaborados.filter(
+    item =>
+      JSON.stringify(item) === JSON.stringify(original)
+  );
+
+  if (coincidencias.length !== 1) {
+    alert(
+      "El instrumento original ha cambiado o no se puede " +
+      "identificar de manera única. " +
+      "Se canceló la recuperación para proteger los datos."
+    );
+    return false;
+  }
+
+  instrumentoOriginalEnRegeneracion =
+    JSON.parse(JSON.stringify(original));
+
+}
+
 
   pruebaObjetivaGeneradaActual =
     borrador.prueba;
@@ -664,6 +739,52 @@ function guardarInstrumentoSinSobrescribir(
   const elaborados =
   datosDestino.instrumentosEvaluacion.elaborados;
 
+  
+if (instrumentoOriginalEnRegeneracion) {
+
+  const original = instrumentoOriginalEnRegeneracion;
+
+  const coincidencias = elaborados
+    .map((item, indice) => ({
+      item,
+      indice
+    }))
+    .filter(({ item }) =>
+      JSON.stringify(item) === JSON.stringify(original)
+    );
+
+  if (coincidencias.length !== 1) {
+    throw new Error(
+      "No se pudo identificar de manera única " +
+      "el instrumento original. " +
+      "Se canceló la sustitución para proteger los datos."
+    );
+  }
+
+  const indiceOriginal = coincidencias[0].indice;
+
+  const mismaActividad =
+    nuevoInstrumento.rubro === original.rubro &&
+    Number(nuevoInstrumento.semana) ===
+      Number(original.semana) &&
+    Number(nuevoInstrumento.indiceActividad) ===
+      Number(original.indiceActividad) &&
+    Number(nuevoInstrumento.indiceInstrumento) ===
+      Number(original.indiceInstrumento);
+
+  if (!mismaActividad) {
+    throw new Error(
+      "El instrumento generado no corresponde " +
+      "a la actividad original."
+    );
+  }
+
+  elaborados[indiceOriginal] = nuevoInstrumento;
+
+  return;
+}
+
+
   const normalizar = texto =>
     String(texto ?? "")
       .trim()
@@ -787,10 +908,13 @@ const copiaDatosGuia = JSON.parse(
     );
 
     datosGuia = copiaDatosGuia;
-    fuenteInstrumentos =
-      datosGuia.instrumentosEvaluacion.fuente;
 
-    return true;
+fuenteInstrumentos =
+  datosGuia.instrumentosEvaluacion.fuente;
+
+instrumentoOriginalEnRegeneracion = null;
+
+return true;
 
   } catch (error) {
     console.error(
@@ -831,8 +955,11 @@ function buscarInstrumentoElaborado(item){
 
     elaborado.rubro === item.rubro &&
 
-    Number(elaborado.indiceInstrumento) ===
-      Number(item.indiceInstrumento) &&
+Number(elaborado.indiceActividad) ===
+  Number(item.indiceActividad) &&
+
+Number(elaborado.indiceInstrumento) ===
+  Number(item.indiceInstrumento) &&
 
     Number(elaborado.semana) ===
       Number(item.semana) &&
@@ -947,12 +1074,24 @@ const textoBoton =
     <strong>${estado}</strong>
   </div>
 
+  
+<button
+  type="button"
+  onclick="seleccionarInstrumento(${index})"
+>
+  ${textoBoton}
+</button>
+
+${elaborado ? `
   <button
     type="button"
-    onclick="seleccionarInstrumento(${index})"
+    onclick="regenerarInstrumentoCompleto(${index})"
+    style="margin-top:6px;"
   >
-    ${textoBoton}
+    Regenerar completo
   </button>
+` : ""}
+
 </td>
 
         </tr>
@@ -4487,6 +4626,23 @@ function validarValoresRubricaHolistica(){
     return;
   }
 
+    
+if (
+  !regenerarCompleto &&
+  elaborado &&
+  elaborado.instrumento === "Escala de estimación" &&
+  elaborado.contenido &&
+  Array.isArray(elaborado.contenido.indicadores)
+) {
+  mostrarEscalaEstimacion(
+    JSON.parse(JSON.stringify(elaborado.contenido)),
+    seleccionado
+  );
+
+  return;
+}
+
+
   const contexto =
     prepararContextoInstrumento(
       instrumentoSeleccionadoActual
@@ -4621,11 +4777,10 @@ async function cambiarModalidadEscala(nuevaModalidad){
       await respuesta.json();
 
     if(
-      !respuesta.ok ||
+            !respuesta.ok ||
       resultado.correcto !== true
     ){
-
-      alert(
+           alert(
         resultado.error ||
         "No fue posible generar la nueva modalidad de Escala de estimación."
       );
@@ -11718,10 +11873,6 @@ if (esperaGeneracion) {
   esperaGeneracion.style.display = "block";
 }
 
-  
-  solicitudGeneracionPruebaObjetivaActual =
-    solicitud;
-
   console.log(
     "Solicitud que se enviará al Worker:",
     solicitud
@@ -11759,7 +11910,7 @@ console.log(
   !Array.isArray(resultado.prueba.items) ||
   resultado.prueba.items.length === 0
 ){
-
+   
   alert(
   resultado.error ||
   "La Prueba objetiva generada no contiene ítems válidos. Intente generar nuevamente."
@@ -11768,6 +11919,10 @@ console.log(
   return;
 }
 
+
+solicitudGeneracionPruebaObjetivaActual =
+  solicitud;
+  
 pruebaObjetivaGeneradaActual =
   resultado.prueba;
 
@@ -11796,7 +11951,7 @@ mostrarRevisionPruebaObjetiva(
 );
 
 } catch (error) {
-
+ 
   console.error(
     "Error al generar la Prueba objetiva:",
     error
@@ -19000,14 +19155,136 @@ function obtenerEstructuraPareamientoPruebaObjetiva(){
     justificacionRespuesta: ""
   };
 }
+
   
-async function seleccionarInstrumento(index){
+async function regenerarInstrumentoCompleto(index) {
+
+  if (generandoInstrumentoEvaluacion) {
+    return;
+  }
+
+  const instrumentos = obtenerInstrumentosPendientes();
+  const seleccionado = instrumentos[index];
+
+  if (!seleccionado) {
+    alert("No se encontró el instrumento seleccionado.");
+    return;
+  }
+
+  const elaborado = buscarInstrumentoElaborado(seleccionado);
+
+  if (!elaborado) {
+    alert(
+      "Este instrumento está pendiente. " +
+      "Utilice la opción Elaborar instrumento."
+    );
+    return;
+  }
+
+  if (!verificarSincronizacionPendienteInstrumentos() ||
+      !verificarCronogramasActualizadosInstrumentos() ||
+      !verificarInstrumentosActualizados()) {
+    alert(
+      "Los datos han cambiado. Recargue Instrumentos " +
+      "antes de iniciar la regeneración."
+    );
+    return;
+  }
+
+  
+if (seleccionado.instrumento === "Prueba objetiva") {
+
+  const borrador = obtenerBorradorPruebaObjetiva();
+
+  
+const mismaAsignatura =
+  !!borrador?.asignatura &&
+  !!fuenteInstrumentos?.asignatura?.codigo &&
+  borrador.asignatura.codigo ===
+    fuenteInstrumentos.asignatura.codigo &&
+  borrador.asignatura.nombre ===
+    (fuenteInstrumentos.asignatura.nombre || "");
+
+
+  const mismaActividad =
+    borrador?.instrumento?.rubro === seleccionado.rubro &&
+    Number(borrador?.instrumento?.indiceActividad) ===
+      Number(seleccionado.indiceActividad) &&
+    Number(borrador?.instrumento?.indiceInstrumento) ===
+      Number(seleccionado.indiceInstrumento);
+
+ 
+if (
+  borrador?.regeneracionCompleta === true &&
+  mismaAsignatura &&
+  mismaActividad
+) {
+
+
+   
+    const decision = prompt(
+      "Existe una prueba objetiva regenerada pendiente de aceptación.\n\n" +
+      "Seleccione una opción:\n\n" +
+      "1 - Recuperar el borrador existente.\n" +
+      "2 - Iniciar una nueva regeneración.\n" +
+      "3 - Cancelar sin realizar cambios.\n\n" +
+      "Escriba 1, 2 o 3:",
+      "1"
+    );
+
+    if (decision === null || decision.trim() === "3") {
+      return;
+    }
+
+    if (decision.trim() === "1") {
+      instrumentoSeleccionadoActual = seleccionado;
+
+      if (restaurarBorradorPruebaObjetiva()) {
+        return;
+      }
+
+      return;
+    }
+
+    if (decision.trim() !== "2") {
+      alert("Opción no válida. No se realizó ningún cambio.");
+      return;
+    }
+ 
+
+  }
+
+}
+
+
+  const confirmar = confirm(
+    "¿Desea regenerar completamente este instrumento?\n\n" +
+    "El instrumento aprobado se conservará hasta " +
+    "que usted acepte y guarde el nuevo."
+  );
+
+  if (!confirmar) {
+    return;
+  }
+
+  instrumentoOriginalEnRegeneracion =
+  JSON.parse(JSON.stringify(elaborado));
+
+await seleccionarInstrumento(index, true);
+}
+
+  
+async function seleccionarInstrumento(index, regenerarCompleto = false){
 
   
   if (generandoInstrumentoEvaluacion) {
     return;
   }
 
+if (!regenerarCompleto) {
+  instrumentoOriginalEnRegeneracion = null;
+}
+  
   const instrumentos =
     obtenerInstrumentosPendientes();
 
@@ -19037,13 +19314,13 @@ async function seleccionarInstrumento(index){
       seleccionado
     );
 
-
   /*
     SI LA PRUEBA YA FUE ACEPTADA,
     RECUPERAR LA VERSIÓN GUARDADA
   */
 
   if(
+    !regenerarCompleto &&
     elaborado &&
     elaborado.instrumento ===
       "Prueba objetiva" &&
@@ -19089,7 +19366,9 @@ async function seleccionarInstrumento(index){
   */
 
   const borradorRestaurado =
-    restaurarBorradorPruebaObjetiva();
+    regenerarCompleto
+      ? false
+      : restaurarBorradorPruebaObjetiva();
 
 
   if(borradorRestaurado){
@@ -19115,6 +19394,7 @@ const elaborado =
   );
 
 if(
+  !regenerarCompleto &&
   elaborado &&
   elaborado.instrumento ===
     "Lista de cotejo" &&
@@ -19129,7 +19409,8 @@ if(
   return;
 }
 
-  if(
+ if(
+  !regenerarCompleto &&
   elaborado &&
   elaborado.instrumento ===
     "Rúbrica" &&
@@ -19143,6 +19424,23 @@ if(
 
   return;
 }
+
+  
+if (
+  !regenerarCompleto &&
+  elaborado &&
+  elaborado.instrumento === "Escala de estimación" &&
+  elaborado.contenido &&
+  Array.isArray(elaborado.contenido.indicadores)
+) {
+  mostrarEscalaEstimacion(
+    JSON.parse(JSON.stringify(elaborado.contenido)),
+    seleccionado
+  );
+
+  return;
+}
+
   
   const contexto =
     prepararContextoInstrumento(
@@ -19222,6 +19520,8 @@ generandoInstrumentoEvaluacion = true;
       resultado.correcto !== true
     ){
 
+      instrumentoOriginalEnRegeneracion = null;
+
       alert(
         resultado.error ||
         "No fue posible elaborar el instrumento de evaluación."
@@ -19274,6 +19574,8 @@ if(
     
 }
   catch(error){
+
+    instrumentoOriginalEnRegeneracion = null;
 
     console.error(
       "Error al generar el instrumento:",
