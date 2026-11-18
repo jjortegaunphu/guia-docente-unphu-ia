@@ -3887,13 +3887,17 @@ function construirVistaClasesOriginalesEvaluacion() {
 
         <p>
   <strong>Estado:</strong>
-  ${escaparHTML(
-    prepararResumenSincronizacionEvaluaciones()
-      .find(evaluacion =>
-        Number(evaluacion.semana) === Number(item.semana) &&
-        Number(evaluacion.claseAplicacion) === Number(item.clase)
-      )?.estado || item.estado
-  )}
+ 
+${escaparHTML(
+  prepararResumenSincronizacionEvaluaciones()
+    .find(evaluacion =>
+      Number(evaluacion.semana) ===
+        Number(item.evaluacion?.semana) &&
+      Number(evaluacion.claseAplicacion) ===
+        Number(item.evaluacion?.claseAplicacion)
+    )?.estado || item.estado
+)}
+
 </p>
       </section>
     `;
