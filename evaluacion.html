@@ -1347,6 +1347,123 @@ function validarRegistroRecuperacionSincronizacion(
   );
 }
 
+    
+
+function actualizarActividadEnCronogramaInstrumentos(
+  cronogramaInstrumentos,
+  cronogramaOriginal,
+  cronogramaAdaptado,
+  semanaObjetivo,
+  claseObjetivo,
+  indiceActividad
+) {
+
+ 
+if (
+  !Array.isArray(cronogramaInstrumentos) ||
+  !Array.isArray(cronogramaOriginal) ||
+  !Array.isArray(cronogramaAdaptado) ||
+  !Number.isInteger(indiceActividad) ||
+  indiceActividad < 0
+) {
+  return null;
+}
+
+
+  const copiaInstrumentos = structuredClone(
+    cronogramaInstrumentos
+  );
+
+  const obtenerActividad = (cronograma) => {
+    const semanas = cronograma.filter(
+      item => Number(item.semana) ===
+        Number(semanaObjetivo)
+    );
+
+    if (semanas.length !== 1) return null;
+
+    const clases = semanas[0].propuesta?.clases
+      ?.filter(
+        item => Number(item.clase) ===
+          Number(claseObjetivo)
+      );
+
+    if (!clases || clases.length !== 1) {
+      return null;
+    }
+
+    return clases[0]
+      .metodologiasActividades?.[indiceActividad]
+      || null;
+  };
+
+ 
+const actividadOriginal = obtenerActividad(
+  cronogramaOriginal
+);
+
+const actividadOrigen = obtenerActividad(
+  cronogramaAdaptado
+);
+
+const actividadDestino = obtenerActividad(
+  copiaInstrumentos
+);
+
+if (
+  !actividadOriginal ||
+  !actividadOrigen ||
+  !actividadDestino
+) {
+  return null;
+}
+
+  const camposPermitidos = [
+    "actividadFormativa",
+    "metodologia",
+    "explicacionMetodologia",
+    "codigosREA"
+  ];
+
+  
+for (const campo of camposPermitidos) {
+  if (
+    !Object.prototype.hasOwnProperty.call(
+      actividadOriginal,
+      campo
+    ) ||
+    !Object.prototype.hasOwnProperty.call(
+      actividadOrigen,
+      campo
+    ) ||
+    !Object.prototype.hasOwnProperty.call(
+      actividadDestino,
+      campo
+    )
+  ) {
+    return null;
+  }
+
+  if (
+    JSON.stringify(actividadDestino[campo]) !==
+    JSON.stringify(actividadOriginal[campo])
+  ) {
+    console.warn(
+      "La copia de Instrumentos contiene " +
+      "diferencias previas en: " + campo
+    );
+    return null;
+  }
+
+  actividadDestino[campo] = structuredClone(
+    actividadOrigen[campo]
+  );
+}
+
+
+  return copiaInstrumentos;
+}
+
    
 function prepararRegistroRecuperacionSincronizacion(
   registro
@@ -1405,12 +1522,64 @@ function prepararRegistroRecuperacionSincronizacion(
     respaldoAdaptado = JSON.parse(respaldoOriginal);
     registroAplicado = JSON.parse(registroOriginal);
 
-    respaldoAdaptado.datosGuia.cronograma =
-      JSON.parse(
-        JSON.stringify(preparacion.cronogramaAdaptado)
-      );
+   
+respaldoAdaptado.datosGuia.cronograma =
+  JSON.parse(
+    JSON.stringify(preparacion.cronogramaAdaptado)
+  );
 
-    registroAplicado.aplicadaAlCronograma = true;
+const cronogramaInstrumentos =
+  respaldoAdaptado.datosGuia
+    ?.instrumentosEvaluacion
+    ?.fuente
+    ?.cronograma;
+
+const indiceActividad = Number(
+  registroAplicado
+    ?.propuestaAdaptacion
+    ?.indiceActividadSeleccionada
+);
+
+if (
+  !Array.isArray(cronogramaInstrumentos) ||
+  !Number.isInteger(indiceActividad) ||
+  indiceActividad < 0
+) {
+  console.error(
+    "No se encontró una copia válida del cronograma " +
+    "o el índice de la actividad aprobada."
+  );
+  return null;
+}
+
+
+const cronogramaInstrumentosActualizado =
+  actualizarActividadEnCronogramaInstrumentos(
+    cronogramaInstrumentos,
+    JSON.parse(respaldoOriginal).datosGuia.cronograma,
+    preparacion.cronogramaAdaptado,
+    preparacion.semana,
+    preparacion.clase,
+    indiceActividad
+  );
+
+
+if (!cronogramaInstrumentosActualizado) {
+  console.error(
+    "No fue posible preparar la actualización " +
+    "del cronograma de Instrumentos."
+  );
+  return null;
+}
+
+respaldoAdaptado.datosGuia
+  .instrumentosEvaluacion
+  .fuente
+  .cronograma =
+    cronogramaInstrumentosActualizado;
+
+registroAplicado.aplicadaAlCronograma = true;
+
   } catch (error) {
     return null;
   }
@@ -1517,12 +1686,44 @@ const registroOriginalValidado = JSON.parse(
   operacion.registroOriginal
 );
 
-const respaldoSinCambioCronograma = JSON.parse(
-  JSON.stringify(respaldoAdaptado)
+
+const respaldoSinCambioCronograma = structuredClone(
+  respaldoAdaptado
 );
 
 respaldoSinCambioCronograma.datosGuia.cronograma =
   respaldoOriginalValidado.datosGuia.cronograma;
+
+const copiaOriginalInstrumentos =
+  respaldoOriginalValidado.datosGuia
+    ?.instrumentosEvaluacion
+    ?.fuente
+    ?.cronograma;
+
+const copiaAdaptadaInstrumentos =
+  respaldoAdaptado.datosGuia
+    ?.instrumentosEvaluacion
+    ?.fuente
+    ?.cronograma;
+
+if (
+  !Array.isArray(copiaOriginalInstrumentos) ||
+  !Array.isArray(copiaAdaptadaInstrumentos)
+) {
+  console.error(
+    "No se encontraron ambas versiones del " +
+    "cronograma de Instrumentos."
+  );
+  return false;
+}
+
+respaldoSinCambioCronograma.datosGuia
+  .instrumentosEvaluacion
+  .fuente
+  .cronograma = structuredClone(
+    copiaOriginalInstrumentos
+  );
+
 
 const registroSinCambioEstado = JSON.parse(
   JSON.stringify(registroAplicado)
@@ -1547,6 +1748,49 @@ if (
   );
   return false;
 }
+
+    
+const propuestaValidada =
+  registroOriginalValidado.propuestaAdaptacion;
+
+const indiceValidado = Number(
+  propuestaValidada?.indiceActividadSeleccionada
+);
+
+if (
+  !Number.isInteger(indiceValidado) ||
+  indiceValidado < 0
+) {
+  console.error(
+    "Índice de actividad aprobada inválido."
+  );
+  return false;
+}
+
+
+const copiaEsperadaInstrumentos =
+  actualizarActividadEnCronogramaInstrumentos(
+    copiaOriginalInstrumentos,
+    respaldoOriginalValidado.datosGuia.cronograma,
+    respaldoAdaptado.datosGuia.cronograma,
+    operacion.semana,
+    operacion.clase,
+    indiceValidado
+  );
+
+
+if (
+  !copiaEsperadaInstrumentos ||
+  JSON.stringify(copiaEsperadaInstrumentos) !==
+    JSON.stringify(copiaAdaptadaInstrumentos)
+) {
+  console.error(
+    "La copia de Instrumentos contiene cambios " +
+    "distintos de la adaptación autorizada."
+  );
+  return false;
+}
+
   
 const cronogramaOriginal = JSON.parse(
   operacion.respaldoOriginal
@@ -1860,6 +2104,7 @@ const registroOriginal = JSON.parse(
   operacion.registroOriginal
 );
 
+
 const respaldoSinCambios = structuredClone(respaldo);
 
 respaldoSinCambios.datosGuia.cronograma =
@@ -1867,7 +2112,38 @@ respaldoSinCambios.datosGuia.cronograma =
     respaldoOriginal.datosGuia.cronograma
   );
 
+const cronogramaOriginalInstrumentos174 =
+  respaldoOriginal.datosGuia
+    ?.instrumentosEvaluacion
+    ?.fuente
+    ?.cronograma;
+
+const cronogramaAdaptadoInstrumentos174 =
+  respaldo.datosGuia
+    ?.instrumentosEvaluacion
+    ?.fuente
+    ?.cronograma;
+
+if (
+  !Array.isArray(cronogramaOriginalInstrumentos174) ||
+  !Array.isArray(cronogramaAdaptadoInstrumentos174)
+) {
+  console.error(
+    "No se encontraron las dos versiones del " +
+    "cronograma de Instrumentos."
+  );
+  return false;
+}
+
+respaldoSinCambios.datosGuia
+  .instrumentosEvaluacion
+  .fuente
+  .cronograma = structuredClone(
+    cronogramaOriginalInstrumentos174
+  );
+
 const registroSinCambios = structuredClone(registro);
+
 
 registroSinCambios.aplicadaAlCronograma = false;
 
@@ -1914,6 +2190,32 @@ if (
 ) {
   return false;
 }
+
+    
+
+const copiaEsperadaInstrumentos174 =
+  actualizarActividadEnCronogramaInstrumentos(
+    cronogramaOriginalInstrumentos174,
+    cronogramaOriginal174,
+    cronogramaAdaptado174,
+    semana174,
+    clase174,
+    indice174
+  );
+
+
+if (
+  !copiaEsperadaInstrumentos174 ||
+  JSON.stringify(copiaEsperadaInstrumentos174) !==
+    JSON.stringify(cronogramaAdaptadoInstrumentos174)
+) {
+  console.error(
+    "La copia de Instrumentos no coincide " +
+    "con la actualización evaluativa esperada."
+  );
+  return false;
+}
+
 
 const copiaOriginal174 =
   structuredClone(cronogramaOriginal174);
