@@ -405,6 +405,118 @@ pruebaObjetivaGeneradaActual.cantidadItems =
 
 }
 
+function verificarCronogramasActualizadosInstrumentos() {
+  try {
+    const texto = localStorage.getItem(
+      "respaldoGuiaDocente"
+    );
+
+    if (!texto || !datosGuia) {
+      return false;
+    }
+
+    const respaldoActual = JSON.parse(texto);
+    const datosActuales = respaldoActual?.datosGuia;
+
+    if (!datosActuales) {
+      return false;
+    }
+
+    const campos = [
+      ["cronograma"],
+      ["instrumentosEvaluacion", "fuente", "cronograma"]
+    ];
+
+    const obtener = (objeto, ruta) =>
+      ruta.reduce(
+        (valor, clave) => valor?.[clave],
+        objeto
+      );
+
+    return campos.every(ruta => {
+      const actual = obtener(datosActuales, ruta);
+      const memoria = obtener(datosGuia, ruta);
+
+      return (
+        Array.isArray(actual) &&
+        Array.isArray(memoria) &&
+        JSON.stringify(actual) === JSON.stringify(memoria)
+      );
+    });
+
+  } catch (error) {
+    console.error(
+      "Error al verificar los cronogramas:",
+      error
+    );
+
+    return false;
+  }
+}
+
+  function verificarInstrumentosActualizados() {
+  try {
+    const texto = localStorage.getItem(
+      "respaldoGuiaDocente"
+    );
+
+    if (!texto || !datosGuia) {
+      return false;
+    }
+
+    const respaldoActual = JSON.parse(texto);
+
+    const actuales =
+      respaldoActual?.datosGuia
+        ?.instrumentosEvaluacion?.elaborados;
+
+    const memoria =
+      datosGuia?.instrumentosEvaluacion?.elaborados;
+
+    if (
+      actuales !== undefined &&
+      !Array.isArray(actuales)
+    ) {
+      return false;
+    }
+
+    if (
+      memoria !== undefined &&
+      !Array.isArray(memoria)
+    ) {
+      return false;
+    }
+
+    return JSON.stringify(actuales ?? []) ===
+      JSON.stringify(memoria ?? []);
+
+  } catch (error) {
+    console.error(
+      "Error al verificar instrumentos actualizados:",
+      error
+    );
+
+    return false;
+  }
+}
+  
+  function verificarSincronizacionPendienteInstrumentos() {
+  const recuperacion = localStorage.getItem(
+    "recuperacionSincronizacionEvaluativa"
+  );
+
+  if (recuperacion !== null) {
+    alert(
+      "Existe una sincronización evaluativa pendiente. " +
+      "Regrese al Sistema de Evaluación y complete " +
+      "la recuperación antes de guardar instrumentos."
+    );
+
+    return false;
+  }
+
+  return true;
+}
 
 function cargarDatosInstrumentos(){
 
@@ -544,10 +656,13 @@ function obtenerInstrumentosPendientes(){
 
 
   
-function guardarInstrumentoSinSobrescribir(nuevoInstrumento){
+function guardarInstrumentoSinSobrescribir(
+  nuevoInstrumento,
+  datosDestino = datosGuia
+){
 
   const elaborados =
-    datosGuia.instrumentosEvaluacion.elaborados;
+  datosDestino.instrumentosEvaluacion.elaborados;
 
   const normalizar = texto =>
     String(texto ?? "")
@@ -598,6 +713,84 @@ function guardarInstrumentoSinSobrescribir(nuevoInstrumento){
 
 }
 
+  function guardarInstrumentoDeFormaSegura(nuevoInstrumento) {
+  try {
+    const textoRespaldo = localStorage.getItem(
+      "respaldoGuiaDocente"
+    );
+
+    if (!textoRespaldo || !datosGuia) {
+      throw new Error(
+        "No se encontró el respaldo de la guía docente."
+      );
+    }
+
+    if (!verificarSincronizacionPendienteInstrumentos()) {
+      return false;
+    }
+
+    if (
+      !verificarCronogramasActualizadosInstrumentos() ||
+      !verificarInstrumentosActualizados()
+    ) {
+      throw new Error(
+        "Los datos almacenados han cambiado. Recargue Instrumentos."
+      );
+    }
+
+    const respaldo = JSON.parse(textoRespaldo);
+
+    const copiaDatosGuia = JSON.parse(
+      JSON.stringify(datosGuia)
+    );
+
+    if (!copiaDatosGuia.instrumentosEvaluacion) {
+      throw new Error(
+        "No se encontraron los datos de evaluación."
+      );
+    }
+
+    if (
+      !Array.isArray(
+        copiaDatosGuia.instrumentosEvaluacion.elaborados
+      )
+    ) {
+      copiaDatosGuia.instrumentosEvaluacion.elaborados = [];
+    }
+
+    guardarInstrumentoSinSobrescribir(
+      nuevoInstrumento,
+      copiaDatosGuia
+    );
+
+    respaldo.datosGuia = copiaDatosGuia;
+
+    localStorage.setItem(
+      "respaldoGuiaDocente",
+      JSON.stringify(respaldo)
+    );
+
+    datosGuia = copiaDatosGuia;
+    fuenteInstrumentos =
+      datosGuia.instrumentosEvaluacion.fuente;
+
+    return true;
+
+  } catch (error) {
+    console.error(
+      "Error al guardar el instrumento de forma segura:",
+      error
+    );
+
+    alert(
+      "No fue posible guardar el instrumento. " +
+      "Los datos originales en memoria se conservaron. " +
+      "Revise el almacenamiento antes de intentarlo nuevamente."
+    );
+
+    return false;
+  }
+}
 
 function buscarInstrumentoElaborado(item){
 
@@ -1620,6 +1813,28 @@ function agregarIndicadorEscala(){
 
 function aceptarEscalaEstimacion(){
 
+    if (!verificarSincronizacionPendienteInstrumentos()) {
+    return;
+  }
+
+if (!verificarCronogramasActualizadosInstrumentos()) {
+  alert(
+    "Los cronogramas han cambiado desde que se abrió esta página. " +
+    "Recargue Instrumentos antes de guardar para evitar " +
+    "sobrescribir adaptaciones aprobadas."
+  );
+  return;
+}
+
+  if (!verificarInstrumentosActualizados()) {
+  alert(
+    "Los instrumentos elaborados han cambiado desde que se abrió " +
+    "esta página. Recargue Instrumentos antes de guardar para evitar " +
+    "sobrescribir instrumentos previamente aceptados."
+  );
+  return;
+}
+  
   const filas =
     document.querySelectorAll(
       ".filaIndicadorEscala"
@@ -1872,26 +2087,6 @@ function aceptarEscalaEstimacion(){
   }
 
 
-  if(!datosGuia.instrumentosEvaluacion){
-
-    datosGuia.instrumentosEvaluacion = {};
-
-  }
-
-
-  if(
-    !Array.isArray(
-      datosGuia.instrumentosEvaluacion
-        .elaborados
-    )
-  ){
-
-    datosGuia.instrumentosEvaluacion
-      .elaborados = [];
-
-  }
-
-
   const nuevoInstrumento = {
 
     rubro:
@@ -1954,59 +2149,10 @@ function aceptarEscalaEstimacion(){
 
   };
 
-  guardarInstrumentoSinSobrescribir(
-  nuevoInstrumento
-  );
 
-  const respaldoActual =
-    localStorage.getItem(
-      "respaldoGuiaDocente"
-    );
-
-
-  if(!respaldoActual){
-
-    alert(
-      "No fue posible localizar el respaldo de la guía docente."
-    );
-
-    return;
-  }
-
-
-  try{
-
-    const respaldo =
-      JSON.parse(
-        respaldoActual
-      );
-
-
-    respaldo.datosGuia =
-      datosGuia;
-
-
-    localStorage.setItem(
-      "respaldoGuiaDocente",
-      JSON.stringify(respaldo)
-    );
-
-  }
-  catch(error){
-
-    console.error(
-      "Error al guardar la Escala de estimación:",
-      error
-    );
-
-
-    alert(
-      "La Escala de estimación es válida, pero ocurrió un error al guardar el instrumento."
-    );
-
-    return;
-  }
-
+  if (!guardarInstrumentoDeFormaSegura(nuevoInstrumento)) {
+  return;
+}
 
   alert(
     "La Escala de estimación ha sido aceptada y guardada correctamente."
@@ -3039,6 +3185,28 @@ function renumerarItemsListaCotejo(){
 
 function aceptarListaCotejo(){
 
+    if (!verificarSincronizacionPendienteInstrumentos()) {
+    return;
+  }
+
+  if (!verificarCronogramasActualizadosInstrumentos()) {
+  alert(
+    "Los cronogramas han cambiado desde que se abrió esta página. " +
+    "Recargue Instrumentos antes de guardar para evitar " +
+    "sobrescribir adaptaciones aprobadas."
+  );
+  return;
+}
+
+  if (!verificarInstrumentosActualizados()) {
+  alert(
+    "Los instrumentos elaborados han cambiado desde que se abrió " +
+    "esta página. Recargue Instrumentos antes de guardar para evitar " +
+    "sobrescribir instrumentos previamente aceptados."
+  );
+  return;
+}
+
   const filas =
     document.querySelectorAll(
       ".filaItemListaCotejo"
@@ -3284,54 +3452,9 @@ const nuevoInstrumento = {
 
 };
 
-guardarInstrumentoSinSobrescribir(
-  nuevoInstrumento
-);
-
-const respaldoActual =
-  localStorage.getItem(
-    "respaldoGuiaDocente"
-  );
-
-
-if(!respaldoActual){
-
-  alert(
-    "No fue posible localizar el respaldo de la guía docente."
-  );
-
+if (!guardarInstrumentoDeFormaSegura(nuevoInstrumento)) {
   return;
 }
-
-
-try{
-
-  const respaldo =
-    JSON.parse(respaldoActual);
-
-  respaldo.datosGuia =
-    datosGuia;
-
-  localStorage.setItem(
-    "respaldoGuiaDocente",
-    JSON.stringify(respaldo)
-  );
-
-}
-catch(error){
-
-  console.error(
-    "Error al guardar la Lista de cotejo:",
-    error
-  );
-
-  alert(
-    "La Lista de cotejo es válida, pero ocurrió un error al guardar el instrumento."
-  );
-
-  return;
-}
-
 
 alert(
   "La Lista de cotejo ha sido aceptada y guardada correctamente."
@@ -4752,6 +4875,28 @@ function renumerarCriteriosRubrica(){
 
 function aceptarRubricaHolistica(){
 
+    if (!verificarSincronizacionPendienteInstrumentos()) {
+    return;
+  }
+
+  if (!verificarCronogramasActualizadosInstrumentos()) {
+  alert(
+    "Los cronogramas han cambiado desde que se abrió esta página. " +
+    "Recargue Instrumentos antes de guardar para evitar " +
+    "sobrescribir adaptaciones aprobadas."
+  );
+  return;
+}
+
+  if (!verificarInstrumentosActualizados()) {
+  alert(
+    "Los instrumentos elaborados han cambiado desde que se abrió " +
+    "esta página. Recargue Instrumentos antes de guardar para evitar " +
+    "sobrescribir instrumentos previamente aceptados."
+  );
+  return;
+}
+
   const filas =
     document.querySelectorAll(
       ".filaNivelRubricaHolistica"
@@ -4985,7 +5130,29 @@ guardarInstrumentoSinSobrescribir(
   
 function aceptarRubrica(){
 
-if(
+    if (!verificarSincronizacionPendienteInstrumentos()) {
+    return;
+  }
+
+  if (!verificarCronogramasActualizadosInstrumentos()) {
+  alert(
+    "Los cronogramas han cambiado desde que se abrió esta página. " +
+    "Recargue Instrumentos antes de guardar para evitar " +
+    "sobrescribir adaptaciones aprobadas."
+  );
+  return;
+}
+
+if (!verificarInstrumentosActualizados()) {
+  alert(
+    "Los instrumentos elaborados han cambiado desde que se abrió " +
+    "esta página. Recargue Instrumentos antes de guardar para evitar " +
+    "sobrescribir instrumentos previamente aceptados."
+  );
+  return;
+}
+
+  if(
   document.querySelector(
     ".filaNivelRubricaHolistica"
   )
@@ -16199,6 +16366,28 @@ async function descargarWordEstudiantePruebaObjetiva(){
 }
 
 function aceptarPruebaObjetiva(){
+
+    if (!verificarSincronizacionPendienteInstrumentos()) {
+    return;
+  }
+
+  if (!verificarCronogramasActualizadosInstrumentos()) {
+  alert(
+    "Los cronogramas han cambiado desde que se abrió esta página. " +
+    "Recargue Instrumentos antes de guardar para evitar " +
+    "sobrescribir adaptaciones aprobadas."
+  );
+  return;
+}
+
+  if (!verificarInstrumentosActualizados()) {
+  alert(
+    "Los instrumentos elaborados han cambiado desde que se abrió " +
+    "esta página. Recargue Instrumentos antes de guardar para evitar " +
+    "sobrescribir instrumentos previamente aceptados."
+  );
+  return;
+}
 
   if(
     !pruebaObjetivaGeneradaActual ||
