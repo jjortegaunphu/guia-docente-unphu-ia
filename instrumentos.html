@@ -715,34 +715,50 @@ function guardarInstrumentoSinSobrescribir(
 
   function guardarInstrumentoDeFormaSegura(nuevoInstrumento) {
   try {
-    const textoRespaldo = localStorage.getItem(
-      "respaldoGuiaDocente"
-    );
-
-    if (!textoRespaldo || !datosGuia) {
-      throw new Error(
-        "No se encontró el respaldo de la guía docente."
-      );
-    }
+    if (!datosGuia) {
+  throw new Error(
+    "No se encontraron los datos de la guía docente."
+  );
+}
 
     if (!verificarSincronizacionPendienteInstrumentos()) {
       return false;
     }
 
-    if (
-      !verificarCronogramasActualizadosInstrumentos() ||
-      !verificarInstrumentosActualizados()
-    ) {
-      throw new Error(
-        "Los datos almacenados han cambiado. Recargue Instrumentos."
-      );
-    }
+   if (
+  !verificarCronogramasActualizadosInstrumentos() ||
+  !verificarInstrumentosActualizados()
+) {
+  throw new Error(
+    "Los datos almacenados han cambiado. Recargue Instrumentos."
+  );
+}
 
-    const respaldo = JSON.parse(textoRespaldo);
+const textoRespaldo = localStorage.getItem(
+  "respaldoGuiaDocente"
+);
 
-    const copiaDatosGuia = JSON.parse(
-      JSON.stringify(datosGuia)
-    );
+if (!textoRespaldo) {
+  throw new Error(
+    "No se encontró el respaldo de la guía docente."
+  );
+}
+
+const respaldo = JSON.parse(textoRespaldo);
+
+if (
+  !respaldo.datosGuia ||
+  typeof respaldo.datosGuia !== "object" ||
+  Array.isArray(respaldo.datosGuia)
+) {
+  throw new Error(
+    "El respaldo no contiene datos válidos de la guía docente."
+  );
+}
+
+const copiaDatosGuia = JSON.parse(
+  JSON.stringify(respaldo.datosGuia)
+);
 
     if (!copiaDatosGuia.instrumentosEvaluacion) {
       throw new Error(
@@ -3382,21 +3398,6 @@ const itemsAceptados =
 
   });
 
-
-if(!datosGuia.instrumentosEvaluacion){
-  datosGuia.instrumentosEvaluacion = {};
-}
-
-
-if(
-  !Array.isArray(
-    datosGuia.instrumentosEvaluacion.elaborados
-  )
-){
-  datosGuia.instrumentosEvaluacion.elaborados = [];
-}
-
-
 const nuevoInstrumento = {
 
   rubro:
@@ -4992,21 +4993,6 @@ function aceptarRubricaHolistica(){
     return;
   }
 
-
-  if(!datosGuia.instrumentosEvaluacion){
-    datosGuia.instrumentosEvaluacion = {};
-  }
-
-
-  if(
-    !Array.isArray(
-      datosGuia.instrumentosEvaluacion.elaborados
-    )
-  ){
-    datosGuia.instrumentosEvaluacion.elaborados = [];
-  }
-
-
   const nuevoInstrumento = {
 
     rubro:
@@ -5070,59 +5056,13 @@ function aceptarRubricaHolistica(){
 
   };
  
-guardarInstrumentoSinSobrescribir(
-  nuevoInstrumento
-);
-
-  const respaldoActual =
-    localStorage.getItem(
-      "respaldoGuiaDocente"
-    );
-
-
-  if(!respaldoActual){
-
-    alert(
-      "No fue posible localizar el respaldo de la guía docente."
-    );
-
-    return;
-  }
-
-
-  try{
-
-    const respaldo =
-      JSON.parse(respaldoActual);
-
-    respaldo.datosGuia =
-      datosGuia;
-
-    localStorage.setItem(
-      "respaldoGuiaDocente",
-      JSON.stringify(respaldo)
-    );
-
-  }
-  catch(error){
-
-    console.error(
-      "Error al guardar la Rúbrica holística:",
-      error
-    );
-
-    alert(
-      "La Rúbrica holística es válida, pero ocurrió un error al guardar el instrumento."
-    );
-
-    return;
-  }
-
+if (!guardarInstrumentoDeFormaSegura(nuevoInstrumento)) {
+  return;
+}
 
   alert(
     "La Rúbrica holística ha sido aceptada y guardada correctamente."
   );
-
 
   mostrarInstrumentosPendientes();
 
@@ -5436,20 +5376,6 @@ const insuficiente =
 
     });
 
-    if(!datosGuia.instrumentosEvaluacion){
-    datosGuia.instrumentosEvaluacion = {};
-  }
-
-
-  if(
-    !Array.isArray(
-      datosGuia.instrumentosEvaluacion.elaborados
-    )
-  ){
-    datosGuia.instrumentosEvaluacion.elaborados = [];
-  }
-
-
   const nuevoInstrumento = {
 
     rubro:
@@ -5511,57 +5437,10 @@ const insuficiente =
 
   };
 
-   
-guardarInstrumentoSinSobrescribir(
-  nuevoInstrumento
-);
-
-
-  const respaldoActual =
-    localStorage.getItem(
-      "respaldoGuiaDocente"
-    );
-
-
-  if(!respaldoActual){
-
-    alert(
-      "No fue posible localizar el respaldo de la guía docente."
-    );
-
-    return;
-  }
-
-
-  try{
-
-    const respaldo =
-      JSON.parse(respaldoActual);
-
-    respaldo.datosGuia =
-      datosGuia;
-
-    localStorage.setItem(
-      "respaldoGuiaDocente",
-      JSON.stringify(respaldo)
-    );
-
-  }
-  catch(error){
-
-    console.error(
-      "Error al guardar la Rúbrica:",
-      error
-    );
-
-    alert(
-      "La Rúbrica es válida, pero ocurrió un error al guardar el instrumento."
-    );
-
-    return;
-  }
-
-
+if (!guardarInstrumentoDeFormaSegura(nuevoInstrumento)) {
+  return;
+}
+  
   alert(
     "La Rúbrica ha sido aceptada y guardada correctamente."
   );
@@ -16414,25 +16293,6 @@ function aceptarPruebaObjetiva(){
     return;
   }
 
-
-  if(!datosGuia.instrumentosEvaluacion){
-
-    datosGuia.instrumentosEvaluacion = {};
-
-  }
-
-
-  if(
-    !Array.isArray(
-      datosGuia.instrumentosEvaluacion.elaborados
-    )
-  ){
-
-    datosGuia.instrumentosEvaluacion.elaborados = [];
-
-  }
-
-
   /*
     ASEGURAR LOS VALORES DEFINITIVOS
   */
@@ -16500,67 +16360,12 @@ function aceptarPruebaObjetiva(){
   };
  
 /*
-  GUARDAR EL INSTRUMENTO
-  SIN SOBRESCRIBIR OTROS
+  GUARDAR EL INSTRUMENTO DE FORMA SEGURA
 */
 
-guardarInstrumentoSinSobrescribir(
-  nuevoInstrumento
-);
-
-  /*
-    GUARDAR EN EL RESPALDO GENERAL
-  */
-
-  const respaldoActual =
-    localStorage.getItem(
-      "respaldoGuiaDocente"
-    );
-
-
-  if(!respaldoActual){
-
-    alert(
-      "No fue posible localizar el respaldo de la guía docente."
-    );
-
-    return;
-  }
-
-
-  try{
-
-    const respaldo =
-      JSON.parse(
-        respaldoActual
-      );
-
-
-    respaldo.datosGuia =
-      datosGuia;
-
-
-    localStorage.setItem(
-      "respaldoGuiaDocente",
-      JSON.stringify(respaldo)
-    );
-
-  }
-  catch(error){
-
-    console.error(
-      "Error al guardar la Prueba objetiva:",
-      error
-    );
-
-
-    alert(
-      "La Prueba objetiva es válida, pero ocurrió un error al guardar el instrumento."
-    );
-
-    return;
-  }
-
+if (!guardarInstrumentoDeFormaSegura(nuevoInstrumento)) {
+  return;
+}
 
   /*
     EL BORRADOR YA NO ES NECESARIO
