@@ -1385,123 +1385,159 @@ else{
 
 }
 
-function finalizarGuiaDocente(){
 
-  if(!datosGuia || !respaldoGuia){
+function finalizarGuiaDocente() {
+
+  if (!datosGuia || !respaldoGuia) {
     return;
   }
 
-    if(datosGuia.estadoGuia === "finalizada"){
+  if (datosGuia.estadoGuia === "finalizada") {
+    alert("Esta Guía Docente ya fue finalizada anteriormente.");
+    return;
+  }
 
-    alert(
-      "Esta Guía Docente ya fue finalizada anteriormente."
+  const esEdicionFinalizada =
+    respaldoGuia.origen === "edicionGuiaFinalizada";
+
+  const idOriginal = respaldoGuia.idGuiaFinalizada;
+
+  let guiasGuardadas;
+
+  try {
+    guiasGuardadas = JSON.parse(
+      localStorage.getItem("guiasDocentesFinalizadas") || "[]"
     );
 
+    if (!Array.isArray(guiasGuardadas)) {
+      throw new Error("El historial no es válido.");
+    }
+  } catch (error) {
+    console.error(error);
+    alert("No fue posible recuperar el historial de guías.");
     return;
   }
 
-  const confirmar =
-    window.confirm(
-      "¿Desea finalizar esta Guía Docente?\n\n" +
-      "La guía quedará registrada como finalizada y " +
-      "se conservará toda la información elaborada."
+  let indiceOriginal = -1;
+
+  if (esEdicionFinalizada) {
+
+    if (!idOriginal) {
+      alert("No se encontró el identificador de la guía original.");
+      return;
+    }
+
+    indiceOriginal = guiasGuardadas.findIndex(
+      guia => guia?.id === idOriginal
     );
 
-
-  if(!confirmar){
-    return;
+    if (indiceOriginal === -1) {
+      alert(
+        "No se encontró la guía original en Mis guías. " +
+        "No se guardaron los cambios."
+      );
+      return;
+    }
   }
 
-  /*
-    NORMA BIBLIOGRÁFICA SELECCIONADA
-    PARA EL DOCUMENTO FINAL
-  */
+  const confirmar = window.confirm(
+    esEdicionFinalizada
+      ? "¿Desea guardar los cambios en la guía finalizada?\n\n" +
+        "Se actualizará la guía original sin crear un duplicado."
+      : "¿Desea finalizar esta Guía Docente?\n\n" +
+        "La guía quedará registrada como finalizada."
+  );
+
+  if (!confirmar) {
+    return;
+  }
 
   const selectorNorma =
-    document.getElementById(
-      "normaBibliografica"
-    );
+    document.getElementById("normaBibliografica");
 
   const normaBibliografica =
     selectorNorma?.value === "VANCOUVER"
       ? "VANCOUVER"
       : "APA7";
 
-  datosGuia.normaBibliografica =
+  const fechaFinalizacion = new Date().toISOString();
+
+  const datosActualizados = structuredClone(datosGuia);
+
+  datosActualizados.normaBibliografica =
     normaBibliografica;
-  
-  const fechaFinalizacion =
-    new Date().toISOString();
 
+  datosActualizados.estadoGuia = "finalizada";
 
-  datosGuia.estadoGuia =
-    "finalizada";
+  const fechaOriginal =
+    esEdicionFinalizada
+      ? guiasGuardadas[indiceOriginal].fechaFinalizacion
+      : fechaFinalizacion;
 
-  datosGuia.fechaFinalizacion =
-    fechaFinalizacion;
+  datosActualizados.fechaFinalizacion = fechaOriginal;
 
+  if (esEdicionFinalizada) {
 
-  respaldoGuia.datosGuia =
-    datosGuia;
+    guiasGuardadas[indiceOriginal] = {
+      ...guiasGuardadas[indiceOriginal],
+      datosGuia: datosActualizados,
+      fechaUltimaModificacion: fechaFinalizacion
+    };
 
-  respaldoGuia.estadoGuia =
-    "finalizada";
+  } else {
 
-  respaldoGuia.fechaFinalizacion =
-    fechaFinalizacion;
-
-
-  localStorage.setItem(
-    "respaldoGuiaDocente",
-    JSON.stringify(respaldoGuia)
-  );
-
-
-  const registroFinalizado = {
-    id:
-      `guia-${Date.now()}`,
-
-    fechaFinalizacion:
+    guiasGuardadas.push({
+      id: `guia-${Date.now()}`,
       fechaFinalizacion,
+      datosGuia: datosActualizados
+    });
+  }
 
-    datosGuia:
-      datosGuia
+  const respaldoActualizado = {
+    ...respaldoGuia,
+    datosGuia: datosActualizados,
+    estadoGuia: "finalizada",
+    fechaFinalizacion: fechaOriginal
   };
 
+  try {
 
-  const guiasGuardadas =
-    JSON.parse(
-      localStorage.getItem(
-        "guiasDocentesFinalizadas"
-      ) || "[]"
+    localStorage.setItem(
+      "guiasDocentesFinalizadas",
+      JSON.stringify(guiasGuardadas)
     );
 
+    localStorage.setItem(
+      "respaldoGuiaDocente",
+      JSON.stringify(respaldoActualizado)
+    );
 
-  guiasGuardadas.push(
-    registroFinalizado
-  );
+  } catch (error) {
 
+    console.error("Error al guardar la guía:", error);
 
-  localStorage.setItem(
-    "guiasDocentesFinalizadas",
-    JSON.stringify(guiasGuardadas)
-  );
+    alert(
+      "No fue posible completar el guardado. " +
+      "Verifique el almacenamiento antes de continuar."
+    );
 
+    return;
+  }
+
+  datosGuia = datosActualizados;
+  respaldoGuia = respaldoActualizado;
 
   alert(
-    "La Guía Docente ha sido finalizada correctamente."
+    esEdicionFinalizada
+      ? "Los cambios se guardaron en la guía finalizada original."
+      : "La Guía Docente ha sido finalizada correctamente."
   );
 
-
-  document
-    .getElementById("revisionGuia")
+  document.getElementById("revisionGuia")
     .style.display = "none";
 
-
-  document
-    .getElementById("guiaFinalizada")
+  document.getElementById("guiaFinalizada")
     .style.display = "block";
-
 }
 
 
