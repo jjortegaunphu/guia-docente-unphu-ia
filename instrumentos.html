@@ -729,9 +729,7 @@ function obtenerInstrumentosPendientes(){
 
 }
 
-
-  
-function guardarInstrumentoSinSobrescribir(
+  function guardarInstrumentoSinSobrescribir(
   nuevoInstrumento,
   datosDestino = datosGuia
 ){
@@ -800,6 +798,12 @@ if (instrumentoOriginalEnRegeneracion) {
   const indiceExistente = elaborados.findIndex(item =>
 
     item.rubro === nuevoInstrumento.rubro &&
+
+    Number(item.indiceActividad) ===
+    Number(nuevoInstrumento.indiceActividad) &&
+
+    Number(item.indiceInstrumento) ===
+    Number(nuevoInstrumento.indiceInstrumento) &&
 
     Number(item.semana) ===
       Number(nuevoInstrumento.semana) &&
