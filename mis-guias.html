@@ -1540,68 +1540,103 @@ ${cronogramaHTML}
 
 }
 
-    function editarSistemaEvaluacionGuiaFinalizada(idGuia){
+    
+function editarSistemaEvaluacionGuiaFinalizada(idGuia) {
 
-  const guias =
-    obtenerGuiasFinalizadas();
+  const guias = obtenerGuiasFinalizadas();
 
-  const guiaSeleccionada =
-    guias.find(
-      guia =>
-        guia?.id === idGuia
-    );
+  const guiaSeleccionada = guias.find(
+    guia => guia?.id === idGuia
+  );
 
-  if(
+  if (
     !guiaSeleccionada ||
     !guiaSeleccionada.datosGuia
-  ){
-
+  ) {
     alert(
       "No fue posible recuperar la Guía Docente seleccionada."
     );
-
     return;
   }
 
-  // Crear una copia independiente de la guía finalizada
-  const datosGuia =
-    JSON.parse(
-      JSON.stringify(
-        guiaSeleccionada.datosGuia
-      )
+  const clave = "respaldoGuiaDocente";
+  let respaldoActual;
+
+  try {
+    respaldoActual = JSON.parse(
+      localStorage.getItem(clave) || "{}"
     );
 
-  // Restaurar como guía activa
-  const respaldoActual =
-    JSON.parse(
-      localStorage.getItem(
-        "respaldoGuiaDocente"
-      ) || "{}"
+    if (
+      !respaldoActual ||
+      typeof respaldoActual !== "object" ||
+      Array.isArray(respaldoActual)
+    ) {
+      throw new Error("Respaldo inválido");
+    }
+
+  } catch (error) {
+    alert(
+      "No fue posible leer el respaldo de trabajo. " +
+      "No se realizará ninguna modificación."
+    );
+    return;
+  }
+
+  // Si ya estamos editando esta misma guía,
+  // conservar todos los cambios existentes.
+  if (
+    respaldoActual.origen === "edicionGuiaFinalizada" &&
+    respaldoActual.idGuiaFinalizada === idGuia &&
+    respaldoActual.datosGuia
+  ) {
+    window.location.href = "evaluacion.html";
+    return;
+  }
+
+  // Evitar sustituir silenciosamente otra edición.
+  if (respaldoActual.datosGuia) {
+
+    const continuar = confirm(
+      "Existe un respaldo de trabajo. " +
+      "Abrir esta guía sustituirá ese respaldo.\n\n" +
+      "¿Desea continuar?"
     );
 
-  respaldoActual.datosGuia =
-    datosGuia;
+    if (!continuar) {
+      return;
+    }
+  }
 
-      
-respaldoActual.idGuiaFinalizada =
-  guiaSeleccionada.id;
-
-respaldoActual.origen =
-  "edicionGuiaFinalizada";
-
-
-  localStorage.setItem(
-    "respaldoGuiaDocente",
-    JSON.stringify(
-      respaldoActual
-    )
+  // Copia independiente de la guía histórica.
+  const datosGuia = JSON.parse(
+    JSON.stringify(guiaSeleccionada.datosGuia)
   );
 
-  // Abrir el sistema de evaluación
-  window.location.href =
-    "evaluacion.html";
+  const nuevoRespaldo = {
+    ...respaldoActual,
+    datosGuia,
+    idGuiaFinalizada: guiaSeleccionada.id,
+    origen: "edicionGuiaFinalizada"
+  };
 
+  try {
+    localStorage.setItem(
+      clave,
+      JSON.stringify(nuevoRespaldo)
+    );
+  } catch (error) {
+    console.error(error);
+
+    alert(
+      "No fue posible guardar el respaldo de edición."
+    );
+    return;
+  }
+
+  window.location.href = "evaluacion.html";
 }
+
 
     function mostrarGuiasFinalizadas(){
 
