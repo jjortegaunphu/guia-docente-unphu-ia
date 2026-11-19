@@ -592,6 +592,26 @@ if(idGuiaFinalizada){
     datosGuia =
       respaldoGuia.datosGuia;
 
+    /*
+  ADAPTAR EL BOTÓN CUANDO SE EDITA
+  UNA GUÍA HISTÓRICA FINALIZADA
+*/
+
+const esEdicionGuiaFinalizada =
+  respaldoGuia.origen === "edicionGuiaFinalizada" &&
+  typeof respaldoGuia.idGuiaFinalizada === "string" &&
+  respaldoGuia.idGuiaFinalizada.trim() !== "";
+
+const btnFinalizarGuia =
+  document.getElementById("btnFinalizarGuia");
+
+if (btnFinalizarGuia) {
+  btnFinalizarGuia.textContent =
+    esEdicionGuiaFinalizada
+      ? "Guardar modificaciones"
+      : "Finalizar Guía Docente";
+}
+
 
     if(!datosGuia){
 
@@ -1511,29 +1531,64 @@ if (
     fechaFinalizacion: fechaOriginal
   };
 
+ const historialAnterior =
+  localStorage.getItem("guiasDocentesFinalizadas");
+
+const respaldoAnterior =
+  localStorage.getItem("respaldoGuiaDocente");
+
+try {
+
+  localStorage.setItem(
+    "guiasDocentesFinalizadas",
+    JSON.stringify(guiasGuardadas)
+  );
+
+  localStorage.setItem(
+    "respaldoGuiaDocente",
+    JSON.stringify(respaldoActualizado)
+  );
+
+} catch (error) {
+
+  console.error("Error al guardar la guía:", error);
+
   try {
 
-    localStorage.setItem(
-      "guiasDocentesFinalizadas",
-      JSON.stringify(guiasGuardadas)
+    if (historialAnterior === null) {
+      localStorage.removeItem("guiasDocentesFinalizadas");
+    } else {
+      localStorage.setItem(
+        "guiasDocentesFinalizadas",
+        historialAnterior
+      );
+    }
+
+    if (respaldoAnterior === null) {
+      localStorage.removeItem("respaldoGuiaDocente");
+    } else {
+      localStorage.setItem(
+        "respaldoGuiaDocente",
+        respaldoAnterior
+      );
+    }
+
+  } catch (errorRestauracion) {
+
+    console.error(
+      "No fue posible restaurar completamente el almacenamiento:",
+      errorRestauracion
     );
 
-    localStorage.setItem(
-      "respaldoGuiaDocente",
-      JSON.stringify(respaldoActualizado)
-    );
-
-  } catch (error) {
-
-    console.error("Error al guardar la guía:", error);
-
-    alert(
-      "No fue posible completar el guardado. " +
-      "Verifique el almacenamiento antes de continuar."
-    );
-
-    return;
   }
+
+  alert(
+    "No fue posible completar el guardado. " +
+    "Verifique el almacenamiento antes de continuar."
+  );
+
+  return;
+}
 
   datosGuia = datosActualizados;
   respaldoGuia = respaldoActualizado;
