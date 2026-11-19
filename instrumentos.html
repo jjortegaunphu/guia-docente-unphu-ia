@@ -12067,7 +12067,7 @@ if(
                 >
 
                 <strong>
-                  ${alternativa.letra || ""}.
+                  ${String(alternativa.letra || "").toLowerCase()})
                 </strong>
 
                 <input
@@ -12238,9 +12238,9 @@ if(
                   }
                 >
 
-                <strong>
-                  ${alternativa.letra || ""}.
-                </strong>
+               <strong>
+                 ${String(alternativa.letra || "").toLowerCase()})
+               </strong>
 
                 <input
                   type="text"
@@ -12397,7 +12397,7 @@ if(
               >
 
                 <strong>
-                  ${opcion.letra || ""}.
+                  ${String(opcion.letra || "").toLowerCase()})
                 </strong>
 
                 <input
@@ -12535,8 +12535,8 @@ if(
             "
           >
             <strong>
-              ${alternativa.letra || ""}
-            </strong>.
+              ${String(alternativa.letra || "").toLowerCase()}
+            </strong>)
 
             ${alternativa.texto || ""}
           </div>
@@ -12562,8 +12562,8 @@ if(
           >
             ☐
             <strong>
-              ${alternativa.letra || ""}
-            </strong>.
+              ${String(alternativa.letra || "").toLowerCase()}
+            </strong>)
 
             ${alternativa.texto || ""}
           </div>
@@ -12605,8 +12605,8 @@ if(
             "
           >
             <strong>
-              ${opcion.letra || ""}
-            </strong>.
+               ${String(opcion.letra || "").toLowerCase()})
+            </strong>
 
             ${opcion.texto || ""}
           </div>
@@ -13265,10 +13265,9 @@ ${htmlItems}
             item.respuestasCorrectas
               .map(
                 opcion =>
-                  `${opcion.letra || ""}. ${opcion.texto || ""}`
-              )
-              .join(" | ");
-
+                    `${String(opcion.letra || "").toLowerCase()}) ${opcion.texto || ""}`
+               )
+               .join(" | ");
         }
 
 
@@ -13585,9 +13584,9 @@ const instruccionesEstudiante =
                     "
                   >
                     <strong>
-                      ${alternativa.letra || ""}
-                    </strong>.
-                    ${alternativa.texto || ""}
+                      ${String(alternativa.letra || "").toLowerCase()})
+                    </strong>
+                   ${alternativa.texto || ""}
                   </div>
                 `
               )
@@ -13659,8 +13658,8 @@ const instruccionesEstudiante =
                     "
                   >
                     <strong>
-                      ${opcion.letra || ""}
-                    </strong>.
+                     ${String(opcion.letra || "").toLowerCase()})
+                    </strong>
                     ${opcion.texto || ""}
                   </div>
                 `
@@ -14122,7 +14121,7 @@ pruebaObjetivaGeneradaActual.items.forEach(
     item.respuestasCorrectas
       .map(
         opcion =>
-          `${opcion.letra || ""}. ${opcion.texto || ""}`
+          `${String(opcion.letra || "").toLowerCase()}) ${opcion.texto || ""}`
       )
       .join(" | ");
 
@@ -14783,7 +14782,7 @@ async function descargarWordEstudiantePruebaObjetiva(){
 
                   new TextRun({
                     text:
-                      `${alternativa.letra || ""}. `,
+                      `${String(alternativa.letra || "").toLowerCase()}) `,
                     bold: true
                   }),
 
@@ -14968,7 +14967,7 @@ async function descargarWordEstudiantePruebaObjetiva(){
 
                   new TextRun({
                     text:
-                      `${opcion.letra || ""}. `,
+                     `${String(opcion.letra || "").toLowerCase()}) `,
                     bold: true
                   }),
 
@@ -15654,7 +15653,7 @@ async function descargarWordEstudiantePruebaObjetiva(){
 
                   new TextRun({
                     text:
-                      `${alternativa.letra || ""}. `,
+                       `${String(alternativa.letra || "").toLowerCase()}) `,
                     bold: true
                   }),
 
@@ -15849,8 +15848,8 @@ async function descargarWordEstudiantePruebaObjetiva(){
 
                   new TextRun({
                     text:
-                      `${opcion.letra || ""}. `,
-                    bold: true
+                     `${String(opcion.letra || "").toLowerCase()}) `,
+                   bold: true
                   }),
 
                   new TextRun({
@@ -16108,7 +16107,7 @@ async function descargarWordEstudiantePruebaObjetiva(){
                 ){
 
                   return (
-                    `${opcion.letra || ""}. ` +
+                   `${String(opcion.letra || "").toLowerCase()}) ` +
                     `${opcion.texto || ""}`
                   );
 
