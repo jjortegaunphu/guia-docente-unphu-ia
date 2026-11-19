@@ -610,10 +610,13 @@ if(idGuiaFinalizada){
     );
 
 
-    if(
-      datosGuia.estadoGuia ===
-      "finalizada"
-    ){
+    if (
+  datosGuia.estadoGuia === "finalizada" &&
+  !(
+    respaldoGuia.origen === "edicionGuiaFinalizada" &&
+    respaldoGuia.idGuiaFinalizada
+  )
+) {
 
       document
         .getElementById(
@@ -1392,10 +1395,18 @@ function finalizarGuiaDocente() {
     return;
   }
 
-  if (datosGuia.estadoGuia === "finalizada") {
-    alert("Esta Guía Docente ya fue finalizada anteriormente.");
-    return;
-  }
+  const esEdicionHistoricaValida =
+  respaldoGuia.origen === "edicionGuiaFinalizada" &&
+  typeof respaldoGuia.idGuiaFinalizada === "string" &&
+  respaldoGuia.idGuiaFinalizada.trim() !== "";
+
+if (
+  datosGuia.estadoGuia === "finalizada" &&
+  !esEdicionHistoricaValida
+) {
+  alert("Esta Guía Docente ya fue finalizada anteriormente.");
+  return;
+}
 
   const esEdicionFinalizada =
     respaldoGuia.origen === "edicionGuiaFinalizada";
